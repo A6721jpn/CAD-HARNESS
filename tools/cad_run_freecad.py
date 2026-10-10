@@ -191,6 +191,8 @@ def execute(app, builder, model_path, emit, probe_fn=None):
                       probe_status="pass" if observed["probe_pass"] else "predicate_fail",
                       measurements=observed["measurements"], reference=observed.get("reference"),
                       predicate_diff=[k for k, passed in observed["predicates"].items() if not passed])
+        if not result["probe_pass"]:
+            result.update(failed_phase="probe", code_owner="script", next_actor="sol")
         emit("event", {"phase": "probe", "event": "probe_finished",
                       "status": "ok" if observed["probe_pass"] else "failed",
                       "data": {"predicate": observed["predicates"]}})
@@ -199,16 +201,18 @@ def execute(app, builder, model_path, emit, probe_fn=None):
         if not Path(model_path).is_file():
             raise OSError("model_missing")
         result["script_completed"] = True
-        result.update(status="ok" if result["probe_pass"] else "failed",
-                      failed_phase=None if result["probe_pass"] else "probe",
-                      code_owner=None if result["probe_pass"] else "script",
-                      next_actor=None if result["probe_pass"] else "sol")
+        if result["failed_phase"] is None:
+            result["status"] = "ok"
     except Exception as exc:
-        result.update(status="failed", failed_phase=phase, code_owner=owner,
-                      next_actor="sol" if owner == "script" else "human",
-                      error_type=type(exc).__name__)
-        if phase == "probe":
-            result.update(probe_pass=None, probe_status="exception")
+        result["status"] = "failed"
+        if result["failed_phase"] is None:
+            result.update(failed_phase=phase, code_owner=owner,
+                          next_actor="sol" if owner == "script" else "human",
+                          error_type=type(exc).__name__)
+            if phase == "probe":
+                result.update(probe_pass=None, probe_status="exception")
+        else:
+            result["save_error_type"] = type(exc).__name__
         emit("event", {"phase": phase, "event": phase + "_finished", "status": "failed"})
     finally:
         if doc is not None:
@@ -218,9 +222,9 @@ def execute(app, builder, model_path, emit, probe_fn=None):
             except Exception as exc:
                 result["close_error_type"] = type(exc).__name__
         if not result["document_closed"]:
-            result["status"], result["next_actor"] = "failed", "human"
+            result["status"] = "failed"
             if result["failed_phase"] is None:
-                result.update(failed_phase="cleanup", code_owner="harness")
+                result.update(failed_phase="cleanup", code_owner="harness", next_actor="human")
     return result
 
 

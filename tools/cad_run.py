@@ -36,6 +36,15 @@ def judge_stub():
     return {"enabled": False, "invoked": False, "decision": None, "usage": None}
 
 
+def known_launch_rule(text):
+    for code, pattern in (("rule_path", r"\bPATH\b"),
+                          ("rule_execution_policy", r"ExecutionPolicy|execution[ _-]?policy|実行ポリシー"),
+                          ("rule_cim", r"\bCIM\b")):
+        if re.search(pattern, text, re.I):
+            return code
+    return None
+
+
 def new_result():
     fields = ("cad_run_id", "attempt_id", "recipe", "script_sha256", "source_sha256",
               "status", "failed_phase", "code_owner", "next_actor", "cad_exit_code",
@@ -49,8 +58,6 @@ def fail(result, phase, code, owner="harness", actor="human"):
     result["status"] = "failed"
     if result["failed_phase"] is None:
         result.update(failed_phase=phase, code_owner=owner, message_code=code, next_actor=actor)
-    elif actor == "human":
-        result["next_actor"] = "human"
 
 
 class Events:
@@ -94,7 +101,7 @@ def parser():
 
 def preflight(args, root=ROOT):
     if args.timeout_s <= 0:
-        raise ValueError("invalid_timeout")
+        raise InputError("invalid_timeout")
     script = Path(args.script)
     script = script if script.is_absolute() else root / script
     raw = script.read_bytes()
@@ -102,21 +109,21 @@ def preflight(args, root=ROOT):
     tree = ast.parse(text)
     if script.suffix.lower() != ".py" or not any(
             isinstance(n, ast.FunctionDef) and n.name == "build" for n in tree.body):
-        raise ValueError("build_required")
+        raise InputError("build_required")
     if PRIVATE.search(text):
-        raise ValueError("private_input")
+        raise InputError("private_input")
     source_hash = next((n.value.value for n in tree.body if isinstance(n, ast.Assign)
                         and any(isinstance(t, ast.Name) and t.id == "SOURCE_SHA256" for t in n.targets)
                         and isinstance(n.value, ast.Constant) and isinstance(n.value.value, str)), None)
     out = Path(args.out_dir)
     if ".." in out.parts:
-        raise ValueError("parent_path")
+        raise InputError("parent_path")
     out = Path(os.path.abspath(out if out.is_absolute() else root / out))
     allowed = root.resolve() / "reports" / "cad-run"
     if not out.is_relative_to(allowed) or out == allowed or out.resolve() != out:
-        raise ValueError("output_root")
+        raise InputError("output_root")
     if out.exists() or out.is_symlink():
-        raise ValueError("output_exists")
+        raise InputError("output_exists")
     return out, raw, source_hash
 
 
@@ -141,15 +148,23 @@ def window_scan(pid):
         def visit(hwnd, unused):
             nonlocal recovery, failed
             owner = wintypes.DWORD()
-            if not user.GetWindowThreadProcessId(hwnd, ctypes.byref(owner)):
+            thread = user.GetWindowThreadProcessId(hwnd, ctypes.byref(owner))
+            if owner.value != pid:
+                return True  # Unrelated or vanished windows cannot fail this PID's scan.
+            if not thread:
                 failed = True
                 return True
-            if owner.value == pid:
-                owned.append(hwnd)
-                length = user.GetWindowTextLengthW(hwnd)
-                title = ctypes.create_unicode_buffer(length + 1)
-                user.GetWindowTextW(hwnd, title, len(title))
-                recovery |= "ドキュメントの復旧" in title.value
+            owned.append(hwnd)
+            ctypes.set_last_error(0)
+            length = user.GetWindowTextLengthW(hwnd)
+            if not length and ctypes.get_last_error():
+                failed = True
+                return True
+            title = ctypes.create_unicode_buffer(length + 1)
+            ctypes.set_last_error(0)
+            copied = user.GetWindowTextW(hwnd, title, len(title))
+            failed |= not copied and bool(ctypes.get_last_error())
+            recovery |= "ドキュメントの復旧" in title.value
             return True
         callback = callback_type(visit)
         if not user.EnumWindows(callback, 0):
@@ -181,7 +196,7 @@ def cleanup(proc, gui_up, scan=window_scan, wait_s=1, blocked=False):
         proc.terminate()
         detail["cleanup_action"] = "forced_own_headless_exit"
         proc.wait(timeout=wait_s)
-        detail["cleanup_status"] = "forced_own_headless_exit"
+        detail["cleanup_status"] = "exited"
     except (OSError, subprocess.TimeoutExpired):
         pass
     return detail
@@ -196,6 +211,7 @@ def capture(stream, path, state):
                 for line in reader:
                     if "'Midplane' property" in line:
                         state["warnings"] += 1
+                    state["launch_rule"] = state.get("launch_rule") or known_launch_rule(line)
                     output.write(scrub(line))
                     output.flush()
     except Exception:
@@ -208,8 +224,13 @@ def merge_worker(result, worker, proc):
             or worker.get("script_sha256") != result["script_sha256"]
             or worker.get("owned_pid") != proc.pid):
         raise ValueError("worker_protocol")
-    fields = ("script_completed", "probe_pass", "probe_status", "measurements", "predicate_diff", "reference")
+    fields = ("script_completed", "measurements", "predicate_diff", "reference", "document_closed")
     result.update({k: worker.get(k) for k in fields})
+    if result["failed_phase"] is None:
+        result.update(probe_pass=worker.get("probe_pass"), probe_status=worker.get("probe_status"))
+    for key in ("error_type", "save_error_type", "close_error_type"):
+        if key in worker:
+            result[key] = worker[key]
     if worker.get("status") != "ok":
         fail(result, worker.get("failed_phase") or "build", "worker_failed",
              worker.get("code_owner") or "harness", worker.get("next_actor") or "human")
@@ -224,6 +245,8 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
     try:
         out, raw, source_hash = preflight(args, root)
         out.mkdir(parents=True, exist_ok=False)
+    except InputError:
+        raise
     except (ValueError, OSError, UnicodeError, SyntaxError) as exc:
         raise InputError(type(exc).__name__) from exc
     result = new_result()
@@ -232,7 +255,8 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                   source_sha256=source_hash, timeout_s=args.timeout_s, status="ok",
                   script_completed=False, probe_status="not_run")
     events, proc, threads = Events(out, result), None, []
-    gui_up, consumed, timed_out, capture_state = None, 0, False, {"warnings": 0, "failed": False}
+    gui_up, consumed, timed_out = None, 0, False
+    launch_resolved, capture_state = False, {"warnings": 0, "failed": False, "launch_rule": None}
     try:
         (out / "input.py").write_bytes(raw)
         cfg = '<?xml version="1.0" encoding="UTF-8"?><FCParameters><FCParamGroup Name="Root"/></FCParameters>'
@@ -260,7 +284,7 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                 thread = threading.Thread(target=capture, args=(stream, out / name, capture_state), daemon=True)
                 thread.start()
                 threads.append(thread)
-            events.emit("launch", "launch_finished", "ok")
+            events.emit("launch", "launch_finished", "pending")
             deadline = time.monotonic() + args.timeout_s
             while True:
                 notifications = out / "worker-events.jsonl"
@@ -275,6 +299,9 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                             if message["owned_pid"] != proc.pid:
                                 raise ValueError("owned_pid_mismatch")
                             gui_up = message.get("gui_up")
+                            if not launch_resolved:
+                                events.emit("launch", "launch_finished", "ok", code="worker_ready")
+                                launch_resolved = True
                         elif message["kind"] == "event":
                             events.emit(message["phase"], message["event"], message["status"],
                                         data=message.get("data"))
@@ -286,7 +313,7 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                     fail(result, "dialog", "recovery_dialog")
                     events.emit("cleanup", "dialog_detected", "pending", data={"window_scan": inspected})
                     break
-                if inspected["state"] == "scan_failed" or gui_up not in (None, 0):
+                if gui_up not in (None, 0):
                     fail(result, "cleanup", "runtime_state_unknown")
                     break
                 if time.monotonic() >= deadline:
@@ -295,6 +322,7 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                     break
                 time.sleep(0.05)
     except Exception as exc:
+        capture_state["launch_rule"] = capture_state["launch_rule"] or known_launch_rule(str(exc))
         fail(result, "launch" if proc is None else "build", "harness_" + type(exc).__name__)
     finally:
         recovered = cleanup(proc, gui_up, scan, min(1, args.timeout_s),
@@ -313,9 +341,9 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                 fail(result, "build", "invalid_worker_result")
         elif proc is not None:
             fail(result, "launch", "missing_worker_result")
-        if result["cad_exit_code"] != 0:
-            fail(result, "build" if gui_up == 0 else "launch", "cad_nonzero_or_pending")
-        if timed_out or recovered["cleanup_status"] not in ("exited", "not_started"):
+        if type(result["cad_exit_code"]) is int and result["cad_exit_code"] != 0:
+            fail(result, "build" if gui_up == 0 else "launch", "cad_nonzero")
+        if timed_out or recovered["cleanup_action"] != "none" or recovered["cleanup_status"] not in ("exited", "not_started"):
             fail(result, "cleanup", "cleanup_incomplete")
         if capture_state["failed"] or any(t.is_alive() for t in threads):
             fail(result, "cleanup", "capture_incomplete")
@@ -323,9 +351,17 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
         events.emit("cleanup", "cleanup_finished",
                     "ok" if result["cleanup_status"] == "exited" else "pending",
                     data={k: recovered[k] for k in ("cleanup_action", "window_scan")})
-        if result["failed_phase"] == "launch" and result.get("message_code") != "missing_executable":
-            judge_stub()
-            events.emit("j1", "j1_skipped", "skipped", code="disabled")
+        if result["failed_phase"] == "launch":
+            if capture_state["launch_rule"]:
+                result["message_code"] = capture_state["launch_rule"]
+            elif result.get("message_code") != "missing_executable":
+                judge_stub()
+                events.emit("j1", "j1_skipped", "skipped", code="disabled")
+        launch_known = proc is None or launch_resolved or type(result["cad_exit_code"]) is int
+        if launch_known and (result["failed_phase"] == "launch" or not launch_resolved):
+            events.emit("launch", "launch_finished",
+                        "failed" if result["failed_phase"] == "launch" or result["cad_exit_code"] != 0 else "ok",
+                        code=result.get("message_code"))
         for name in ("stderr.txt", "stdout.txt", "model.FCStd", "input.py", "worker-result.json",
                      "worker-events.jsonl", "owned-pid.json", "request.json", "user.cfg", "system.cfg"):
             if (out / name).is_file():
@@ -350,7 +386,7 @@ def main(argv=None):
     except InputError as exc:
         result, code = new_result(), 2
         result.update(status="input_error", failed_phase="preflight",
-                      code_owner="harness", next_actor="human", message_code=type(exc).__name__)
+                      code_owner="harness", next_actor="human", probe_status="not_run", message_code=str(exc))
     except Exception as exc:
         result, code = new_result(), 1
         result.update(status="failed", failed_phase="cleanup", code_owner="harness",

@@ -92,9 +92,9 @@ python tools\cad_run.py --script tools\fixtures\cad_run_a_build.py --out-dir rep
 `--out-dir` はreports/cad-run配下の未作成ディレクトリのみ。既存reportsは上書きしない。
 結果はstdoutのJSON一つとresult.json。CAD出力は匿名化したstdout/stderrログへ分離する。
 events.jsonlは一イベント一行。所有PID、段、状態、メッセージを別フィールドで記録する。
-終了0＝実行・Probe・保存・自然終了が成功、1＝実行失敗／不適合／停止、2＝入力不備。
+終了0＝CAD終了0・buildと保存完了・Probeの全述語true・自然終了確認済みで、強制終了もtimeoutも無い場合。1＝実行失敗／不適合／停止、2＝入力不備。
 失敗の詳細はfailed_phase、probe_status、code_owner、next_actor、cleanup_statusに残す。
-自分で起動したPIDだけを回収する。復旧画面・状態不明では操作せず人手へ返す。
+自然終了以外の回収は、自分の起動ハンドルを保持し、GuiUpが未報告または0で、所有PIDの窓列挙が成功し窓0の場合だけ。復旧題名・別窓・列挙失敗・ハンドル無し・GuiUp非0では終了要求や強制終了をせずcleanup_pendingで人手へ返す。
 良いfixtureはrun05由来。原本ハッシュ・除いた処理はfixture、入力コピーのハッシュはresultに記録。
 悪いスモークはfixtureの新規コピーの末尾に `build = build_without_fillet` を付加して渡す。
 CADなしのテスト：`python -B -m unittest tools.test_cad_run`。

@@ -53,16 +53,26 @@ class CadRunTests(unittest.TestCase):
             doc.saveAs.assert_not_called()
             app.closeDocument.assert_called_once_with("CadRunA")
 
-    def test_save_failure_is_fixed_worker_failure(self):
+    def test_primary_worker_failure_survives_save_and_close_failures(self):
         with tempfile.TemporaryDirectory(prefix="cad-run-unit-") as temp:
-            doc = SimpleNamespace(recompute=Mock(), saveAs=Mock(side_effect=OSError("intentional")))
-            app = self.fake_app(doc)
-            body = SimpleNamespace(Document=doc, TypeId="PartDesign::Body")
-            probe = Mock(return_value={"probe_pass": True, "measurements": {}, "predicates": {"ok": True}})
-            result = worker.execute(app, lambda unused: body, Path(temp) / "model.FCStd", Mock(), probe)
-            self.assertEqual((result["code_owner"], result["next_actor"]), ("harness", "human"))
-            self.assertFalse(result["script_completed"])
-            self.assertTrue(result["document_closed"])
+            for passed in (True, False):
+                for close_failed in (False, True):
+                    with self.subTest(passed=passed, close_failed=close_failed):
+                        doc = SimpleNamespace(recompute=Mock(), saveAs=Mock(side_effect=OSError("intentional")))
+                        app = self.fake_app(doc)
+                        if close_failed:
+                            app.closeDocument.side_effect = OSError("intentional")
+                        body = SimpleNamespace(Document=doc, TypeId="PartDesign::Body")
+                        probe = Mock(return_value={"probe_pass": passed, "measurements": {}, "predicates": {"ok": passed}})
+                        result = worker.execute(app, lambda unused: body, Path(temp) / "model.FCStd", Mock(), probe)
+                        self.assertEqual((result["failed_phase"], result["probe_status"], result["next_actor"]),
+                                         ("build", "pass", "human") if passed else ("probe", "predicate_fail", "sol"))
+                        self.assertFalse(result["script_completed"])
+                        self.assertEqual(result["document_closed"], not close_failed)
+                        if not passed:
+                            self.assertEqual(result["save_error_type"], "OSError")
+                        if close_failed:
+                            self.assertEqual(result["close_error_type"], "OSError")
 
     def test_cleanup_only_terminates_confirmed_owned_headless_process(self):
         for state, gui, handle, blocked in (
@@ -81,7 +91,8 @@ class CadRunTests(unittest.TestCase):
         proc = SimpleNamespace(pid=4242, _handle=object(), poll=lambda: None,
                                terminate=Mock(), wait=Mock())
         result = host.cleanup(proc, 0, lambda pid: {"state": "no_windows"})
-        self.assertEqual(result["cleanup_status"], "forced_own_headless_exit")
+        self.assertEqual(result["cleanup_status"], "exited")
+        self.assertEqual(result["cleanup_action"], "forced_own_headless_exit")
         proc.terminate.assert_called_once_with()
         route = host.new_result()
         host.fail(route, "dialog", "recovery_dialog")
@@ -95,24 +106,40 @@ class CadRunTests(unittest.TestCase):
             script.write_text("def build(doc):\n    return doc\n", encoding="utf-8")
             (root / "reports/cad-run/existing").mkdir(parents=True)
             process = Mock()
-            for dest in ("reports/runs/new", "reports/outcomes/new", "reports/evidence/new",
-                         "../outside", "reports/cad-run", "reports/cad-run/existing"):
-                with self.subTest(dest=dest), self.assertRaises(ValueError):
+            for dest, reason in (("reports/runs/new", "output_root"), ("reports/outcomes/new", "output_root"),
+                                 ("reports/evidence/new", "output_root"), ("../outside", "parent_path"),
+                                 ("reports/cad-run", "output_root"), ("reports/cad-run/existing", "output_exists")):
+                with self.subTest(dest=dest), self.assertRaises(host.InputError) as rejected:
                     args = host.parser().parse_args(["--script", str(script), "--out-dir", dest, "--timeout-s", "1"])
                     host.run_attempt(args, root, process)
+                self.assertEqual(str(rejected.exception), reason)
+            attempt = host.run_attempt
+            for text, timeout, dest, reason in (
+                    ("def build(doc): pass", "0", "reports/cad-run/new", "invalid_timeout"),
+                    ("pass", "1", "reports/cad-run/new", "build_required"),
+                    ("def build(doc): pass\n# token=test-placeholder", "1", "reports/cad-run/new", "private_input"),
+                    ("def build(doc): pass", "1", "reports/runs/new", "output_root")):
+                script.write_text(text, encoding="utf-8")
+                with self.subTest(reason=reason), patch.object(
+                        host, "run_attempt", side_effect=lambda a: attempt(a, root, process)), contextlib.redirect_stdout(io.StringIO()) as output:
+                    code = host.main(["--script", str(script), "--out-dir", dest, "--timeout-s", timeout])
+                result = json.loads(output.getvalue())
+                self.assertEqual((code, result["message_code"], result["probe_status"]), (2, reason, "not_run"))
             process.assert_not_called()
         with contextlib.redirect_stdout(io.StringIO()) as output:
             code = host.main([])
         self.assertEqual(code, 2)
         self.assertEqual(json.loads(output.getvalue())["failed_phase"], "preflight")
+        self.assertEqual(json.loads(output.getvalue())["message_code"], "invalid_arguments")
         with patch.object(host, "run_attempt", side_effect=OSError("intentional")), contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(host.main(["--script", "unused.py", "--out-dir", "unused", "--timeout-s", "1"]), 1)
 
     def test_host_warning_failure_routes_and_event_schema(self):
         measurements = json.loads((EVIDENCE / "run05-cad.json").read_text(encoding="utf-8"))["measurements"]
-        cases = ((0, "pass", 0, None), (9, "pass", 1, "human"),
-                 (0, "predicate_fail", 1, "sol"), (0, "exception", 1, "human"),
-                 (0, None, 1, "human"))
+        cases = ((0, "pass", 0, None, True), (9, "pass", 1, "human", True),
+                 (0, "predicate_fail", 1, "sol", True), (0, "exception", 1, "human", True),
+                 (0, None, 1, "human", True), (9, "predicate_fail", 1, "sol", True),
+                 (0, "predicate_fail", 1, "sol", False))
         with tempfile.TemporaryDirectory(prefix="cad-run-unit-") as temp:
             root = Path(temp)
             script = root / "build.py"
@@ -120,10 +147,11 @@ class CadRunTests(unittest.TestCase):
             exe = root / "freecad/bin/freecadcmd.exe"
             exe.parent.mkdir(parents=True)
             exe.write_bytes(b"offline fixture; never executed")
-            for index, (cad_exit, probe_status, expected_exit, actor) in enumerate(cases):
+            for index, (cad_exit, probe_status, expected_exit, actor, closed) in enumerate(cases):
                 with self.subTest(probe_status=probe_status, cad_exit=cad_exit):
                     out = root / "reports/cad-run" / str(index)
-                    proc = SimpleNamespace(pid=4242, _handle=object(), poll=lambda: cad_exit,
+                    proc = SimpleNamespace(pid=4242, _handle=object(),
+                                           poll=Mock(side_effect=[None, cad_exit, cad_exit, cad_exit]),
                                            terminate=Mock(), wait=Mock(),
                                            stdout=io.BufferedReader(io.BytesIO(b"")),
                                            stderr=io.BufferedReader(io.BytesIO(
@@ -137,7 +165,7 @@ class CadRunTests(unittest.TestCase):
                             {"kind": "ready", "owned_pid": 4242, "gui_up": 0}) + "\n", encoding="utf-8")
                         if probe_status is not None:
                             report = {"schema": "cad-harness.cad_run.worker.v0", **request,
-                                      "owned_pid": 4242, "document_closed": True,
+                                      "owned_pid": 4242, "document_closed": closed,
                                       "status": "ok" if probe_status == "pass" else "failed",
                                       "failed_phase": None if probe_status == "pass" else "probe",
                                       "code_owner": "script" if probe_status == "predicate_fail" else "probe",
@@ -145,24 +173,133 @@ class CadRunTests(unittest.TestCase):
                                       "script_completed": probe_status != "exception",
                                       "probe_pass": probe_status == "pass",
                                       "probe_status": probe_status, "measurements": measurements, "predicate_diff": []}
+                            if not closed:
+                                report["close_error_type"] = "OSError"
                             (out / "worker-result.json").write_text(json.dumps(report), encoding="utf-8")
                             (out / "model.FCStd").write_bytes(b"offline model placeholder")
                         return proc
                     args = host.parser().parse_args(["--script", str(script), "--out-dir", str(out),
                                                      "--timeout-s", "1"])
-                    with patch.object(host, "FREECAD_DIR", root / "freecad"):
-                        result, code = host.run_attempt(args, root, spawn)
+                    scan = Mock(return_value={"state": "scan_failed"})
+                    with patch.object(host, "FREECAD_DIR", root / "freecad"), patch.object(host.time, "sleep"):
+                        result, code = host.run_attempt(args, root, spawn, scan)
+                    scan.assert_called_once_with(4242)
                     self.assertEqual((code, result["next_actor"]), (expected_exit, actor))
                     self.assertEqual(result["cad_exit_code"], cad_exit)
+                    if probe_status == "predicate_fail":
+                        self.assertEqual((result["failed_phase"], result["probe_status"]), ("probe", "predicate_fail"))
+                    if not closed:
+                        self.assertFalse(result["document_closed"])
+                        self.assertEqual(result["close_error_type"], "OSError")
                     self.assertEqual(result["removed_warning_lines"], 1)
                     self.assertIsNone(result["geometry_ok"])
                     self.assertNotIn("script_ok", result)
                     self.assertEqual(json.loads((out / "result.json").read_text(encoding="utf-8")), result)
                     events = [json.loads(line) for line in (out / "events.jsonl").read_text(encoding="utf-8").splitlines()]
                     self.assertTrue(all(set(e) == set(host.EVENT_KEYS) for e in events))
+                    launches = [e for e in events if e["event"] == "launch_finished"]
+                    self.assertEqual(launches[0]["status"], "pending")
+                    self.assertEqual(launches[1]["message_code"], "worker_ready")
+                    self.assertEqual(launches[1]["status"], "ok")
                     self.assertTrue(all(set(e["data"]) <= host.DATA_KEYS for e in events))
                     self.assertNotIn("test-placeholder", (out / "stderr.txt").read_text(encoding="utf-8"))
                     proc.terminate.assert_not_called()
+
+    def test_primary_dialog_survives_worker_merge(self):
+        result = host.new_result()
+        result.update(status="ok", attempt_id="attempt", script_sha256="hash", probe_status="not_run")
+        host.fail(result, "dialog", "recovery_dialog")
+        report = {"schema": "cad-harness.cad_run.worker.v0", "attempt_id": "attempt",
+                  "script_sha256": "hash", "owned_pid": 4242, "status": "failed",
+                  "failed_phase": "probe", "next_actor": "sol", "code_owner": "script",
+                  "probe_status": "predicate_fail", "probe_pass": False, "document_closed": False,
+                  "close_error_type": "OSError"}
+        host.merge_worker(result, report, SimpleNamespace(pid=4242))
+        host.fail(result, "cleanup", "capture_incomplete")
+        self.assertEqual((result["failed_phase"], result["probe_status"], result["next_actor"]),
+                         ("dialog", "not_run", "human"))
+        self.assertEqual(result["close_error_type"], "OSError")
+
+    def test_window_scan_limits_query_failures_to_owned_pid(self):
+        for mode, expected in (("foreign_failed", "windows"), ("owned_failed", "scan_failed"),
+                               ("foreign_only", "no_windows"), ("enumeration_failed", "scan_failed")):
+            with self.subTest(mode=mode):
+                user = Mock()
+                def enumerate_windows(callback, unused):
+                    callback(101, 0)
+                    if mode != "foreign_only":
+                        callback(102, 0)
+                    return mode != "enumeration_failed"
+                def owner(hwnd, pointer):
+                    pointer._obj.value = 4242 if hwnd == 102 else 0
+                    return 0 if hwnd == 101 or mode == "owned_failed" else 1
+                user.EnumWindows.side_effect = enumerate_windows
+                user.GetWindowThreadProcessId.side_effect = owner
+                user.GetWindowTextLengthW.return_value = 0
+                user.GetWindowTextW.return_value = 0
+                with patch.object(host.os, "name", "nt"), patch.object(host.ctypes, "WinDLL", return_value=user, create=True), \
+                        patch.object(host.ctypes, "WINFUNCTYPE", return_value=lambda fn: fn, create=True), \
+                        patch.object(host.ctypes, "set_last_error", create=True), \
+                        patch.object(host.ctypes, "get_last_error", return_value=0, create=True):
+                    result = host.window_scan(4242)
+                self.assertEqual(result["state"], expected)
+                self.assertTrue(all(call.args[0] == 102 for call in user.GetWindowTextW.call_args_list))
+
+    def test_launch_rules_skip_stub_and_unmatched_failure_calls_it(self):
+        cases = (("PATH unavailable", "rule_path", False), ("ExecutionPolicy blocked", "rule_execution_policy", False),
+                 ("実行ポリシーで拒否", "rule_execution_policy", False), ("CIM denied", "rule_cim", False),
+                 ("unknown launch fault", None, False), ("PATH unavailable", "rule_path", True))
+        with tempfile.TemporaryDirectory(prefix="cad-run-unit-") as temp:
+            root = Path(temp)
+            script = root / "build.py"
+            script.write_text("def build(doc): pass", encoding="utf-8")
+            exe = root / "freecad/bin/freecadcmd.exe"
+            exe.parent.mkdir(parents=True)
+            exe.write_bytes(b"offline fixture; never executed")
+            for index, (diagnostic, rule, spawn_error) in enumerate(cases):
+                with self.subTest(diagnostic=diagnostic, spawn_error=spawn_error):
+                    proc = SimpleNamespace(pid=4242, poll=lambda: 7,
+                                           stdout=io.BufferedReader(io.BytesIO(b"")),
+                                           stderr=io.BufferedReader(io.BytesIO(diagnostic.encode("utf-8"))))
+                    spawn = Mock(side_effect=OSError(diagnostic)) if spawn_error else Mock(return_value=proc)
+                    out = root / "reports/cad-run" / str(index)
+                    args = host.parser().parse_args(["--script", str(script), "--out-dir", str(out), "--timeout-s", "1"])
+                    with patch.object(host, "FREECAD_DIR", root / "freecad"), patch.object(host, "judge_stub", wraps=host.judge_stub) as judge:
+                        result, code = host.run_attempt(args, root, spawn, Mock())
+                    events = [json.loads(line) for line in (out / "events.jsonl").read_text(encoding="utf-8").splitlines()]
+                    self.assertEqual((code, result["failed_phase"]), (1, "launch"))
+                    self.assertEqual(judge.call_count, 0 if rule else 1)
+                    self.assertEqual(sum(e["event"] == "j1_skipped" for e in events), 0 if rule else 1)
+                    if rule:
+                        self.assertEqual(result["message_code"], rule)
+                    launches = [e for e in events if e["event"] == "launch_finished"]
+                    self.assertEqual(launches[-1]["status"], "failed")
+                    if not spawn_error:
+                        self.assertEqual(launches[0]["status"], "pending")
+
+    def test_unreported_exit_keeps_launch_pending_and_never_terminates_on_failed_scan(self):
+        with tempfile.TemporaryDirectory(prefix="cad-run-unit-") as temp:
+            root = Path(temp)
+            script = root / "build.py"
+            script.write_text("def build(doc): pass", encoding="utf-8")
+            exe = root / "freecad/bin/freecadcmd.exe"
+            exe.parent.mkdir(parents=True)
+            exe.write_bytes(b"offline fixture; never executed")
+            proc = SimpleNamespace(pid=4242, _handle=object(), poll=lambda: None, terminate=Mock(), wait=Mock(),
+                                   stdout=io.BufferedReader(io.BytesIO(b"")), stderr=io.BufferedReader(io.BytesIO(b"")))
+            out = root / "reports/cad-run/pending"
+            args = host.parser().parse_args(["--script", str(script), "--out-dir", str(out), "--timeout-s", "1"])
+            scan = Mock(return_value={"state": "scan_failed"})
+            with patch.object(host, "FREECAD_DIR", root / "freecad"), patch.object(host.time, "monotonic", side_effect=(0, 2)), \
+                    patch.object(host, "fail", wraps=host.fail) as failures:
+                result, code = host.run_attempt(args, root, Mock(return_value=proc), scan)
+            self.assertEqual((code, result["message_code"], result["cleanup_status"]), (1, "timeout", "cleanup_pending"))
+            self.assertIsNone(result["cad_exit_code"])
+            self.assertEqual(scan.call_count, 2)
+            self.assertNotIn("cad_nonzero", [call.args[2] for call in failures.call_args_list])
+            proc.terminate.assert_not_called()
+            events = [json.loads(line) for line in (out / "events.jsonl").read_text(encoding="utf-8").splitlines()]
+            self.assertEqual([e["status"] for e in events if e["event"] == "launch_finished"], ["pending"])
 
     def test_disabled_judge_and_source_provenance(self):
         self.assertEqual(host.judge_stub(), {"enabled": False, "invoked": False, "decision": None, "usage": None})
