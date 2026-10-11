@@ -4,16 +4,56 @@ import json
 from pathlib import Path
 import subprocess
 import tempfile
+import tomllib
 import unittest
 from unittest.mock import patch
 
 from tools import cad_agent as agent, cad_run, cad_run_probes as specs
+from tools.test_support import start_tempdirs, stop_tempdirs
 
 SOURCE = "def build(doc):\n    doc.Label = '図面'\n    return None\n"
 USAGE = dict(zip(agent.USAGE_KEYS, (100, 50, 0, 20, 10)))
 
 
+def setUpModule():
+    global _temp_patches
+    _temp_patches = start_tempdirs()
+
+
+def tearDownModule():
+    stop_tempdirs(_temp_patches)
+
+
 class CadAgentTests(unittest.TestCase):
+    def test_mvp_context_separation_and_toml_roundtrip(self):
+        description = '日本語 "quote"\\path\nrequest'
+        context = agent.developer_context('skill "\\\n日本語', 'JSON only',
+                                          {"actual": None, "expected": 6})
+        argv = agent.exec_argv("codex.exe", Path("outside"), Path("last"), description, context)
+        self.assertEqual(argv[-1], description)
+        setting = next(arg for arg in argv if arg.startswith("developer_instructions="))
+        self.assertEqual(tomllib.loads(setting)["developer_instructions"], context)
+        self.assertNotIn("expected", argv[-1])
+        with self.assertRaisesRegex(ValueError, "context_argv_limit"):
+            agent.exec_argv("codex.exe", Path("outside"), Path("last"), description, "x" * 40000)
+
+    def test_mvp_shared_call_attempt_budget_and_deadline_clip(self):
+        clock = [10.0]
+        budget = agent.Budget(clock=lambda: clock[0])
+        self.assertEqual(budget.cad_timeout(), 300)
+        for unused in range(3):
+            budget.call()
+            budget.cad()
+        with self.assertRaisesRegex(ValueError, "call_limit"):
+            budget.call()
+        with self.assertRaisesRegex(ValueError, "attempt_limit"):
+            budget.cad()
+        clock[0] = 895.5
+        self.assertEqual(budget.cad_timeout(), 14)
+        clock[0] = 910
+        with self.assertRaisesRegex(ValueError, "deadline_exceeded"):
+            budget.remaining()
+
     def fake_runner(self, plans, source=SOURCE, cli_exit=0, with_usage=True, task_id=cad_run.TASK):
         model_calls, cad_calls, work_dirs = [], [], []
         def run(argv, **kwargs):
@@ -68,7 +108,8 @@ class CadAgentTests(unittest.TestCase):
 
     def drive(self, root, runner, name="unit-run", task_id=cad_run.TASK):
         self.driver_test_root = Path(root).resolve()
-        with patch.object(agent, "agents_identity", return_value={"codex_home": None}):
+        with patch.object(agent, "agents_identity", return_value={"codex_home": None}), \
+                patch.object(agent, "ROOT", self.driver_test_root):
             result = agent.run_driver(name, "codex.exe", Path(root), runner, task_id=task_id)
         work_dirs = getattr(runner, "work_dirs", [])
         self.assertEqual(len(set(work_dirs)), len(work_dirs))

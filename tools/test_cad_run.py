@@ -13,8 +13,18 @@ from unittest.mock import Mock, patch
 
 from tools import cad_run as host, cad_run_freecad as worker, cad_run_probes as specs
 from tools.fixtures import cad_run_a_build as fixture
+from tools.test_support import start_tempdirs, stop_tempdirs
 
 EVIDENCE = host.ROOT / "reports/evidence/A-box-pocket-fillet-FreeCAD-20261005"
+
+
+def setUpModule():
+    global _temp_patches
+    _temp_patches = start_tempdirs()
+
+
+def tearDownModule():
+    stop_tempdirs(_temp_patches)
 
 
 class CadRunTests(unittest.TestCase):
