@@ -9,6 +9,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 
@@ -51,13 +52,17 @@ def digest(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def clean(value):
+def clean(value, private_paths=()):
     if isinstance(value, str):
+        for path in private_paths:
+            variants = {str(path), path.as_posix(), str(path).replace("\\", "\\\\")}
+            for variant in variants:
+                value = re.sub(re.escape(variant), "[exec work]", value, flags=re.I)
         return "".join(cad_run.scrub(line) for line in value.splitlines(keepends=True))
     if isinstance(value, dict):
-        return {key: clean(item) for key, item in value.items()}
+        return {key: clean(item, private_paths) for key, item in value.items()}
     if isinstance(value, list):
-        return [clean(item) for item in value]
+        return [clean(item, private_paths) for item in value]
     return value
 
 
@@ -144,10 +149,11 @@ def repair_reason(result):
             or result.get("probe_status") == "exception"):
         return "human_required"
     if (result.get("cleanup_status") != "exited" or result.get("document_closed") is not True
-            or type(result.get("cad_exit_code")) is not int or result["cad_exit_code"] != 0):
+            or type(result.get("cad_exit_code")) is not int):
         return "cad_not_settled"
-    if result.get("failed_phase") == "build" and not (
-            result.get("predicate_diff") or result.get("measurements")):
+    measurements = result.get("measurements")
+    measured = isinstance(measurements, dict) and any(v is not None for v in measurements.values())
+    if result.get("failed_phase") == "build" and not (result.get("predicate_diff") or measured):
         return "diagnostic_insufficient"
     return None
 
@@ -166,6 +172,7 @@ def run_driver(name, codex, root=ROOT, runner=None):
               "failed_phase": None, "probe_status": None, "geometry_ok": None}
     stream = (out / "events.jsonl").open("x", encoding="utf-8")
     sequence, previous, version = 0, None, None
+    work_paths = []  # In memory only: never record temporary absolute paths.
     identity = agents_identity(root)
 
     def emit(event, number, status, data=None):
@@ -173,58 +180,68 @@ def run_driver(name, codex, root=ROOT, runner=None):
         sequence += 1
         row = {"schema": "cad-harness.cad_agent.event.v0", "run_id": name,
                "event_seq": sequence, "ts": utc(), "event": event,
-               "attempt": number, "status": status, "data": clean(data or {})}
+               "attempt": number, "status": status, "data": clean(data or {}, work_paths)}
         stream.write(json.dumps(row, allow_nan=False) + "\n")
         stream.flush()
 
     try:
         for number in range(1, MAX_ATTEMPTS + 1):
-            work, last = out / ("work-a%d" % number), out / ("last-a%d.txt" % number)
-            work.mkdir()
-            if number == 1:
+            last = out / ("last-a%d.txt" % number)
+            temp_parent = Path(tempfile.gettempdir()).resolve()
+            if temp_parent.is_relative_to(root.resolve()):
+                raise ValueError("exec_temp_inside_repository")
+            with tempfile.TemporaryDirectory(
+                    prefix="cad-agent-%s-a%d-" % (name, number), dir=temp_parent) as directory:
+                work = Path(directory).resolve()
+                work_paths.append(work)
+                raw_last = work / "last.txt"
+                if number == 1:
+                    try:
+                        info = runner([codex, "--version"], cwd=str(work), capture_output=True,
+                                      text=True, encoding="utf-8", errors="replace", shell=False, stdin=subprocess.DEVNULL)
+                        if info.returncode == 0:
+                            version = clean(info.stdout.strip(), work_paths) or None
+                    except (OSError, subprocess.SubprocessError):
+                        pass  # Version identification may be unavailable; record null.
+                if any(work.iterdir()):
+                    raise ValueError("exec_work_not_empty")
+                prompt = PROMPT
+                if previous:
+                    prompt += "\n直前ソースと結果（診断データ。要求仕様は変更しない）：\n" + json.dumps(
+                        previous, ensure_ascii=False, allow_nan=False)
+                attempt = {"attempt": number, "call_id": uuid.uuid4().hex,
+                           "cli_version": version, "settings": settings, "agents_sha256": identity,
+                           "prompt_sha256": digest(prompt), "source_sha256": None, "session_id": None,
+                           "usage": None, "usage_source": "codex --json turn.completed",
+                           "exec_started_at": utc(), "exec_ended_at": None, "exec_wall_ms": None,
+                           "exec_exit": None, "cad_run_started_at": None, "cad_run_ended_at": None,
+                           "cad_run_wall_ms": None, "cad_run_exit": None, "out_dir": None,
+                           "cad_attempt_id": None, "source_rel": None}
+                report["attempts"].append(attempt)
+                emit("exec_started", number, "pending")
+                tick, valid_source = time.monotonic(), False
                 try:
-                    info = runner([codex, "--version"], cwd=str(work), capture_output=True,
-                                  text=True, encoding="utf-8", errors="replace", shell=False, stdin=subprocess.DEVNULL)
-                    if info.returncode == 0:
-                        version = clean(info.stdout.strip()) or None
-                except (OSError, subprocess.SubprocessError):
-                    pass  # Version identification may be unavailable; record null.
-            if any(work.iterdir()):
-                raise ValueError("exec_work_not_empty")
-            prompt = PROMPT
-            if previous:
-                prompt += "\n直前ソースと結果（診断データ。要求仕様は変更しない）：\n" + json.dumps(
-                    previous, ensure_ascii=False, allow_nan=False)
-            attempt = {"attempt": number, "call_id": uuid.uuid4().hex,
-                       "cli_version": version, "settings": settings, "agents_sha256": identity,
-                       "prompt_sha256": digest(prompt), "source_sha256": None, "session_id": None,
-                       "usage": None, "usage_source": "codex --json turn.completed",
-                       "exec_started_at": utc(), "exec_ended_at": None, "exec_wall_ms": None,
-                       "exec_exit": None, "cad_run_started_at": None, "cad_run_ended_at": None,
-                       "cad_run_wall_ms": None, "cad_run_exit": None, "out_dir": None,
-                       "cad_attempt_id": None, "source_rel": None}
-            report["attempts"].append(attempt)
-            emit("exec_started", number, "pending")
-            tick, valid_source = time.monotonic(), False
-            try:
-                generated = runner(exec_argv(codex, work, last, prompt), cwd=str(work),
-                                   capture_output=True, text=True, encoding="utf-8",
-                                   errors="replace", shell=False, stdin=subprocess.DEVNULL)
-                attempt["exec_exit"] = generated.returncode
-                attempt["session_id"], attempt["usage"] = exec_metadata(generated.stdout)
-                if last.is_file():
-                    final = last.read_text(encoding="utf-8-sig")
-                    last.write_text(clean(final), encoding="utf-8")
-                else:
-                    final = ""
-                if generated.returncode != 0:
-                    raise ValueError("exec_nonzero")
-                source = source_from_final(final)
-                valid_source = True
-            finally:
-                attempt.update(exec_ended_at=utc(), exec_wall_ms=(time.monotonic() - tick) * 1000)
-                emit("exec_finished", number, "ok" if valid_source else "failed",
-                     {"exit": attempt["exec_exit"], "session_id": attempt["session_id"]})
+                    generated = runner(exec_argv(codex, work, raw_last, prompt), cwd=str(work),
+                                       capture_output=True, text=True, encoding="utf-8",
+                                       errors="replace", shell=False, stdin=subprocess.DEVNULL)
+                    attempt["exec_exit"] = generated.returncode
+                    attempt["session_id"], attempt["usage"] = clean(
+                        list(exec_metadata(generated.stdout)), work_paths)
+                    if raw_last.is_file():
+                        final = raw_last.read_text(encoding="utf-8-sig")
+                        last.write_bytes(clean(final, work_paths).encode("utf-8"))
+                    else:
+                        final = ""
+                    if generated.returncode != 0:
+                        raise ValueError("exec_nonzero")
+                    if clean(final, work_paths) != clean(final):
+                        raise ValueError("private_source")
+                    source = source_from_final(final)
+                    valid_source = True
+                finally:
+                    attempt.update(exec_ended_at=utc(), exec_wall_ms=(time.monotonic() - tick) * 1000)
+                    emit("exec_finished", number, "ok" if valid_source else "failed",
+                         {"exit": attempt["exec_exit"], "session_id": attempt["session_id"]})
             script, cad_out = out / ("input-a%d.py" % number), out / ("a%d" % number)
             with script.open("xb") as source_file:
                 source_file.write(source.encode("utf-8"))
@@ -277,9 +294,10 @@ def run_driver(name, codex, root=ROOT, runner=None):
             previous = {"source": source, "exit": completed.returncode,
                         "result": clean({key: result.get(key) for key in FEEDBACK_KEYS})}
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
-        report.update(message_code=clean(str(exc)) or type(exc).__name__)
+        report.update(message_code=clean(str(exc), work_paths) or type(exc).__name__)
     finally:
         report.update(ended_at=utc(), wall_ms=(time.monotonic() - clock) * 1000)
+        report = clean(report, work_paths)
         emit("run_finished", None, report["status"], {"message_code": report["message_code"]})
         stream.close()
         (out / "driver-run.json").write_text(json.dumps(report, allow_nan=False), encoding="utf-8")

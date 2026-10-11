@@ -15,7 +15,7 @@ USAGE = dict(zip(agent.USAGE_KEYS, (100, 50, 0, 20, 10)))
 
 class CadAgentTests(unittest.TestCase):
     def fake_runner(self, plans, source=SOURCE, cli_exit=0, with_usage=True):
-        model_calls, cad_calls = [], []
+        model_calls, cad_calls, work_dirs = [], [], []
         def run(argv, **kwargs):
             self.assertFalse(kwargs["shell"])
             self.assertNotIn("env", kwargs)  # CODEX_HOME is inherited, never replaced.
@@ -29,7 +29,14 @@ class CadAgentTests(unittest.TestCase):
                                  list(agent.DISABLED))
                 self.assertNotIn("resume", argv)
                 self.assertFalse(any("dangerously" in item for item in argv))
-                self.assertEqual(list(Path(kwargs["cwd"]).iterdir()), [])
+                work = Path(kwargs["cwd"]).resolve()
+                self.assertEqual(Path(argv[argv.index("-C") + 1]).resolve(), work)
+                self.assertFalse(work.is_relative_to(self.driver_test_root))
+                self.assertFalse(work.is_relative_to(agent.ROOT.resolve()))
+                self.assertEqual(Path(argv[argv.index("-o") + 1]).parent, work)
+                self.assertEqual(list(work.iterdir()), [])
+                self.assertNotIn(str(work), argv[-1])
+                work_dirs.append(work)
                 model_calls.append(argv[-1])
                 Path(argv[argv.index("-o") + 1]).write_text(source, encoding="utf-8")
                 rows = [{"type": "thread.started", "thread_id": "mock-session-%d" % len(model_calls)}]
@@ -37,6 +44,10 @@ class CadAgentTests(unittest.TestCase):
                     rows += [{"type": "turn.completed", "usage": USAGE}] * 2
                 return subprocess.CompletedProcess(argv, cli_exit, "\n".join(map(json.dumps, rows)), "")
             self.assertEqual(Path(argv[2]).name, "cad_run.py")
+            for flag, value in (("--recipe", "freecadcmd"), ("--timeout-s", "300"),
+                                ("--task", "A-box-pocket-fillet")):
+                self.assertEqual(argv[argv.index(flag) + 1], value)
+            self.assertNotIn("console", argv)
             script, out = (Path(argv[argv.index(flag) + 1]) for flag in ("--script", "--out-dir"))
             plan = plans[len(cad_calls)]
             cad_calls.append(out)
@@ -52,11 +63,18 @@ class CadAgentTests(unittest.TestCase):
             (out / "result.json").write_text(json.dumps(result), encoding="utf-8")
             return subprocess.CompletedProcess(argv, plan.get("exit", 1),
                                                plan.get("raw", json.dumps(result)), "")
+        run.work_dirs = work_dirs
         return run, model_calls, cad_calls
 
     def drive(self, root, runner, name="unit-run"):
+        self.driver_test_root = Path(root).resolve()
         with patch.object(agent, "agents_identity", return_value={"codex_home": None}):
-            return agent.run_driver(name, "codex.exe", Path(root), runner)
+            result = agent.run_driver(name, "codex.exe", Path(root), runner)
+        work_dirs = getattr(runner, "work_dirs", [])
+        self.assertEqual(len(set(work_dirs)), len(work_dirs))
+        for work in work_dirs:
+            self.assertFalse(work.exists())
+        return result
 
     def test_source_accepts_one_fence_and_rejects_invalid_sources(self):
         for text in (SOURCE, "\x60\x60\x60python\n" + SOURCE + "\x60\x60\x60", "\x60\x60\x60\n" + SOURCE + "\x60\x60\x60"):
@@ -83,14 +101,16 @@ class CadAgentTests(unittest.TestCase):
     def test_stop_routes_and_type_only_diagnostic_do_not_repair(self):
         plans = (({"cleanup_status": "cleanup_pending"}, "cad_not_settled"),
                  ({"document_closed": False}, "cad_not_settled"),
-                 ({"cad_exit_code": 9}, "cad_not_settled"),
+                 *[({"cad_exit_code": value}, "cad_not_settled") for value in (None, "0", 0.0, False)],
                  ({"next_actor": "human"}, "human_required"),
                  ({"next_actor": None}, "human_required"),
                  ({"failed_phase": "launch"}, "human_required"),
                  ({"failed_phase": "dialog"}, "human_required"),
                  ({"probe_status": "exception"}, "human_required"),
                  ({"failed_phase": "build", "predicate_diff": None, "measurements": None,
-                   "error_type": "RuntimeError"}, "diagnostic_insufficient"))
+                   "error_type": "RuntimeError"}, "diagnostic_insufficient"),
+                 ({"failed_phase": "build", "predicate_diff": [],
+                   "measurements": {"volume_mm3": None}}, "diagnostic_insufficient"))
         for plan, reason in plans:
             with self.subTest(reason=reason, plan=plan), tempfile.TemporaryDirectory() as temp:
                 run, models, cads = self.fake_runner([plan])
@@ -112,7 +132,11 @@ class CadAgentTests(unittest.TestCase):
             self.assertIn("outer_fillet", models[1])
             self.assertEqual(cads[0].parent, cads[1].parent)
             self.assertEqual([out.name for out in cads], ["a1", "a2"])
+            self.assertGreaterEqual(report["wall_ms"], 0)
+            self.assertEqual({key for key in report if key.endswith("_ms")}, {"wall_ms"})
             for attempt in report["attempts"]:
+                self.assertEqual({key for key in attempt if key.endswith("_ms")},
+                                 {"exec_wall_ms", "cad_run_wall_ms"})
                 self.assertEqual([u["values"] for u in attempt["usage"]], [USAGE, USAGE])
                 self.assertNotIn("usage_total", attempt)
                 self.assertIsNotNone(attempt["session_id"])
@@ -151,6 +175,52 @@ class CadAgentTests(unittest.TestCase):
             self.assertEqual(accepted, out / "a1")
             self.assertEqual(raw, SOURCE.encode("utf-8"))
             self.assertFalse(accepted.exists())
+            run, models, cads = self.fake_runner([])
+            with patch.object(agent.tempfile, "gettempdir", return_value=str(root)):
+                report, code = self.drive(root, run)
+            self.assertEqual((code, report["message_code"]), (1, "exec_temp_inside_repository"))
+            self.assertEqual((models, cads), ([], []))
+
+    def test_nonzero_native_exit_with_diagnostic_allows_safe_repair(self):
+        good = {"exit": 0, "status": "ok", "failed_phase": None, "probe_status": "pass",
+                "probe_pass": True, "next_actor": None, "predicate_diff": []}
+        for phase in ("build", "probe"):
+            with self.subTest(phase=phase), tempfile.TemporaryDirectory() as temp:
+                failed = {"failed_phase": phase, "cad_exit_code": 9,
+                          "script_completed": phase != "build"}
+                run, models, cads = self.fake_runner([failed, good])
+                report, code = self.drive(temp, run)
+                self.assertEqual((code, len(models), len(cads)), (0, 2, 2))
+                self.assertEqual(report["attempts"][0]["result"]["cad_exit_code"], 9)
+                self.assertEqual(report["attempts"][0]["result"]["failed_phase"], phase)
+
+    def test_external_work_is_removed_and_not_retained_on_source_or_exec_failure(self):
+        for fault in ("source", "exec"):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as temp:
+                base, models, cads = self.fake_runner([])
+                def run(argv, **kwargs):
+                    work = Path(kwargs["cwd"]).resolve()
+                    if argv[1] == "--version":
+                        return subprocess.CompletedProcess(argv, 0, str(work), "")
+                    result = base(argv, **kwargs)
+                    last = Path(argv[argv.index("-o") + 1])
+                    if fault == "exec":
+                        raise OSError("exec failure at " + str(work))
+                    last.write_text(SOURCE + "# " + str(work) + "\n", encoding="utf-8")
+                    return result
+                run.work_dirs = base.work_dirs
+                report, code = self.drive(temp, run)
+                self.assertEqual((code, len(models), len(cads)), (1, 1, 0))
+                out = Path(temp) / "reports/cad-run/unit-run"
+                retained = [json.dumps(report), (out / "driver-run.json").read_text(),
+                            (out / "events.jsonl").read_text(), *models]
+                if (out / "last-a1.txt").exists():
+                    retained.append((out / "last-a1.txt").read_text())
+                for work in run.work_dirs:
+                    for variant in (str(work), work.as_posix(), json.dumps(str(work))[1:-1]):
+                        for text in retained:
+                            self.assertNotIn(variant, text)
+                self.assertNotIn("work-a1", [path.name for path in out.iterdir()])
 
     def test_invalid_cad_protocol_and_inconsistent_success_stop(self):
         for plan in ({"raw": "not JSON"}, {"script_sha256": "wrong"}, {"exit": 0},
