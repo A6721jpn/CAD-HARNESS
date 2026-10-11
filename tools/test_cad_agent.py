@@ -245,6 +245,8 @@ class CadAgentTests(unittest.TestCase):
                 self.assertEqual(models, [specs.SPECS[task]["prompt"]])
                 if task == specs.TASK_B:
                     self.assertIn("80×60", models[0])
+                    self.assertIn("DPC-019のみでCADを実行する", models[0])
+                    self.assertIn("LPC-017ではCADを実行しない", models[0])
                     self.assertNotIn("幅40 mm", models[0])
         with tempfile.TemporaryDirectory() as temp:
             call = unittest.mock.Mock()

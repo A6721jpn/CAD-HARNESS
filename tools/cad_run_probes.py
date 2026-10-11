@@ -187,7 +187,7 @@ def b_predicates(m):
                           and b_near(m["pocket_depth_mm"], 4)
                           and m["pocket_length_mode"]
                           and b_box(m["pocket_sketch_box"], (-15, 15, -10, 10, 10, 10)),
-        "holes_pattern": len(holes) == 3 and centers and m["hole_pattern_attributes"]
+        "holes_pattern": len(holes) == 3 and centers
                          and all(b_near(h["radius"], 3) and b_near(abs(h["axis"][2]), 1)
                                  and b_near(h["axis"][0], 0) and b_near(h["axis"][1], 0)
                                  and b_near(h["z_min"], 0) and b_near(h["z_max"], 10)
@@ -230,6 +230,28 @@ def length_mode(feature, expected):
             and str(feature.Type) in ("Length", "0") and not feature.Reversed
             and (str(feature.SideType) == feature.getEnumerationsOfProperty("SideType")[0]
                  if "SideType" in feature.PropertiesList else not feature.Midplane))
+
+
+def pattern_vector(pattern, app):
+    """Resolve the selected direction geometrically, without axis-object identity."""
+    selected = pattern.Direction
+    reference = link(selected)
+    vector = reference if all(hasattr(reference, k) for k in ("x", "y", "z")) else None
+    if vector is None:
+        names = selected[1] if isinstance(selected, (tuple, list)) and len(selected) == 2 else ()
+        if names and names[0]:
+            subshape = reference.getSubObject(names[0])
+            vector = getattr(getattr(subshape, "Curve", None), "Direction", None)
+        else:
+            axes = {"X_Axis": (1, 0, 0), "Y_Axis": (0, 1, 0), "Z_Axis": (0, 0, 1)}
+            values = axes.get(getattr(reference, "Role", None))
+            if values and reference.TypeId == "App::Line":
+                vector = reference.getGlobalPlacement().Rotation.multVec(app.Vector(*values))
+    if vector is None:
+        return None
+    values = [vector.x, vector.y, vector.z]
+    magnitude = sqrt(sum(v * v for v in values))
+    return [v / magnitude for v in values] if magnitude else None
 
 
 def b_probe(doc, body):
@@ -308,7 +330,8 @@ def b_probe(doc, body):
     m["outer_chamfer_geometry"] = all(bevels) and covers(top_edges, outer_top)
     m.update(pocket_depth_mm=None, pocket_length_mode=False, pocket_sketch_box=dict.fromkeys(BOX_KEYS),
              hole_pattern_attributes=False, feature_chain_ok=False, outer_chamfer_selection=False,
-             pattern_length_mm=None, pattern_occurrences=None, pattern_axis_role=None, chamfer_size_mm=None)
+             pattern_length_mm=None, pattern_occurrences=None, pattern_axis_role=None,
+             pattern_direction=None, chamfer_size_mm=None)
     pads, pockets, patterns, chamfers = (groups[t] for t in (
         "PartDesign::Pad", "PartDesign::Pocket", "PartDesign::LinearPattern", "PartDesign::Chamfer"))
     if len(pads) == 1 and len(pockets) == 2 and len(patterns) == 1:
@@ -321,17 +344,23 @@ def b_probe(doc, body):
             m.update(pocket_depth_mm=central.Length.Value, pocket_length_mode=length_mode(central, 4),
                      pocket_sketch_box=bbox(ps.Shape), pattern_length_mm=pattern.Length.Value,
                      pattern_occurrences=pattern.Occurrences, pattern_axis_role=getattr(axis, "Role", None))
-            circle = hs.Geometry[0] if hs.GeometryCount == 1 else None
+            circles = [edge.Curve for edge in hs.Shape.Edges if isinstance(edge.Curve, Part.Circle)]
+            direction = pattern_vector(pattern, App)
+            m["pattern_direction"] = direction
             m["hole_pattern_attributes"] = (
-                isinstance(circle, Part.Circle) and length_mode(hole, 10)
-                and b_box(bbox(hs.Shape), (-23, -17, -23, -17, 10, 10))
+                bool(circles) and all(b_near(circle.Center.x, -20) and b_near(circle.Center.y, -20)
+                                     and b_near(circle.Center.z, 10) and b_near(circle.Radius, 3)
+                                     and b_near(circle.Axis.x, 0) and b_near(circle.Axis.y, 0)
+                                     and b_near(abs(circle.Axis.z), 1) for circle in circles)
+                and length_mode(hole, 10) and b_box(bbox(hs.Shape), (-23, -17, -23, -17, 10, 10))
                 and list(pattern.Originals) == [hole] and pattern.Occurrences == 3
-                and axis in origin.OriginFeatures and getattr(axis, "Role", None) == "X_Axis"
+                and direction is not None and all(b_near(v, expected) for v, expected in
+                                                  zip(direction, (1, 0, 0)))
                 and not pattern.Reversed)
             common_chain = (len({base, ps, hs}) == 3 and all(
                 s in groups["Sketcher::SketchObject"] for s in (base, ps, hs))
                 and length_mode(pad, 10) and b_box(bbox(base.Shape), (-40, 40, -30, 30, 0, 0))
-                and base.GeometryCount == ps.GeometryCount == 4
+                and m["hole_pattern_attributes"]
                 and getattr(pattern, "BaseFeature", None) == hole
                 and link(ps.AttachmentSupport) == pad and link(hs.AttachmentSupport) == central
                 and str(ps.MapMode) == str(hs.MapMode) == "FlatFace"
@@ -379,7 +408,7 @@ fixture、evidence、既存reports、他runの解答を参照・コピーしな�
 """
 
 B_PROMPT = """モデル / effort: gpt-6.1-sol / xhigh。
-ホスト: DPC-019。CADはFreeCAD 1.1.4のみ。SolidWorksとFusionは起動しない。
+ホスト: DPC-019のみでCADを実行する。CADはFreeCAD 1.1.4のみ。SolidWorksとFusionは起動しない。LPC-017ではCADを実行しない。
 単位mm、新規文書、原点・回転なしのPartDesign::Bodyが1個、最終valid solidが1個。
 1) XY中心矩形80×60のSketchを+Zへ片方向Pad長さ10。X=-40..40、Y=-30..30、Z=0..10。
 2) Z=10の上面中央に30×20の矩形Sketch、Pocket長さ4で非貫通。X=-15..15、Y=-10..10、底Z=6、垂直壁。Through allではない。

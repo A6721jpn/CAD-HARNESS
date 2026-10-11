@@ -374,6 +374,143 @@ class CadRunTests(unittest.TestCase):
             with self.subTest(fault=fault):
                 self.assertEqual({k for k, v in specs.b_predicates(changed).items() if not v}, expected)
 
+    def fake_b_probe_input(self, fault=None, direction="vector"):
+        # Small geometric doubles: b_probe reads these faces/edges, not preset flags.
+        class Entity:
+            def __init__(self, **fields):
+                self.__dict__.update(fields)
+        class Vector:
+            def __init__(self, x, y, z):
+                self.x, self.y, self.z = x, y, z
+            def __iter__(self):
+                return iter((self.x, self.y, self.z))
+            def dot(self, other):
+                return sum(a * b for a, b in zip(self, other))
+        class Plane:
+            pass
+        class Line:
+            pass
+        class Cylinder(Entity):
+            pass
+        class Circle(Entity):
+            pass
+        def bounds(values):
+            x0, x1, y0, y1, z0, z1 = values
+            return Entity(XMin=x0, XMax=x1, YMin=y0, YMax=y1, ZMin=z0, ZMax=z1,
+                          XLength=x1-x0, YLength=y1-y0, ZLength=z1-z0)
+        def box_points(points):
+            return bounds([f(p[i] for p in points) for i in range(3) for f in (min, max)])
+        def vertices(points):
+            return [Entity(Point=Vector(*p)) for p in points]
+        def line(a, b):
+            edge = Entity(Curve=Line(), Vertexes=vertices((a, b)), BoundBox=box_points((a, b)),
+                          Length=sum((v-u)**2 for u, v in zip(a, b))**0.5)
+            edge.Curve.Direction = Vector(*(v-u for u, v in zip(a, b)))
+            edge.isSame = lambda other: edge is other
+            return edge
+        def rectangle(x, y, z):
+            points = [(-x, -y, z), (x, -y, z), (x, y, z), (-x, y, z)]
+            return [line(points[i], points[(i+1) % 4]) for i in range(4)]
+        def shape(values, edges=()):
+            return Entity(BoundBox=bounds(values), Edges=list(edges), Faces=[], Solids=[object()],
+                          Volume=specs.B_VOLUME, Area=0, isValid=lambda: True,
+                          isInside=lambda point, tol, boundary: False)
+        def face(points, normal, edges=(), surface=None):
+            return Entity(BoundBox=box_points(points), Vertexes=vertices(points), Edges=list(edges),
+                          Surface=surface or Plane(), normalAt=lambda u, v: Vector(*normal))
+        def rim(x, y, z, length=6*pi):
+            curve = Circle(Center=Vector(x, y, z), Radius=3, Axis=Vector(0, 0, 1))
+            return Entity(Curve=curve, BoundBox=bounds((x-3, x+3, y-3, y+3, z, z)),
+                          Vertexes=[], Length=length)
+        top_inner, bottom_inner = rectangle(15, 10, 10), rectangle(15, 10, 6)
+        corners = [(-15, -10), (15, -10), (15, 10), (-15, 10)]
+        vertical = [line((x, y, 6), (x, y, 10)) for x, y in corners]
+        outer = rectangle(39, 29, 10)
+        floor_z = 5 if fault == "floor" else 6
+        faces = [face([(x, y, floor_z) for x, y in corners], (0, 0, 1), bottom_inner)]
+        for i, normal in enumerate(((0, -1, 0), (1, 0, 0), (0, 1, 0), (-1, 0, 0))):
+            p, q = corners[i], corners[(i+1) % 4]
+            faces.append(face([(*p, 6), (*q, 6), (*q, 10), (*p, 10)], normal,
+                              [top_inner[i], bottom_inner[i], vertical[i], vertical[(i+1) % 4]]))
+        faces.append(face([(-39,-29,10),(39,-29,10),(39,29,10),(-39,29,10)],
+                          (0,0,1), top_inner + outer))
+        for index, (axis, side, half, span) in enumerate(
+                (("x",-1,40,30),("x",1,40,30),("y",-1,30,40),("y",1,30,40))):
+            if fault == "bevel" and index == 0:
+                continue
+            points = [(side*half, -span, 9), (side*half, span, 9),
+                      (side*(half-1), span-1, 10), (side*(half-1), -span+1, 10)]
+            normal = (side*2**-0.5, 0, 2**-0.5)
+            if axis == "y":
+                points = [(y,x,z) for x,y,z in points]
+                normal = (0, side*2**-0.5, 2**-0.5)
+            faces.append(face(points, normal))
+        edges = top_inner + bottom_inner + vertical + outer
+        for x in (-20, 0, 20):
+            x = 1 if fault == "hole" and x == 0 else x
+            cylinder = Cylinder(Center=Vector(x,-20,0), Radius=3, Axis=Vector(0,0,1))
+            # Exercise grouping of split cylinder faces and circle arcs.
+            for low, high in ((0,5),(5,10)):
+                faces.append(face([(x-3,-23,low),(x+3,-17,high)], (1,0,0), surface=cylinder))
+            for z in (0,10):
+                edges.extend((rim(x,-20,z,3*pi), rim(x,-20,z,3*pi)))
+        final = shape((-40,40,-30,30,0,10), edges)
+        final.Faces = faces
+        origin = Entity(TypeId="App::Origin")
+        axis = Entity(TypeId="App::Line", Role="X_Axis", InList=[origin],
+                      getGlobalPlacement=lambda: Entity(Rotation=Entity(multVec=lambda v: v)))
+        origin.OriginFeatures = [axis]
+        body = Entity(TypeId="PartDesign::Body", Origin=origin, Shape=final,
+                      Placement=Entity(isIdentity=lambda: True))
+        def sketch(values, count, edges=()):
+            return Entity(TypeId="Sketcher::SketchObject", Shape=shape(values, edges), GeometryCount=count)
+        # Extra construction geometry must not invalidate otherwise correct profiles.
+        base = sketch((-40,40,-30,30,0,0), 5, rectangle(40,30,0))
+        ps = sketch((-15,15,-10,10,10,10), 5, top_inner)
+        hs = sketch((-23,-17,-23,-17,10,10), 2, [rim(-20,-20,10)])
+        def feature(kind, profile, length, previous=None):
+            return Entity(TypeId="PartDesign::"+kind, Profile=profile, Length=Entity(Value=length),
+                          Type="Length", Reversed=False, PropertiesList=[], Midplane=False,
+                          BaseFeature=previous)
+        pad = feature("Pad", base, 10)
+        pad.getSubObject = lambda name: line((0,0,0),(2,0,0))
+        central, hole = feature("Pocket", ps, 4, pad), None
+        hole = feature("Pocket", hs, 10, central)
+        ps.AttachmentSupport, hs.AttachmentSupport = (pad, ["Face1"]), (central, ["Face1"])
+        ps.MapMode = hs.MapMode = "FlatFace"
+        selected = {"vector": Vector(7,0,0), "origin": (axis, [""]), "edge": (pad, ["Edge1"]),
+                    "negative": Vector(-1,0,0), "zero": Vector(0,0,0), "reversed": Vector(1,0,0)}[direction]
+        pattern = Entity(TypeId="PartDesign::LinearPattern", Originals=[hole], BaseFeature=hole,
+                         Direction=selected, Length=Entity(Value=40), Occurrences=3,
+                         Reversed=direction == "reversed", Shape=shape((-40,40,-30,30,0,10),
+                                                                       rectangle(40,30,10)))
+        chamfer = Entity(TypeId="PartDesign::Chamfer", Base=(pattern, ["Edge1","Edge2","Edge3","Edge4"]),
+                         Size=Entity(Value=1))
+        body.Group = [base,pad,ps,central,hs,hole,pattern,chamfer]
+        body.Tip = chamfer
+        doc = Entity(Objects=[body,origin,axis] + body.Group)
+        modules = {"FreeCAD": Entity(Vector=Vector), "Part": Entity(
+            Plane=Plane, Line=Line, Circle=Circle, Cylinder=Cylinder)}
+        return doc, body, modules
+
+    def test_b_probe_extracts_faces_circles_and_rejects_only_matching_geometry(self):
+        cases = ((None, set()), ("hole", {"holes_pattern"}), ("floor", {"central_pocket"}),
+                 ("bevel", {"outer_chamfer"}))
+        for fault, expected in cases:
+            with self.subTest(fault=fault):
+                doc, body, modules = self.fake_b_probe_input(fault)
+                with patch.dict("sys.modules", modules):
+                    result = specs.b_probe(doc, body)
+                self.assertEqual({k for k,v in result["predicates"].items() if not v}, expected)
+                self.assertEqual(result["probe_pass"], not expected)
+        for direction in ("origin", "edge", "negative", "zero", "reversed"):
+            with self.subTest(direction=direction):
+                doc, body, modules = self.fake_b_probe_input(direction=direction)
+                with patch.dict("sys.modules", modules):
+                    result = specs.b_probe(doc, body)
+                expected = {"feature_chain"} if direction in ("negative", "zero", "reversed") else set()
+                self.assertEqual({k for k,v in result["predicates"].items() if not v}, expected)
+
     def test_worker_clocks_record_stages_failures_and_unreached_nulls(self):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / "model.FCStd"
