@@ -1,0 +1,117 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "P4",
+  "description": "L字ブラケット。単位mm。底板はX=-30..30、Y=-20..20、Z=0..8。立壁は+Y側でY=14..20、X=-20..20、Z=8..38。底板だけを貫通する直径6の穴を2つ、中心(15,0)と(-15,0)。",
+  "description_sha256": "a062cc18c33cd927bf7b2767f4e060ef574008c06ee415769e76e9b3e32e3ac1",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -30,
+    30,
+    -20,
+    20,
+    0,
+    38
+  ],
+  "volume": {
+    "target_mm3": 25947.61065788307,
+    "relative": 0.0001,
+    "formula": "26400 - 144*pi"
+  },
+  "regions": [
+    {
+      "bounds": [
+        -30,
+        30,
+        -20,
+        20,
+        0,
+        8
+      ]
+    },
+    {
+      "bounds": [
+        -20,
+        20,
+        14,
+        20,
+        8,
+        38
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "z": 4,
+      "kind": "rectangle",
+      "bounds": [
+        -30,
+        30,
+        -20,
+        20
+      ]
+    },
+    {
+      "z": 23,
+      "kind": "rectangle",
+      "bounds": [
+        -20,
+        20,
+        14,
+        20
+      ]
+    }
+  ],
+  "steps": [],
+  "holes": [
+    {
+      "center_xy": [
+        -15,
+        0
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        8
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        15,
+        0
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        8
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      60,
+      40,
+      8,
+      40,
+      6,
+      30,
+      6
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "decision": "DECISION-01",
+    "version": 1,
+    "confirmed": true
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "P3",
+  "description": "段付きピン。軸はZ、下端はZ=0。下から直径20で長さ30、その上に直径12で長さ40。中実。穴なし。単位mm。",
+  "description_sha256": "4971fd8a24361fbff87eaf8e971cd3d64482f132ade432e6981cf82649a7ead1",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -10,
+    10,
+    -10,
+    10,
+    0,
+    70
+  ],
+  "volume": {
+    "target_mm3": 13948.671381938682,
+    "relative": 0.0001,
+    "formula": "4440*pi"
+  },
+  "regions": [],
+  "sections": [],
+  "steps": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 20,
+      "z": [
+        0,
+        30
+      ]
+    },
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 12,
+      "z": [
+        30,
+        70
+      ]
+    }
+  ],
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      20,
+      30,
+      12,
+      40
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "decision": "DECISION-01",
+    "version": 1,
+    "confirmed": true
+  }
+}

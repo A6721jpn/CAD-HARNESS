@@ -1,0 +1,117 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "H_RECT_STACK",
+  "description": "Held-out bracket: 67 x 43 x 7 base, 39 x 6.5 x 29 wall, two D4.5 base holes.",
+  "description_sha256": "788bc3ccb0a325331f63a782a6a07d20133c010886fecd610311c8f28f459343",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -33.5,
+    33.5,
+    -21.5,
+    21.5,
+    0,
+    36
+  ],
+  "volume": {
+    "target_mm3": 27295.839620676823,
+    "relative": 0.0001,
+    "formula": "27518.5 - 70.875*pi"
+  },
+  "regions": [
+    {
+      "bounds": [
+        -33.5,
+        33.5,
+        -21.5,
+        21.5,
+        0,
+        7
+      ]
+    },
+    {
+      "bounds": [
+        -19.5,
+        19.5,
+        15,
+        21.5,
+        7,
+        36
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "z": 3,
+      "kind": "rectangle",
+      "bounds": [
+        -33.5,
+        33.5,
+        -21.5,
+        21.5
+      ]
+    },
+    {
+      "z": 21.5,
+      "kind": "rectangle",
+      "bounds": [
+        -19.5,
+        19.5,
+        15,
+        21.5
+      ]
+    }
+  ],
+  "steps": [],
+  "holes": [
+    {
+      "center_xy": [
+        -18.5,
+        -1.5
+      ],
+      "diameter": 4.5,
+      "z": [
+        0,
+        7
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        18.5,
+        -1.5
+      ],
+      "diameter": 4.5,
+      "z": [
+        0,
+        7
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      67,
+      43,
+      7,
+      39,
+      6.5,
+      29,
+      4.5
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "decision": "held-out dimensions, independent analytic targets",
+    "version": 1,
+    "confirmed": false
+  }
+}

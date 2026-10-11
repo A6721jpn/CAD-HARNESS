@@ -1,0 +1,90 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "P1",
+  "description": "40×30×20のブロック。上面の中央に20×15、深さ5のポケット。上面の外周4辺だけR3のフィレット。穴や面取りはなし。単位mm。",
+  "description_sha256": "5fbc3240fabae553d18247c209f64de7be3709f196c1f6d0df2d0841deb91547",
+  "units": "mm",
+  "frame": "bbox_relative",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -20,
+    20,
+    -15,
+    15,
+    0,
+    20
+  ],
+  "volume": {
+    "target_mm3": 22239.9556819442,
+    "relative": 0.01,
+    "upper_exclusive": 22500,
+    "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+  },
+  "regions": [
+    {
+      "bounds": [
+        -20,
+        20,
+        -15,
+        15,
+        0,
+        20
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "z": 10,
+      "kind": "rectangle",
+      "bounds": [
+        -20,
+        20,
+        -15,
+        15
+      ]
+    }
+  ],
+  "steps": [],
+  "holes": [],
+  "pockets": [
+    {
+      "bounds": [
+        -10,
+        10,
+        -7.5,
+        7.5
+      ],
+      "top_z": 20,
+      "depth": 5,
+      "sharp": true
+    }
+  ],
+  "finish": {
+    "kind": "fillet",
+    "size": 3,
+    "target": "top_outer"
+  },
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      40,
+      30,
+      20,
+      20,
+      15,
+      5,
+      3
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "decision": "DECISION-01",
+    "version": 1,
+    "confirmed": true,
+    "source": "tools/cad_run_probes.py GOAL_VOLUME; historical measurement, not analytic independence"
+  }
+}

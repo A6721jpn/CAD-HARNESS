@@ -1,0 +1,118 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "P5",
+  "description": "ふた板。100×60×厚さ5。XY中心、下面はZ=0。四隅に直径5の通し穴。穴中心は外形からX方向12、Y方向10。ポケットなし。単位mm。",
+  "description_sha256": "e9c0ac455eca29fa041370608297037ce3317dabcec28de5177a3be327eb5c1b",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -50,
+    50,
+    -30,
+    30,
+    0,
+    5
+  ],
+  "volume": {
+    "target_mm3": 29607.300918301276,
+    "relative": 0.0001,
+    "formula": "30000 - 125*pi"
+  },
+  "regions": [
+    {
+      "bounds": [
+        -50,
+        50,
+        -30,
+        30,
+        0,
+        5
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "z": 2.5,
+      "kind": "rectangle",
+      "bounds": [
+        -50,
+        50,
+        -30,
+        30
+      ]
+    }
+  ],
+  "steps": [],
+  "holes": [
+    {
+      "center_xy": [
+        -38,
+        -20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -38,
+        20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        38,
+        -20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        38,
+        20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      100,
+      60,
+      5,
+      5
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "decision": "DECISION-01",
+    "version": 1,
+    "confirmed": true
+  }
+}

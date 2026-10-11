@@ -1,0 +1,70 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "H_SHAFT",
+  "description": "Held-out shaft: D22 x 27 then D13 x 41; center (1.7,-2.3); bottom Z2.5.",
+  "description_sha256": "b2907fd563cbc210fdbf9b3c60954ff840797a77764e548d7ce6c95bbfa3894e",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -9.3,
+    12.7,
+    -13.3,
+    8.7,
+    2.5,
+    70.5
+  ],
+  "volume": {
+    "target_mm3": 15705.607073458774,
+    "relative": 0.0001,
+    "formula": "4999.25*pi"
+  },
+  "regions": [],
+  "sections": [],
+  "steps": [
+    {
+      "center_xy": [
+        1.7,
+        -2.3
+      ],
+      "diameter": 22,
+      "z": [
+        2.5,
+        29.5
+      ]
+    },
+    {
+      "center_xy": [
+        1.7,
+        -2.3
+      ],
+      "diameter": 13,
+      "z": [
+        29.5,
+        70.5
+      ]
+    }
+  ],
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      22,
+      27,
+      13,
+      41
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "decision": "held-out dimensions, independent analytic targets",
+    "version": 1,
+    "confirmed": false
+  }
+}

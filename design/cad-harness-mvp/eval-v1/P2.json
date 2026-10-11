@@ -1,0 +1,126 @@
+{
+  "schema": "cad-harness.gold.v1",
+  "case_id": "P2",
+  "description": "80×60×厚さ10の板。XY中心、下面はZ=0。上面中央に30×20、深さ4のポケット。下面まで貫通する直径6の穴を、Y=-20の線上に3つ、中心X=-20,0,20。上面の外周だけ脚1の面取り。単位mm。",
+  "description_sha256": "a59765f06847ace621f054a471bd48b13c8796b5fadb60061eca2b550f0e5ae7",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "bbox": [
+    -40,
+    40,
+    -30,
+    30,
+    0,
+    10
+  ],
+  "volume": {
+    "target_mm3": 44613.10331686409,
+    "relative": 0.0001,
+    "formula": "45600 - 270*pi - 416/3"
+  },
+  "regions": [
+    {
+      "bounds": [
+        -40,
+        40,
+        -30,
+        30,
+        0,
+        10
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "z": 3,
+      "kind": "rectangle",
+      "bounds": [
+        -40,
+        40,
+        -30,
+        30
+      ]
+    }
+  ],
+  "steps": [],
+  "holes": [
+    {
+      "center_xy": [
+        -20,
+        -20
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        0,
+        -20
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        20,
+        -20
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [
+    {
+      "bounds": [
+        -15,
+        15,
+        -10,
+        10
+      ],
+      "top_z": 10,
+      "depth": 4,
+      "sharp": true
+    }
+  ],
+  "finish": {
+    "kind": "chamfer",
+    "size": 1,
+    "target": "top_outer"
+  },
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      80,
+      60,
+      10,
+      30,
+      20,
+      4,
+      6,
+      1
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "decision": "DECISION-01",
+    "version": 1,
+    "confirmed": true
+  }
+}
