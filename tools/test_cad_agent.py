@@ -1,0 +1,166 @@
+"""B2 protocol tests; every Codex and cad_run subprocess is mocked."""
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from tools import cad_agent as agent, cad_run
+
+SOURCE = "def build(doc):\n    doc.Label = '図面'\n    return None\n"
+USAGE = dict(zip(agent.USAGE_KEYS, (100, 50, 0, 20, 10)))
+
+
+class CadAgentTests(unittest.TestCase):
+    def fake_runner(self, plans, source=SOURCE, cli_exit=0, with_usage=True):
+        model_calls, cad_calls = [], []
+        def run(argv, **kwargs):
+            self.assertFalse(kwargs["shell"])
+            self.assertNotIn("env", kwargs)  # CODEX_HOME is inherited, never replaced.
+            if argv[1] == "--version":
+                return subprocess.CompletedProcess(argv, 0, "codex-cli 0.159.2\n", "")
+            if argv[1] == "exec":
+                self.assertEqual(argv[argv.index("-m") + 1], agent.MODEL)
+                self.assertEqual(argv[argv.index("-c") + 1], 'model_reasoning_effort="xhigh"')
+                self.assertEqual(argv[argv.index("-s") + 1], "read-only")
+                self.assertEqual([argv[i + 1] for i, item in enumerate(argv) if item == "--disable"],
+                                 list(agent.DISABLED))
+                self.assertNotIn("resume", argv)
+                self.assertFalse(any("dangerously" in item for item in argv))
+                self.assertEqual(list(Path(kwargs["cwd"]).iterdir()), [])
+                model_calls.append(argv[-1])
+                Path(argv[argv.index("-o") + 1]).write_text(source, encoding="utf-8")
+                rows = [{"type": "thread.started", "thread_id": "mock-session-%d" % len(model_calls)}]
+                if with_usage:
+                    rows += [{"type": "turn.completed", "usage": USAGE}] * 2
+                return subprocess.CompletedProcess(argv, cli_exit, "\n".join(map(json.dumps, rows)), "")
+            self.assertEqual(Path(argv[2]).name, "cad_run.py")
+            script, out = (Path(argv[argv.index(flag) + 1]) for flag in ("--script", "--out-dir"))
+            plan = plans[len(cad_calls)]
+            cad_calls.append(out)
+            out.mkdir()
+            result = {"schema": "cad-harness.cad_run.v0", "task_id": cad_run.TASK,
+                      "script_sha256": hashlib.sha256(script.read_bytes()).hexdigest(),
+                      "attempt_id": "mock-cad-%d" % len(cad_calls), "status": "failed",
+                      "failed_phase": "probe", "probe_status": "predicate_fail", "probe_pass": False,
+                      "next_actor": "sol", "predicate_diff": ["outer_fillet"],
+                      "measurements": {"face_count": 11}, "document_closed": True,
+                      "script_completed": True, "cad_exit_code": 0, "cleanup_status": "exited"}
+            result.update({key: value for key, value in plan.items() if key not in ("exit", "raw")})
+            (out / "result.json").write_text(json.dumps(result), encoding="utf-8")
+            return subprocess.CompletedProcess(argv, plan.get("exit", 1),
+                                               plan.get("raw", json.dumps(result)), "")
+        return run, model_calls, cad_calls
+
+    def drive(self, root, runner, name="unit-run"):
+        with patch.object(agent, "agents_identity", return_value={"codex_home": None}):
+            return agent.run_driver(name, "codex.exe", Path(root), runner)
+
+    def test_source_accepts_one_fence_and_rejects_invalid_sources(self):
+        for text in (SOURCE, "\x60\x60\x60python\n" + SOURCE + "\x60\x60\x60", "\x60\x60\x60\n" + SOURCE + "\x60\x60\x60"):
+            self.assertEqual(agent.source_from_final(text), SOURCE)
+        for text in ("", "pass", "def build(:", "def build(other): pass",
+                     "説明\n\x60\x60\x60python\n" + SOURCE + "\x60\x60\x60",
+                     "python tools/cad_run.py", SOURCE + "# token=test-placeholder\n"):
+            with self.subTest(text=text), self.assertRaises((ValueError, SyntaxError)):
+                agent.source_from_final(text)
+
+    def test_invalid_generation_never_invokes_cad_and_usage_missing_is_null(self):
+        for source, cli_exit in (("pass", 0), ("def build(:", 0), (SOURCE, 7)):
+            with self.subTest(source=source, cli_exit=cli_exit), tempfile.TemporaryDirectory() as temp:
+                run, models, cads = self.fake_runner([], source, cli_exit, with_usage=False)
+                report, code = self.drive(temp, run)
+                self.assertEqual(code, 1)
+                self.assertEqual(len(models), 1)
+                self.assertEqual(cads, [])
+                self.assertIsNone(report["attempts"][0]["usage"])
+                self.assertIsNone(report["final_exit"])
+                events = [json.loads(line) for line in (Path(temp) / "reports/cad-run/unit-run/events.jsonl").read_text().splitlines()]
+                self.assertEqual(next(e for e in events if e["event"] == "exec_finished")["status"], "failed")
+
+    def test_stop_routes_and_type_only_diagnostic_do_not_repair(self):
+        plans = (({"cleanup_status": "cleanup_pending"}, "cad_not_settled"),
+                 ({"document_closed": False}, "cad_not_settled"),
+                 ({"cad_exit_code": 9}, "cad_not_settled"),
+                 ({"next_actor": "human"}, "human_required"),
+                 ({"next_actor": None}, "human_required"),
+                 ({"failed_phase": "launch"}, "human_required"),
+                 ({"failed_phase": "dialog"}, "human_required"),
+                 ({"probe_status": "exception"}, "human_required"),
+                 ({"failed_phase": "build", "predicate_diff": None, "measurements": None,
+                   "error_type": "RuntimeError"}, "diagnostic_insufficient"))
+        for plan, reason in plans:
+            with self.subTest(reason=reason, plan=plan), tempfile.TemporaryDirectory() as temp:
+                run, models, cads = self.fake_runner([plan])
+                report, code = self.drive(temp, run)
+                self.assertEqual((code, report["message_code"]), (1, reason))
+                self.assertEqual((len(models), len(cads)), (1, 1))
+                if reason == "cad_not_settled":
+                    self.assertEqual(report["failed_phase"], "probe")
+
+    def test_safe_repair_passes_previous_source_and_result_and_preserves_raw_usage(self):
+        good = {"exit": 0, "status": "ok", "failed_phase": None, "probe_status": "pass",
+                "probe_pass": True, "next_actor": None, "predicate_diff": []}
+        with tempfile.TemporaryDirectory() as temp:
+            run, models, cads = self.fake_runner([{}, good])
+            report, code = self.drive(temp, run)
+            self.assertEqual((code, report["status"], len(models), len(cads)), (0, "ok", 2, 2))
+            self.assertIn(SOURCE.strip().splitlines()[0], models[1])
+            self.assertIn('"exit": 1', models[1])
+            self.assertIn("outer_fillet", models[1])
+            self.assertEqual(cads[0].parent, cads[1].parent)
+            self.assertEqual([out.name for out in cads], ["a1", "a2"])
+            for attempt in report["attempts"]:
+                self.assertEqual([u["values"] for u in attempt["usage"]], [USAGE, USAGE])
+                self.assertNotIn("usage_total", attempt)
+                self.assertIsNotNone(attempt["session_id"])
+                self.assertIsNotNone(attempt["cli_version"])
+                self.assertGreaterEqual(attempt["exec_wall_ms"], 0)
+                self.assertGreaterEqual(attempt["cad_run_wall_ms"], 0)
+            self.assertNotIn("script_ok", report)
+            self.assertIsNone(report["geometry_ok"])
+            stored = json.loads((cads[0].parent / "driver-run.json").read_text())
+            self.assertEqual(stored, report)
+            events = [json.loads(line) for line in (cads[0].parent / "events.jsonl").read_text().splitlines()]
+            self.assertLessEqual({e["event"] for e in events},
+                                 {"exec_started", "exec_finished", "cad_run_finished", "repair_decided", "run_finished"})
+
+    def test_attempt_limit_has_no_hidden_fourth_call(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run, models, cads = self.fake_runner([{}, {}, {}])
+            report, code = self.drive(temp, run)
+            self.assertEqual((code, report["message_code"], len(models), len(cads)), (1, "attempt_limit", 3, 3))
+            self.assertEqual(report["final_out_dir"], "reports/cad-run/unit-run/a3")
+
+    def test_run_output_guard_and_existing_cad_preflight_accept_nested_fresh_directory(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for name in ("../outside", "reports/runs/new", str(root / "outside"), "bad.name", ""):
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    agent.new_run_dir(root, name)
+            out = agent.new_run_dir(root, "fresh")
+            with self.assertRaises(ValueError):
+                agent.new_run_dir(root, "fresh")
+            script = out / "input.py"
+            script.write_bytes(SOURCE.encode("utf-8"))
+            args = cad_run.parser().parse_args(["--script", str(script), "--out-dir", str(out / "a1"),
+                                               "--timeout-s", "300"])
+            accepted, raw, unused = cad_run.preflight(args, root)
+            self.assertEqual(accepted, out / "a1")
+            self.assertEqual(raw, SOURCE.encode("utf-8"))
+            self.assertFalse(accepted.exists())
+
+    def test_invalid_cad_protocol_and_inconsistent_success_stop(self):
+        for plan in ({"raw": "not JSON"}, {"script_sha256": "wrong"}, {"exit": 0},
+                     {"task_id": "wrong"}, {"raw": '{"value": NaN}'}):
+            with self.subTest(plan=plan), tempfile.TemporaryDirectory() as temp:
+                run, models, cads = self.fake_runner([plan])
+                report, code = self.drive(temp, run)
+                self.assertEqual((code, len(models), len(cads)), (1, 1, 1))
+                self.assertEqual(report["status"], "failed")
+
+
+if __name__ == "__main__":
+    unittest.main()

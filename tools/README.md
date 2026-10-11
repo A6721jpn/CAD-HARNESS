@@ -100,3 +100,15 @@ events.jsonlは一イベント一行。所有PID、段、状態、メッセー�
 CADなしのテスト：`python -B -m unittest tools.test_cad_run`。
 J1は無効。Sol呼出し、自動修正、N=5、Fusion/SolidWorks対応は含めない。
 結果をmeasure_rollout入力やoutcomesへ自動転記しない。設計はdesign/cad-run-arch/CONSENSUS.md。
+
+## cad_agent 試作（条件B2・課題A）
+
+Solはbuild(doc)のソースだけを返し、driverが固定のcad_runを実行します。
+監督側の通常プロセスから実行：`python tools\cad_agent.py --run b2-demo`。
+新規reports/cad-run/<run>/に入力・driver-run.json・events.jsonl、a1〜a3にCAD結果を保存します。
+既存runは拒否。Solはgpt-6.1-sol/xhigh、ツール無効・read-only・独立execで、CODEX_HOMEを継承します。
+CLIはネイティブcodex.exeを使い、必要なら--codexで指定。consoleやbypassへ切り替えません。
+初回＋最大2回修正。Sol担当でも回収未完了・診断不足なら停止し、CADは最大3回です。
+usageは呼出しごとの生の記録で合計しません。geometry_okはnull、計測入力へ混ぜません。
+生成Pythonは信頼して実行する契約です。既存ベースラインとの比較は参考扱いです。
+CAD・Solなしのテスト：`python -B -m unittest tools.test_cad_run tools.test_cad_agent`。
