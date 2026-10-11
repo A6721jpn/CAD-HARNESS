@@ -150,6 +150,9 @@ def probe(doc, body):
             and near(fillet.Radius.Value, 3) and not getattr(fillet, "UseAllEdges", False)
             and covers(selected, rectangle_segments(20, 15, 20)))
     return {"measurements": measured, "predicates": checks, "probe_pass": all(checks.values()),
+            "predicate_details": legacy_details(TASK_A, measured, checks, {
+                "pocket_floor": (1, len(floor)), "pocket_walls": (4, len(walls)),
+                "feature_counts": ([1, 2, 1, 1, 1], [len(groups[t]) for t in types])}),
             "reference": {"volume_mm3": GOAL_VOLUME, "volume_rule": "below_22500_and_within_1_percent",
                           "bbox_tolerance_mm": 0.1, "face_count": 15,
                           "source": "runbook section 6; run02/run04/run05-cad.json"}}
@@ -199,6 +202,49 @@ def b_predicates(m):
                          and m["pocket_inner_sharp"],
         "volume": abs(m["volume_mm3"] - B_VOLUME) / abs(B_VOLUME) <= TOL,
     }
+
+
+def legacy_details(task_id, measured, predicates, observations=None):
+    """Diagnostics only: legacy predicates above remain the entire pass formula."""
+    if __package__:
+        from .cad_spec_probe import Checks
+    else:
+        from cad_spec_probe import Checks
+    details = Checks(task_id)
+    for name, passed in predicates.items():
+        expected, actual = (observations or {}).get(name, (True, passed))
+        if name == "volume":
+            expected = ({"target": GOAL_VOLUME, "relative": .01, "upper_exclusive": 22500}
+                        if task_id == TASK_A else {"target": B_VOLUME, "relative": TOL})
+            actual = measured["volume_mm3"]
+        elif name == "faces":
+            expected, actual = 15, measured["face_count"]
+        elif name == "feature_counts" and task_id == TASK_B:
+            expected, actual = B_COUNTS, measured["feature_counts"]
+        if name == "bbox":
+            items = (zip(BOX_KEYS[6:], (40, 30, 20)) if task_id == TASK_A else zip(BOX_KEYS, B_BOX))
+            for key, value in items:
+                observed = measured["bound_box_mm"][key]
+                tol = .1 if task_id == TASK_A else TOL
+                details.add(name, "bbox." + key, value, observed,
+                            observed is not None and abs(observed - value) <= tol, tol)
+        elif name == "holes_pattern":
+            holes = measured["holes"]
+            details.add(name, "holes.count", 3, len(holes), len(holes) == 3)
+            for i, (x, y) in enumerate(B_CENTERS):
+                found = next((h for h in holes if b_near(h["x"], x) and b_near(h["y"], y)), None)
+                details.add(name, "holes.%d.center" % i, [x, y],
+                            [found["x"], found["y"]] if found else None, found is not None, TOL)
+                if found:
+                    for key, value in (("radius", 3), ("z_min", 0), ("z_max", 10),
+                                       ("top_open", True), ("bottom_open", True), ("axis_empty", True)):
+                        observed = found.get(key)
+                        details.add(name, "holes.%d.%s" % (i, key), value, observed,
+                                    observed is True if value is True else b_near(observed, value), TOL)
+            details.add(name, name + ".aggregate", True, passed, passed)
+        else:
+            details.add(name, name + ".aggregate", expected, actual, passed)
+    return details.details()
 
 
 def combined_box(faces):
@@ -385,6 +431,7 @@ def b_probe(doc, body):
                     and covers(selected, rectangle_segments(40, 30, 10)))
     checks = b_predicates(m)
     return {"measurements": m, "predicates": checks, "probe_pass": all(checks.values()),
+            "predicate_details": legacy_details(TASK_B, m, checks),
             "reference": {"volume_mm3": B_VOLUME, "volume_formula": "45600 - 270*pi - 416/3",
                           "unit": "mm^3", "provenance": "CONSENSUS section 2: geometric derivation",
                           "linear_tolerance_mm": TOL, "axis_tolerance": TOL,
