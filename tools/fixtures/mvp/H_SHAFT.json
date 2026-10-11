@@ -1,0 +1,29 @@
+{
+  "schema": "cad-harness.build-spec.v1",
+  "family": "stepped_shaft",
+  "units": "mm",
+  "frame": "world",
+  "pockets": [],
+  "holes": [],
+  "finish": null,
+  "center_xy": [
+    1.7,
+    -2.3
+  ],
+  "steps": [
+    {
+      "diameter": 22,
+      "z": [
+        2.5,
+        29.5
+      ]
+    },
+    {
+      "diameter": 13,
+      "z": [
+        29.5,
+        70.5
+      ]
+    }
+  ]
+}

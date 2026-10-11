@@ -1,0 +1,66 @@
+{
+  "schema": "cad-harness.build-spec.v1",
+  "family": "rect_prism",
+  "units": "mm",
+  "frame": "world",
+  "regions": [
+    {
+      "bounds": [
+        -50,
+        50,
+        -30,
+        30,
+        0,
+        5
+      ]
+    }
+  ],
+  "pockets": [],
+  "holes": [
+    {
+      "center_xy": [
+        -38,
+        -20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "center_xy": [
+        -38,
+        20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "center_xy": [
+        38,
+        -20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ]
+    },
+    {
+      "center_xy": [
+        38,
+        20
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        5
+      ]
+    }
+  ],
+  "finish": null
+}
