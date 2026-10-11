@@ -21,3 +21,15 @@ Clean against the signed bar: `cad_spec.py` selects `rect_prism` / `rect_stack` 
 7. NIT `design/cad-harness-mvp/eval-v1/P1.json:8-10`. `tolerances.volume_relative` is 1e-4, while the gate is `volume.relative` 0.01 plus `upper_exclusive` 22500 (`cad_spec_probe.py:213-216`). The probe uses the inner field. Delete or annotate the outer 1e-4 so it is not read as the P1 bar.
 
 verdict: FIX-FIRST
+
+## Re-check round 2
+
+Diff `7353beb..57c0037` and the impl-notes "Fix round 2" section. No code, tests, FreeCAD, or Sol were run here. The 55 tests, the 13/13 smoke, and preview `host-live-probe-r2-mvp1` are the supervisor's host record.
+
+Items 1, 2, 3, 5, 6, and 7 are fixed. Spec JSON goes through `strip_final_fence` before `read_json` (`tools/cad_agent.py:467`). `spec_contract` (`tools/cad_agent.py:126-137`) states six-number region bounds, bottom-up order, hole z equal to the pierced region, no pocket/hole overlap, and binding center-XY / bottom-Z=0. `needs_clarification` is one invalid output and the loop continues (`tools/cad_agent.py:473-483`). `invalid_feedback` caps at 1536 bytes (`tools/cad_agent.py:27`, `:140-144`). The compiler test patches `read_text`, `read_bytes`, and `open` (`tools/test_cad_spec.py:22`). P1's gold edit is the `provenance.source` note; `volume.relative` 0.01 and `upper_exclusive` 22500 are unchanged (`design/cad-harness-mvp/eval-v1/P1.json:21-24`). P2–P5 are absent from the diff.
+
+The host preview (exit 0, status preview, llm_calls=1, cad_attempts=0, rect_prism bounds [-36,36,-23,23,0,17], pocket [-9.5,9.5,-6.5,6.5] top_z 17 depth 3.5, fillet 2.2 top_outer) matches `H_LIVE_PROBE.txt`. Item 4 is closed.
+
+`tools/eval_mvp.py` launches description mode with `--eval` and the frozen gold description text (`eval_mvp.py:254-257`), refuses existing runs and aggregate files (`:224-231`, exclusive `open("x")` at `:237`), and counts a pass only with geometry, editability, reimport, closed documents, 1–3 Sol calls, 1–3 CAD attempts, and `wall_s` ≤ 900 (`:169-178`). `bar_met` requires a complete 10-run suite, ≥8 passes, and each part ≥1 (`:191-203`). An absent run stays incomplete (`:184-185`, `:280-281`). Tokens are provider `turn.completed` sums; a missing key stays null (`:70-92`, `:199-200`). No remaining MUST-FIX.
+
+recheck verdict: READY
