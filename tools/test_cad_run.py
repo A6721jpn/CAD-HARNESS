@@ -1,5 +1,7 @@
 """Offline contract tests: no CAD executable is invoked."""
 import contextlib
+import copy
+from math import pi
 import hashlib
 import io
 import json
@@ -9,7 +11,7 @@ import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
-from tools import cad_run as host, cad_run_freecad as worker
+from tools import cad_run as host, cad_run_freecad as worker, cad_run_probes as specs
 from tools.fixtures import cad_run_a_build as fixture
 
 EVIDENCE = host.ROOT / "reports/evidence/A-box-pocket-fillet-FreeCAD-20261005"
@@ -162,7 +164,10 @@ class CadRunTests(unittest.TestCase):
                         self.assertEqual(Path(kwargs["cwd"]), out)
                         request = json.loads((out / "request.json").read_text(encoding="utf-8"))
                         (out / "worker-events.jsonl").write_text(json.dumps(
-                            {"kind": "ready", "owned_pid": 4242, "gui_up": 0}) + "\n", encoding="utf-8")
+                            {"kind": "ready", "owned_pid": 4242, "gui_up": 0}) + "\n"
+                            + json.dumps({"kind": "event", "phase": "build", "event": "build_finished",
+                                          "status": "ok", "ts": "2026-10-11T12:00:00+00:00"}) + "\n",
+                            encoding="utf-8")
                         if probe_status is not None:
                             report = {"schema": "cad-harness.cad_run.worker.v0", **request,
                                       "owned_pid": 4242, "document_closed": closed,
@@ -202,6 +207,10 @@ class CadRunTests(unittest.TestCase):
                     self.assertEqual(launches[1]["message_code"], "worker_ready")
                     self.assertEqual(launches[1]["status"], "ok")
                     self.assertTrue(all(set(e["data"]) <= host.DATA_KEYS for e in events))
+                    transferred = [e for e in events if e["data"]["worker_ts"] is not None]
+                    self.assertEqual(len(transferred), 1)
+                    self.assertEqual(transferred[0]["data"]["worker_ts"], "2026-10-11T12:00:00+00:00")
+                    self.assertNotEqual(transferred[0]["ts"], transferred[0]["data"]["worker_ts"])
                     self.assertNotIn("test-placeholder", (out / "stderr.txt").read_text(encoding="utf-8"))
                     proc.terminate.assert_not_called()
 
@@ -309,6 +318,91 @@ class CadRunTests(unittest.TestCase):
             for forbidden in ("Get" + "-CimInstance", "Win32" + "_Process", "w" + "mi",
                               "so" + "cket", "ht" + "tp", "url" + "lib"):
                 self.assertNotIn(forbidden.lower(), text)
+
+
+    def test_task_selection_and_worker_protocol(self):
+        cli = ["--script", "unused.py", "--out-dir", "unused", "--timeout-s", "1"]
+        self.assertEqual(host.parser().parse_args(cli).task, specs.TASK_A)
+        self.assertEqual(host.parser().parse_args(cli + ["--task", specs.TASK_B]).task, specs.TASK_B)
+        with patch.object(host, "run_attempt") as run, contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(host.main(cli + ["--task", "unknown"]), 2)
+            run.assert_not_called()
+        result = host.new_result(specs.TASK_B)
+        result.update(attempt_id="a", script_sha256="h")
+        report = {"schema": "cad-harness.cad_run.worker.v0", "attempt_id": "a",
+                  "script_sha256": "h", "owned_pid": 42, "status": "failed",
+                  "failed_phase": "probe", "probe_status": "predicate_fail", "next_actor": "sol",
+                  "document_closed": True, "timings_ms": dict(build=1, recompute=2, probe=3, save=4)}
+        for task in (None, specs.TASK_A):
+            with self.subTest(task=task), self.assertRaises(ValueError):
+                host.merge_worker(result, dict(report, **({"task_id": task} if task else {})),
+                                  SimpleNamespace(pid=42))
+        host.merge_worker(result, dict(report, task_id=specs.TASK_B), SimpleNamespace(pid=42))
+        self.assertEqual(result["timings_ms"], report["timings_ms"])
+
+    def test_b_predicates_reject_independent_geometry_and_history_errors(self):
+        good = {"body_count": 1, "body_identity": True, "solid_count": 1, "is_valid": True,
+                "bound_box_mm": dict(zip(worker.BOX_KEYS, (-40, 40, -30, 30, 0, 10, 80, 60, 10))),
+                "volume_mm3": 48000 - 30 * 20 * 4 - 3 * pi * 3**2 * 10 - 416 / 3,
+                "feature_counts": {"PartDesign::Body": 1, "Sketcher::SketchObject": 3,
+                                   "PartDesign::Pad": 1, "PartDesign::Pocket": 2,
+                                   "PartDesign::LinearPattern": 1, "PartDesign::Chamfer": 1,
+                                   "PartDesign::Fillet": 0},
+                "standard_auxiliaries": True, "feature_chain_ok": True,
+                "pocket_geometry": True, "pocket_inner_sharp": True, "pocket_depth_mm": 4,
+                "pocket_length_mode": True,
+                "pocket_sketch_box": dict(zip(worker.BOX_KEYS, (-15, 15, -10, 10, 10, 10))),
+                "hole_pattern_attributes": True, "outer_chamfer_geometry": True,
+                "outer_chamfer_selection": True,
+                "holes": [dict(x=x, y=-20, radius=3, axis=[0, 0, 1], z_min=0, z_max=10,
+                               top_open=True, bottom_open=True, axis_empty=True) for x in (-20, 0, 20)]}
+        self.assertTrue(all(specs.b_predicates(good).values()))
+        for fault, expected in (("chamfer", {"volume", "feature_counts", "feature_chain", "outer_chamfer"}),
+                                ("depth", {"central_pocket"}), ("count", {"holes_pattern"}),
+                                ("position", {"holes_pattern"})):
+            changed = copy.deepcopy(good)
+            if fault == "chamfer":
+                changed.update(volume_mm3=45600 - 270 * pi, feature_chain_ok=False,
+                               outer_chamfer_geometry=False, outer_chamfer_selection=False)
+                changed["feature_counts"]["PartDesign::Chamfer"] = 0
+            elif fault == "depth":
+                changed["pocket_depth_mm"] = 5
+            elif fault == "count":
+                changed["holes"].pop()
+            else:
+                changed["holes"][1]["x"] = 1
+            with self.subTest(fault=fault):
+                self.assertEqual({k for k, v in specs.b_predicates(changed).items() if not v}, expected)
+
+    def test_worker_clocks_record_stages_failures_and_unreached_nulls(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "model.FCStd"
+            doc = SimpleNamespace(recompute=Mock(), saveAs=lambda name: Path(name).write_bytes(b"model"))
+            body = SimpleNamespace(Document=doc, TypeId="PartDesign::Body")
+            observed = {"probe_pass": True, "predicates": {"ok": True}, "measurements": {}}
+            with patch.object(worker.time, "monotonic", side_effect=(1, 1.1, 2, 2.2, 3, 3.3, 4, 4.4)):
+                result = worker.execute(self.fake_app(doc), lambda d: body, path, Mock(),
+                                        lambda d, b: observed, task_id=specs.TASK_B)
+            self.assertEqual(result["status"], "ok")
+            self.assertEqual(doc.Name, "CadRunB")
+            for name, expected in zip(("build", "recompute", "probe", "save"), (100, 200, 300, 400)):
+                self.assertAlmostEqual(result["timings_ms"][name], expected)
+            for stage, phase, actor, reached in (("build", "build", "sol", 1),
+                                                ("recompute", "build", "human", 2),
+                                                ("probe", "probe", "human", 3),
+                                                ("save", "build", "human", 4)):
+                doc.recompute.side_effect = RuntimeError("recompute") if stage == "recompute" else None
+                doc.saveAs = Mock(side_effect=OSError("save")) if stage == "save" else Mock()
+                builder = Mock(side_effect=RuntimeError("build")) if stage == "build" else lambda d: body
+                prober = Mock(side_effect=RuntimeError("probe")) if stage == "probe" else lambda d, b: observed
+                with self.subTest(stage=stage), patch.object(
+                        worker.time, "monotonic", side_effect=range(2 * reached)):
+                    result = worker.execute(self.fake_app(doc), builder, path, Mock(), prober)
+                self.assertEqual((result["failed_phase"], result["next_actor"]), (phase, actor))
+                self.assertEqual(list(result["timings_ms"].values()),
+                                 [1000] * reached + [None] * (4 - reached))
+            for kind in ("ready", "event"):
+                self.assertTrue(worker.worker_row(kind, {})["ts"].endswith("+00:00"))
 
 
 if __name__ == "__main__":

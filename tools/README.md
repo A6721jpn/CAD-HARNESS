@@ -80,7 +80,7 @@ python tools\measure_rollout.py --file PATH --task-id A-box-pocket-fillet --scri
 
 壁時計はセッション全体の timestamp 差で、アイドル時間を含む。`cad_regen`、LLM think、tool RTT、screenshot encode は rollout から取得できないため `null`。最初に観測した累積 token 区間は `session_delta` に含まれない。`script_ok` と `geometry_ok`、CAD geometry、実コストは手動または別工程で扱う。
 
-## cad_run 試作（課題Aのみ）
+## cad_run 試作（課題A既定）
 
 標準ライブラリの同期CLI。入力は信頼するUTF-8ファイルの `build(doc)` 契約。
 FreeCAD 1.1.4の固定レシピで新規文書を作り、同じプロセスでProbe・保存・終了する。
@@ -101,7 +101,7 @@ CADなしのテスト：`python -B -m unittest tools.test_cad_run`。
 J1は無効。Sol呼出し、自動修正、N=5、Fusion/SolidWorks対応は含めない。
 結果をmeasure_rollout入力やoutcomesへ自動転記しない。設計はdesign/cad-run-arch/CONSENSUS.md。
 
-## cad_agent 試作（条件B2・課題A）
+## cad_agent 試作（条件B2・課題A既定）
 
 Solはbuild(doc)のソースだけを返し、driverが固定のcad_runを実行します。
 監督側の通常プロセスから実行：`python tools\cad_agent.py --run b2-demo`。
@@ -112,3 +112,14 @@ CLIはネイティブcodex.exeを使い、必要なら--codexで指定。console
 usageは呼出しごとの生の記録で合計しません。geometry_okはnull、計測入力へ混ぜません。
 生成Pythonは信頼して実行する契約です。既存ベースラインとの比較は参考扱いです。
 CAD・Solなしのテスト：`python -B -m unittest tools.test_cad_run tools.test_cad_agent`。
+
+## 課題BとCAD内部時間
+
+両CLIの `--task B-plate-pocket-hole-pattern-chamfer` でBを選択。省略時は従来のAです。
+spec・課題別プロンプト・Probeは固定登録のcad_run_probes.py。Aの判定式・fixture・初回プロンプトは維持します。
+Bは80×60×10板、中央Pocket30×20深さ4、半径3の貫通穴3個、上面外周Chamfer各脚1。
+goodはtools/fixtures/cad_run_b_build.py。brokenは新規コピーでbuild_without_chamferを選びます。
+手順・仕様はdocs/runbook-B-plate-pocket-hole-pattern-chamfer-driver.mdを参照。
+result.jsonのtimings_msはworkerのbuild/recompute/probe/saveだけ。未到達はnull、合計を総時間へ加算しません。
+公開events.jsonlのtsは親時刻、転記したworkerイベントの生成UTCはdata.worker_ts。親のイベントではnullです。
+CADなしの全件テスト：`python -B -m unittest tools.test_cad_run tools.test_cad_agent`。

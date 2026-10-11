@@ -7,14 +7,14 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from tools import cad_agent as agent, cad_run
+from tools import cad_agent as agent, cad_run, cad_run_probes as specs
 
 SOURCE = "def build(doc):\n    doc.Label = '図面'\n    return None\n"
 USAGE = dict(zip(agent.USAGE_KEYS, (100, 50, 0, 20, 10)))
 
 
 class CadAgentTests(unittest.TestCase):
-    def fake_runner(self, plans, source=SOURCE, cli_exit=0, with_usage=True):
+    def fake_runner(self, plans, source=SOURCE, cli_exit=0, with_usage=True, task_id=cad_run.TASK):
         model_calls, cad_calls, work_dirs = [], [], []
         def run(argv, **kwargs):
             self.assertFalse(kwargs["shell"])
@@ -45,14 +45,14 @@ class CadAgentTests(unittest.TestCase):
                 return subprocess.CompletedProcess(argv, cli_exit, "\n".join(map(json.dumps, rows)), "")
             self.assertEqual(Path(argv[2]).name, "cad_run.py")
             for flag, value in (("--recipe", "freecadcmd"), ("--timeout-s", "300"),
-                                ("--task", "A-box-pocket-fillet")):
+                                ("--task", task_id)):
                 self.assertEqual(argv[argv.index(flag) + 1], value)
             self.assertNotIn("console", argv)
             script, out = (Path(argv[argv.index(flag) + 1]) for flag in ("--script", "--out-dir"))
             plan = plans[len(cad_calls)]
             cad_calls.append(out)
             out.mkdir()
-            result = {"schema": "cad-harness.cad_run.v0", "task_id": cad_run.TASK,
+            result = {"schema": "cad-harness.cad_run.v0", "task_id": task_id,
                       "script_sha256": hashlib.sha256(script.read_bytes()).hexdigest(),
                       "attempt_id": "mock-cad-%d" % len(cad_calls), "status": "failed",
                       "failed_phase": "probe", "probe_status": "predicate_fail", "probe_pass": False,
@@ -66,10 +66,10 @@ class CadAgentTests(unittest.TestCase):
         run.work_dirs = work_dirs
         return run, model_calls, cad_calls
 
-    def drive(self, root, runner, name="unit-run"):
+    def drive(self, root, runner, name="unit-run", task_id=cad_run.TASK):
         self.driver_test_root = Path(root).resolve()
         with patch.object(agent, "agents_identity", return_value={"codex_home": None}):
-            result = agent.run_driver(name, "codex.exe", Path(root), runner)
+            result = agent.run_driver(name, "codex.exe", Path(root), runner, task_id=task_id)
         work_dirs = getattr(runner, "work_dirs", [])
         self.assertEqual(len(set(work_dirs)), len(work_dirs))
         for work in work_dirs:
@@ -230,6 +230,33 @@ class CadAgentTests(unittest.TestCase):
                 report, code = self.drive(temp, run)
                 self.assertEqual((code, len(models), len(cads)), (1, 1, 1))
                 self.assertEqual(report["status"], "failed")
+
+
+    def test_task_prompt_argv_and_unknown_task_no_calls(self):
+        self.assertEqual(agent.digest(agent.PROMPT),
+                         "ea2008c9dfdb3d1c9ff732dd5c373fd431064d53744e01db9cad8921e32cc641")
+        good = {"exit": 0, "status": "ok", "failed_phase": None, "probe_status": "pass",
+                "probe_pass": True, "next_actor": None, "predicate_diff": []}
+        for task in (specs.TASK_A, specs.TASK_B):
+            with self.subTest(task=task), tempfile.TemporaryDirectory() as temp:
+                run, models, cads = self.fake_runner([good], task_id=task)
+                report, code = self.drive(temp, run, task_id=task)
+                self.assertEqual((code, report["task_id"], len(cads)), (0, task, 1))
+                self.assertEqual(models, [specs.SPECS[task]["prompt"]])
+                if task == specs.TASK_B:
+                    self.assertIn("80×60", models[0])
+                    self.assertNotIn("幅40 mm", models[0])
+        with tempfile.TemporaryDirectory() as temp:
+            call = unittest.mock.Mock()
+            with self.assertRaises(ValueError):
+                agent.run_driver("unknown", "codex.exe", Path(temp), call, task_id="unknown")
+            call.assert_not_called()
+            self.assertEqual(list(Path(temp).iterdir()), [])
+            with patch.object(agent, "run_driver") as driver, patch("sys.stderr"):
+                with self.assertRaises(SystemExit) as rejected:
+                    agent.main(["--run", "unknown", "--task", "unknown"])
+                self.assertEqual(rejected.exception.code, 2)
+                driver.assert_not_called()
 
 
 if __name__ == "__main__":
