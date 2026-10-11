@@ -198,3 +198,135 @@ design/cad-harness-mvp/impl-notes.md
 
 Exclude `reports/`, `.dashboard/`, `.tmp/`, every `__pycache__/`, `debug.log`, legacy fixtures,
 `tools/measure_rollout.py`, and all other pre-existing/unrelated untracked files. No push.
+
+## Fix round 2 and eval preparation — 2026-10-12
+
+Supervisor committed steps 1–5 locally as `183826f..7353beb` on `proto/cad-run` and
+reported 42 passing host tests. This round made no Git calls, permission changes or push.
+Reviewed `grok-impl-review.md` FIX-FIRST; implemented items 1, 2, 3, 5, 6 and 7:
+
+- Spec parsing accepts one optional JSON/untyped fence, using the source fence rules.
+- The separate CLI contract and schema describe required six-number region bounds,
+  bottom-up regions, full pierced-region hole Z, and unsupported overlapping cuts.
+  Unspecified XY-center / bottom-Z=0 defaults are binding.
+- `needs_clarification` consumes one invalid output and retries within the same three calls.
+  Invalid output feedback is scrubbed and capped at 1536 UTF-8 bytes before context encoding,
+  with an explicit truncation flag; the original description payload stays unchanged.
+- Compiler-test isolation now guards Path.read_text, read_bytes and open.
+- Only P1 provenance.source annotates outer volume_relative=1e-4 as non-gating metadata.
+  All P1 gates are identical to the prior frozen gold; P2–P5 are byte-for-byte identical.
+  P1 geometry remains relative=0.01 and V<22500; artifact reimport still uses relative=1e-4.
+- Added H_LIVE_PROBE.txt: new 72×46×17/R2.2 block with a 19×13×3.5 pocket.
+  A mock test verifies no-gold description preview makes one interpretation call and no CAD.
+
+`tools/eval_mvp.py` preregisters P1,P2,P4,P5,P3, two fresh sequential runs each.
+Every subprocess uses description mode + --eval + frozen human gold, an exclusive per-run
+description file containing exactly the gold UTF-8 text, and a checked description SHA.
+Run IDs are <prefix>-<case>-r1/r2-mvp1; inputs and their manifest are also in a fresh -mvp1
+directory. No failed run is replaced. Each run records eval-run.json; aggregation writes
+reports/aggregate-mvp-eval-v1[-suffix].json and .csv exclusively and refuses either existing
+output before any driver launch. --aggregate-only reads a prefix or ten explicit existing IDs
+and launches nothing. It preserves previously observed wall time / failures when available.
+Per-run data include geometry, editability, reimport, wall seconds, Sol calls, CAD attempts,
+failure class and provider turn.completed usage only. Missing/partial token totals are null
+(empty CSV fields), never inferred from text length. Summary enforces 8/10 and every part≥1/2,
+fresh description identity, three-call/attempt limits, 900 seconds, both process exits/closes,
+and matching driver identities; launcher-owned records also retain full harness file hashes.
+Mixed versions or missing unattempted runs cannot claim the bar, even with 9/10 passes.
+An observed launcher failure is a completed miss; an absent run remains incomplete.
+Driver-report-only aggregation cannot recover unrecorded
+launcher overhead or every historic harness file hash; prefer the saved eval-run.json records.
+The manifest's aggregate-only file snapshot describes the aggregation environment, not old CAD.
+
+### Round-2 validation
+
+```powershell
+python -B -m unittest tools.test_cad_run tools.test_cad_agent tools.test_cad_spec tools.test_cad_spec_probe tools.test_cad_mvp tools.test_eval_mvp
+python -B tools\smoke_cad_mvp.py --run 20261012-fix-r2-smoke-mvp1
+```
+
+55 unit tests passed, final rerun 1.816 s. Seven interpretation/guard/P1/live-preview tests and six
+evaluation tests extend the prior 42. All description/evaluation/model paths were mocks.
+The fresh authorized FreeCAD smoke returned exit 0, all 13 expected outcomes correct.
+Summary: `reports/cad-run/20261012-fix-r2-smoke-mvp1/smoke-summary.json`.
+Measured 2026-10-12 01:01:21.068 JST / 2026-10-11 16:01:21.068 UTC.
+
+| Case | Measured mm³ | Gold mm³ | Expected / observed | Reimport | Wall ms |
+| --- | ---: | ---: | --- | --- | ---: |
+| A good | 22239.9556819442 | 22239.9556819442 | pass / pass | legacy | — |
+| A broken | 22500.0000000000 | 22239.9556819442 | fail / fail | legacy | — |
+| B good | 44613.1033168641 | 44613.1033168641 | pass / pass | legacy | — |
+| B broken | 44751.7699835308 | 44613.1033168641 | fail / fail | legacy | — |
+| P1 | 22239.9556819442 | 22239.9556819442 | pass / pass | pass | 954 |
+| P2 | 44613.1033168641 | 44613.1033168641 | pass / pass | pass | 1046 |
+| P3 | 13948.6713819387 | 13948.6713819387 | pass / pass | pass | 875 |
+| P4 | 25947.6106578831 | 25947.6106578831 | pass / pass | pass | 984 |
+| P5 | 29607.3009183013 | 29607.3009183013 | pass / pass | pass | 875 |
+| H_RECT_CHAMFER | 28791.5299306923 | 28791.5299306923 | pass / pass | pass | 985 |
+| H_RECT_FILLET | 55198.4565291079 | 55198.4565076749 | pass / pass | pass | 937 |
+| H_RECT_STACK | 27295.8396206768 | 27295.8396206768 | pass / pass | pass | 891 |
+| H_SHAFT | 15705.6070734588 | 15705.6070734588 | pass / pass | pass | 812 |
+
+All nine MVP rows: editability pass, FCStd+STEP reimport pass, one CAD attempt, zero LLM
+calls, closed documents, normal build/verification exits, cleanup exited. Only the fixed
+FreeCAD_1.1.4-Windows-x86_64-py311 freecadcmd was used, headless. No GUI or external API.
+All 1756 pre-existing report files remain hash-identical. Legacy A/B fixture and
+measure_rollout.py hashes remain identical to the recorded hashes above; A prompt SHA test passes.
+
+### Host-only live injection check and evaluation commands (not executed here)
+
+From C:\dev\CAD-HARNESS, use a fresh run ID. This exact preview command has no gold or CAD:
+
+```powershell
+python -B tools\cad_agent.py --run host-live-probe-r2-mvp1 --mode description --description-file tools\fixtures\mvp\H_LIVE_PROBE.txt
+```
+
+Live injection remains UNCONFIRMED. Before scoring, the supervisor must see a schema-valid
+build_spec preview with llm_calls=1, cad_attempts=0, no agent-source fallback, and the fixture
+dimensions/finish. Mock success does not establish that the host CLI honors developer context.
+No Sol, codex exec, external API or actual eval was run in this sandbox.
+
+After that live check, these are prepared host commands, not reported measurements:
+
+```powershell
+python -B tools\eval_mvp.py --prefix host-mvp-eval-r2 --suffix r2
+python -B tools\eval_mvp.py --aggregate-only --prefix host-mvp-eval-r2 --suffix r2-reaggregate
+```
+
+Check weekly usage before starting and between runs; the signed 60% stop remains supervisor
+responsibility because no provider quota adapter is available. The CLI does not invent quota
+telemetry. If stopped, preserve the preregistered runs and record incomplete as unmet.
+No acceptance-rate claim is made from typed smokes or mocks. No bar was loosened.
+Dashboard was updated separately; current Serve delivery is still unverified.
+
+## COMMIT PLAN (round 2)
+
+Host-only local commits; stage these exact final files only. No Git operation was attempted here.
+
+### Round 2a — `fix(cad): repair interpretation contracts and preserve gold gates`
+
+```text
+tools/cad_agent.py
+design/cad-harness-mvp/build-schema.json
+design/cad-harness-mvp/eval-v1/P1.json
+tools/test_cad_spec.py
+tools/test_cad_spec_probe.py
+tools/test_cad_mvp.py
+tools/fixtures/mvp/H_LIVE_PROBE.txt
+```
+
+### Round 2b — `feat(cad): prepare fixed description MVP evaluation and aggregation`
+
+```text
+tools/eval_mvp.py
+tools/test_eval_mvp.py
+```
+
+### Round 2c — `docs(cad): record round-two fixes and offline validation`
+
+```text
+design/cad-harness-mvp/impl-notes.md
+```
+
+Exclude reports/, .dashboard/, .tmp/, every __pycache__/, debug.log, legacy fixtures,
+and unrelated files. No push. Round-2 status: FIX DONE uncommitted.
