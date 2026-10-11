@@ -33,7 +33,8 @@ def worker_row(kind, payload):
     return {"kind": kind, **payload, "ts": datetime.now(timezone.utc).isoformat()}
 
 
-def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A):
+def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
+            step_path=None, generator="agent"):
     """The actual exception boundary, also exercised with a fake App in unit tests."""
     probe_fn = probe_fn or SPECS[task_id]["probe"]
     result = {"task_id": task_id, "timings_ms": dict.fromkeys(("build", "recompute", "probe", "save")),
@@ -50,7 +51,7 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A):
         if app.listDocuments():
             raise RuntimeError("startup_documents")
         doc = app.newDocument("CadRunA" if task_id == TASK_A else "CadRunB")
-        phase, owner = "build", "script"
+        phase, owner = "build", "harness" if generator == "compiler" else "script"
         with stage(result, "build"):
             body = builder(doc)
         if body is None or body.Document != doc or body.TypeId != "PartDesign::Body":
@@ -68,8 +69,12 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A):
                       probe_status="pass" if observed["probe_pass"] else "predicate_fail",
                       measurements=observed["measurements"], reference=observed.get("reference"),
                       predicate_diff=[k for k, passed in observed["predicates"].items() if not passed])
+        result.update({key: observed.get(key) for key in
+                       ("predicate_details", "geometry_ok", "editability_ok", "skill_warnings")})
         if not result["probe_pass"]:
-            result.update(failed_phase="probe", code_owner="script", next_actor="sol")
+            compiler_native = generator == "compiler" and observed.get("editability_ok") is False
+            result.update(failed_phase="probe", code_owner="harness" if compiler_native else "script",
+                          next_actor="human" if compiler_native else "sol")
         emit("event", {"phase": "probe", "event": "probe_finished",
                       "status": "ok" if observed["probe_pass"] else "failed",
                       "data": {"predicate": observed["predicates"]}})
@@ -78,6 +83,17 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A):
             doc.saveAs(str(model_path))
             if not Path(model_path).is_file():
                 raise OSError("model_missing")
+        if step_path is not None and result["probe_pass"]:
+            phase, owner = "export", "harness"
+            tick = time.monotonic()
+            try:
+                import Part
+                # Body.Shape contains the current Tip solid in its world placement.
+                Part.export([body], str(step_path))
+                if not Path(step_path).is_file() or Path(step_path).stat().st_size == 0:
+                    raise OSError("step_missing")
+            finally:
+                result["export_ms"] = (time.monotonic() - tick) * 1000
         result["script_completed"] = True
         if result["failed_phase"] is None:
             result["status"] = "ok"
@@ -91,6 +107,8 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A):
                 result.update(probe_pass=None, probe_status="exception")
         else:
             result["save_error_type"] = type(exc).__name__
+        if phase == "export":
+            result["export_error_type"] = type(exc).__name__
         emit("event", {"phase": phase, "event": phase + "_finished", "status": "failed"})
     finally:
         if doc is not None:
@@ -120,8 +138,20 @@ def main():
                     raise ValueError("input_hash_mismatch")
                 namespace = runpy.run_path(str(source))
                 return namespace["build"](doc)
-            result = execute(App, builder, Path.cwd() / "model.FCStd", emit,
-                             task_id=request.get("task_id", TASK_A))
+            probe_fn, step_path = None, None
+            if request.get("probe_profile") == "mvp-v1":
+                from cad_spec_probe import load_gold, probe as spec_probe
+                gold_path = Path.cwd() / "gold.json"
+                if hashlib.sha256(gold_path.read_bytes()).hexdigest() != request["gold_sha256"]:
+                    raise ValueError("gold_hash_mismatch")
+                gold = load_gold(gold_path)
+                if gold["case_id"] != request["task_id"]:
+                    raise ValueError("gold_task_mismatch")
+                probe_fn = lambda doc, body: spec_probe(doc, body, gold)
+                step_path = Path.cwd() / "model.step"
+            result = execute(App, builder, Path.cwd() / "model.FCStd", emit, probe_fn,
+                             task_id=request.get("task_id", TASK_A), step_path=step_path,
+                             generator=request.get("generator", "agent"))
         except Exception as exc:
             result = {"status": "failed", "failed_phase": "launch", "code_owner": "harness",
                       "next_actor": "human", "script_completed": False, "probe_status": "not_run",
@@ -130,6 +160,8 @@ def main():
         result.setdefault("timings_ms", dict.fromkeys(("build", "recompute", "probe", "save")))
         result.update(task_id=request.get("task_id", TASK_A), schema="cad-harness.cad_run.worker.v0",
                       attempt_id=request["attempt_id"], script_sha256=request["script_sha256"])
+        result.update({key: request.get(key) for key in
+                       ("probe_profile", "gold_sha256", "spec_sha256", "generator")})
         with (Path.cwd() / "worker-result.json").open("x", encoding="utf-8") as output:
             json.dump(result, output, allow_nan=False)
     # FreeCAD's console recipe consumes empty stdin and exits; raw CAD exit is host-owned.
