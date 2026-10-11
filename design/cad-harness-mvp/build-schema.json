@@ -32,6 +32,7 @@
     },
     "regions": {
       "type": "array",
+      "description": "Bottom-up, base first. Each region requires six bounds including z_min/z_max; higher regions start at a prior top and lie inside that region in XY.",
       "minItems": 1,
       "maxItems": 8,
       "items": {
@@ -142,6 +143,7 @@
     },
     "bounds4": {
       "type": "array",
+      "description": "Exactly [x_min,x_max,y_min,y_max]. Pocket top_z and depth are separate required fields.",
       "minItems": 4,
       "maxItems": 4,
       "items": {
@@ -150,6 +152,7 @@
     },
     "bounds6": {
       "type": "array",
+      "description": "Exactly [x_min,x_max,y_min,y_max,z_min,z_max]; both z coordinates are required.",
       "minItems": 6,
       "maxItems": 6,
       "items": {
@@ -208,6 +211,7 @@
     },
     "hole": {
       "type": "object",
+      "description": "Through hole: required z equals the pierced region's full [bottom,top]. No pocket/hole or hole/hole overlap, nor blocked openings.",
       "additionalProperties": false,
       "required": [
         "center_xy",

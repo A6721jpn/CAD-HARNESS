@@ -1,6 +1,7 @@
 """Compiler contracts use held-out typed dimensions only, never evaluation gold."""
 import ast
 import copy
+from contextlib import contextmanager, ExitStack
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -9,14 +10,23 @@ from tools import cad_spec
 from tools.fixtures.cad_mvp_build import HELD_OUT, held_out_specs
 
 
-class CadSpecTests(unittest.TestCase):
-    def test_held_out_families_compile_without_evaluation_access(self):
-        real = Path.read_text
+@contextmanager
+def no_evaluation_reads():
+    def guarded(real):
         def read(path, *args, **kwargs):
-            if "eval-v1" in str(path) or "description" in path.name.lower():
+            if "eval-v1" in str(path).lower() or "description" in path.name.lower():
                 raise AssertionError("compiler test read evaluation input")
             return real(path, *args, **kwargs)
-        with patch.object(Path, "read_text", read):
+        return read
+    with ExitStack() as stack:
+        for name in ("read_text", "read_bytes", "open"):
+            stack.enter_context(patch.object(Path, name, guarded(getattr(Path, name))))
+        yield
+
+
+class CadSpecTests(unittest.TestCase):
+    def test_held_out_families_compile_without_evaluation_access(self):
+        with no_evaluation_reads():
             specs = held_out_specs()
             seen = set()
             for name, spec in specs.items():
@@ -33,6 +43,13 @@ class CadSpecTests(unittest.TestCase):
                     self.assertNotEqual(source, cad_spec.compile_spec(changed))
                     seen.update(HELD_OUT[name])
             self.assertEqual(seen, set(cad_spec.RECIPE_FAMILIES))
+
+    def test_guard_blocks_all_path_read_methods(self):
+        with no_evaluation_reads():
+            for path in (Path("eval-v1/blocked.json"), Path("description-sha.json")):
+                for method in ("read_text", "read_bytes", "open"):
+                    with self.subTest(method=method,path=path), self.assertRaises(AssertionError):
+                        getattr(path, method)()
 
     def test_schema_rejects_unsupported_nonfinite_and_intersecting_inputs(self):
         spec = held_out_specs()["H_RECT_CHAMFER"]

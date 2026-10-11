@@ -1,0 +1,1 @@
+Make a solid rectangular block 72 mm wide in X, 46 mm deep in Y, and 17 mm tall in Z. Center it in XY and put its bottom at Z=0. Cut a centered rectangular pocket 19 by 13 mm from the top, 3.5 mm deep. Round only the four outside edges of the top with a 2.2 mm radius. Keep the pocket edges sharp. No holes or chamfers.

@@ -10,6 +10,7 @@ import unittest
 from unittest.mock import patch, Mock
 
 from tools import cad_agent as agent, cad_run, cad_verify_freecad
+from tools import cad_spec
 from tools.fixtures.cad_mvp_build import typed_spec
 from tools.test_support import start_tempdirs, stop_tempdirs
 
@@ -28,6 +29,55 @@ def tearDownModule():
 
 
 class MvpTests(unittest.TestCase):
+    def test_spec_accepts_one_json_or_untyped_fence_and_rejects_other_wrappers(self):
+        spec = json.dumps(typed_spec("P5"))
+        for text in (spec,"```json\n" + spec + "\n```","```\n" + spec + "\n```"):
+            with self.subTest(text=text[:12]),tempfile.TemporaryDirectory() as temp:
+                runner,calls,cads = self.runner([text])
+                report,code = self.drive(self.root(temp),runner)
+                self.assertEqual((code,len(calls),len(cads)),(0,1,1))
+        for text in ("```yaml\n" + spec + "\n```","explanation\n```json\n" + spec + "\n```",
+                     "```json\n```json\n" + spec + "\n```\n```"):
+            with self.subTest(wrapper=text[:20]),self.assertRaises(ValueError):
+                cad_spec.read_json(agent.strip_final_fence(text,"json","spec"))
+
+    def test_contract_matches_required_z_bottom_up_and_nonoverlap_checks(self):
+        schema_text = (ROOT / "design/cad-harness-mvp/build-schema.json").read_text(encoding="utf-8")
+        schema, contract = json.loads(schema_text),agent.spec_contract(schema_text)
+        self.assertEqual((schema["$defs"]["bounds6"]["minItems"],schema["$defs"]["bounds6"]["maxItems"]),(6,6))
+        for text in ("z is required, never optional","bottom-up","full z interval", "Pocket/hole overlap"):
+            self.assertIn(text,contract)
+        for fault in ("region_z","order","hole_z","overlap"):
+            spec = typed_spec("P4") if fault == "order" else typed_spec("P2")
+            if fault == "region_z": spec["regions"][0]["bounds"] = spec["regions"][0]["bounds"][:4]
+            if fault == "order": spec["regions"].reverse()
+            if fault == "hole_z": spec["holes"][0]["z"] = [1,10]
+            if fault == "overlap": spec["holes"][0]["center_xy"] = [0,0]
+            with self.subTest(fault=fault),self.assertRaises(ValueError):
+                cad_spec.validate_spec(spec)
+
+    def test_clarification_consumes_calls_and_binding_defaults_resolve_retry(self):
+        clarification = '{"needs_clarification":["Where is the origin?"]}'
+        for outputs,expected in (([clarification,json.dumps(typed_spec("P5"))],(0,2,1)),
+                                 ([clarification]*3,(1,3,0))):
+            with self.subTest(expected=expected),tempfile.TemporaryDirectory() as temp:
+                runner,calls,cads = self.runner(outputs)
+                report,code = self.drive(self.root(temp),runner)
+                self.assertEqual((code,len(calls),len(cads)),expected)
+                self.assertIn("defaults are binding",calls[0][1])
+                self.assertEqual(calls[0][0],calls[1][0])
+                if code: self.assertEqual(report["message_code"],"call_limit")
+
+    def test_large_invalid_output_is_capped_before_context_argv_encoding(self):
+        with tempfile.TemporaryDirectory() as temp:
+            runner,calls,cads = self.runner([('雪\\"\n' * 20000),json.dumps(typed_spec("P5"))])
+            report,code = self.drive(self.root(temp),runner)
+            self.assertEqual((code,len(calls),len(cads)),(0,2,1))
+            self.assertIn("invalid_output_truncated",calls[1][1])
+            feedback = agent.invalid_feedback('雪' * 20000,"invalid")
+            self.assertLessEqual(len(feedback["invalid_output"].encode("utf-8")),agent.INVALID_OUTPUT_BYTES)
+            self.assertTrue(feedback["invalid_output_truncated"])
+
     def root(self, temp):
         root = Path(temp) / "repo"
         for name in ("skills/freecad-modeling/SKILL.md", "design/cad-harness-mvp/build-schema.json"):
@@ -88,6 +138,17 @@ class MvpTests(unittest.TestCase):
                     self.assertNotIn("cad-harness.gold.v1",calls[0][1])
                     self.assertNotIn(report["gold_sha256"],calls[0][1])
                     self.assertFalse(Path(calls[0][2]).is_relative_to(root))
+
+    def test_live_probe_fixture_previews_without_gold_or_cad(self):
+        with tempfile.TemporaryDirectory() as temp:
+            description = (ROOT / "tools/fixtures/mvp/H_LIVE_PROBE.txt").read_text(encoding="utf-8")
+            runner,calls,cads = self.runner([json.dumps(typed_spec("H_RECT_FILLET"))])
+            report,code = agent.run_mvp_driver("live-mock-mvp1","mock-only",description,None,
+                                             root=self.root(temp),runner=runner)
+            self.assertEqual((code,report["status"],len(calls),len(cads)),(0,"preview",1,0))
+            self.assertIsNone(report["gold_sha256"])
+            self.assertEqual(report["build_spec"],typed_spec("H_RECT_FILLET"))
+            self.assertEqual(calls[0][0],description)
 
     def test_spec_geometry_repair_has_details_only_in_separate_context(self):
         wrong = typed_spec("P5")

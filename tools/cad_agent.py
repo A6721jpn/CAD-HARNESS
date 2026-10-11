@@ -24,6 +24,7 @@ else:
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL, EFFORT, MAX_ATTEMPTS = "gpt-6.1-sol", "xhigh", 3
+INVALID_OUTPUT_BYTES = 1536
 DISABLED = ("shell_tool", "unified_exec", "code_mode_host", "multi_agent", "apps",
             "plugins", "browser_use", "computer_use", "image_generation", "view_image")
 USAGE_KEYS = ("input_tokens", "cached_input_tokens", "cache_write_input_tokens",
@@ -112,13 +113,39 @@ def loads(text):
     return json.loads(text, parse_constant=reject)
 
 
-def source_from_final(text):
+def strip_final_fence(text, languages, kind):
     text = text.strip()
     if text.startswith("```"):
-        match = re.fullmatch(r"```(?:python|py)?[ \t]*\r?\n(.*?)\r?\n```", text, re.S)
+        match = re.fullmatch(r"```(?:" + languages + r")?[ \t]*\r?\n(.*?)\r?\n```", text, re.S)
         if not match:
-            raise ValueError("invalid_source_fence")
+            raise ValueError("invalid_" + kind + "_fence")
         text = match[1].strip()
+    return text
+
+
+def spec_contract(schema_text):
+    return ("Return one build-spec JSON matching this schema, or "
+            '{"unsupported":["reason"]} or {"needs_clarification":["question"]}. '
+            "Do not return source or grading values. Units default to mm. Unless placement is "
+            "specified, center XY and put the bottom at Z=0. These placement defaults are binding; "
+            "do not ask clarification for unspecified origin/placement. Region bounds require exactly "
+            "six numbers: [x_min,x_max,y_min,y_max,z_min,z_max]; region z is required, never optional. "
+            "List regions bottom-up, base first; each higher region starts at a previous region's top "
+            "and is contained in its XY bounds. Pocket bounds require four XY numbers; top_z and depth "
+            "are required, and pockets cut down from top_z. Hole z is required as [bottom,top] and "
+            "must equal the full z interval of the pierced region. Pocket/hole overlap, overlapping "
+            "holes/pockets, and blocked hole openings are unsupported.\n" + schema_text)
+
+
+def invalid_feedback(final, error):
+    raw = clean(final).encode("utf-8")
+    clipped = raw[:INVALID_OUTPUT_BYTES].decode("utf-8", errors="ignore")
+    return {"invalid_output": clipped, "invalid_output_truncated": len(raw) > INVALID_OUTPUT_BYTES,
+            "error": error}
+
+
+def source_from_final(text):
+    text = strip_final_fence(text, "python|py", "source")
     try:
         tree = ast.parse(text)
     except SyntaxError as exc:
@@ -405,12 +432,7 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                 spec = cad_spec.loads_spec(input_text)
             else:
                 budget.call()
-                contract = ("Return one build-spec JSON matching this schema, or "
-                            '{"unsupported":["reason"]} or {"needs_clarification":["question"]}. '
-                            "Do not return source or grading values. Units default to mm. Unless placement "
-                            "is specified, center XY and put the bottom at Z=0. Bounds order is "
-                            "x_min,x_max,y_min,y_max[,z_min,z_max]; z intervals are [bottom,top]. "
-                            "Pockets cut down from top_z; holes are full through intervals.\n" + schema_text) if target == "spec" else (
+                contract = spec_contract(schema_text) if target == "spec" else (
                             "Return only complete Python source defining build(doc) and returning its Body. "
                             "Allowed imports: FreeCAD, Part, Sketcher, math. No file, shell, network, "
                             "document lifecycle, save, or probe operations.")
@@ -442,7 +464,7 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                 budget.remaining()
                 try:
                     if target == "spec":
-                        raw_spec = cad_spec.read_json(final)
+                        raw_spec = cad_spec.read_json(strip_final_fence(final, "json", "spec"))
                         if isinstance(raw_spec, dict) and set(raw_spec) == {"unsupported"}:
                             if not isinstance(raw_spec["unsupported"], list) or not raw_spec["unsupported"]:
                                 raise ValueError("unsupported_contract")
@@ -455,9 +477,9 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                         source = source_from_final(final)
                         cad_run.source_contract(ast.parse(source))
                 except ValueError as exc:
-                    if str(exc) in ("needs_clarification", "private_source"):
+                    if str(exc) == "private_source":
                         raise
-                    previous = {"invalid_output": clean(final), "error": str(exc)}
+                    previous = invalid_feedback(final, str(exc))
                     continue
             if target == "spec":
                 canonical = cad_spec.canonical(spec)

@@ -85,6 +85,6 @@
     "decision": "DECISION-01",
     "version": 1,
     "confirmed": true,
-    "source": "tools/cad_run_probes.py GOAL_VOLUME; historical measurement, not analytic independence"
+    "source": "tools/cad_run_probes.py GOAL_VOLUME; historical measurement, not analytic independence. tolerances.volume_relative=1e-4 is a non-gate annotation for artifact reimport agreement, not the P1 geometry bar. The geometry gate is volume.relative=0.01 plus volume.upper_exclusive=22500."
   }
 }

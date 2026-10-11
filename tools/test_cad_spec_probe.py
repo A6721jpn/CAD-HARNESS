@@ -29,6 +29,13 @@ def box(b):
 
 
 class ProbeTests(unittest.TestCase):
+    def test_p1_outer_volume_tolerance_is_annotation_and_gold_gate_is_unchanged(self):
+        gold = probe.load_gold(ROOT / "design/cad-harness-mvp/eval-v1/P1.json")
+        self.assertEqual(gold["volume"],{"target_mm3":22239.9556819442,"relative":.01,
+            "upper_exclusive":22500,"formula":"legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"})
+        self.assertEqual(gold["tolerances"],{"linear_mm":.01,"axis":1e-6,"volume_relative":1e-4})
+        self.assertIn("non-gate annotation",gold["provenance"]["source"])
+
     def test_world_shape_uses_copy_of_immutable_document_property(self):
         class Immutable:
             @property
