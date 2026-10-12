@@ -1,0 +1,105 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "DS1",
+  "description": "66×46×18のブロックをXY中心、底Z=0で作る。上面中央20×16の窪みを深さ5。外側上面4辺だけR2.5、内縁と縦辺は鋭いまま。単位mm。",
+  "description_sha256": "3b350d8c24bb11da8e2113d750f66a56513d7311c1a7c5a0a3d3a101cdda93df",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "rect_prism",
+  "parameters": {
+    "profile": "rect_prism",
+    "bbox": [
+      -33,
+      33,
+      -23,
+      23,
+      0,
+      18
+    ],
+    "pockets": [
+      {
+        "bounds": [
+          -10,
+          10,
+          -8,
+          8
+        ],
+        "top_z": 18,
+        "depth": 5,
+        "sharp": true
+      }
+    ],
+    "holes": [],
+    "finish": {
+      "kind": "fillet",
+      "size": 2.5,
+      "target": "top_outer"
+    }
+  },
+  "holes": [],
+  "pockets": [
+    {
+      "bounds": [
+        -10,
+        10,
+        -8,
+        8
+      ],
+      "top_z": 18,
+      "depth": 5,
+      "sharp": true
+    }
+  ],
+  "finish": {
+    "kind": "fillet",
+    "size": 2.5,
+    "target": "top_outer"
+  },
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      66,
+      46,
+      18,
+      20,
+      16,
+      5,
+      2.5
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "confirmed": false,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -33,
+    33,
+    -23,
+    23,
+    0,
+    18
+  ],
+  "volume": {
+    "target_mm3": 39468,
+    "relative": 0.0001,
+    "formula": "W*D*(pocket_floor-bottom)"
+  },
+  "volume_scope": [
+    -33,
+    33,
+    -23,
+    23,
+    0,
+    13
+  ]
+}

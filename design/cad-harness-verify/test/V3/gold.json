@@ -1,0 +1,53 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "V3",
+  "description": "XY平面で90度曲がる管。中心線半径25、外径12、内径8。中心線は(0,0,0)から+X向きに出て(25,25,0)へ+Y向きで到着。単位mm。両端開口、一定断面。",
+  "description_sha256": "16079c59949a476c37110eefe206ca510c09e5303631f0ab5b136b2c54c5d37c",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "elbow",
+  "parameters": {
+    "profile": "elbow",
+    "path_radius": 25,
+    "outer_radius": 6,
+    "inner_radius": 4
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      25,
+      12,
+      8
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    0,
+    31,
+    -6,
+    25,
+    -6,
+    6
+  ],
+  "volume": {
+    "target_mm3": 2467.4011002723396,
+    "relative": 0.0001,
+    "formula": "pi*(ro^2-ri^2)*(pi*R/2)"
+  }
+}

@@ -1,0 +1,518 @@
+{
+  "schema": "cad-harness.verify-order.v1",
+  "plan_commit": "f0e8953",
+  "deadline_s": 10800,
+  "run_timeout_s": 900,
+  "cad_timeout_s": 300,
+  "cleanup_reserve_s": 5,
+  "soft_quota_percent": 55,
+  "hard_quota_percent": 60,
+  "planned_calls": 71,
+  "max_calls": 125,
+  "dev_max_calls": 4,
+  "entries": [
+    {
+      "sequence": 1,
+      "group": "dev",
+      "case": "DV1",
+      "round": 1,
+      "id": "dev-DV1-r1",
+      "max_calls": 2,
+      "min_calls": 2
+    },
+    {
+      "sequence": 2,
+      "group": "dev",
+      "case": "DV6",
+      "round": 1,
+      "id": "dev-DV6-r1",
+      "max_calls": 1,
+      "min_calls": 1
+    },
+    {
+      "sequence": 3,
+      "group": "dev",
+      "case": "DQ2",
+      "round": 1,
+      "id": "dev-DQ2-r1",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 4,
+      "group": "legacy",
+      "case": "A-good",
+      "round": 1,
+      "id": "legacy-A-good-r1",
+      "max_calls": 0,
+      "min_calls": 0
+    },
+    {
+      "sequence": 5,
+      "group": "legacy",
+      "case": "A-broken",
+      "round": 1,
+      "id": "legacy-A-broken-r1",
+      "max_calls": 0,
+      "min_calls": 0
+    },
+    {
+      "sequence": 6,
+      "group": "legacy",
+      "case": "B-good",
+      "round": 1,
+      "id": "legacy-B-good-r1",
+      "max_calls": 0,
+      "min_calls": 0
+    },
+    {
+      "sequence": 7,
+      "group": "legacy",
+      "case": "B-broken",
+      "round": 1,
+      "id": "legacy-B-broken-r1",
+      "max_calls": 0,
+      "min_calls": 0
+    },
+    {
+      "sequence": 8,
+      "group": "mvp",
+      "case": "P1",
+      "round": 1,
+      "id": "mvp-P1-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 9,
+      "group": "mvp",
+      "case": "P1",
+      "round": 2,
+      "id": "mvp-P1-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 10,
+      "group": "mvp",
+      "case": "P2",
+      "round": 1,
+      "id": "mvp-P2-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 11,
+      "group": "mvp",
+      "case": "P2",
+      "round": 2,
+      "id": "mvp-P2-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 12,
+      "group": "mvp",
+      "case": "P4",
+      "round": 1,
+      "id": "mvp-P4-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 13,
+      "group": "mvp",
+      "case": "P4",
+      "round": 2,
+      "id": "mvp-P4-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 14,
+      "group": "mvp",
+      "case": "P5",
+      "round": 1,
+      "id": "mvp-P5-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 15,
+      "group": "mvp",
+      "case": "P5",
+      "round": 2,
+      "id": "mvp-P5-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 16,
+      "group": "mvp",
+      "case": "P3",
+      "round": 1,
+      "id": "mvp-P3-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 17,
+      "group": "mvp",
+      "case": "P3",
+      "round": 2,
+      "id": "mvp-P3-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 18,
+      "group": "geometry",
+      "case": "V1",
+      "round": 1,
+      "id": "geometry-V1-r1",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 19,
+      "group": "geometry",
+      "case": "V2",
+      "round": 1,
+      "id": "geometry-V2-r1",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 20,
+      "group": "geometry",
+      "case": "V3",
+      "round": 1,
+      "id": "geometry-V3-r1",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 21,
+      "group": "geometry",
+      "case": "V4",
+      "round": 1,
+      "id": "geometry-V4-r1",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 22,
+      "group": "geometry",
+      "case": "V5",
+      "round": 1,
+      "id": "geometry-V5-r1",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 23,
+      "group": "geometry",
+      "case": "V6",
+      "round": 1,
+      "id": "geometry-V6-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 24,
+      "group": "geometry",
+      "case": "S1",
+      "round": 1,
+      "id": "geometry-S1-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 25,
+      "group": "geometry",
+      "case": "V1",
+      "round": 2,
+      "id": "geometry-V1-r2",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 26,
+      "group": "geometry",
+      "case": "V2",
+      "round": 2,
+      "id": "geometry-V2-r2",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 27,
+      "group": "geometry",
+      "case": "V3",
+      "round": 2,
+      "id": "geometry-V3-r2",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 28,
+      "group": "geometry",
+      "case": "V4",
+      "round": 2,
+      "id": "geometry-V4-r2",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 29,
+      "group": "geometry",
+      "case": "V5",
+      "round": 2,
+      "id": "geometry-V5-r2",
+      "max_calls": 3,
+      "min_calls": 2
+    },
+    {
+      "sequence": 30,
+      "group": "geometry",
+      "case": "V6",
+      "round": 2,
+      "id": "geometry-V6-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 31,
+      "group": "geometry",
+      "case": "S1",
+      "round": 2,
+      "id": "geometry-S1-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 32,
+      "group": "geometry",
+      "case": "V6",
+      "round": 3,
+      "id": "geometry-V6-r3",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 33,
+      "group": "geometry",
+      "case": "S1",
+      "round": 3,
+      "id": "geometry-S1-r3",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 34,
+      "group": "geometry",
+      "case": "S1",
+      "round": 4,
+      "id": "geometry-S1-r4",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 35,
+      "group": "geometry",
+      "case": "S1",
+      "round": 5,
+      "id": "geometry-S1-r5",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 36,
+      "group": "q",
+      "case": "Q1",
+      "round": 1,
+      "id": "q-Q1-r1",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 37,
+      "group": "q",
+      "case": "Q1",
+      "round": 2,
+      "id": "q-Q1-r2",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 38,
+      "group": "q",
+      "case": "Q1",
+      "round": 3,
+      "id": "q-Q1-r3",
+      "max_calls": 3,
+      "min_calls": 1
+    },
+    {
+      "sequence": 39,
+      "group": "q",
+      "case": "Q2",
+      "round": 1,
+      "id": "q-Q2-r1",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 40,
+      "group": "q",
+      "case": "Q3",
+      "round": 1,
+      "id": "q-Q3-r1",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 41,
+      "group": "q",
+      "case": "Q2",
+      "round": 2,
+      "id": "q-Q2-r2",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 42,
+      "group": "q",
+      "case": "Q3",
+      "round": 2,
+      "id": "q-Q3-r2",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 43,
+      "group": "q",
+      "case": "Q2",
+      "round": 3,
+      "id": "q-Q2-r3",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 44,
+      "group": "q",
+      "case": "Q3",
+      "round": 3,
+      "id": "q-Q3-r3",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 45,
+      "group": "q",
+      "case": "Q2",
+      "round": 4,
+      "id": "q-Q2-r4",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 46,
+      "group": "q",
+      "case": "Q3",
+      "round": 4,
+      "id": "q-Q3-r4",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 47,
+      "group": "q",
+      "case": "Q2",
+      "round": 5,
+      "id": "q-Q2-r5",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 48,
+      "group": "q",
+      "case": "Q3",
+      "round": 5,
+      "id": "q-Q3-r5",
+      "max_calls": 1,
+      "min_calls": 1,
+      "first_response": true
+    },
+    {
+      "sequence": 49,
+      "group": "fault",
+      "case": "F1",
+      "round": 1,
+      "id": "fault-F1-r1",
+      "max_calls": 3,
+      "min_calls": 3,
+      "fault_id": "F1"
+    },
+    {
+      "sequence": 50,
+      "group": "fault",
+      "case": "F2",
+      "round": 1,
+      "id": "fault-F2-r1",
+      "max_calls": 3,
+      "min_calls": 3,
+      "fault_id": "F2"
+    },
+    {
+      "sequence": 51,
+      "group": "fault",
+      "case": "F3",
+      "round": 1,
+      "id": "fault-F3-r1",
+      "max_calls": 3,
+      "min_calls": 2,
+      "fault_id": "F3"
+    },
+    {
+      "sequence": 52,
+      "group": "fault",
+      "case": "F1",
+      "round": 2,
+      "id": "fault-F1-r2",
+      "max_calls": 3,
+      "min_calls": 3,
+      "fault_id": "F1"
+    },
+    {
+      "sequence": 53,
+      "group": "fault",
+      "case": "F2",
+      "round": 2,
+      "id": "fault-F2-r2",
+      "max_calls": 3,
+      "min_calls": 3,
+      "fault_id": "F2"
+    },
+    {
+      "sequence": 54,
+      "group": "fault",
+      "case": "F3",
+      "round": 2,
+      "id": "fault-F3-r2",
+      "max_calls": 3,
+      "min_calls": 2,
+      "fault_id": "F3"
+    }
+  ]
+}

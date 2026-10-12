@@ -1,0 +1,26 @@
+{
+  "kind": "spec",
+  "path": [
+    "holes"
+  ],
+  "match": {
+    "center_xy": [
+      -36,
+      -27
+    ],
+    "diameter": 4,
+    "z": [
+      0,
+      12
+    ]
+  },
+  "set": {
+    "diameter": 6
+  },
+  "expected_predicate": "holes",
+  "candidate": "candidate.json",
+  "schema": "cad-harness.verify-fault.v1",
+  "fault_id": "F3",
+  "base_case": "V6",
+  "inject_once": true
+}

@@ -380,9 +380,10 @@ def run_driver(name, codex, root=ROOT, runner=None, task_id=cad_run.TASK):
 
 
 def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=ROOT,
-                   runner=None, clock=None, evaluation=False):
+                   runner=None, clock=None, evaluation=False, probe_profile="mvp-v1",
+                   first_response_only=False, fault=None, guard=None, max_calls=3, rubric=None):
     """Typed runs never call Codex; interpretation/source paths accept a mock runner."""
-    budget = Budget(clock=clock)
+    budget = Budget(seconds=min(900,guard.remaining()) if guard else 900,clock=clock or (guard.clock if guard else None))
     if mode not in ("typed", "description", "agent") or not name.endswith("-mvp1"):
         raise ValueError("invalid_mvp_mode_or_suffix")
     if __package__:
@@ -390,26 +391,42 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
     else:
         import cad_spec
         import cad_spec_probe
+    verify = probe_profile == "verify-v1"
+    if probe_profile not in ("mvp-v1","verify-v1") or type(max_calls) is not int or not 1 <= max_calls <= 3:
+        raise ValueError("invalid_verify_options")
+    if not verify and (first_response_only or fault or rubric):
+        raise ValueError("verify_opt_in_required")
+    if verify:
+        if __package__:
+            from . import cad_verify_probe as cad_spec_probe
+            from .cad_verify_guard import clarification, CLARIFICATION_FIELDS, QUESTIONS
+        else:
+            import cad_verify_probe as cad_spec_probe
+            from cad_verify_guard import clarification, CLARIFICATION_FIELDS, QUESTIONS
     gold_path = Path(gold_path).resolve() if gold_path else None
-    if gold_path is None and (mode != "description" or evaluation):
+    if gold_path is None and (mode != "description" or evaluation) and not (verify and first_response_only and rubric):
         raise ValueError("human_gold_required")
     gold = cad_spec_probe.load_gold(gold_path) if gold_path else None
-    if evaluation and (gold["provenance"]["authority"] != "human" or gold["provenance"]["confirmed"] is not True):
+    if evaluation and gold is not None and (gold["provenance"]["authority"] != "human" or gold["provenance"]["confirmed"] is not True):
         raise ValueError("eval_human_gold_required")
     if gold is not None and mode != "typed" and gold["description"] != input_text:
         raise ValueError("description_gold_identity")
     runner = runner or subprocess.run
     out = new_run_dir(root, name)
     report = {"schema": "cad-harness.cad_agent.mvp1", "run_id": name, "mode": mode,
-              "task_id": gold["case_id"] if gold else "PREVIEW", "input_sha256": digest(input_text),
+              "task_id": gold["case_id"] if gold else rubric["case_id"] if rubric else "PREVIEW", "input_sha256": digest(input_text),
               "description_sha256": digest(input_text) if mode != "typed" else None,
               "gold_sha256": hashlib.sha256(gold_path.read_bytes()).hexdigest() if gold_path else None,
               "started_at": utc(), "status": "failed", "message_code": None,
               "calls": [], "attempts": [], "final_out_dir": None, "geometry_ok": None}
+    if verify:
+        report.update(probe_profile=probe_profile,first_response=None,unsupported_to_source=False,
+                      first_response_only=first_response_only,fault=fault.record if fault else None)
     previous, last_spec, target = None, None, "source" if mode == "agent" else "spec"
     skill_path = root / "skills/freecad-modeling/SKILL.md"
     schema_path = root / "design/cad-harness-mvp/build-schema.json"
     try:
+        if guard: guard.before_run()
         schema_text = schema_path.read_text(encoding="utf-8")
         skill = skill_path.read_text(encoding="utf-8")
         report.update(skill_sha256=digest(skill), schema_sha256=digest(schema_text),
@@ -417,7 +434,7 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                       probe_sha256=hashlib.sha256(Path(cad_spec_probe.__file__).read_bytes()).hexdigest(),
                       settings={"model": MODEL, "effort": EFFORT, "disabled": list(DISABLED),
                                 "sandbox": "read-only", "skip_git_repo_check": True,
-                                "max_calls": 3, "max_cad_attempts": 3, "deadline_s": 900, "cad_timeout_s": 300},
+                                "max_calls": max_calls, "max_cad_attempts": 3, "deadline_s": 900, "cad_timeout_s": 300},
                       agents_sha256=agents_identity(root))
         report["cli_version"] = None
         if mode != "typed":
@@ -431,14 +448,23 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
             if mode == "typed":
                 spec = cad_spec.loads_spec(input_text)
             else:
+                if budget.calls >= max_calls: raise ValueError("call_limit")
+                snapshot = guard.before_call() if guard else None
                 budget.call()
                 contract = spec_contract(schema_text) if target == "spec" else (
                             "Return only complete Python source defining build(doc) and returning its Body. "
                             "Allowed imports: FreeCAD, Part, Sketcher, math. No file, shell, network, "
                             "document lifecycle, save, or probe operations.")
+                if verify and target == "spec":
+                    contract += ('\nVERIFY clarification contract: needs_clarification is a list of necessary missing field IDs only, '
+                                 'never natural-language questions or invented values. Allowed field IDs: '+', '.join(CLARIFICATION_FIELDS)+'.')
                 context = developer_context(skill, contract, previous)
                 record = {"call": budget.calls, "kind": target, "context_sha256": digest(context),
                           "prompt_sha256": digest(input_text), "started_at": utc(), "usage": None}
+                if guard: record["quota_snapshot"] = snapshot
+                if verify:
+                    record["purpose"] = ("parse_repair" if previous and "invalid_output" in previous else
+                                         "repair" if previous else "interpretation" if target == "spec" else "source")
                 report["calls"].append(record)
                 temp_parent = Path(tempfile.gettempdir()).resolve()
                 if temp_parent.is_relative_to(root.resolve()):
@@ -465,21 +491,53 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                 try:
                     if target == "spec":
                         raw_spec = cad_spec.read_json(strip_final_fence(final, "json", "spec"))
+                        if verify and budget.calls == 1:
+                            report["first_response"] = {"kind":"invalid","raw":raw_spec,"sha256":digest(final)}
                         if isinstance(raw_spec, dict) and set(raw_spec) == {"unsupported"}:
                             if not isinstance(raw_spec["unsupported"], list) or not raw_spec["unsupported"]:
                                 raise ValueError("unsupported_contract")
+                            if verify:
+                                if budget.calls == 1: report["first_response"]["kind"] = "unsupported"
+                                report["unsupported_to_source"] = True
+                                if first_response_only:
+                                    report.update(status="first_response",message_code="first_response_stop")
+                                    break
                             target, previous = "source", None
                             continue
                         if isinstance(raw_spec, dict) and set(raw_spec) == {"needs_clarification"}:
+                            if verify:
+                                fields = clarification(raw_spec)
+                                if budget.calls == 1:
+                                    report["first_response"].update(kind="needs_clarification",fields=fields)
+                                report.update(status="needs_clarification",message_code="clarification_stop",clarification_fields=fields,
+                                              questions=[QUESTIONS.get(f,f) for f in fields])
+                                break
                             raise ValueError("needs_clarification")
                         spec = cad_spec.validate_spec(raw_spec)
+                        if verify and budget.calls == 1:
+                            b = spec.get("regions",[{}])[0].get("bounds",[]) if spec.get("regions") else []
+                            defaults = len(b) == 6 and abs(b[0]+b[1]) < 1e-9 and abs(b[2]+b[3]) < 1e-9 and b[4] == 0
+                            report["first_response"].update(kind="spec",binding_defaults_ok=defaults)
+                        if first_response_only:
+                            report.update(status="first_response",message_code="first_response_stop")
+                            break
+                        if fault:
+                            spec = cad_spec.validate_spec(fault.inject("spec",spec))
                     else:
                         source = source_from_final(final)
                         cad_run.source_contract(ast.parse(source))
+                        if fault:
+                            source = source_from_final(fault.inject("source",source))
+                            cad_run.source_contract(ast.parse(source))
                 except ValueError as exc:
                     if str(exc) == "private_source":
                         raise
                     previous = invalid_feedback(final, str(exc))
+                    if verify and budget.calls == 1 and report["first_response"] is None:
+                        report["first_response"] = {"kind":"invalid","sha256":digest(final)}
+                    if first_response_only:
+                        report.update(status="first_response",message_code=str(exc))
+                        break
                     continue
             if target == "spec":
                 canonical = cad_spec.canonical(spec)
@@ -497,14 +555,16 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                               preview_kind="agent_source", source_rel="preview-source.py")
                 break
             budget.cad()
+            if guard: guard.remaining()
+            if guard and budget.remaining() <= 6: raise ValueError("deadline_exceeded")
             script = out / ("input-a%d.py" % budget.attempts)
             script.write_bytes(source.encode("utf-8"))
             cad_out = out / ("a%d-mvp1" % budget.attempts)
             argv = [sys.executable, "-B", str(root / "tools/cad_run.py"), "--script", str(script),
-                    "--out-dir", str(cad_out), "--timeout-s", str(budget.cad_timeout()),
-                    "--recipe", "freecadcmd", "--probe-profile", "mvp-v1", "--gold", str(gold_path),
+                    "--out-dir", str(cad_out), "--timeout-s", str(max(1,math.floor(min(300,budget.remaining()-5))) if guard else budget.cad_timeout()),
+                    "--recipe", "freecadcmd", "--probe-profile", probe_profile, "--gold", str(gold_path),
                     "--task", gold["case_id"], "--generator", "compiler" if target == "spec" else "agent",
-                    "--end-to-end-s", str(budget.remaining())]
+                    "--end-to-end-s", str(budget.remaining()-5 if guard else budget.remaining())]
             tick = time.monotonic()
             completed = runner(argv, cwd=str(root), capture_output=True, text=True, encoding="utf-8",
                                errors="replace", shell=False, stdin=subprocess.DEVNULL,
@@ -520,6 +580,9 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                                        "out_dir": cad_out.relative_to(root.resolve()).as_posix(),
                                        "wall_ms": (time.monotonic() - tick) * 1000, "result": clean(result)})
             report.update(final_out_dir=report["attempts"][-1]["out_dir"], geometry_ok=result.get("geometry_ok"))
+            if fault: fault.observe(result,budget.calls)
+            if fault and fault.record.get("observed") and not fault.record.get("detected"):
+                raise ValueError("fault_false_pass" if result.get("geometry_ok") is True else "fault_detection_mismatch")
             if completed.returncode == 0:
                 if (result.get("status") != "ok" or result.get("probe_pass") is not True
                         or result.get("verification_pass") is not True or result.get("cad_exit_code") != 0
@@ -545,8 +608,12 @@ def run_mvp_driver(name, codex, input_text, gold_path, mode="description", root=
                       llm_calls=budget.calls, cad_attempts=budget.attempts)
         if report["wall_ms"] > 900000:
             report.update(status="failed", message_code="deadline_exceeded")
+        if guard:
+            if guard.clock() >= guard.deadline:
+                report.update(status="failed",message_code="shared_deadline_exceeded")
+            report["shared_deadline_remaining_s"] = max(0,guard.deadline-guard.clock())
         (out / "driver-run.json").write_text(json.dumps(report, ensure_ascii=False, allow_nan=False), encoding="utf-8")
-    return report, 0 if report["status"] in ("ok", "preview") else 1
+    return report, 0 if report["status"] in ("ok", "preview") or (verify and report["status"] in ("first_response","needs_clarification")) else 1
 
 
 def main(argv=None):
@@ -560,21 +627,41 @@ def main(argv=None):
     parser.add_argument("--description-file", help="UTF-8 user text without appended rules")
     parser.add_argument("--gold", help="Human-confirmed/frozen grading specification")
     parser.add_argument("--eval", action="store_true", help="Use frozen human gold without a preview pause")
+    parser.add_argument("--verify", action="store_true", help="Opt in to verify-v1 geometry/clarification contracts")
+    parser.add_argument("--first-response-only",action="store_true",help="VERIFY only: one interpretation, no CAD or follow-up")
+    parser.add_argument("--quota-snapshot",help="Supervisor-written snapshot, checked before every real call")
+    parser.add_argument("--rubric",help="VERIFY clarification rubric; absent geometry gold")
+    parser.add_argument("--fault",help="VERIFY frozen one-shot fault.json")
     args = parser.parse_args(argv)
     if Path(args.codex).suffix.lower() in (".cmd", ".bat", ".ps1"):
         parser.error("use the native Codex executable")
     try:
         if args.mode == "legacy":
-            if args.spec or args.description_file or args.gold or args.eval:
+            if args.spec or args.description_file or args.gold or args.eval or args.verify or args.first_response_only or args.quota_snapshot or args.rubric or args.fault:
                 raise ValueError("mvp_arguments_on_legacy")
             report, code = run_driver(args.run, args.codex, task_id=args.task)
         else:
             input_path = args.spec if args.mode == "typed" else args.description_file
             preview = args.mode == "description" and not args.eval
-            if not input_path or (not args.gold and not preview) or (args.mode == "typed" and args.description_file) or (args.mode != "typed" and args.spec):
+            if not input_path or (not args.gold and not preview and not (args.verify and args.first_response_only and args.rubric)) or (args.mode == "typed" and args.description_file) or (args.mode != "typed" and args.spec):
                 raise ValueError("mvp_input_required")
+            guard = fault = rubric = None
+            if args.verify or args.quota_snapshot:
+                if __package__:
+                    from .cad_verify_guard import Guard,Fault
+                else:
+                    from cad_verify_guard import Guard,Fault
+                if args.mode != "typed" and not args.quota_snapshot: raise ValueError("quota_snapshot_required")
+                guard = Guard(args.quota_snapshot) if args.quota_snapshot else None
+                fault = Fault(args.fault) if args.fault else None
+                rubric = loads(Path(args.rubric).read_text(encoding="utf-8")) if args.rubric else None
+            elif args.first_response_only or args.fault or args.rubric:
+                raise ValueError("verify_opt_in_required")
             report, code = run_mvp_driver(args.run, args.codex, Path(input_path).read_text(encoding="utf-8"),
-                                          args.gold, mode=args.mode, evaluation=args.eval)
+                                          args.gold, mode=args.mode, evaluation=args.eval,
+                                          probe_profile="verify-v1" if args.verify else "mvp-v1",
+                                          first_response_only=args.first_response_only,fault=fault,guard=guard,rubric=rubric,
+                                          max_calls=1 if args.first_response_only else 3)
     except (OSError, ValueError) as exc:
         report, code = {"schema": "cad-harness.cad_agent.v0", "status": "input_error",
                         "message_code": clean(str(exc)), "geometry_ok": None}, 2

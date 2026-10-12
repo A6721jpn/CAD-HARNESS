@@ -1,0 +1,65 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "V4",
+  "description": "上面開口の箱。外形X=-30..30,Y=-20..20,Z=0..20、壁と底3。内側にY=-1.5..1.5の三角リブ。XZ断面の頂点は(-27,3),(27,3),(27,15)。単位mm。穴なし。",
+  "description_sha256": "5b8ab7071990adb49bcdcd559cbce4d08db9e2f35c4e969e5db861c38612e44f",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "ribbed_box",
+  "parameters": {
+    "profile": "ribbed_box",
+    "bbox": [
+      -30,
+      30,
+      -20,
+      20,
+      0,
+      20
+    ],
+    "wall": 3,
+    "rib_thickness": 3,
+    "rib_top": 15
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      60,
+      40,
+      20,
+      3,
+      54,
+      12,
+      3
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -30,
+    30,
+    -20,
+    20,
+    0,
+    20
+  ],
+  "volume": {
+    "target_mm3": 17760.0,
+    "relative": 0.0001,
+    "formula": "W*D*H-(W-2*t)*(D-2*t)*(H-t)+(W-2*t)*(rib_top-t)*rib_thickness/2"
+  }
+}

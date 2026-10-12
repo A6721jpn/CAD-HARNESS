@@ -1,0 +1,105 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "S1",
+  "description": "58×42×16のブロック。XY中心、下面Z=0。上面中央に18×14、深さ4のポケット。上面の外周4辺だけR2。垂直辺は鋭く残す。単位mm。穴や面取りはなし。",
+  "description_sha256": "075c14295bc482ef61c38add3db5cec519635ef56db946d9362cc1cc3a6748c4",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "rect_prism",
+  "parameters": {
+    "profile": "rect_prism",
+    "bbox": [
+      -29,
+      29,
+      -21,
+      21,
+      0,
+      16
+    ],
+    "pockets": [
+      {
+        "bounds": [
+          -9,
+          9,
+          -7,
+          7
+        ],
+        "top_z": 16,
+        "depth": 4,
+        "sharp": true
+      }
+    ],
+    "holes": [],
+    "finish": {
+      "kind": "fillet",
+      "size": 2,
+      "target": "top_outer"
+    }
+  },
+  "holes": [],
+  "pockets": [
+    {
+      "bounds": [
+        -9,
+        9,
+        -7,
+        7
+      ],
+      "top_z": 16,
+      "depth": 4,
+      "sharp": true
+    }
+  ],
+  "finish": {
+    "kind": "fillet",
+    "size": 2,
+    "target": "top_outer"
+  },
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      58,
+      42,
+      16,
+      18,
+      14,
+      4,
+      2
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -29,
+    29,
+    -21,
+    21,
+    0,
+    16
+  ],
+  "volume": {
+    "target_mm3": 29232,
+    "relative": 0.0001,
+    "formula": "W*D*(pocket_floor-bottom)"
+  },
+  "volume_scope": [
+    -29,
+    29,
+    -21,
+    21,
+    0,
+    12
+  ]
+}

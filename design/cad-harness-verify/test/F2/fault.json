@@ -1,0 +1,9 @@
+{
+  "kind": "source",
+  "candidate": "candidate.py",
+  "expected_predicate": "holes",
+  "schema": "cad-harness.verify-fault.v1",
+  "fault_id": "F2",
+  "base_case": "V5",
+  "inject_once": true
+}

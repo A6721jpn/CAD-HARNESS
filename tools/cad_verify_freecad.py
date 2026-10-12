@@ -14,6 +14,12 @@ else:
 
 
 def verify(app, part, request, directory):
+    gold_reader, artifact_probe = load_gold, probe
+    if request.get("probe_profile") == "verify-v1":
+        if __package__:
+            from .cad_verify_probe import load_gold as gold_reader, probe as artifact_probe
+        else:
+            from cad_verify_probe import load_gold as gold_reader, probe as artifact_probe
     result = {"schema": "cad-harness.verify.v1", "owned_pid": os.getpid(),
               "verification_pass": False, "document_closed": False, "artifacts": {}}
     result.update({key: request.get(key) for key in
@@ -25,7 +31,7 @@ def verify(app, part, request, directory):
         gold_path = directory / "gold.json"
         if hashlib.sha256(gold_path.read_bytes()).hexdigest() != request["gold_sha256"]:
             raise ValueError("verify_gold_hash")
-        gold = load_gold(gold_path)
+        gold = gold_reader(gold_path)
         if gold["case_id"] != request["task_id"]:
             raise ValueError("verify_gold_task")
         hashes = {name: hashlib.sha256((directory / name).read_bytes()).hexdigest()
@@ -49,7 +55,7 @@ def verify(app, part, request, directory):
                     imported.Shape = part.read(str(directory / name))
                     doc.recompute()
                     body = SimpleNamespace(Shape=imported.Shape)
-                observed = probe(doc, body, gold, require_editability=name.endswith("FCStd"))
+                observed = artifact_probe(doc, body, gold, require_editability=name.endswith("FCStd"))
                 result["artifacts"][name] = observed
                 checks.add("reimport", name + ".gold_geometry", True, observed["probe_pass"], observed["probe_pass"])
                 m, built = observed["measurements"], request["built"]

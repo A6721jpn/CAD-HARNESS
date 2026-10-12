@@ -1,0 +1,88 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "DQ1",
+  "description": "78×44×11の板に中央直径9の貫通穴を1個。単位mm。その他の加工は不要。",
+  "description_sha256": "ec05658fd0cb0a68fc6e10f7313207c75eb38d017a5c7d8f9965bd7d6fbafaf6",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "rect_prism",
+  "parameters": {
+    "profile": "rect_prism",
+    "bbox": [
+      -39,
+      39,
+      -22,
+      22,
+      0,
+      11
+    ],
+    "pockets": [],
+    "holes": [
+      {
+        "center_xy": [
+          0,
+          0
+        ],
+        "diameter": 9,
+        "z": [
+          0,
+          11
+        ],
+        "through": true
+      }
+    ],
+    "finish": null
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 9,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      78,
+      44,
+      11,
+      9
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "confirmed": false,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -39,
+    39,
+    -22,
+    22,
+    0,
+    11
+  ],
+  "volume": {
+    "target_mm3": 37052.21023641287,
+    "relative": 0.0001,
+    "formula": "W*D*H-sum(pocket_volume)-sum(pi*hole_radius^2*H)-(W+D)*C^2+4*C^3/3"
+  }
+}

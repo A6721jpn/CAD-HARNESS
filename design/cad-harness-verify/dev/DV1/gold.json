@@ -1,0 +1,78 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "DV1",
+  "description": "外径36、内径10、高さ40の中空円筒をZ軸に沿って作る。下端はZ=0。Z=16から22まで外側に半径方向3の環状溝。単位mm。",
+  "description_sha256": "412df594cbd825cb01f253d0d4c32279c5516f08b82dccf5999c56c0ced954d1",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "roller",
+  "parameters": {
+    "profile": "roller",
+    "radius": 18,
+    "bore_radius": 5,
+    "length": 40,
+    "groove_z": [
+      16,
+      22
+    ],
+    "groove_depth": 3,
+    "section_z": [
+      10,
+      19,
+      32
+    ]
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 10,
+      "z": [
+        0,
+        40
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      36,
+      10,
+      40,
+      6,
+      30
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "confirmed": false,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -18,
+    18,
+    -18,
+    18,
+    0,
+    40
+  ],
+  "volume": {
+    "target_mm3": 35707.342100701586,
+    "relative": 0.0001,
+    "formula": "pi*((R^2-r^2)*L-(R^2-(R-d)^2)*(z1-z0))"
+  }
+}

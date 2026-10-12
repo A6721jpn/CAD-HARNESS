@@ -1,0 +1,274 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "F3",
+  "description": "110×76×12の板、XY中心、下面Z=0。上面から26×18、深さ5のポケットを中心(-26,0),(26,0)に2つ。直径4の通し穴をX=-36,0,36、Y=-27,27の6点に。上面外周だけ脚0.8の面取り。単位mm。",
+  "description_sha256": "56bffa1c4fe3b68f20c3609c068929ab8d583c9e0215616703d520a76c86d629",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "rect_prism",
+  "parameters": {
+    "profile": "rect_prism",
+    "bbox": [
+      -55,
+      55,
+      -38,
+      38,
+      0,
+      12
+    ],
+    "pockets": [
+      {
+        "bounds": [
+          -39,
+          -13,
+          -9,
+          9
+        ],
+        "top_z": 12,
+        "depth": 5,
+        "sharp": true
+      },
+      {
+        "bounds": [
+          13,
+          39,
+          -9,
+          9
+        ],
+        "top_z": 12,
+        "depth": 5,
+        "sharp": true
+      }
+    ],
+    "holes": [
+      {
+        "center_xy": [
+          -36,
+          -27
+        ],
+        "diameter": 4,
+        "z": [
+          0,
+          12
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          -36,
+          27
+        ],
+        "diameter": 4,
+        "z": [
+          0,
+          12
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          0,
+          -27
+        ],
+        "diameter": 4,
+        "z": [
+          0,
+          12
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          0,
+          27
+        ],
+        "diameter": 4,
+        "z": [
+          0,
+          12
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          36,
+          -27
+        ],
+        "diameter": 4,
+        "z": [
+          0,
+          12
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          36,
+          27
+        ],
+        "diameter": 4,
+        "z": [
+          0,
+          12
+        ],
+        "through": true
+      }
+    ],
+    "finish": {
+      "kind": "chamfer",
+      "size": 0.8,
+      "target": "top_outer"
+    }
+  },
+  "holes": [
+    {
+      "center_xy": [
+        -36,
+        -27
+      ],
+      "diameter": 4,
+      "z": [
+        0,
+        12
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -36,
+        27
+      ],
+      "diameter": 4,
+      "z": [
+        0,
+        12
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        0,
+        -27
+      ],
+      "diameter": 4,
+      "z": [
+        0,
+        12
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        0,
+        27
+      ],
+      "diameter": 4,
+      "z": [
+        0,
+        12
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        36,
+        -27
+      ],
+      "diameter": 4,
+      "z": [
+        0,
+        12
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        36,
+        27
+      ],
+      "diameter": 4,
+      "z": [
+        0,
+        12
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [
+    {
+      "bounds": [
+        -39,
+        -13,
+        -9,
+        9
+      ],
+      "top_z": 12,
+      "depth": 5,
+      "sharp": true
+    },
+    {
+      "bounds": [
+        13,
+        39,
+        -9,
+        9
+      ],
+      "top_z": 12,
+      "depth": 5,
+      "sharp": true
+    }
+  ],
+  "finish": {
+    "kind": "chamfer",
+    "size": 0.8,
+    "target": "top_outer"
+  },
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      110,
+      76,
+      12,
+      26,
+      18,
+      5,
+      26,
+      18,
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      0.8
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -55,
+    55,
+    -38,
+    38,
+    0,
+    12
+  ],
+  "volume": {
+    "target_mm3": 94616.86398243281,
+    "relative": 0.0001,
+    "formula": "W*D*H-sum(pocket_volume)-sum(pi*hole_radius^2*H)-(W+D)*C^2+4*C^3/3"
+  }
+}

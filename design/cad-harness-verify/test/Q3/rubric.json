@@ -1,0 +1,22 @@
+{
+  "schema": "cad-harness.verify-rubric.v1",
+  "case_id": "Q3",
+  "description_sha256": "684f4cdf11d50f322b7e66386e03c5f3a57e3295cc0f15053f5145a027d71ae9",
+  "required_fields": [
+    "hole_positions"
+  ],
+  "max_real_calls": 1,
+  "cad_attempts": 0,
+  "no_follow_up": true,
+  "positive": {
+    "needs_clarification": [
+      "hole_positions"
+    ]
+  },
+  "negative": {
+    "needs_clarification": [
+      "origin"
+    ]
+  },
+  "critical_invention_field": "hole_positions"
+}

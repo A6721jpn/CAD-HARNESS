@@ -1,0 +1,53 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "DV3",
+  "description": "中心線R31でXY上を直角に曲がる外径14、内径9の管。始点(0,0,0)、接線+X、終点(31,31,0)、接線+Y。両端開口。単位mm。",
+  "description_sha256": "66b2c04f04ea5b088b45f0451710de10c68f225b550423ad04d51ca8326e1175",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "elbow",
+  "parameters": {
+    "profile": "elbow",
+    "path_radius": 31,
+    "outer_radius": 7,
+    "inner_radius": 4.5
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      31,
+      14,
+      9.0
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "confirmed": false,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    0,
+    38,
+    -7,
+    31,
+    -7,
+    7
+  ],
+  "volume": {
+    "target_mm3": 4398.142461235445,
+    "relative": 0.0001,
+    "formula": "pi*(ro^2-ri^2)*(pi*R/2)"
+  }
+}

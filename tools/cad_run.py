@@ -103,7 +103,7 @@ def parser():
     p.add_argument("--timeout-s", required=True, type=int, help="Positive CAD runtime limit")
     p.add_argument("--recipe", choices=("freecadcmd", "console"), default="freecadcmd")
     p.add_argument("--task", default=TASK)
-    p.add_argument("--probe-profile", choices=("legacy", "mvp-v1"), default="legacy")
+    p.add_argument("--probe-profile", choices=("legacy", "mvp-v1", "verify-v1"), default="legacy")
     p.add_argument("--gold")
     p.add_argument("--generator", choices=("compiler", "agent"), default="agent")
     p.add_argument("--end-to-end-s", type=float, default=900)
@@ -131,11 +131,15 @@ def source_contract(tree):
 
 
 def preflight(args, root=ROOT):
-    mvp = getattr(args, "probe_profile", "legacy") == "mvp-v1"
+    mvp = getattr(args, "probe_profile", "legacy") in ("mvp-v1","verify-v1")
     if not mvp and args.task not in SPECS:
         raise InputError("invalid_task")
     if mvp:
-        if __package__:
+        if args.probe_profile == "verify-v1" and __package__:
+            from .cad_verify_probe import load_gold
+        elif args.probe_profile == "verify-v1":
+            from cad_verify_probe import load_gold
+        elif __package__:
             from .cad_spec_probe import load_gold
         else:
             from cad_spec_probe import load_gold
@@ -274,7 +278,7 @@ def merge_worker(result, worker, proc):
         raise ValueError("worker_protocol")
     fields = ("script_completed", "measurements", "predicate_diff", "reference", "document_closed",
               "predicate_details", "geometry_ok", "editability_ok", "skill_warnings", "export_ms")
-    if result.get("probe_profile") == "mvp-v1" and any(
+    if result.get("probe_profile") in ("mvp-v1","verify-v1") and any(
             worker.get(k) != result.get(k) for k in ("probe_profile", "gold_sha256", "spec_sha256", "generator")):
         raise ValueError("worker_profile_binding")
     result.update({k: worker.get(k) for k in fields})
@@ -371,7 +375,7 @@ def verify_artifacts(out, result, root, request, run_deadline, popen, scan, even
 
 
 def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
-    mvp = getattr(args, "probe_profile", "legacy") == "mvp-v1"
+    mvp = getattr(args, "probe_profile", "legacy") in ("mvp-v1","verify-v1")
     run_deadline = time.monotonic() + args.end_to_end_s if mvp else None
     try:
         out, raw, source_hash = preflight(args, root)
@@ -392,7 +396,7 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
         spec_sha = next((n.value.value for n in tree.body if isinstance(n, ast.Assign)
                         and any(isinstance(t, ast.Name) and t.id == "BUILD_SPEC_SHA256" for t in n.targets)
                         and isinstance(n.value, ast.Constant)), None)
-        result.update(probe_profile="mvp-v1", gold_sha256=hashlib.sha256(gold_raw).hexdigest(),
+        result.update(probe_profile=args.probe_profile, gold_sha256=hashlib.sha256(gold_raw).hexdigest(),
                       spec_sha256=spec_sha, generator=args.generator, verification_pass=False)
         request.update({k: result[k] for k in ("probe_profile", "gold_sha256", "spec_sha256", "generator")})
     events, proc, threads = Events(out, result), None, []

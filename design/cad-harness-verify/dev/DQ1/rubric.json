@@ -1,0 +1,10 @@
+{
+  "schema": "cad-harness.verify-rubric.v1",
+  "case_id": "DQ1",
+  "first_kind": "spec",
+  "binding_defaults": [
+    "xy_center",
+    "bottom_z_zero"
+  ],
+  "final_all_gates": true
+}

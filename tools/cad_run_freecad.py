@@ -139,8 +139,11 @@ def main():
                 namespace = runpy.run_path(str(source))
                 return namespace["build"](doc)
             probe_fn, step_path = None, None
-            if request.get("probe_profile") == "mvp-v1":
-                from cad_spec_probe import load_gold, probe as spec_probe
+            if request.get("probe_profile") in ("mvp-v1","verify-v1"):
+                if request["probe_profile"] == "verify-v1":
+                    from cad_verify_probe import load_gold, probe as spec_probe
+                else:
+                    from cad_spec_probe import load_gold, probe as spec_probe
                 gold_path = Path.cwd() / "gold.json"
                 if hashlib.sha256(gold_path.read_bytes()).hexdigest() != request["gold_sha256"]:
                     raise ValueError("gold_hash_mismatch")

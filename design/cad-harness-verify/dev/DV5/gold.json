@@ -1,0 +1,239 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "DV5",
+  "description": "外径96、内径22、厚さ10のフランジ。PCD70に直径6の通し穴8個を+Xから45度ずつ配置。X長さ10、Y幅5、深さ2.5の上面溝を(-18,-18),(0,-18),(18,-18)に。単位mm。",
+  "description_sha256": "77f49a4359bc905e0e2fa2dff7646af91366f3be7e5b100867d8d00ccfc8a53e",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "flange",
+  "parameters": {
+    "profile": "flange",
+    "radius": 48,
+    "bore_radius": 11,
+    "thickness": 10,
+    "pcd_radius": 35,
+    "pcd_count": 8,
+    "hole_radius": 3,
+    "pockets": [
+      {
+        "bounds": [
+          -23,
+          -13,
+          -20.5,
+          -15.5
+        ],
+        "top_z": 10,
+        "depth": 2.5,
+        "sharp": true
+      },
+      {
+        "bounds": [
+          -5,
+          5,
+          -20.5,
+          -15.5
+        ],
+        "top_z": 10,
+        "depth": 2.5,
+        "sharp": true
+      },
+      {
+        "bounds": [
+          13,
+          23,
+          -20.5,
+          -15.5
+        ],
+        "top_z": 10,
+        "depth": 2.5,
+        "sharp": true
+      }
+    ]
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 22,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        35.0,
+        0.0
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        24.748737341529164,
+        24.748737341529164
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        2.1431318985078682e-15,
+        35.0
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -24.74873734152916,
+        24.748737341529164
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -35.0,
+        4.2862637970157365e-15
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -24.748737341529168,
+        -24.74873734152916
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -6.429395695523604e-15,
+        -35.0
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        24.748737341529157,
+        -24.748737341529168
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [
+    {
+      "bounds": [
+        -23,
+        -13,
+        -20.5,
+        -15.5
+      ],
+      "top_z": 10,
+      "depth": 2.5,
+      "sharp": true
+    },
+    {
+      "bounds": [
+        -5,
+        5,
+        -20.5,
+        -15.5
+      ],
+      "top_z": 10,
+      "depth": 2.5,
+      "sharp": true
+    },
+    {
+      "bounds": [
+        13,
+        23,
+        -20.5,
+        -15.5
+      ],
+      "top_z": 10,
+      "depth": 2.5,
+      "sharp": true
+    }
+  ],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      96,
+      22,
+      10,
+      6,
+      10,
+      5,
+      2.5,
+      70
+    ]
+  },
+  "provenance": {
+    "authority": "fixture",
+    "confirmed": false,
+    "decision": "PLAN-CONSENSUS R3b",
+    "source": "analytic dimensions; supervisor commit pending"
+  },
+  "bbox": [
+    -48,
+    48,
+    -48,
+    48,
+    0,
+    10
+  ],
+  "volume": {
+    "target_mm3": 65944.02091728053,
+    "relative": 0.0001,
+    "formula": "pi*(R^2-bore^2-N*hole_radius^2)*H-sum(slot_width*slot_depth*cut_depth)"
+  }
+}

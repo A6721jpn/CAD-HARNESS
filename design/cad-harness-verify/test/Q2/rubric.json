@@ -1,0 +1,22 @@
+{
+  "schema": "cad-harness.verify-rubric.v1",
+  "case_id": "Q2",
+  "description_sha256": "39218988825f7f97d43a00d3a2d7c95358c074d42fb326a505384575b52fffb8",
+  "required_fields": [
+    "plate_thickness"
+  ],
+  "max_real_calls": 1,
+  "cad_attempts": 0,
+  "no_follow_up": true,
+  "positive": {
+    "needs_clarification": [
+      "plate_thickness"
+    ]
+  },
+  "negative": {
+    "needs_clarification": [
+      "origin"
+    ]
+  },
+  "critical_invention_field": "plate_thickness"
+}
