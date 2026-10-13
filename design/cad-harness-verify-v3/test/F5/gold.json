@@ -1,0 +1,235 @@
+{
+  "schema": "cad-harness.verify-gold.v3",
+  "case_id": "F5",
+  "description": "円形フランジ外径108、厚さ11、中央通し穴D26。PCD82にD7通し穴6個、+Xから60度刻み。上面の長手Xの12×4・深さ3の矩形溝を中心(-20,-23),(20,-23)に。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "043ec0822245137740f7300b6c23b222e4e354f4437c0444ef5a7c586c3a84c3",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "flange",
+  "parameters": {
+    "profile": "flange",
+    "radius": 54,
+    "bore_radius": 13,
+    "thickness": 11,
+    "pcd_radius": 41,
+    "pcd_count": 6,
+    "hole_radius": 3.5,
+    "pockets": [
+      {
+        "bounds": [
+          -26.0,
+          -14.0,
+          -25.0,
+          -21.0
+        ],
+        "top_z": 11,
+        "depth": 3,
+        "sharp": true
+      },
+      {
+        "bounds": [
+          14.0,
+          26.0,
+          -25.0,
+          -21.0
+        ],
+        "top_z": 11,
+        "depth": 3,
+        "sharp": true
+      }
+    ]
+  },
+  "bbox": [
+    -54,
+    54,
+    -54,
+    54,
+    0,
+    11
+  ],
+  "volume": {
+    "target_mm3": 92101.52755309542,
+    "relative": 0.0001,
+    "formula": "pi*(54^2-13^2-6*3.5^2)*11-2*12*4*3"
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 26,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        41.0,
+        0.0
+      ],
+      "diameter": 7,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        20.500000000000004,
+        35.50704155516198
+      ],
+      "diameter": 7,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -20.49999999999999,
+        35.50704155516199
+      ],
+      "diameter": 7,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -41.0,
+        5.021051876504148e-15
+      ],
+      "diameter": 7,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -20.500000000000018,
+        -35.507041555161976
+      ],
+      "diameter": 7,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        20.500000000000004,
+        -35.50704155516198
+      ],
+      "diameter": 7,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [
+    {
+      "bounds": [
+        -26.0,
+        -14.0,
+        -25.0,
+        -21.0
+      ],
+      "top_z": 11,
+      "depth": 3,
+      "sharp": true
+    },
+    {
+      "bounds": [
+        14.0,
+        26.0,
+        -25.0,
+        -21.0
+      ],
+      "top_z": 11,
+      "depth": 3,
+      "sharp": true
+    }
+  ],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      108,
+      26,
+      11,
+      7,
+      12,
+      4,
+      3,
+      82
+    ],
+    "roles": [
+      {
+        "role": "outer_diameter",
+        "target_mm": 108,
+        "relation": "native_primary"
+      },
+      {
+        "role": "bore_diameter",
+        "target_mm": 26,
+        "relation": "native_primary"
+      },
+      {
+        "role": "thickness",
+        "target_mm": 11,
+        "relation": "native_primary"
+      },
+      {
+        "role": "hole_diameter",
+        "target_mm": 7,
+        "relation": "native_primary"
+      },
+      {
+        "role": "slot_x",
+        "target_mm": 12,
+        "relation": "native_primary"
+      },
+      {
+        "role": "slot_y",
+        "target_mm": 4,
+        "relation": "native_primary"
+      },
+      {
+        "role": "slot_depth",
+        "target_mm": 3,
+        "relation": "native_primary"
+      },
+      {
+        "role": "pcd_diameter",
+        "target_mm": 82,
+        "relation": "native_primary"
+      }
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "Signed PLAN-V3-CONSENSUS three-party AGREE",
+    "source": "Codex description-only analytic authoring; Grok independent review pending"
+  }
+}

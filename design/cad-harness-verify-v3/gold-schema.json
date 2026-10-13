@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "verify-v3 analytic world gold and primary roles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "case_id",
+    "description",
+    "description_sha256",
+    "units",
+    "frame",
+    "tolerances",
+    "bbox",
+    "volume",
+    "regions",
+    "sections",
+    "steps",
+    "holes",
+    "pockets",
+    "finish",
+    "editability",
+    "provenance",
+    "profile",
+    "parameters"
+  ],
+  "properties": {
+    "schema": {
+      "const": "cad-harness.verify-gold.v3"
+    },
+    "case_id": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "description_sha256": {
+      "type": "string"
+    },
+    "units": {
+      "const": "mm"
+    },
+    "frame": {
+      "const": "world"
+    },
+    "tolerances": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "linear_mm",
+        "axis",
+        "volume_relative"
+      ],
+      "properties": {
+        "linear_mm": {
+          "const": 0.01
+        },
+        "axis": {
+          "const": 1e-06
+        },
+        "volume_relative": {
+          "const": 0.0001
+        }
+      }
+    },
+    "bbox": {
+      "$ref": "#/$defs/bounds6"
+    },
+    "volume": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_mm3",
+        "relative",
+        "formula"
+      ],
+      "properties": {
+        "target_mm3": {
+          "type": "number"
+        },
+        "relative": {
+          "const": 0.0001
+        },
+        "formula": {
+          "type": "string"
+        }
+      }
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/region"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "holes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hole"
+      }
+    },
+    "pockets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pocket"
+      }
+    },
+    "finish": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/finish"
+        }
+      ]
+    },
+    "editability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "key_dimensions_mm",
+        "roles"
+      ],
+      "properties": {
+        "required": {
+          "const": true
+        },
+        "key_dimensions_mm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "role",
+              "target_mm",
+              "relation"
+            ],
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "target_mm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "relation": {
+                "enum": [
+                  "native_primary",
+                  "axial_control",
+                  "radial_control"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority",
+        "decision",
+        "confirmed"
+      ],
+      "properties": {
+        "authority": {
+          "enum": [
+            "human",
+            "fixture"
+          ]
+        },
+        "decision": {
+          "type": "string"
+        },
+        "version": {
+          "const": 1
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "profile": {
+      "enum": [
+        "roller",
+        "taper",
+        "elbow",
+        "ribbed_box",
+        "flange",
+        "rect_prism"
+      ]
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "volume_scope": {
+      "$ref": "#/$defs/bounds6"
+    },
+    "completion_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "description_sha256",
+        "answer_sha256",
+        "completion_input_sha256"
+      ],
+      "properties": {
+        "description_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "answer_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "completion_input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "pair": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number"
+      }
+    },
+    "bounds4": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "number"
+      }
+    },
+    "bounds6": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "number"
+      }
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bounds"
+      ],
+      "properties": {
+        "bounds": {
+          "$ref": "#/$defs/bounds6"
+        }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "z",
+        "kind",
+        "bounds"
+      ],
+      "properties": {
+        "z": {
+          "type": "number"
+        },
+        "kind": {
+          "const": "rectangle"
+        },
+        "bounds": {
+          "$ref": "#/$defs/bounds4"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "center_xy",
+        "diameter",
+        "z"
+      ],
+      "properties": {
+        "center_xy": {
+          "$ref": "#/$defs/pair"
+        },
+        "diameter": {
+          "type": "number"
+        },
+        "z": {
+          "$ref": "#/$defs/pair"
+        }
+      }
+    },
+    "hole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "center_xy",
+        "diameter",
+        "z",
+        "through"
+      ],
+      "properties": {
+        "center_xy": {
+          "$ref": "#/$defs/pair"
+        },
+        "diameter": {
+          "type": "number"
+        },
+        "z": {
+          "$ref": "#/$defs/pair"
+        },
+        "through": {
+          "const": true
+        }
+      }
+    },
+    "pocket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bounds",
+        "top_z",
+        "depth",
+        "sharp"
+      ],
+      "properties": {
+        "bounds": {
+          "$ref": "#/$defs/bounds4"
+        },
+        "top_z": {
+          "type": "number"
+        },
+        "depth": {
+          "type": "number"
+        },
+        "sharp": {
+          "const": true
+        }
+      }
+    },
+    "finish": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "size",
+        "target"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "fillet",
+            "chamfer"
+          ]
+        },
+        "size": {
+          "type": "number"
+        },
+        "target": {
+          "const": "top_outer"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "cad-harness.verify-gold.v3",
+  "case_id": "depth_edit",
+  "description": "Z\u8ef8\u306e\u4e2d\u7a7a\u30ed\u30fc\u30e9\u30fc\u3002\u5916\u5f8429\u3001\u9577\u305537\u3001\u8cab\u901a\u7a74\u76f4\u5f847\u3002\u5916\u5468\u306eZ=13..19\u306b\u5e456\u3001\u534a\u5f84\u6df1\u30551.75\u306e\u5168\u5468\u6e9d\u3002XY\u4e2d\u5fc3\u3001\u4e0b\u9762Z=0\u3002\u5358\u4f4dmm\u3002\u4ed6\u306e\u52a0\u5de5\u306a\u3057\u3002",
+  "description_sha256": "aeebc9ef35fc8c2cccf462dec8c6d095af0b52a51acbea1f74704ecf3a531571",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "roller",
+  "parameters": {
+    "profile": "roller",
+    "radius": 14.5,
+    "bore_radius": 3.5,
+    "length": 37.0,
+    "groove_z": [
+      13.0,
+      19.0
+    ],
+    "groove_depth": 1.75,
+    "section_z": [
+      6.5,
+      16.0,
+      28.0
+    ]
+  },
+  "bbox": [
+    -14.5,
+    14.5,
+    -14.5,
+    14.5,
+    0.0,
+    37.0
+  ],
+  "volume": {
+    "target_mm3": 22116.419582190443,
+    "relative": 0.0001,
+    "formula": "pi*((R^2-r^2)*H-(R^2-(R-depth)^2)*width)"
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0.0,
+        0.0
+      ],
+      "diameter": 7.0,
+      "z": [
+        0.0,
+        37.0
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      29.0,
+      7.0,
+      37.0
+    ],
+    "roles": [
+      {
+        "role": "outer_diameter",
+        "target_mm": 29.0,
+        "relation": "native_primary"
+      },
+      {
+        "role": "bore_diameter",
+        "target_mm": 7.0,
+        "relation": "native_primary"
+      },
+      {
+        "role": "length",
+        "target_mm": 37.0,
+        "relation": "native_primary"
+      },
+      {
+        "role": "groove_width",
+        "target_mm": 6.0,
+        "relation": "axial_control"
+      },
+      {
+        "role": "groove_depth",
+        "target_mm": 1.75,
+        "relation": "radial_control"
+      }
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "Signed PLAN-V3-CONSENSUS three-party AGREE",
+    "source": "Codex description-only analytic authoring; Grok independent review pending"
+  }
+}

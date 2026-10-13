@@ -1,0 +1,96 @@
+{
+  "schema": "cad-harness.verify-gold.v3",
+  "case_id": "G4",
+  "description": "上面開口の箱。外形X=-42..42,Y=-29..29,Z=0..28、壁と底5。Y=-2.5..2.5の三角リブ、XZ頂点(-37,5),(37,5),(37,20)。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "daf5b6e786c541f494ddb95c21732a79a2f3822d41001f3ebc5196dd57a188ec",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "ribbed_box",
+  "parameters": {
+    "profile": "ribbed_box",
+    "bbox": [
+      -42,
+      42,
+      -29,
+      29,
+      0,
+      28
+    ],
+    "wall": 5,
+    "rib_thickness": 5,
+    "rib_top": 20
+  },
+  "bbox": [
+    -42,
+    42,
+    -29,
+    29,
+    0,
+    28
+  ],
+  "volume": {
+    "target_mm3": 57495,
+    "relative": 0.0001,
+    "formula": "84*58*28-74*48*23+74*15*5/2"
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      84,
+      58,
+      28,
+      5,
+      74,
+      15
+    ],
+    "roles": [
+      {
+        "role": "outer_x",
+        "target_mm": 84,
+        "relation": "native_primary"
+      },
+      {
+        "role": "outer_y",
+        "target_mm": 58,
+        "relation": "native_primary"
+      },
+      {
+        "role": "height",
+        "target_mm": 28,
+        "relation": "native_primary"
+      },
+      {
+        "role": "wall_bottom",
+        "target_mm": 5,
+        "relation": "native_primary"
+      },
+      {
+        "role": "rib_span_x",
+        "target_mm": 74,
+        "relation": "native_primary"
+      },
+      {
+        "role": "rib_height",
+        "target_mm": 15,
+        "relation": "native_primary"
+      }
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "Signed PLAN-V3-CONSENSUS three-party AGREE",
+    "source": "Codex description-only analytic authoring; Grok independent review pending"
+  }
+}

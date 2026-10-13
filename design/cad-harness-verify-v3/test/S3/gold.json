@@ -1,0 +1,142 @@
+{
+  "schema": "cad-harness.verify-gold.v3",
+  "case_id": "S3",
+  "description": "74×54×20のブロック。上面中央に24×18深さ6の矩形ポケット。上面外周4辺だけR3、垂直辺は鋭く残す。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "9e9dbe968a82d1ba8e2d662b5357fd1479fa986aad9666d9e5a6b9551881219d",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "rect_prism",
+  "parameters": {
+    "profile": "rect_prism",
+    "bbox": [
+      -37.0,
+      37.0,
+      -27.0,
+      27.0,
+      0,
+      20
+    ],
+    "holes": [],
+    "pockets": [
+      {
+        "bounds": [
+          -12.0,
+          12.0,
+          -9.0,
+          9.0
+        ],
+        "top_z": 20,
+        "depth": 6,
+        "sharp": true
+      }
+    ],
+    "finish": {
+      "kind": "fillet",
+      "size": 3,
+      "target": "top_outer"
+    }
+  },
+  "bbox": [
+    -37.0,
+    37.0,
+    -27.0,
+    27.0,
+    0,
+    20
+  ],
+  "volume": {
+    "target_mm3": 55944,
+    "relative": 0.0001,
+    "formula": "74*54*14"
+  },
+  "holes": [],
+  "pockets": [
+    {
+      "bounds": [
+        -12.0,
+        12.0,
+        -9.0,
+        9.0
+      ],
+      "top_z": 20,
+      "depth": 6,
+      "sharp": true
+    }
+  ],
+  "finish": {
+    "kind": "fillet",
+    "size": 3,
+    "target": "top_outer"
+  },
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      74,
+      54,
+      20,
+      24,
+      18,
+      6,
+      3
+    ],
+    "roles": [
+      {
+        "role": "stock_x",
+        "target_mm": 74,
+        "relation": "native_primary"
+      },
+      {
+        "role": "stock_y",
+        "target_mm": 54,
+        "relation": "native_primary"
+      },
+      {
+        "role": "height",
+        "target_mm": 20,
+        "relation": "native_primary"
+      },
+      {
+        "role": "pocket_x",
+        "target_mm": 24,
+        "relation": "native_primary"
+      },
+      {
+        "role": "pocket_y",
+        "target_mm": 18,
+        "relation": "native_primary"
+      },
+      {
+        "role": "pocket_depth",
+        "target_mm": 6,
+        "relation": "native_primary"
+      },
+      {
+        "role": "top_outer_radius",
+        "target_mm": 3,
+        "relation": "native_primary"
+      }
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "Signed PLAN-V3-CONSENSUS three-party AGREE",
+    "source": "Codex description-only analytic authoring; Grok independent review pending"
+  },
+  "volume_scope": [
+    -37,
+    37,
+    -27,
+    27,
+    0,
+    14
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "cad-harness.verify-gold.v3",
+  "case_id": "F4",
+  "description": "Z軸の中空ローラー。外径46、長さ54、貫通穴直径14。外周のZ=23..33に幅10、半径深さ3.5の全周溝。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "264bff8b30962f154a075b3af8e4ebc831b2b9a010e505aa1f7b89617ee4e0c0",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "roller",
+  "parameters": {
+    "profile": "roller",
+    "radius": 23,
+    "bore_radius": 7,
+    "length": 54,
+    "groove_z": [
+      23,
+      33
+    ],
+    "groove_depth": 3.5,
+    "section_z": [
+      11.5,
+      28.0,
+      43.5
+    ]
+  },
+  "bbox": [
+    -23,
+    23,
+    -23,
+    23,
+    0,
+    54
+  ],
+  "volume": {
+    "target_mm3": 76756.96250883261,
+    "relative": 0.0001,
+    "formula": "pi*((R^2-r^2)*H-(R^2-(R-depth)^2)*width)"
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 14,
+      "z": [
+        0,
+        54
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      46,
+      14,
+      54
+    ],
+    "roles": [
+      {
+        "role": "outer_diameter",
+        "target_mm": 46,
+        "relation": "native_primary"
+      },
+      {
+        "role": "bore_diameter",
+        "target_mm": 14,
+        "relation": "native_primary"
+      },
+      {
+        "role": "length",
+        "target_mm": 54,
+        "relation": "native_primary"
+      },
+      {
+        "role": "groove_width",
+        "target_mm": 10,
+        "relation": "axial_control"
+      },
+      {
+        "role": "groove_depth",
+        "target_mm": 3.5,
+        "relation": "radial_control"
+      }
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "Signed PLAN-V3-CONSENSUS three-party AGREE",
+    "source": "Codex description-only analytic authoring; Grok independent review pending"
+  }
+}

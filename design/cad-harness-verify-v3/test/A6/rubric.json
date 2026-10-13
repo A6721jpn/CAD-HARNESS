@@ -1,0 +1,19 @@
+{
+  "schema": "cad-harness.verify-q.v1",
+  "case_id": "A6",
+  "description_sha256": "e5dd9b502018ede89cd23f7c3e82db8e97c86e5fc98e6b050cb73cfe7ce3b599",
+  "required_fields": [
+    "hole_positions"
+  ],
+  "critical_invention_field": "hole_positions",
+  "positive": {
+    "needs_clarification": [
+      "hole_positions"
+    ]
+  },
+  "negative": {
+    "needs_clarification": [
+      "plate_thickness"
+    ]
+  }
+}

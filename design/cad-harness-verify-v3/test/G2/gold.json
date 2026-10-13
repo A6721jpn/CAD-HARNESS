@@ -1,0 +1,119 @@
+{
+  "schema": "cad-harness.verify-gold.v3",
+  "case_id": "G2",
+  "description": "中実の四角テーパー。Z=0は56×36、Z=44は28×18。中心一致、ねじれなし、寸法は高さに対して線形に比例縮小。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "432413c07bdcb9bfac1745dfad873b77d9e575733048026e4359df500c7c635b",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "taper",
+  "parameters": {
+    "profile": "taper",
+    "bottom": [
+      56,
+      36
+    ],
+    "top": [
+      28,
+      18
+    ],
+    "height": 44
+  },
+  "bbox": [
+    -28,
+    28,
+    -18,
+    18,
+    0,
+    44
+  ],
+  "volume": {
+    "target_mm3": 51744,
+    "relative": 0.0001,
+    "formula": "44*56*36*(1-1/2+1/12)"
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [
+    {
+      "kind": "rectangle",
+      "z": 0,
+      "bounds": [
+        -28,
+        28,
+        -18,
+        18
+      ]
+    },
+    {
+      "kind": "rectangle",
+      "z": 22,
+      "bounds": [
+        -21,
+        21,
+        -13.5,
+        13.5
+      ]
+    },
+    {
+      "kind": "rectangle",
+      "z": 44,
+      "bounds": [
+        -14,
+        14,
+        -9,
+        9
+      ]
+    }
+  ],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      56,
+      36,
+      28,
+      18,
+      44
+    ],
+    "roles": [
+      {
+        "role": "bottom_x",
+        "target_mm": 56,
+        "relation": "native_primary"
+      },
+      {
+        "role": "bottom_y",
+        "target_mm": 36,
+        "relation": "native_primary"
+      },
+      {
+        "role": "top_x",
+        "target_mm": 28,
+        "relation": "native_primary"
+      },
+      {
+        "role": "top_y",
+        "target_mm": 18,
+        "relation": "native_primary"
+      },
+      {
+        "role": "height",
+        "target_mm": 44,
+        "relation": "native_primary"
+      }
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "Signed PLAN-V3-CONSENSUS three-party AGREE",
+    "source": "Codex description-only analytic authoring; Grok independent review pending"
+  }
+}
