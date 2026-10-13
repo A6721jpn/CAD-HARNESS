@@ -1,0 +1,9 @@
+{
+  "schema": "cad-harness.verify-fault.v1",
+  "fault_id": "K1",
+  "base_case": "W1",
+  "kind": "source",
+  "inject_once": true,
+  "expected_predicate": "roller",
+  "candidate": "candidate.py"
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "W3",
+  "description": "XY平面で90度曲がる管。中心線R32、外径16、内径10。(0,0,0)から+X向きに出て(32,32,0)へ+Y向きで到着。両端開口、一定断面。単位mm。他の加工なし。",
+  "description_sha256": "e7627755d9360a652b869a6faa1ce2b2c8eef2e365d49ef01a89cdc4084d287b",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "elbow",
+  "parameters": {
+    "profile": "elbow",
+    "path_radius": 32,
+    "outer_radius": 8,
+    "inner_radius": 5
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      32,
+      16,
+      10
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-V2-CONSENSUS three-party AGREE",
+    "source": "signed description-only analytic formula; supervisor local commit pending"
+  },
+  "bbox": [
+    0,
+    40,
+    -8,
+    32,
+    -8,
+    8
+  ],
+  "volume": {
+    "target_mm3": 6158.63314627976,
+    "relative": 0.0001,
+    "formula": "pi*(8^2-5^2)*(32*pi/2)=624*pi^2"
+  }
+}

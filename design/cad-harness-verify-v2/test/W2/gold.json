@@ -1,0 +1,92 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "W2",
+  "description": "中実の四角テーパー。Z=0は50×30、Z=40は30×18。中心一致、ねじれなし、寸法は高さに対して線形に比例縮小。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "78d5d028737a5e5d973678241d3aca42b422cd703b10a5108637c412c0ec9dae",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "taper",
+  "parameters": {
+    "profile": "taper",
+    "bottom": [
+      50,
+      30
+    ],
+    "top": [
+      30,
+      18
+    ],
+    "height": 40
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [
+    {
+      "kind": "rectangle",
+      "z": 0,
+      "bounds": [
+        -25,
+        25,
+        -15,
+        15
+      ]
+    },
+    {
+      "kind": "rectangle",
+      "z": 20,
+      "bounds": [
+        -20,
+        20,
+        -12,
+        12
+      ]
+    },
+    {
+      "kind": "rectangle",
+      "z": 40,
+      "bounds": [
+        -15,
+        15,
+        -9,
+        9
+      ]
+    }
+  ],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      50,
+      30,
+      30,
+      18,
+      40
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-V2-CONSENSUS three-party AGREE",
+    "source": "signed description-only analytic formula; supervisor local commit pending"
+  },
+  "bbox": [
+    -25,
+    25,
+    -15,
+    15,
+    0,
+    40
+  ],
+  "volume": {
+    "target_mm3": 39200,
+    "relative": 0.0001,
+    "formula": "40*integral_0^1((50-20*t)*(30-12*t))dt=39200"
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "C2",
+  "description": "76×44の板。四隅D6通し穴、穴中心は外形からX9 Y8。XY中心、下面Z=0。単位mm。他の加工なし。\n厚さは11。",
+  "description_sha256": "2b4e93e6db4fd62cef81eb23c831831d57d15c1bde0d0b0b23ff7a86594dcb57",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "rect_prism",
+  "parameters": {
+    "profile": "rect_prism",
+    "bbox": [
+      -38.0,
+      38.0,
+      -22.0,
+      22.0,
+      0,
+      11
+    ],
+    "holes": [
+      {
+        "center_xy": [
+          -29,
+          -14
+        ],
+        "diameter": 6,
+        "z": [
+          0,
+          11
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          -29,
+          14
+        ],
+        "diameter": 6,
+        "z": [
+          0,
+          11
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          29,
+          -14
+        ],
+        "diameter": 6,
+        "z": [
+          0,
+          11
+        ],
+        "through": true
+      },
+      {
+        "center_xy": [
+          29,
+          14
+        ],
+        "diameter": 6,
+        "z": [
+          0,
+          11
+        ],
+        "through": true
+      }
+    ],
+    "pockets": [],
+    "finish": null
+  },
+  "holes": [
+    {
+      "center_xy": [
+        -29,
+        -14
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -29,
+        14
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        29,
+        -14
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        29,
+        14
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        11
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      76,
+      44,
+      11,
+      6
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-V2-CONSENSUS three-party AGREE",
+    "source": "signed description-only analytic formula; supervisor local commit pending"
+  },
+  "bbox": [
+    -38.0,
+    38.0,
+    -22.0,
+    22.0,
+    0,
+    11
+  ],
+  "volume": {
+    "target_mm3": 35539.92930917844,
+    "relative": 0.0001,
+    "formula": "76*44*11-4*pi*3^2*11=36784-396*pi"
+  }
+}

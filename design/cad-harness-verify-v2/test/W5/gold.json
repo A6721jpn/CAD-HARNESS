@@ -1,0 +1,193 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "W5",
+  "description": "円形フランジ外径96、厚さ10、中央通し穴D24。PCD72にD6通し穴6個、+Xから60度刻み。上面の長手Xの10×3・深さ2の溝を中心(-18,-20),(18,-20)に。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "0adcb4da674e082da1b11ae66d231d58f8283023f039080835d3e345ea5fb1d3",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "flange",
+  "parameters": {
+    "profile": "flange",
+    "radius": 48,
+    "bore_radius": 12,
+    "thickness": 10,
+    "pcd_radius": 36,
+    "pcd_count": 6,
+    "hole_radius": 3,
+    "pockets": [
+      {
+        "bounds": [
+          -23,
+          -13,
+          -21.5,
+          -18.5
+        ],
+        "top_z": 10,
+        "depth": 2,
+        "sharp": true
+      },
+      {
+        "bounds": [
+          13,
+          23,
+          -21.5,
+          -18.5
+        ],
+        "top_z": 10,
+        "depth": 2,
+        "sharp": true
+      }
+    ]
+  },
+  "holes": [
+    {
+      "center_xy": [
+        0,
+        0
+      ],
+      "diameter": 24,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        36.0,
+        0.0
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        18.000000000000004,
+        31.17691453623979
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -17.999999999999993,
+        31.176914536239792
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -36.0,
+        4.408728476930472e-15
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        -18.000000000000014,
+        -31.176914536239785
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    },
+    {
+      "center_xy": [
+        18.000000000000004,
+        -31.17691453623979
+      ],
+      "diameter": 6,
+      "z": [
+        0,
+        10
+      ],
+      "through": true
+    }
+  ],
+  "pockets": [
+    {
+      "bounds": [
+        -23,
+        -13,
+        -21.5,
+        -18.5
+      ],
+      "top_z": 10,
+      "depth": 2,
+      "sharp": true
+    },
+    {
+      "bounds": [
+        13,
+        23,
+        -21.5,
+        -18.5
+      ],
+      "top_z": 10,
+      "depth": 2,
+      "sharp": true
+    }
+  ],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      96,
+      24,
+      10,
+      6,
+      10,
+      3,
+      2,
+      72
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-V2-CONSENSUS three-party AGREE",
+    "source": "signed description-only analytic formula; supervisor local commit pending"
+  },
+  "bbox": [
+    -48,
+    48,
+    -48,
+    48,
+    0,
+    10
+  ],
+  "volume": {
+    "target_mm3": 66041.94128460104,
+    "relative": 0.0001,
+    "formula": "pi*(48^2-12^2-6*3^2)*10-2*10*3*2=21060*pi-120"
+  }
+}

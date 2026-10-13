@@ -1,0 +1,113 @@
+{
+  "schema": "cad-harness.build-spec.v1",
+  "family": "rect_prism",
+  "units": "mm",
+  "frame": "world",
+  "regions": [
+    {
+      "bounds": [
+        -48.0,
+        48.0,
+        -32.0,
+        32.0,
+        0,
+        14
+      ]
+    }
+  ],
+  "holes": [
+    {
+      "center_xy": [
+        -30,
+        -22
+      ],
+      "diameter": 8,
+      "z": [
+        0,
+        14
+      ]
+    },
+    {
+      "center_xy": [
+        -30,
+        22
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        14
+      ]
+    },
+    {
+      "center_xy": [
+        0,
+        -22
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        14
+      ]
+    },
+    {
+      "center_xy": [
+        0,
+        22
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        14
+      ]
+    },
+    {
+      "center_xy": [
+        30,
+        -22
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        14
+      ]
+    },
+    {
+      "center_xy": [
+        30,
+        22
+      ],
+      "diameter": 5,
+      "z": [
+        0,
+        14
+      ]
+    }
+  ],
+  "pockets": [
+    {
+      "bounds": [
+        -33,
+        -11,
+        -7,
+        7
+      ],
+      "top_z": 14,
+      "depth": 4
+    },
+    {
+      "bounds": [
+        11,
+        33,
+        -7,
+        7
+      ],
+      "top_z": 14,
+      "depth": 4
+    }
+  ],
+  "finish": {
+    "kind": "chamfer",
+    "size": 1,
+    "target": "top_outer"
+  }
+}

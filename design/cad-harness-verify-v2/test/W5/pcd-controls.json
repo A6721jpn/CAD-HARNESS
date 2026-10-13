@@ -1,0 +1,17 @@
+{
+  "decoy": {
+    "geometry": true,
+    "editability": false,
+    "native_valid": true
+  },
+  "reference": {
+    "geometry": true,
+    "editability": false,
+    "native_valid": true
+  },
+  "inactive": {
+    "geometry": true,
+    "editability": false,
+    "native_valid": true
+  }
+}

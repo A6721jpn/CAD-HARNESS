@@ -1,0 +1,65 @@
+{
+  "schema": "cad-harness.verify-gold.v1",
+  "case_id": "W4",
+  "description": "上面開口の箱。外形X=-36..36,Y=-24..24,Z=0..24、壁と底4。Y=-2..2の三角リブ、XZ頂点(-32,4),(32,4),(32,16)。XY中心、下面Z=0。単位mm。他の加工なし。",
+  "description_sha256": "4739df621e8911fb44b6983166e5a2aa40e9cebe27bcb04d73556d874a5850b3",
+  "units": "mm",
+  "frame": "world",
+  "tolerances": {
+    "linear_mm": 0.01,
+    "axis": 1e-06,
+    "volume_relative": 0.0001
+  },
+  "profile": "ribbed_box",
+  "parameters": {
+    "profile": "ribbed_box",
+    "bbox": [
+      -36,
+      36,
+      -24,
+      24,
+      0,
+      24
+    ],
+    "wall": 4,
+    "rib_thickness": 4,
+    "rib_top": 16
+  },
+  "holes": [],
+  "pockets": [],
+  "finish": null,
+  "sections": [],
+  "steps": [],
+  "regions": [],
+  "editability": {
+    "required": true,
+    "key_dimensions_mm": [
+      72,
+      48,
+      24,
+      4,
+      64,
+      12,
+      4
+    ]
+  },
+  "provenance": {
+    "authority": "human",
+    "confirmed": true,
+    "decision": "PLAN-V2-CONSENSUS three-party AGREE",
+    "source": "signed description-only analytic formula; supervisor local commit pending"
+  },
+  "bbox": [
+    -36,
+    36,
+    -24,
+    24,
+    0,
+    24
+  ],
+  "volume": {
+    "target_mm3": 33280,
+    "relative": 0.0001,
+    "formula": "72*48*24-64*40*20+64*12*4/2=33280"
+  }
+}
