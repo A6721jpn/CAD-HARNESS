@@ -2,8 +2,8 @@
   "schema": "cad-harness.verify-sha.v3",
   "profile": "verify-v3",
   "version": "verify-v3-reviewed-r1-solfix",
-  "created_at": "2026-10-13T09:49:29.162383+00:00",
-  "local_commit": "ef8c694",
+  "created_at": "2026-10-13T10:17:02.600008+00:00",
+  "local_commit": "f898d32",
   "plan_commit": "fd7e215",
   "files": {
     "design/cad-harness-mvp/DECISION-01-acceptance-bar.md": "fee078a9ff067a5bc93e9dcf9e760ba08ac3229b7badaa11b0cb39aeb461827d",
@@ -145,7 +145,7 @@
     "tools/cad_verify_guard.py": "e54bc0ef1f21d115d569df719bebd18dbf1733220a1a9a8ff1ff20acdaa0ae8e",
     "tools/cad_verify_probe.py": "f52d0ec1f2fb086367e4eb5ca37ade9d6623b1b49addc8630cb2bb674982ffbe",
     "tools/cad_verify_v2_probe.py": "18244b29b39630f92f3d27c01a50519266ac77c79bdb3cdfc9feb806b3fd5d1c",
-    "tools/cad_verify_v3_agent.py": "862d99214384106774fb02c9dc968c10c47e4a4e16bc895fa1fd214b3353aad5",
+    "tools/cad_verify_v3_agent.py": "eb00bda40a1321bcc67c63a99bdca7c9f92d7de5da28eb5674f39338463660e3",
     "tools/cad_verify_v3_diagnostics.py": "454cfd769918f4855e2c98404f941f3ecd613a775d3a7981daa1ebcd77634b2d",
     "tools/cad_verify_v3_guard.py": "a08767000f3e1da23b81bab0198540bd5dc414fb2a0349cc50415b4b2155b1a7",
     "tools/cad_verify_v3_probe.py": "787340110697e1c9f54b24ebdef733322cc1e3968c632f9302102994d5e224f1",
@@ -162,7 +162,7 @@
     "tools/smoke_verify_v3.py": "1fc8cc4978695453ef091110ae1c099fb130a3a8f9eb0d1d8d177e04ff36994a",
     "tools/test_cad_verify.py": "be5657780bf5927862f11da6bc049b9ce1b4cc71b51040c6d3b2b7a0cb193d3e",
     "tools/test_support.py": "29cb4201b072d2879b0d25315355351aaa1713493390842b4b394dddd6e5d243",
-    "tools/test_verify_v3.py": "b9dcb63fe413327e621bfb921465e130d7c4dc068b2c60107914afd1f72488c8"
+    "tools/test_verify_v3.py": "084c0ce54665a51b5af6ca6431007b79c1ae0ac1de3fa8a1ef69c570b539a795"
   },
   "cli": {
     "path": "C:\\Users\\backo\\.codex\\packages\\standalone\\releases\\0.159.2-x86_64-pc-windows-msvc\\bin\\codex.exe",

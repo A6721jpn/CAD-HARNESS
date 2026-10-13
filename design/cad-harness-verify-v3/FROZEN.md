@@ -24,3 +24,15 @@
   - The 46 completed records stay byte-identical.
   - Resume runs A5-r5 (-resume1) and then sequences 48–60.
   - G5-r1 and G1-r2 stay scored as recorded, with a provider_rejected annotation.
+
+## Re-freeze label: solfix-a1 (manifest version stays verify-v3-reviewed-r1-solfix) (2026-10-13 JST)
+- Why: resume #2 crashed at completion-C4-r1 with OverflowError (math.floor(inf) at the no-deadline CAD timeout cap). See SOLFIX-ADDENDUM-A1.md.
+- Consensus: SOLFIX-ADDENDUM-A1.md Revision 2. codex, grok and gemini all AGREE in solfix-a1-{codex,grok,gemini}.md. Implementation commit: f898d32. 24 tests OK.
+- Manifests:
+  - The previous solfix manifest is archived (git mv) byte-identical as SHA256.solfix.json, sha256 7d6f95ad58e73ae13fc6f6fa918500f3e41021579bd32c96855b29f56f5a20ac.
+  - New SHA256.json: 157 files, sha256 f5b4aafc2ce203c465b0b85490c781345260049e11a05254c02c361c15cd1fcd.
+- Archived run directories (renamed, nothing deleted):
+  - From resume attempt #1 (quota snapshot stale, 0 Sol calls): suffix -aborted-quota-stale-20261013T1850.
+  - From resume attempt #2 (inf overflow): suite, q-A5-r5, q-A6-r5 and completion-C4-r1 -resume1 dirs, suffix -aborted-inf-overflow-20261013T1856. Logs: .tmp/v3resume.{out,err}-aborted-inf-overflow-20261013T1856.log.
+- Call charge: the 4 accepted calls from attempt #2 (A5-r5 1, A6-r5 1, C4-r1 2) are charged and unscored. Spent before re-execution: 58 of 163. Worst case: 106.
+- Scope: segment 2 (entries[46:]: A5-r5, then sequences 48–60) is re-executed in full. Scoring, gold, thresholds and order are unchanged. The 46 segment-1 records are unchanged.
