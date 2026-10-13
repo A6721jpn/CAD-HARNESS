@@ -1,4 +1,5 @@
 """VERIFY v3 only: one suite clock and independent generation/parse/repair slots."""
+import math
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,12 +23,22 @@ class Guard(V1Guard):
         self.snapshots = []
         self.check_versions = check_versions or (lambda: None)
 
+    def inherit(self,document,*,no_deadline=False):
+        started,deadline=document['started_monotonic'],document['deadline_monotonic']
+        calls=document['real_calls'];cap=document['call_budget']
+        if (type(started) not in (int,float) or type(deadline) not in (int,float) or not math.isfinite(started) or not math.isfinite(deadline)
+                or abs((deadline-started)-10800)>1e-6 or type(calls) is not int
+                or cap!=163 or not 0<=calls<=cap or self.clock()<started):raise Stop('resume_clock_or_cap_binding')
+        self.started,self.deadline,self.calls,self.call_budget=started,None if no_deadline else deadline,calls,cap
+        self.remaining()
+
     def remaining(self, reserve=30):
+        if self.deadline is None:return math.inf
         return super().remaining(reserve)
 
     def before_episode(self, maximum_calls):
         self.before_run(maximum_calls)
-        if self.deadline-self.clock() < 960:
+        if self.deadline is not None and self.deadline-self.clock() < 960:
             raise Stop("shared_deadline_insufficient_episode_reserve")
 
 

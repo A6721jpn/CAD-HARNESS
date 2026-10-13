@@ -1,12 +1,16 @@
 """Explicit VERIFY v3 driver. No changes to the MVP/v1 generation loops."""
 import ast
+import codecs
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 
 if __package__:
@@ -20,6 +24,170 @@ else:
 
 
 CAPABILITY_ALLOWLIST=frozenset(('unsupported_shaft_operation',))
+PROVIDER_ALLOWLIST=frozenset(('server_overloaded',))
+PROVIDER_POLICY='solfix-600s-unlimited-v1'
+PROVIDER_WAIT_S=600
+CAPTURE_BYTES=16384
+EVENT_CHARS=1048576
+
+
+class StreamCapture:
+    """Hash every byte, retain a bounded UTF-8 tail, and inspect events as they arrive."""
+    def __init__(self,parse=False):
+        self.parse=parse;self.hash=hashlib.sha256();self.full_bytes=0;self.tail=b''
+        self.line='';self.skipping=False;self.complete=True;self.output=False
+        self.codes=[];self.shapes=[];self.session=None;self.usage=[];self.event_index=0
+
+    def event(self,line):
+        index=self.event_index;self.event_index+=1
+        try:event=agent.loads(line)
+        except ValueError:return
+        if not isinstance(event,dict):return
+        kind=event.get('type');payload=event.get('payload') if kind in ('event_msg','response_item') else event
+        if kind=='thread.started':self.session=agent.clean(event.get('thread_id'))
+        if kind=='turn.completed' and isinstance(event.get('usage'),dict):
+            if len(self.usage)<64:self.usage.append(dict(event_index=index,values=agent.clean({k:event['usage'].get(k) for k in agent.USAGE_KEYS})))
+            else:self.complete=False
+        if not isinstance(payload,dict):return
+        pkind=payload.get('type')
+        error=payload.get('error') if pkind in ('error','turn.failed','task_complete') else None
+        info=error.get('codex_error_info') if isinstance(error,dict) else payload.get('codex_error_info') if pkind=='error' else None
+        if isinstance(info,str):
+            if info not in self.codes:
+                if len(self.codes)<32:self.codes.append(info)
+                else:self.complete=False
+            shape=[kind,pkind]
+            if shape not in self.shapes and len(self.shapes)<32:self.shapes.append(shape)
+        item=payload.get('item') if pkind in ('item.started','item.updated','item.completed') else payload
+        if isinstance(item,dict):
+            if item.get('type') in ('agent_message','agent_message_delta') and (item.get('text') or item.get('message') or item.get('delta')):self.output=True
+            if item.get('type')=='message' and item.get('role')=='assistant' and item.get('content'):self.output=True
+        if pkind=='task_complete' and payload.get('last_agent_message'):self.output=True
+
+    def feed(self,text):
+        raw=text.encode('utf-8');self.hash.update(raw);self.full_bytes+=len(raw)
+        self.tail=(self.tail+raw)[-CAPTURE_BYTES:]
+        if not self.parse:return
+        parts=text.split('\n')
+        for i,part in enumerate(parts):
+            if not self.skipping:
+                if len(self.line)+len(part)>EVENT_CHARS:self.line='';self.skipping=True;self.complete=False
+                else:self.line+=part
+            if i<len(parts)-1:
+                if not self.skipping:self.event(self.line)
+                self.line='';self.skipping=False
+
+    def finish(self):
+        if self.parse and self.line and not self.skipping:self.event(self.line)
+        self.line=''
+
+    def summary(self,final=None,source='stdout'):
+        output=self.output or bool(final)
+        return dict(error_infos=self.codes,assistant_output=output,event_shapes=self.shapes,source=source,
+            full_sha256=self.hash.hexdigest(),parse_complete=self.complete,
+            provider_rejected=bool(self.complete and self.codes and set(self.codes)<=PROVIDER_ALLOWLIST and not output))
+
+    def artifact(self):
+        tail=self.tail.decode('utf-8',errors='ignore').encode('utf-8')
+        return dict(tail=tail,full_sha256=self.hash.hexdigest(),full_bytes=self.full_bytes)
+
+
+def provider_summary(stdout,final=None,source='stdout'):
+    capture=StreamCapture(parse=True)
+    for start in range(0,len(stdout),8192):capture.feed(stdout[start:start+8192])
+    capture.finish();return capture.summary(final,source)
+
+
+def bounded_run(argv,**kwargs):
+    """Production exec transport never buffers complete stdout/stderr in memory."""
+    if len(argv)<2 or argv[1]!='exec':return subprocess.run(argv,**kwargs)
+    options=dict(kwargs);timeout=options.pop('timeout',None)
+    for key in ('capture_output','text','encoding','errors'):options.pop(key,None)
+    captures={k:StreamCapture(parse=k=='stdout') for k in ('stdout','stderr')};errors=[]
+    def drain(pipe,capture):
+        decoder=codecs.getincrementaldecoder('utf-8')(errors='replace')
+        try:
+            with pipe:
+                while True:
+                    chunk=pipe.read(8192)
+                    if not chunk:break
+                    capture.feed(decoder.decode(chunk))
+                capture.feed(decoder.decode(b'',final=True));capture.finish()
+        except OSError as exc:errors.append(exc)
+    with subprocess.Popen(argv,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**options) as process:
+        threads=[threading.Thread(target=drain,args=(getattr(process,k),v),daemon=True) for k,v in captures.items()]
+        for thread in threads:thread.start()
+        failure=None
+        try:process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired as exc:
+            failure=exc;process.kill();process.wait()
+        finally:
+            for thread in threads:thread.join()
+        stdout,stderr=(captures[k].tail.decode('utf-8',errors='ignore') for k in ('stdout','stderr'))
+        completed=subprocess.CompletedProcess(argv,process.returncode,stdout,stderr)
+        completed.transport_capture={k:v.artifact() for k,v in captures.items()}
+        completed.provider_summary=captures['stdout'].summary()
+        completed.exec_metadata=(captures['stdout'].session,captures['stdout'].usage or None)
+        if failure:
+            failure.output=stdout;failure.stderr=stderr
+            failure.transport_capture=completed.transport_capture;failure.exec_metadata=completed.exec_metadata
+            failure.provider_summary=completed.provider_summary
+            raise failure
+        if errors:raise errors[0]
+        return completed
+
+
+def rollout_summary(session_id,final=None,home=None):
+    """CLI versions may omit the typed error in stdout. Bind its actual session event.
+
+    Read only the uniquely named session; retain hashes/typed metadata, never its
+    prompt/config/credentials or full contents. No free-text fallback.
+    """
+    if not isinstance(session_id,str) or not re.fullmatch(r'[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}',session_id):return None
+    account=Path(home or os.environ.get('CODEX_HOME') or Path.home()/'.codex')
+    matches=list((account/'sessions').glob('*/*/*/*'+session_id+'*.jsonl'))
+    if len(matches)!=1:return None
+    capture=StreamCapture(parse=True)
+    try:
+        with matches[0].open(encoding='utf-8') as file:
+            while True:
+                chunk=file.read(8192)
+                if not chunk:break
+                capture.feed(chunk)
+    except (OSError,UnicodeError):return None
+    capture.finish();summary=capture.summary(final,'rollout')
+    summary['session_id']=session_id
+    return summary
+
+
+def capture_transport(out,root,row,completed,summary):
+    row['provider_summary']=summary;row['transport_artifacts']={}
+    for key,value in (('stdout',completed.stdout or ''),('stderr',completed.stderr or '')):
+        captured=getattr(completed,'transport_capture',None)
+        if captured:item=captured[key];tail=item['tail'];full_sha=item['full_sha256'];full_bytes=item['full_bytes']
+        else:
+            raw=value.encode('utf-8');tail=raw[-CAPTURE_BYTES:].decode('utf-8',errors='ignore').encode('utf-8');full_sha=hashlib.sha256(raw).hexdigest();full_bytes=len(raw)
+        p=out/('call-c%d-%s-tail.txt'%(row['call'],key))
+        with p.open('xb') as file:file.write(tail)
+        row['transport_artifacts'][key]=dict(path=p.relative_to(root).as_posix(),sha256=hashlib.sha256(tail).hexdigest(),
+            full_sha256=full_sha,full_bytes=full_bytes,bytes=len(tail))
+    p=out/('call-c%d-provider.json'%row['call'])
+    with p.open('x',encoding='utf-8') as file:json.dump(summary,file,allow_nan=False)
+    row['provider_artifact']=dict(path=p.relative_to(root).as_posix(),sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+
+
+def wait_provider(row,budget,guard,logical_deadline,sleeper=None):
+    """Backoff is wall time, never a new clock or a provider failure/stop."""
+    row.update(wait_requested_s=PROVIDER_WAIT_S,backoff_s=0)
+    sleep=sleeper or time.sleep
+    while row['backoff_s']<PROVIDER_WAIT_S:
+        available=min(logical_deadline-budget.clock(),budget.remaining(),guard.remaining() if guard else 900)
+        if available<=0:raise Stop('episode_stage_deadline_exceeded')
+        delay=min(60,PROVIDER_WAIT_S-row['backoff_s'],available)
+        sleep(delay);row['backoff_s']+=delay
+        if delay==available and row['backoff_s']<PROVIDER_WAIT_S:
+            if guard:guard.remaining()
+            raise Stop('episode_stage_deadline_exceeded')
 CAPABILITY_CONTRACT=(
     'The compiler supports exactly rect_prism, rect_stack, stepped_shaft. '
     'Rectangular families support axis-aligned connected stock regions, rectangular top pockets, '
@@ -66,8 +234,9 @@ def feedback(target, candidate, result):
 
 
 def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=None, clock=None,
-               route="spec", max_calls=None, rubric=None, answer=None, fault=None, guard=None, preview=False):
-    if route not in ("source", "spec", "ask", "completion") or not name.endswith("-mvp1"):
+               route="spec", max_calls=None, rubric=None, answer=None, fault=None, guard=None, preview=False,
+               provider_retry=False,sleeper=None,prior_provider_attempts=0,prior_call_identity=None):
+    if route not in ("source", "spec", "ask", "completion") or not (name.endswith('-mvp1') or provider_retry and name.endswith('-mvp1-resume1')):
         raise ValueError("verify_v3_options")
     if route == "completion" and (not isinstance(answer, str) or not rubric or preview):
         raise ValueError("verify_v3_answer_contract")
@@ -77,6 +246,8 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
     max_calls = cap if max_calls is None else max_calls
     if not 1 <= max_calls <= cap:
         raise ValueError("verify_v3_call_contract")
+    if type(prior_provider_attempts) is not int or prior_provider_attempts<0 or prior_provider_attempts and not provider_retry:
+        raise ValueError('provider_retry_seed')
     root = Path(root).resolve()
     budget = Budget(max_calls, clock or (guard.clock if guard else None), preview)
     if guard: guard.before_episode(max_calls)
@@ -90,7 +261,7 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
             raise ValueError("eval_human_gold_required")
     if rubric and rubric.get("description_sha256") != agent.digest(input_text):
         raise ValueError("rubric_description_binding")
-    runner = runner or subprocess.run
+    runner = runner or (bounded_run if provider_retry else subprocess.run)
     out = agent.new_run_dir(root, name)
     report = dict(schema="cad-harness.cad_agent.verify3", run_id=name, mode="description", probe_profile="verify-v3",
         task_id=gold["case_id"] if gold else rubric["case_id"], description_sha256=agent.digest(input_text),
@@ -99,11 +270,17 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
         unsupported_to_source=False, final_out_dir=None, geometry_ok=None, route=route, preview=preview,
         repair_eligible=False, repair_not_attempted_reason=None, fault=fault.record if fault else None,
         interpretations=[], unsupported_origin=None)
+    if provider_retry:report.update(provider_policy=PROVIDER_POLICY,prior_provider_attempts=prior_provider_attempts)
     if answer is not None:
         report.update(answer_sha256=agent.digest(answer), completion_input_sha256=agent.digest(completion_text),
                       completion_reached=False, initial_q_score=None, initial_critical_invention=False)
     target, previous, candidate, last_spec = "spec", None, None, None
     prompt = input_text
+
+    def consume_response(purpose,row):
+        # Eligibility was checked before invocation. A late response is still a
+        # real observation, even if the stage clock expired during transport.
+        budget.counts[purpose]+=1;budget.calls+=1;row['slot_consumed']=True
 
     def invoke(purpose):
         nonlocal prompt, previous
@@ -119,41 +296,80 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
                 "never natural-language questions or invented values. Allowed field IDs: "+", ".join(CLARIFICATION_FIELDS)+".")
         if budget.stage == "repair": contract += "\nRetain this output path for CAD repair; no unsupported or clarification fallback.\n"+REPAIR_CONTRACT
         context = agent.developer_context(skill, contract, previous)
-        row = dict(call=budget.calls+1, kind=target, purpose=purpose, stage=budget.stage,
-            context_sha256=agent.digest(context), prompt_sha256=agent.digest(prompt), started_at=agent.utc(), usage=None,
-            timeout_s=timeout, elapsed_s=budget.clock()-budget.started)
+        if provider_retry and budget.calls==0 and prior_call_identity is not None:
+            identity=dict(kind=target,purpose=purpose,context_sha256=agent.digest(context),prompt_sha256=agent.digest(prompt))
+            if any(identity[k]!=prior_call_identity.get(k) for k in identity):raise Stop('resume_A5_payload_binding')
         parent = Path(tempfile.gettempdir()).resolve()
         if parent.is_relative_to(root): raise ValueError("exec_temp_inside_repository")
-        tick = budget.clock()
-        try:
-            with tempfile.TemporaryDirectory(prefix="cad-verify-v3-", dir=parent) as directory:
-                work = Path(directory); last = work/"last.txt"
-                argv = agent.exec_argv(codex, work, last, prompt, context)
+        logical=budget.calls+1
+        logical_deadline=budget.clock()+timeout
+        seed=prior_provider_attempts if logical==1 else 0
+        with tempfile.TemporaryDirectory(prefix="cad-verify-v3-", dir=parent) as directory:
+            work = Path(directory); last = work/"last.txt"
+            argv = agent.exec_argv(codex, work, last, prompt, context)
+            transport=seed
+            while True:
+                transport+=1
+                timeout=min(budget.sol_timeout(purpose),logical_deadline-budget.clock())
+                if guard:timeout=min(timeout,guard.remaining())
+                if timeout<=0:raise Stop('episode_stage_deadline_exceeded')
+                tick=budget.clock()
+                row = dict(call=len(report['calls'])+1,kind=target,purpose=purpose,stage=budget.stage,
+                    context_sha256=agent.digest(context),prompt_sha256=agent.digest(prompt),started_at=agent.utc(),usage=None,
+                    timeout_s=timeout,elapsed_s=tick-budget.started)
+                if provider_retry:row.update(logical_call=logical,transport_attempt=transport,
+                    argv_sha256=agent.digest(json.dumps(argv,ensure_ascii=False)),slot_consumed=False,provider_rejected=False)
                 snapshot = guard.before_call() if guard else None
-                budget.call(purpose)
+                if not provider_retry:budget.call(purpose)
                 if guard: row["quota_snapshot"] = snapshot
                 row["invoked"] = True
-                if target=='source' or budget.stage=='repair':
+                if provider_retry or target=='source' or budget.stage=='repair':
                     row['context_artifacts']={}
                     for key,value in (('prompt',prompt),('context',context)):
-                        path=out/('call-c%d-%s.txt'%(budget.calls,key))
+                        path=out/('call-c%d-%s.txt'%(row['call'],key))
                         with path.open('xb') as artifact:artifact.write(value.encode('utf-8'))
                         row['context_artifacts'][key]=dict(path=path.relative_to(root).as_posix(),sha256=agent.digest(value))
                 report["calls"].append(row)
                 if route == "completion" and purpose == "interpretation":
                     report["completion_reached"] = True
-                completed = runner(argv, cwd=str(work),
-                    capture_output=True, text=True, encoding="utf-8", errors="replace", shell=False,
-                    stdin=subprocess.DEVNULL, timeout=timeout)
-                row["exit"] = completed.returncode
-                row["session_id"], row["usage"] = agent.exec_metadata(completed.stdout)
-                if completed.returncode != 0 or not last.is_file(): raise ValueError("exec_nonzero_or_missing_final")
-                final = last.read_text(encoding="utf-8-sig")
-                if str(work).lower() in final.lower() or work.as_posix().lower() in final.lower(): raise ValueError("private_source")
-                (out/("last-c%d.txt" % budget.calls)).write_bytes(agent.clean(final).encode("utf-8"))
-                return final
-        finally:
-            row.update(ended_at=agent.utc(), wall_ms=(budget.clock()-tick)*1000)
+                try:
+                    completed = runner(argv,cwd=str(work),capture_output=True,text=True,encoding='utf-8',errors='replace',shell=False,
+                        stdin=subprocess.DEVNULL,timeout=timeout)
+                    row['exit']=completed.returncode
+                    row['session_id'],row['usage']=getattr(completed,'exec_metadata',None) or agent.exec_metadata(completed.stdout)
+                    final=last.read_text(encoding='utf-8-sig') if last.is_file() else None
+                    if provider_retry:
+                        summary=dict(completed.provider_summary) if hasattr(completed,'provider_summary') else provider_summary(completed.stdout,final)
+                        if final:summary.update(assistant_output=True,provider_rejected=False)
+                        if not summary['error_infos'] and (completed.returncode!=0 or not final):
+                            fallback=rollout_summary(row['session_id'],final)
+                            if fallback:
+                                fallback['assistant_output'] |= summary['assistant_output']
+                                fallback['provider_rejected'] &= not summary['assistant_output'] and summary.get('parse_complete',True)
+                                summary=fallback
+                        capture_transport(out,root,row,completed,summary)
+                        row['provider_rejected']=summary['provider_rejected']
+                        if row['provider_rejected'] and guard:guard.calls-=1
+                        if not row['provider_rejected']:consume_response(purpose,row)
+                    if not provider_retry or not row['provider_rejected']:
+                        if completed.returncode!=0 or final is None:raise ValueError('exec_nonzero_or_missing_final')
+                        if str(work).lower() in final.lower() or work.as_posix().lower() in final.lower():raise ValueError('private_source')
+                        (out/('last-c%d.txt'%row['call'])).write_bytes(agent.clean(final).encode('utf-8'))
+                        if logical==1:report['first_response_call']=row['call']
+                        return final
+                except (OSError,subprocess.SubprocessError) as exc:
+                    if provider_retry and 'transport_artifacts' not in row:
+                        text=lambda v:v.decode('utf-8',errors='replace') if isinstance(v,bytes) else v or ''
+                        failed=subprocess.CompletedProcess(argv,None,text(getattr(exc,'stdout',None)),text(getattr(exc,'stderr',None)))
+                        if hasattr(exc,'transport_capture'):failed.transport_capture=exc.transport_capture
+                        summary=dict(exc.provider_summary) if hasattr(exc,'provider_summary') else provider_summary(failed.stdout)
+                        summary.update(provider_rejected=False,transport_error=type(exc).__name__)
+                        row['session_id'],row['usage']=getattr(exc,'exec_metadata',None) or agent.exec_metadata(failed.stdout)
+                        capture_transport(out,root,row,failed,summary);row['error_type']=type(exc).__name__
+                        consume_response(purpose,row)
+                    raise
+                finally:row.update(ended_at=agent.utc(),wall_ms=(budget.clock()-tick)*1000)
+                wait_provider(row,budget,guard,logical_deadline,sleeper)
 
     def parse(final):
         if target == "source":
@@ -162,7 +378,7 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
             return "source", value, None
         raw = cad_spec.read_json(agent.strip_final_fence(final, "json", "spec"))
         kind,value,decision=interpretation(raw,source_enabled=route=='source' and budget.stage=='initial' and budget.attempts==0)
-        report['interpretations'].append(dict(call=budget.calls,**decision))
+        report['interpretations'].append(dict(call=report['calls'][-1]['call'],**decision))
         if kind=='unsupported':report['unsupported_origin']=decision['unsupported_origin']
         return kind,value,raw
 
@@ -251,7 +467,7 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
                 canonical = cad_spec.canonical(candidate)
                 if canonical == last_spec: raise ValueError("unchanged_spec")
                 last_spec = canonical
-                (out/("build-spec-c%d.json" % budget.calls)).write_text(canonical, encoding="utf-8")
+                (out/("build-spec-c%d.json" % report['calls'][-1]['call'])).write_text(canonical, encoding="utf-8")
                 source = cad_spec.compile_spec(candidate)
             else: source = candidate
             timeout = math.floor(budget.cad_timeout())
@@ -282,7 +498,7 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
             if budget.clock() > min(budget.deadline, budget.stage_deadline):
                 raise Stop("episode_stage_deadline_exceeded")
             if fault:
-                fault.observe(result, budget.calls)
+                fault.observe(result, report['calls'][-1]['call'])
                 if fault.record.get("observed") and not fault.record.get("detected"):
                     raise ValueError("fault_false_pass" if result.get("geometry_ok") is True else "fault_detection_mismatch")
             problem = eval_verify.harness_failure(report)
@@ -301,12 +517,15 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
         report["message_code"] = agent.clean(str(exc)) or type(exc).__name__
     finally:
         report.update(ended_at=agent.utc(), wall_ms=(budget.clock()-budget.started)*1000,
-            llm_calls=budget.calls, cad_attempts=budget.attempts, budget_counts=budget.counts,
+            llm_calls=budget.calls if provider_retry else len(report['calls']),logical_calls=budget.calls,cad_attempts=budget.attempts,budget_counts=budget.counts,
             parse_repairs=budget.counts["parse_repair"], repair_calls=budget.counts["repair"],
-            repair_invoked=budget.counts['repair']==1,repair_success=budget.counts['repair']==1 and report['status']=='ok')
+            repair_invoked=any(c['purpose']=='repair' for c in report['calls']),repair_success=budget.counts['repair']==1 and report['status']=='ok')
+        if provider_retry:
+            report.update(transport_attempts=len(report['calls']),provider_rejected_attempts=sum(c['provider_rejected'] for c in report['calls']),
+                provider_wait_s=sum(c.get('backoff_s',0) for c in report['calls']))
         if route == "completion" and not report["completion_reached"]:
             report.setdefault("completion_not_reached_reason", report["message_code"] or "initial_question_not_accepted")
-        if report["repair_eligible"] and budget.counts["repair"] == 0:
+        if report["repair_eligible"] and not report['repair_invoked']:
             reason = report["message_code"] or "repair_slot_not_used"
             report["repair_not_attempted_reason"] = reason
             if not any(s in reason for s in ("quota_", "sha_", "agents", "deadline", "reservation", "budget")):
@@ -314,8 +533,8 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
         if report["wall_ms"] >= 900000:
             report.update(status="failed", message_code="episode_deadline_exceeded")
         if guard:
-            report["shared_deadline_remaining_s"] = max(0, guard.deadline-guard.clock())
-            if guard.clock() >= guard.deadline: report.update(status="failed", message_code="shared_deadline_exceeded")
+            report["shared_deadline_remaining_s"] = None if guard.deadline is None else max(0, guard.deadline-guard.clock())
+            if guard.deadline is not None and guard.clock() >= guard.deadline: report.update(status="failed", message_code="shared_deadline_exceeded")
         with (out/"driver-run.json").open("x", encoding="utf-8") as output:
             json.dump(report, output, ensure_ascii=False, allow_nan=False)
     return report, 0 if report["status"] in ("ok", "preview", "first_response") else 1

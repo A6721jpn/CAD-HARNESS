@@ -3,6 +3,7 @@ import argparse
 import ast
 from collections import Counter
 import csv
+from datetime import datetime
 import hashlib
 import json
 import math
@@ -35,6 +36,10 @@ CODE=tuple(dict.fromkeys((*eval_verify.CODE,
     "design/cad-harness-verify-v3/call-cap.md", "design/cad-harness-verify-v3/native-controls-handoff.md")))
 GROUPS=("dev","legacy","mvp","geometry","q","completion","fault")
 CAPS={"source":4,"spec":3,"ask":1,"completion":4,"offline":0,"mvp":3}
+SOLFIX_VERSION='verify-v3-reviewed-r1-solfix'
+RESUME_DEADLINE='none (user decision 17:08)'
+SOLFIX_CODE=frozenset(('tools/cad_verify_v3_agent.py','tools/cad_verify_v3_guard.py','tools/eval_verify_v3.py','tools/test_verify_v3.py'))
+SOLFIX_DOCS=frozenset(DESIGN+'/'+n for n in ('SOLFIX-CONSENSUS.md','SOLFIX-BRIEF.md','SOL-FAILURE.md','solfix-codex.md'))
 sha=eval_verify.sha
 write_json=eval_verify.write_json
 result_pass=eval_verify.result_pass
@@ -129,6 +134,7 @@ def freeze(root=ROOT,version="verify-v3-phase2-uncommitted",implementation_commi
     root=Path(root).resolve(); base=root/DESIGN
     eval_mvp.valid_name(version)
     names=set(CODE)
+    if version==SOLFIX_VERSION:names.update(SOLFIX_DOCS)
     names.update(p.relative_to(root).as_posix() for p in (root/"design/cad-harness-mvp/eval-v1").glob("*.json"))
     names.update(DESIGN+"/"+n for n in ("PLAN-V3-CONSENSUS.md","run-order.json"))
     for part in ("test","dev"):
@@ -146,6 +152,9 @@ def freeze(root=ROOT,version="verify-v3-phase2-uncommitted",implementation_commi
         agents_sha256=cad_agent.agents_identity(root),settings=dict(model=cad_agent.MODEL,effort=cad_agent.EFFORT,
             disabled=list(cad_agent.DISABLED),sandbox="read-only"))
     if version.startswith("verify-v3-reviewed-") and not value["cli"]: raise Stop("reviewed_cli_freeze_required")
+    if version==SOLFIX_VERSION:
+        original=read_json((base/'SHA256.run-r1.json').read_text(encoding='utf-8'))
+        transition(root,original,value)
     validate_order(read_json((base/"run-order.json").read_text(encoding="utf-8")))
     write_json(base/"SHA256.json",value)
     return value
@@ -214,6 +223,13 @@ def paths(root,prefix):
 def run_name(prefix,entry): return prefix+"-"+entry["id"]+"-mvp1"
 
 
+def driver_path(root,name):
+    if name.endswith('-mvp1-resume1'):
+        eval_mvp.valid_name(name)
+        return safe_file(root,'reports/cad-run/'+name)
+    return eval_mvp.run_path(root,name)
+
+
 def inputs(root,entry):
     group,case=entry["group"],entry["case"]
     if group=="mvp":
@@ -274,11 +290,18 @@ def first_response(final):
 
 def check_calls(report,entry,raw,answer,where):
     calls=report["calls"]; n=report["llm_calls"]; attempts=report["attempts"]
-    if (type(n) is not int or n!=len(calls) or not 0<=n<=entry["max_calls"]
+    solfix=report.get('provider_policy')==agent.PROVIDER_POLICY
+    slot_calls=[c for c in calls if not solfix or c.get('slot_consumed') is True]
+    if (type(n) is not int or n!=len(slot_calls) or not 0<=n<=entry["max_calls"]
             or type(report["cad_attempts"]) is not int or report["cad_attempts"]!=len(attempts)
             or len(attempts)>(3 if entry["group"]=="mvp" else 0 if entry["group"]=="dev" or entry["route"]=="ask" else 2)):
         raise ValueError("budget_binding")
-    purposes=Counter(c.get("purpose",c.get("kind")) for c in calls)
+    purposes=Counter(c.get("purpose",c.get("kind")) for c in slot_calls)
+    if solfix:
+        if report.get('logical_calls')!=len(slot_calls):raise ValueError('logical_call_binding')
+        if (report.get('transport_attempts')!=len(calls) or report.get('provider_rejected_attempts')!=len(calls)-n
+                or report.get('provider_wait_s')!=sum(c.get('backoff_s',0) for c in calls)):raise ValueError('provider_counter_binding')
+        check_transport(report,where)
     if entry["group"]!="mvp":
         if any(p not in ("question","interpretation","source","parse_repair","repair") or count>1 for p,count in purposes.items()):
             raise ValueError("purpose_budget_binding")
@@ -290,7 +313,7 @@ def check_calls(report,entry,raw,answer,where):
     generation_closed=False; repair_seen=False
     for index,c in enumerate(calls):
         snapshot=c.get("quota_snapshot")
-        expected=sha(raw+b"\n"+answer) if answer is not None and index>0 else sha(raw)
+        expected=sha(raw+b"\n"+answer) if answer is not None and (c.get('purpose')!='question' if solfix else index>0) else sha(raw)
         if (c.get("prompt_sha256")!=expected or not snapshot or snapshot["decision"]!="allow"
                 or not 0<=snapshot["age_s"]<=300 or not 0<=snapshot["used_percent"]<55):
             raise ValueError("call_quota_or_payload_binding")
@@ -307,7 +330,7 @@ def check_calls(report,entry,raw,answer,where):
             generation_closed |= c["stage"]=="repair"
             cap=180 if purpose=="repair" else 60 if purpose=="parse_repair" else 450
             if not 0<c["timeout_s"]<=cap or not 0<=c["elapsed_s"]<900: raise ValueError("call_time_binding")
-            if c['kind']=='source' or c['stage']=='repair':
+            if solfix or c['kind']=='source' or c['stage']=='repair':
                 artifacts=c.get('context_artifacts')
                 if not artifacts or set(artifacts)!={'prompt','context'}:raise ValueError('context_artifacts_missing')
                 for key,item in artifacts.items():
@@ -315,6 +338,36 @@ def check_calls(report,entry,raw,answer,where):
                     if path.resolve()!=path or not path.is_relative_to(where):raise ValueError('context_artifact_path')
                     if sha(path.read_bytes())!=item['sha256'] or item['sha256']!=c[key+'_sha256']:raise ValueError('context_artifact_hash')
     return purposes
+
+
+def check_transport(report,where):
+    root=where.parents[2];previous={};accepted=0;seed=report.get('prior_provider_attempts',0)
+    for c in report['calls']:
+        logical=c.get('logical_call');attempt=c.get('transport_attempt')
+        if logical!=accepted+1 or type(attempt) is not int or attempt<1:raise ValueError('transport_order_binding')
+        prior=previous.get(logical)
+        if prior:
+            if not prior['provider_rejected'] or attempt!=prior['transport_attempt']+1 or any(c[k]!=prior[k] for k in ('kind','purpose','stage','argv_sha256','prompt_sha256','context_sha256')):raise ValueError('provider_retry_binding')
+            if prior.get('backoff_s')!=agent.PROVIDER_WAIT_S or prior.get('wait_requested_s')!=agent.PROVIDER_WAIT_S:raise ValueError('provider_backoff_binding')
+        elif attempt!=(seed+1 if logical==1 else 1):raise ValueError('provider_seed_binding')
+        artifacts=c.get('transport_artifacts')
+        if not artifacts or set(artifacts)!={'stdout','stderr'}:raise ValueError('transport_capture_missing')
+        for item in (*artifacts.values(),c['provider_artifact']):
+            p=safe_file(root,item['path'])
+            if not p.is_relative_to(where) or sha(p.read_bytes())!=item['sha256']:raise ValueError('transport_artifact_binding')
+        for item in artifacts.values():
+            size=min(item['full_bytes'],16384)
+            path=safe_file(root,item['path'])
+            if path.stat().st_size!=item['bytes'] or not max(0,size-3)<=item['bytes']<=size:raise ValueError('transport_capture_limit')
+            path.read_text(encoding='utf-8')
+        summary=read_json(safe_file(root,c['provider_artifact']['path']).read_text(encoding='utf-8'))
+        if summary!=c['provider_summary'] or c.get('provider_rejected')!=summary['provider_rejected']:raise ValueError('provider_classification_binding')
+        if summary.get('source')=='stdout' and summary['full_sha256']!=artifacts['stdout']['full_sha256']:raise ValueError('provider_stream_hash_binding')
+        if summary.get('source')=='rollout' and summary.get('session_id')!=c.get('session_id'):raise ValueError('provider_session_binding')
+        if summary['provider_rejected'] and (not summary.get('parse_complete',True) or summary['assistant_output'] or not summary['error_infos'] or not set(summary['error_infos'])<=agent.PROVIDER_ALLOWLIST or c.get('slot_consumed')):raise ValueError('provider_allowlist_binding')
+        if not summary['provider_rejected'] and not c.get('slot_consumed'):raise ValueError('provider_slot_binding')
+        if c['slot_consumed']:accepted+=1
+        previous[logical]=c
 
 
 def check_attempts(root,entry,report,where,gold):
@@ -385,7 +438,7 @@ def check_fault(root,entry,report,where):
 
 
 def record(root,entry,name):
-    row=empty_row(entry,name); where=eval_mvp.run_path(root,name)
+    row=empty_row(entry,name); where=driver_path(root,name)
     try:
         report=read_json((where/"driver-run.json").read_text(encoding="utf-8"))
         gold,raw,rubric,answer=inputs(root,entry); is_mvp=entry["group"]=="mvp"
@@ -408,12 +461,45 @@ def record(root,entry,name):
             parse_repairs=purposes["parse_repair"],repair_calls=purposes["repair"],
             call_kinds=[c.get("purpose",c.get("kind")) for c in report["calls"]])
         row['call_stages']=[c.get('stage') for c in report['calls']]
+        if report.get('provider_policy')==agent.PROVIDER_POLICY:
+            row.update(provider_rejected_attempts=sum(c.get('provider_rejected',False) for c in report['calls']),
+                logical_calls=report['logical_calls'])
+            message=report.get('message_code') or ''
+            provider_partial=row['provider_rejected_attempts'] and any(k in message for k in ('deadline','quota_','reservation','sha_','insufficient_call_budget'))
+            if provider_partial:
+                timed=message in ('episode_stage_deadline_exceeded','episode_deadline_exceeded','repair_time_reservation_lost')
+                check_attempts(root,entry,report,where,gold)
+                # A rejected later call must not erase an already observed
+                # question or CAD/fault measurement from this partial episode.
+                if report.get('first_response'):
+                    final_text=(where/('last-c%d.txt'%report.get('first_response_call',1))).read_text(encoding='utf-8')
+                    first=first_response(final_text);actual=report['first_response']
+                    if any(actual.get(k)!=v for k,v in first.items()) or actual.get('sha256')!=sha(final_text.encode('utf-8')):raise ValueError('first_response_binding')
+                    row['first_response']=first
+                    if entry['route']=='ask' or entry['group']=='completion':
+                        score,invention=q_score(first,False,entry['case'],rubric)
+                        row.update(initial_q_score=score,initial_critical_invention=invention,q_score=score,critical_invention=invention)
+                    if entry['group']=='completion':
+                        if (report.get('answer_sha256')!=sha(answer) or report.get('completion_input_sha256')!=sha(raw+b'\n'+answer)
+                                or report.get('initial_q_score')!=score or report.get('initial_critical_invention')!=invention
+                                or read_json((where/'first-response.json').read_text(encoding='utf-8'))!=actual):raise ValueError('completion_report_binding')
+                        row['completion_reached']=report.get('completion_reached') is True
+                attempts=report['attempts']
+                if attempts:
+                    first_result,last_result=attempts[0]['result'],attempts[-1]['result']
+                    row.update(initial=gates(first_result),final=gates(last_result),initial_stage_statuses=first_result.get('stage_statuses'),
+                        final_stage_statuses=last_result.get('stage_statuses'),post_answer_first_attempt_pass=entry['group']=='completion' and result_pass(first_result),
+                        repair_eligible=report['repair_eligible'],natural_repair_eligible=report['repair_eligible'] and entry['group'] in ('geometry','q','completion'))
+                    if entry['group']=='fault':row['fault']=check_fault(root,entry,report,where)
+                row.update(completed=False,passed=False,stop_reason=None if timed else row['stop_reason'] or message,
+                    episode_stop_reason=message if timed else None,failure_class='timeout' if timed else row['stop_reason'] or message)
+                return row
         if report.get("message_code")=="repair_time_reservation_lost":
             row["episode_stop_reason"]="repair_time_reservation_lost"
         if not report["calls"]:
             row.update(completed=False,failure_class=row["stop_reason"] or "not_invoked"); return row
         if entry["first_response"] or entry["group"]=="completion":
-            final=(where/"last-c1.txt").read_text(encoding="utf-8")
+            final=(where/('last-c%d.txt'%report.get('first_response_call',1))).read_text(encoding="utf-8")
             first=first_response(final)
             actual=report.get("first_response") or {}
             if any(actual.get(k)!=v for k,v in first.items()) or actual.get("sha256")!=sha(final.encode("utf-8")):
@@ -461,7 +547,7 @@ def record(root,entry,name):
             score,invention=q_score(row["first_response"],False,entry["case"],rubric)
             row.update(initial_q_score=score,initial_critical_invention=invention,q_score=score,critical_invention=invention)
             if entry["route"]=="ask":
-                passed=score==1 and not invention and len(report["calls"])==1 and not attempts and wall<450
+                passed=score==1 and not invention and report.get('logical_calls',len(report['calls']))==1 and not attempts and wall<450
                 row["route_ok"]=None
             else:
                 if (report.get("answer_sha256")!=sha(answer) or report.get("completion_input_sha256")!=sha(raw+b"\n"+answer)
@@ -471,7 +557,7 @@ def record(root,entry,name):
                     raise ValueError("completion_first_artifact_binding")
                 reached=report.get("completion_reached") is True
                 actual_start=any(c["purpose"]=="interpretation" and c["invoked"] for c in report["calls"])
-                if reached!=actual_start or reached and not (score and not invention) or (not reached and (len(report["calls"])!=1 or attempts)):
+                if reached!=actual_start or reached and not (score and not invention) or (not reached and (report.get('logical_calls',len(report['calls']))!=1 or attempts)):
                     raise ValueError("completion_answer_gate_binding")
                 row.update(completion_reached=reached,completion_not_reached_reason=report.get("completion_not_reached_reason"))
                 passed &= reached
@@ -515,6 +601,7 @@ def run(prefix,snapshot,call_budget=163,codex=None,root=ROOT,runner=None,clock=N
     root=Path(root).resolve(); guard=Guard(snapshot,call_budget=call_budget,clock=clock,now=now)
     manifest,order=load(root)
     if manifest["version"].endswith("-aggfix"): raise Stop("aggfix_no_live_run")
+    if manifest['version']==SOLFIX_VERSION:raise Stop('solfix_requires_resume')
     directory=paths(root,prefix)
     executable=manifest["cli"]["path"]
     if codex and Path(shutil.which(codex) or codex).resolve()!=Path(executable): raise Stop("cli_path_changed")
@@ -575,6 +662,123 @@ def run(prefix,snapshot,call_budget=163,codex=None,root=ROOT,runner=None,clock=N
         stop_reason=stopped,rows=rows,real_calls=guard.calls,dev_calls=dev_calls,quota_snapshots=guard.snapshots,
         frozen_sha256=manifest["files"],sha_manifest=digest,call_budget=call_budget)
     write_json(directory/"suite-run.json",document)
+    return document
+
+
+def transition(root,original,current):
+    """The reviewed amendment permits four code files, never CAD/gold/order changes."""
+    if (original.get('schema')!='cad-harness.verify-sha.v3' or original.get('profile')!='verify-v3'
+            or original.get('version')!='verify-v3-reviewed-r1' or current['version']!=SOLFIX_VERSION
+            or any(original[k]!=current[k] for k in ('cli','settings','agents_sha256','plan_commit'))):raise Stop('resume_manifest_identity')
+    old,new=original['files'],current['files']
+    if set(old)-set(new) or set(new)-set(old)!=SOLFIX_DOCS:raise Stop('resume_manifest_file_set')
+    changed={n for n in old if old[n]!=new[n]}
+    if not changed<=SOLFIX_CODE or not changed:raise Stop('resume_code_change_allowlist')
+    verify_frozen(root,current)
+    return sorted(changed)
+
+
+def original_binding(root,prefix,manifest_path,current,order):
+    archive=safe_file(root,Path(manifest_path).as_posix()) if not Path(manifest_path).is_absolute() else Path(manifest_path)
+    if archive.resolve()!=archive or not archive.is_relative_to(root/DESIGN) or archive.name!='SHA256.run-r1.json':raise Stop('original_manifest_archive_path')
+    old=read_json(archive.read_text(encoding='utf-8'));changed=transition(root,old,current)
+    directory=paths(root,prefix);observed=read_json((directory/'suite-run.json').read_text(encoding='utf-8'))
+    plan=read_json((directory/'plan.json').read_text(encoding='utf-8'));digest=sha(archive.read_bytes())
+    if (observed['schema']!='cad-harness.verify-run.v3' or observed['prefix']!=prefix or observed['version']!=old['version']
+            or observed['sha_manifest']!=digest or plan['sha_manifest']!=digest or plan['version']!=old['version']
+            or observed['frozen_sha256']!=old['files'] or plan['entries']!=order['entries']
+            or observed['started_monotonic']!=plan['started_monotonic'] or observed['deadline_monotonic']!=plan['deadline_monotonic']
+            or observed['real_calls']!=54 or observed['call_budget']!=163 or abs(observed['deadline_monotonic']-observed['started_monotonic']-10800)>1e-6
+            or [r['id'] for r in observed['rows']]!=[e['id'] for e in order['entries']]):raise Stop('original_suite_binding')
+    for e,row in zip(order['entries'],observed['rows']):
+        if row['manifest_entry']!=e or row['run']!=run_name(prefix,e) or row['completed']!=(e['sequence']<=46):raise Stop('original_resume_eligibility')
+        if e['sequence']>=48 and (row['sol_calls'] is not None or driver_path(root,row['run']).exists()):raise Stop('resume_started_row')
+    if observed['rows'][46]['id']!='q-A5-r5' or observed['rows'][46]['sol_calls']!=1:raise Stop('resume_A5_binding')
+    return old,observed,plan,archive,changed
+
+
+def original_artifacts(root,prefix,order):
+    directories=[paths(root,prefix),*(driver_path(root,run_name(prefix,e)) for e in order['entries'])]
+    return {p.relative_to(root).as_posix():sha(safe_file(root,p.relative_to(root).as_posix()).read_bytes()) for d in directories if d.exists() for p in d.rglob('*') if p.is_file()}
+
+
+def historical_provider(root,row):
+    report=read_json((driver_path(root,row['run'])/'driver-run.json').read_text(encoding='utf-8'))
+    c=report['calls'][-1];summary=agent.rollout_summary(c.get('session_id'))
+    where=driver_path(root,row['run'])
+    if (not summary or not summary['provider_rejected'] or c.get('exit')==0
+            or (where/('last-c%d.txt'%c['call'])).exists()):raise Stop('original_provider_evidence_missing:'+row['id'])
+    return dict(id=row['id'],run=row['run'],call=c['call'],session_id=c['session_id'],summary=summary,
+        driver_sha256=sha((where/'driver-run.json').read_bytes()),original_score_preserved=row['completed'])
+
+
+def resume(prefix,snapshot,run_manifest,codex=None,root=ROOT,runner=None,clock=None,now=None,sleeper=None):
+    root=Path(root).resolve();manifest,order=load(root)
+    old,observed,plan,archive,changed=original_binding(root,prefix,run_manifest,manifest,order)
+    guard=Guard(snapshot,clock=clock,now=now);guard.inherit(observed,no_deadline=True)
+    # UTC/monotonic correspondence authenticates the inherited clock across reboot.
+    elapsed=(guard.now()-datetime.fromisoformat(plan['started_at'])).total_seconds()
+    if abs(elapsed-(guard.clock()-guard.started))>60:raise Stop('resume_host_clock_changed')
+    selected=order['entries'][46:];names=[run_name(prefix,e)+'-resume1' for e in selected]
+    directory=safe_file(root,paths(root,prefix).relative_to(root).as_posix()+'-resume1')
+    if directory.exists() or any(driver_path(root,n).exists() for n in names):raise Stop('resume_prefix_exists')
+    # Locate the two completed source failures by frozen ID rather than guessed indexes.
+    annotations=[historical_provider(root,next(r for r in observed['rows'] if r['id']==id_)) for id_ in ('q-A5-r5','geometry-G5-r1','geometry-G1-r2')]
+    prior=read_json((driver_path(root,observed['rows'][46]['run'])/'driver-run.json').read_text(encoding='utf-8'))
+    ended=observed['rows'][46]['ended_elapsed_s']
+    if type(ended) not in (int,float) or not 0<=ended<10800:raise Stop('original_A5_time_binding')
+    waited=guard.clock()-guard.started-ended;additional_wait=0
+    while waited<agent.PROVIDER_WAIT_S:
+        delay=min(60,agent.PROVIDER_WAIT_S-waited,guard.remaining())
+        (sleeper or time.sleep)(delay);additional_wait+=delay
+        waited=guard.clock()-guard.started-ended
+    executable=manifest['cli']['path']
+    if codex and Path(shutil.which(codex) or codex).resolve()!=Path(executable):raise Stop('cli_path_changed')
+    def bound_runner(argv,**kwargs):
+        completed=(runner or agent.bounded_run)(argv,**kwargs)
+        if len(argv)>1 and argv[1]=='--version' and (completed.returncode or cad_agent.clean(completed.stdout.strip())!=manifest['cli']['version']):raise Stop('cli_version_changed')
+        return completed
+    preserved=original_artifacts(root,prefix,order);digest=sha((root/DESIGN/'SHA256.json').read_bytes())
+    bindings=dict(original_sha_manifest=sha(archive.read_bytes()),sha_manifest=digest,
+        original_suite_sha256=sha((paths(root,prefix)/'suite-run.json').read_bytes()),original_plan_sha256=sha((paths(root,prefix)/'plan.json').read_bytes()),
+        original_artifacts=preserved,code_changes=changed,original_provider_attempts=annotations,
+        deadline=RESUME_DEADLINE,deadline_ok=True,original_deadline_monotonic=observed['deadline_monotonic'])
+    guard.check_versions=lambda:verify_frozen(root,manifest)
+    directory.mkdir(parents=True,exist_ok=False)
+    write_json(directory/'plan.json',dict(profile='verify-v3',segment=2,prefix=prefix,version=manifest['version'],entries=selected,
+        started_monotonic=guard.started,deadline_monotonic=guard.deadline,inherited_calls=54,call_budget=163,**bindings))
+    rows=[];stopped=None;segment_start=guard.clock();initial_calls=guard.calls
+    with (directory/'progress.jsonl').open('x',encoding='utf-8',newline='\n') as progress:
+        for e,name in zip(selected,names):
+            row=empty_row(e,name,stopped);tick=guard.clock()
+            if stopped is None:
+                try:
+                    guard.before_episode(max(e['max_calls'],sum(x['min_calls'] for x in selected if x['sequence']>=e['sequence'])))
+                    gold,raw,rubric,answer=inputs(root,e);fault=Fault(root/DESIGN/'test'/e['case']/'fault.json') if e['group']=='fault' else None
+                    report,_=agent.run_driver(name,executable,raw.decode('utf-8'),gold,root=root,runner=bound_runner,guard=guard,
+                        route=e['route'],max_calls=e['max_calls'],rubric=rubric,answer=answer.decode('utf-8') if answer is not None else None,
+                        fault=fault,provider_retry=True,sleeper=sleeper,prior_provider_attempts=1 if e['sequence']==47 else 0,
+                        prior_call_identity=prior['calls'][0] if e['sequence']==47 else None)
+                    if e['sequence']==47 and report['calls']:
+                        if any(report['calls'][0][k]!=prior['calls'][0][k] for k in ('kind','purpose','context_sha256','prompt_sha256')):raise Stop('resume_A5_payload_binding')
+                    row=record(root,e,name);guard.remaining(reserve=0);verify_frozen(root,manifest)
+                    if row.get('stop_reason'):stopped=row['stop_reason']
+                except (OSError,ValueError,KeyError,TypeError) as exc:
+                    stopped=str(exc);row.update(passed=False,stop_reason=stopped,failure_class=stopped)
+            timed=bool(row.get('episode_stop_reason'))
+            row['observed_wall_s']=guard.clock()-tick if row['completed'] or timed else None
+            if row['completed'] or timed:row['wall_s']=max(row['wall_s'] or 0,row['observed_wall_s'])
+            row['ended_elapsed_s']=guard.clock()-guard.started;row['original_run']=run_name(prefix,e);row['segment']=2
+            rows.append(row);progress.write(json.dumps(row,ensure_ascii=False,allow_nan=False)+'\n');progress.flush()
+            print(json.dumps(dict(id=e['id'],completed=row['completed'],passed=row['passed'],stop_reason=stopped)),flush=True)
+    if original_artifacts(root,prefix,order)!=preserved:raise Stop('original_artifacts_changed')
+    document=dict(schema='cad-harness.verify-resume.v3',profile='verify-v3',segment=2,prefix=prefix,version=manifest['version'],
+        local_commit=manifest['local_commit'],plan_commit=manifest['plan_commit'],created_at=cad_agent.utc(),
+        started_monotonic=guard.started,deadline_monotonic=guard.deadline,segment_started_monotonic=segment_start,
+        segment_wall_s=guard.clock()-segment_start,wall_s=guard.clock()-guard.started,stop_reason=stopped,rows=rows,
+        inherited_calls=54,real_calls=guard.calls-initial_calls,total_real_calls=guard.calls,call_budget=163,quota_snapshots=guard.snapshots,
+        frozen_sha256=manifest['files'],prior_backoff_elapsed_s=waited,additional_provider_wait_s=additional_wait,**bindings)
+    write_json(directory/'suite-run.json',document)
     return document
 
 
@@ -645,7 +849,106 @@ def summarize(rows,order,stopped=None,versions_consistent=True,deadline_ok=True)
         parse_repair_calls=sum(r.get("parse_repairs",0) for r in rows),repair_calls=sum(r.get("repair_calls",0) for r in rows))
 
 
-def aggregate(prefix,suffix,root=ROOT,clock=None):
+def aggregate_resumed(prefix,suffix,run_manifest,root=ROOT,clock=None):
+    """Read-only reconstruction; each observation keeps its own frozen identity."""
+    root=Path(root).resolve();manifest,order=load(root);eval_mvp.valid_name(suffix)
+    if not suffix.endswith('-solfix'):raise Stop('resume_aggregate_new_suffix_required')
+    outputs=[root/'reports'/('aggregate-verify-v3-'+suffix+ext) for ext in ('.json','.csv')]
+    if any(p.exists() or p.is_symlink() or p.resolve()!=p for p in outputs):raise Stop('aggregate_exists_or_linked')
+    old,first,first_plan,archive,changed=original_binding(root,prefix,run_manifest,manifest,order)
+    directory=safe_file(root,paths(root,prefix).relative_to(root).as_posix()+'-resume1')
+    second=read_json((directory/'suite-run.json').read_text(encoding='utf-8'));plan=read_json((directory/'plan.json').read_text(encoding='utf-8'))
+    digest=sha((root/DESIGN/'SHA256.json').read_bytes());selected=order['entries'][46:]
+    expected=dict(original_sha_manifest=sha(archive.read_bytes()),sha_manifest=digest,
+        original_suite_sha256=sha((paths(root,prefix)/'suite-run.json').read_bytes()),
+        original_plan_sha256=sha((paths(root,prefix)/'plan.json').read_bytes()),code_changes=changed,
+        started_monotonic=first['started_monotonic'],deadline_monotonic=None,inherited_calls=54,call_budget=163,
+        deadline=RESUME_DEADLINE,deadline_ok=True,original_deadline_monotonic=first['deadline_monotonic'])
+    if (second.get('schema')!='cad-harness.verify-resume.v3' or second.get('profile')!='verify-v3' or second.get('segment')!=2
+            or second.get('prefix')!=prefix or second.get('version')!=manifest['version'] or plan.get('version')!=manifest['version']
+            or plan.get('entries')!=selected or second.get('frozen_sha256')!=manifest['files']
+            or any(second.get(k)!=v or plan.get(k)!=v for k,v in expected.items())
+            or second['original_artifacts']!=plan['original_artifacts'] or original_artifacts(root,prefix,order)!=second['original_artifacts']
+            or [r['id'] for r in second['rows']]!=[e['id'] for e in selected]):raise Stop('resume_segment_binding')
+    if second['original_provider_attempts']!=plan['original_provider_attempts']:raise Stop('historical_provider_binding')
+    for annotation in second['original_provider_attempts']:
+        source=next(r for r in first['rows'] if r['id']==annotation['id'])
+        if annotation!=historical_provider(root,source):raise Stop('historical_provider_evidence_changed')
+    if {a['id'] for a in second['original_provider_attempts']}!={'q-A5-r5','geometry-G5-r1','geometry-G1-r2'}:raise Stop('historical_provider_set')
+    consistent=True;rows=[];resumed_calls=0;providers=[]
+    for e in order['entries']:
+        is_second=e['sequence']>=47
+        saved=second['rows'][e['sequence']-47] if is_second else first['rows'][e['sequence']-1]
+        identity_manifest=manifest if is_second else old
+        name=run_name(prefix,e)+('-resume1' if is_second else '')
+        if saved['run']!=name or saved['manifest_entry']!=e:raise Stop('resume_run_order_binding')
+        if is_second and (saved.get('original_run')!=run_name(prefix,e) or saved.get('segment')!=2):raise Stop('resume_row_origin_binding')
+        has_driver=(driver_path(root,name)/'driver-run.json').is_file()
+        row=(legacy_record(root,e,name) if e['group']=='legacy' else record(root,e,name)) if saved['completed'] or has_driver else empty_row(e,name,saved.get('stop_reason'))
+        row['wall_s']=max(row.get('wall_s') or 0,saved.get('wall_s') or 0) if row['completed'] or row.get('episode_stop_reason') else None
+        row['ended_elapsed_s']=saved.get('ended_elapsed_s');row['segment']=2 if is_second else 1
+        if saved['passed']!=row['passed'] or saved['completed']!=row['completed']:consistent=False
+        ended=row['ended_elapsed_s']
+        if row['completed'] and (type(ended) not in (int,float) or not math.isfinite(ended) or ended<0
+                or not is_second and ended>=10800):consistent=False;row['passed']=False
+        if is_second:resumed_calls+=row['sol_calls'] or 0
+        identity=row.get('driver_identity')
+        if identity:
+            consistent &= identity.get('cli_version')==identity_manifest['cli']['version'] and identity.get('agents_sha256')==identity_manifest['agents_sha256']
+            for key,path in (('skill_sha256','skills/freecad-modeling/SKILL.md'),('schema_sha256','design/cad-harness-mvp/build-schema.json'),
+                    ('compiler_sha256','tools/cad_spec.py'),('probe_sha256','tools/cad_spec_probe.py' if e['group']=='mvp' else 'tools/cad_verify_v3_probe.py')):
+                consistent &= identity.get(key)==identity_manifest['files'][path]
+            if e['group']!='mvp':consistent &= identity.get('shared_probe_sha256')==identity_manifest['files']['tools/cad_verify_probe.py']
+            consistent &= all((identity.get('settings') or {}).get(k)==v for k,v in identity_manifest['settings'].items())
+        if is_second and has_driver:
+            report=read_json((driver_path(root,name)/'driver-run.json').read_text(encoding='utf-8'))
+            if report.get('provider_policy')!=agent.PROVIDER_POLICY:raise Stop('resume_provider_policy_binding')
+            if e['sequence']==47 and report.get('prior_provider_attempts')!=1:raise Stop('resume_A5_attempt_binding')
+            if e['sequence']==47 and report['calls']:
+                prior=read_json((driver_path(root,first['rows'][46]['run'])/'driver-run.json').read_text(encoding='utf-8'))['calls'][0]
+                if any(report['calls'][0][k]!=prior[k] for k in ('kind','purpose','context_sha256','prompt_sha256')):raise Stop('resume_A5_payload_binding')
+            if e['sequence']!=47 and report.get('prior_provider_attempts')!=0:raise Stop('resume_unstarted_attempt_binding')
+            providers.extend(dict(id=e['id'],run=name,**c) for c in report['calls'] if c['provider_rejected'])
+        rows.append(row)
+    if sum(r['sol_calls'] or 0 for r in first['rows'])!=54:raise Stop('original_spent_call_binding')
+    real_calls=54+resumed_calls
+    consistent &= resumed_calls==second['real_calls'] and real_calls==second['total_real_calls'] and real_calls<=163
+    now=(clock or time.monotonic)()
+    end=second['segment_started_monotonic']+second['segment_wall_s']
+    consistent &= (second['segment_started_monotonic']>=first['started_monotonic']+first['wall_s']
+        and abs((end-first['started_monotonic'])-second['wall_s'])<=1e-6 and second['segment_wall_s']>=0 and end<=now)
+    # Segment 1's saved time evidence is fixed; segment 2 has no suite deadline.
+    first_deadline_ok=first.get('deadline_ok',first['wall_s']<first['deadline_monotonic']-first['started_monotonic'])
+    deadline_ok=first_deadline_ok
+    stopped=second.get('stop_reason') or next((r.get('stop_reason') for r in rows if r.get('stop_reason')),None)
+    summary=summarize(rows,order,stopped,consistent,deadline_ok);groups={g:[r for r in rows if r['group']==g] for g in GROUPS}
+    document=dict(schema='cad-harness.verify-aggregate.v3',profile='verify-v3',prefix=prefix,version=manifest['version'],
+        local_commit=manifest['local_commit'],plan_commit=manifest['plan_commit'],created_at=cad_agent.utc(),sha_manifest=digest,
+        frozen_sha256=manifest['files'],summary=summary,groups=groups,per_suite={g:metric(rs) for g,rs in groups.items()},
+        provider_tokens={g:token_totals(rs) for g,rs in groups.items()},real_calls=real_calls,inherited_calls=54,resumed_calls=resumed_calls,
+        provider_policy=agent.PROVIDER_POLICY,provider_rejected_attempts=providers,provider_wait_s=sum(c.get('backoff_s',0) for c in providers),
+        provider_rejected_attempt_count=len(providers),transport_attempts=real_calls+len(providers),
+        historical_provider_attempts=second['original_provider_attempts'],original_partial=first['rows'][46],
+        segments=[dict(segment=1,version=old['version'],sha_manifest=expected['original_sha_manifest'],suite_sha256=expected['original_suite_sha256'],
+            original_stop_reason=first['stop_reason'],wall_s=first['wall_s'],real_calls=54,completed_preserved=46,
+            deadline_monotonic=first['deadline_monotonic'],deadline_ok=first_deadline_ok),
+            dict(segment=2,version=manifest['version'],sha_manifest=digest,suite_sha256=sha((directory/'suite-run.json').read_bytes()),
+                wall_s=second['segment_wall_s'],real_calls=resumed_calls,stop_reason=second['stop_reason'],
+                deadline=RESUME_DEADLINE,deadline_monotonic=None,deadline_ok=True)],
+        started_monotonic=first['started_monotonic'],deadline_monotonic=None,deadline=RESUME_DEADLINE,
+        original_deadline_monotonic=first['deadline_monotonic'],
+        interval_scope='Signed segmented recovery: original 46 scores preserved; A5-r5 scored only from segment 2. Each segment binds its own manifest. New provider rejections are unscored and uncharged; historical spent54 is inherited conservatively. C/dev remain outside bar_met.')
+    write_json(outputs[0],document)
+    fields=('group','case','bar_class','id','run','segment','scored','completed','passed','wall_s','sol_calls','cad_attempts','parse_repairs','repair_calls',
+        'failure_class','episode_stop_reason','stop_reason',*cad_agent.USAGE_KEYS)
+    with outputs[1].open('x',encoding='utf-8',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=fields);writer.writeheader()
+        for row in rows:writer.writerow({k:row['tokens'].get(k) if k in cad_agent.USAGE_KEYS else row.get(k) for k in fields})
+    return document
+
+
+def aggregate(prefix,suffix,root=ROOT,clock=None,run_manifest=None):
+    if run_manifest is not None:return aggregate_resumed(prefix,suffix,run_manifest,root,clock)
     root=Path(root).resolve(); manifest,order=load(root); directory=paths(root,prefix); eval_mvp.valid_name(suffix)
     outputs=[root/"reports"/("aggregate-verify-v3-"+suffix+ext) for ext in (".json",".csv")]
     if any(p.exists() or p.is_symlink() or p.resolve()!=p for p in outputs): raise ValueError("aggregate_exists_or_linked")
@@ -714,7 +1017,10 @@ def main(argv=None):
     f.add_argument("--codex",help="Hash the reviewed CLI executable and record --version; never generates")
     r=subs.add_parser("run"); r.add_argument("--prefix",required=True); r.add_argument("--quota-snapshot",required=True)
     r.add_argument("--call-budget",type=int,default=163); r.add_argument("--codex")
+    r=subs.add_parser('resume');r.add_argument('--prefix',required=True);r.add_argument('--run-manifest',required=True)
+    r.add_argument('--quota-snapshot',required=True);r.add_argument('--codex')
     a=subs.add_parser("aggregate"); a.add_argument("--prefix",required=True); a.add_argument("--suffix",required=True)
+    a.add_argument('--run-manifest')
     args=parser.parse_args(argv)
     try:
         if args.command=="freeze":
@@ -724,7 +1030,12 @@ def main(argv=None):
             result=run(args.prefix,args.quota_snapshot,args.call_budget,args.codex)
             print(json.dumps({"completed":sum(r["completed"] for r in result["rows"]),"planned":len(result["rows"]),"stop_reason":result["stop_reason"]}))
             return 0 if not result["stop_reason"] else 1
-        result=aggregate(args.prefix,args.suffix); print(json.dumps(result["summary"],allow_nan=False))
+        if args.command=='resume':
+            result=resume(args.prefix,args.quota_snapshot,args.run_manifest,args.codex)
+            print(json.dumps(dict(segment=2,completed=sum(r['completed'] for r in result['rows']),planned=len(result['rows']),
+                real_calls=result['total_real_calls'],stop_reason=result['stop_reason'])))
+            return 0 if not result['stop_reason'] else 1
+        result=aggregate(args.prefix,args.suffix,run_manifest=args.run_manifest); print(json.dumps(result["summary"],allow_nan=False))
         return 0 if result["summary"]["bar_met"] else 1
     except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
         print(json.dumps({"status":"stopped","message_code":str(exc)})); return 2

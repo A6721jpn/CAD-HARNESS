@@ -97,3 +97,54 @@ Verification ran in the requested order, with TEMP redirected by `tools/test_sup
 Fresh mock run prefix: `mock-v3-review-fixes-r1-mvp1`; missing-file cases use `review-fixes-preflight-r1-mvp1` through `r4`. All are confined to fresh temporary mock repositories. Data-only is read-only and accepts no run prefix; it created no report directory and reused no native/live run. The regression removes only disposable mock files, never real helper/control files. The full command's existing evaluator tests freeze/run/aggregate only mocked temporary repositories; no real version or aggregate was created.
 
 Changed paths for the supervisor's review-fix commit (`fix(verify-v3): respect Sketcher datum API and preflight native controls`): `tools/cad_verify_v3_probe.py`, `tools/cad_run.py`, `tools/eval_verify_v3.py`, `tools/smoke_verify_v3.py`, `tools/test_verify_v3.py`, and this `impl-notes.md`. A baseline SHA comparison confirms all native control sources, descriptions/answers/rubrics/gold, signed plan, run-order, numerical tolerances, previous evaluators and SHA manifests remain byte-identical. Gemini's reported earlier native batch was not rerun or re-scored in this review-fix task; native re-review/calibration remains a separate supervisor-controlled step before freeze.
+
+## Solfix
+
+Implemented uncommitted, validated **2026-10-13 17:44:58 JST**. Binding: `SOLFIX-CONSENSUS.md` together with `solfix-codex.md`, including all three USER DECISION sections. The 16:39 decision replaces capped/charged overload retries; the final 17:08 update supersedes both the inherited deadline and the intervening 20:00 cutoff with **no deadline for segment 2**. No Git mutation, Sol/FreeCAD invocation, real freeze, real resume, or real aggregate was executed. The original frozen manifest remains `verify-v3-reviewed-r1`.
+
+### Changes and policy
+
+- `tools/cad_verify_v3_agent.py`: opt-in `solfix-600s-unlimited-v1` transport policy. Only exact typed `codex_error_info=server_overloaded` with no final/assistant output is a provider rejection. CLI versions without a typed stdout code may use the uniquely bound actual session's typed rollout event; free text never establishes rejection. Unknown errors, partial/final output, parse failures and CAD failures receive no provider resend.
+- Each rejection requests **600 seconds** of backoff, in chunks of at most 60 seconds, then the byte-identical argv/prompt/context is resent without an attempt cap, subject to the unchanged episode/stage and quota stops. Fresh quota/version/hash/time checks precede every actual invocation. Rejected attempts consume **zero** new shared-call/P/R/model slots; accepted responses and unclassified failures remain charged, including late responses. Attempts, requested/actual waits, session IDs, exact errors and usage are recorded separately; rejection itself never creates a harness or abnormal stop.
+- Production exec stdout/stderr are drained concurrently in 8192-byte chunks, with at most **16384 UTF-8 bytes retained per stream**, complete-stream hashes and byte counts. Structured events and session/usage metadata are inspected before truncation, including assistant `response_item` payloads. Event assembly is bounded to 1048576 characters, and metadata lists are bounded; uninspectable streams cannot establish a rejection. Rollout evidence is also read incrementally. Timeout capture retains bounded tails and remains an unclassified charged attempt. Classification never relies on a truncated tail.
+- `tools/cad_verify_v3_guard.py`: resume inherits started 534990.093, ceiling 163 and **spent 54 / remaining 109**, and sets the shared deadline to `None`. The original 545790.093 deadline is retained only as segment-1 evidence. No replacement 10800-second clock or wall-clock cutoff is introduced. Clock/cap authentication, quota stops (**55% soft / 60% hard**), model slot caps and **900/450/450/P60/R180** episode/stage reservations remain. The shared 960-second start reserve applies only when a shared deadline exists.
+- **Time consequence:** overload backoff remains wall time within the unchanged episode/stage budgets. A 600-second wait cannot finish inside an initial 450 / repair 450 stage; P60/R180 can stop it sooner. This is an ordinary incomplete time-stop episode, with no rejected P/R slot consumed and no provider-failure harness stop. Episode timers are not paused or reset. The original A5 backoff is credited from recorded elapsed time; any remaining wait is performed before its authorized replay.
+- `tools/eval_verify_v3.py resume`: authenticates the archived manifest and UTC/monotonic correspondence, preserves all 60 original rows/artifacts byte-for-byte, and selects **A5-r5 first, then sequences 48–60**. It writes 14 segment-2 rows under the original suite/run names plus `-resume1`, with original-run/manifest/artifact bindings. A5's first input/context identity is checked before invocation and during aggregation; its prior rejection is retained separately. Completed IDs 1–46 are not re-executed, and existing outputs are never overwritten.
+- Two-segment aggregation binds segment 1 to archived `SHA256.run-r1.json` and segment 2 to solfix `SHA256.json`. Only the four code files below may differ; gold, Probe, controls, data/order/model/CLI/AGENTS/plan identities must match. Aggregate output names require `-solfix`. Segment 1 retains its original recorded `deadline_ok` (or the saved wall/deadline evidence when that field is absent); segment 2 reports **`deadline: none (user decision 17:08)`**, with `deadline_monotonic: null`. Resume and aggregate are allowed after the original deadline, while the shared 163 ceiling remains enforced. The original stop/A5 partial remain an annex; only segment-2 A5 is scored. New rejections/waits are unscored and uncharged.
+- **Historical treatment remains the signed conservative choice:** completed G5-r1/G1-r2 keep their original scores/classes/artifacts, with independent provider-rejected evidence annotations. Inherited spent54 remains the stored historical total; no retrospective refund or result replacement is made. New rejected attempts are uncharged. The aggregate labels the mixed harness versions explicitly as signed segmented recovery, rather than one unchanged frozen run.
+- Solfix freeze support records the four amendment/evidence documents and requires the archived original manifest; transition validation rejects unapproved code/data changes. Cold `run` of the solfix version is rejected; only `resume` is permitted. Shared `cad_agent.py`, MVP/v1/v2 code paths and Probe/gold/scoring rules remain unchanged.
+
+### Tests and checks
+
+Final checks, after all code changes:
+
+| Command/check | Result |
+| --- | --- |
+| `python -B -m unittest tools.test_verify_v3` | **23 tests, OK, 0.955 s**, exit0; TEMP redirected by `tools/test_support.py` |
+| `python -B tools/smoke_verify_v3.py --data-only` | **pass**, exit0: 18 cases, 60 episodes, baseline83/max163, Sol0/CAD0 |
+| AST parse of the four changed Python files | pass |
+| Read-only comparison against the original frozen manifest | only the four permitted code/test paths differ; all other frozen data/Probe/control/older-profile hashes match |
+
+The seven Solfix tests cover strict structured/no-output classification; full-stream event/session detection with bounded multibyte tails and timeout capture; five refusals followed by an identical accepted call with only one charged slot; unknown-error non-retry; ordinary stage-time stops and both 55/60 quota stops; inherited cap/clock authentication and manifest allowlist; resume/aggregate **after the original deadline** with original artifact/score preservation and tamper rejection; and unconsumed rejected P/R slots. The unlimited-retry scheduler test mocks sleep without advancing wall time; advancing-clock tests separately verify 450/P60/R180 clipping. All provider/CAD launches are mocked. Resume/aggregate progress comes only from disposable mock repositories. Mock prefixes: `mock-v3-solfix-r1-mvp1`, `mock-v3-solfix-resume-r1`.
+
+### COMMIT PLAN — supervisor only
+
+1. `fix(verify-v3): recover structured overloads with inherited suite identity` — `tools/cad_verify_v3_agent.py`, `tools/cad_verify_v3_guard.py`, `tools/eval_verify_v3.py`, `tools/test_verify_v3.py`, `design/cad-harness-verify-v3/impl-notes.md`. Preserve the separately authored consensus/evidence documents; no gold/control/order/Probe change belongs in this commit.
+2. Supervisor's archive/re-freeze commit, only after review — byte-identical `design/cad-harness-verify-v3/SHA256.run-r1.json`, new `SHA256.json`, and the supervisor's `FROZEN.md` update. The new manifest binds `SOLFIX-CONSENSUS.md`, `SOLFIX-BRIEF.md`, `SOL-FAILURE.md`, `solfix-codex.md`; all four have separate provenance. No archive, manifest, FROZEN edit or git operation was done by Codex.
+
+### Future host commands — NOT executed
+
+Use the same reviewed CLI and original plan commit. Set the supervisor's reviewed implementation commit below; keep the original quota snapshot path actively refreshed (maximum age 300 seconds). Archive only after confirming the archive/resume/aggregate outputs are absent. These are future host commands, not actions performed in this task.
+
+```powershell
+Set-Location -LiteralPath C:\dev\CAD-HARNESS
+$solfixImplementationCommit = 'REPLACE_WITH_SUPERVISOR_REVIEWED_COMMIT'
+if ($solfixImplementationCommit -notmatch '^[0-9a-f]{7,40}$') { throw 'set the reviewed solfix implementation commit first' }
+if (Test-Path -LiteralPath design\cad-harness-verify-v3\SHA256.run-r1.json) { throw 'archive already exists' }
+Move-Item -LiteralPath design\cad-harness-verify-v3\SHA256.json -Destination design\cad-harness-verify-v3\SHA256.run-r1.json
+python -B tools\eval_verify_v3.py freeze --version verify-v3-reviewed-r1-solfix --implementation-commit $solfixImplementationCommit --plan-commit fd7e215 --codex C:\Users\backo\.codex\packages\standalone\releases\0.159.2-x86_64-pc-windows-msvc\bin\codex.exe
+python -B tools\eval_verify_v3.py resume --prefix host-verify-v3-reviewed-r1 --run-manifest design\cad-harness-verify-v3\SHA256.run-r1.json --quota-snapshot C:\dev\CAD-HARNESS\.tmp\verify-v2-supervisor-quota.json
+python -B tools\eval_verify_v3.py aggregate --prefix host-verify-v3-reviewed-r1 --suffix host-reviewed-r1-solfix --run-manifest design\cad-harness-verify-v3\SHA256.run-r1.json
+```
+
+Expected supervisor outputs: `reports/cad-run/host-verify-v3-reviewed-r1-verify-v3-suite-mvp1-resume1/{plan.json,progress.jsonl,suite-run.json}`, 14 selected episode directories with `-mvp1-resume1`, and `reports/aggregate-verify-v3-host-reviewed-r1-solfix.{json,csv}`. **There is no segment-2 suite deadline or aggregate cutoff**; quota/call/episode/stage checks remain enforced.

@@ -1,7 +1,8 @@
 """Minimum signed v3 contracts; model/CAD launches are mocked."""
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 import copy
 import hashlib
+import io
 import json
 import math
 from pathlib import Path
@@ -18,7 +19,7 @@ from tools.test_support import start_tempdirs,stop_tempdirs
 
 ROOT=Path(__file__).resolve().parents[1];BASE=ROOT/evaluation.DESIGN
 NOW=datetime(2026,10,13,4,0,tzinfo=timezone.utc)
-REVIEW_RUN='mock-v3-review-fixes-r1-mvp1'
+REVIEW_RUN='mock-v3-solfix-r1-mvp1'
 SOURCE='import FreeCAD\nimport Part\nimport Sketcher\ndef build(doc):\n    return doc.addObject("PartDesign::Body", "Body")\n'
 
 def setUpModule():
@@ -87,7 +88,7 @@ class V3Contracts(unittest.TestCase):
                         allocation.assert_not_called();launch.assert_not_called();data.assert_not_called()
                     path.write_bytes(original)
 
-    def drive(self,d,case,outputs,fail=False,route='spec',clock=None,after_cad=None,fault=None,preview=False):
+    def drive(self,d,case,outputs,fail=False,route='spec',clock=None,after_cad=None,fault=None,preview=False,provider=False,sleeper=None,cap=163):
         root=Path(d)/'repo';folder=BASE/'test'/case;calls=[];cads=[]
         for name in ('skills/freecad-modeling/SKILL.md','design/cad-harness-mvp/build-schema.json'):
             p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes())
@@ -97,8 +98,10 @@ class V3Contracts(unittest.TestCase):
             self.assertFalse(kw['shell'])
             if argv[1]=='--version':return subprocess.CompletedProcess(argv,0,'MOCK CLI','')
             if argv[1]=='exec':
-                calls.append((argv,kw));Path(argv[argv.index('-o')+1]).write_text(outputs[len(calls)-1],encoding='utf-8')
+                calls.append((argv,kw));value=outputs[len(calls)-1]
                 if clock:clock[0]+=10
+                if isinstance(value,dict):return subprocess.CompletedProcess(argv,value.get('exit',1),value['stdout'],value.get('stderr',''))
+                Path(argv[argv.index('-o')+1]).write_text(value,encoding='utf-8')
                 return subprocess.CompletedProcess(argv,0,'{"type":"turn.completed","usage":{"input_tokens":11,"output_tokens":2}}','')
             self.assertEqual(argv[argv.index('--probe-profile')+1],'verify-v3');cads.append((argv,kw))
             source,out,gold=[Path(argv[argv.index(k)+1]) for k in ('--script','--out-dir','--gold')]
@@ -117,12 +120,203 @@ class V3Contracts(unittest.TestCase):
             if after_cad:after_cad()
             return subprocess.CompletedProcess(argv,0 if r['status']=='ok' else 1,json.dumps(r),'')
         snapshot=Path(d)/'quota.json';snapshot.write_text(json.dumps(dict(snapshot_id='mock',observed_at=NOW.isoformat(),used_percent=20)))
-        guard=Guard(snapshot,clock=(lambda:clock[0]) if clock else None,now=lambda:NOW)
+        guard=Guard(snapshot,call_budget=cap,clock=(lambda:clock[0]) if clock else None,now=lambda:NOW)
         rubric=json.loads((folder/'rubric.json').read_text(encoding='utf-8')) if (folder/'rubric.json').is_file() else None
         answer=(folder/'answer.txt').read_text(encoding='utf-8') if route=='completion' else None
         report,code=driver.run_driver(REVIEW_RUN,'MOCK-NO-SOL',(folder/'description.txt').read_text(encoding='utf-8'),folder/'gold.json' if (folder/'gold.json').is_file() else None,
-            root=root,runner=runner,guard=guard,route=route,rubric=rubric,answer=answer,fault=fault,preview=preview)
+            root=root,runner=runner,guard=guard,route=route,rubric=rubric,answer=answer,fault=fault,preview=preview,provider_retry=provider,sleeper=sleeper)
         return root,report,code,calls,cads,guard
+
+    def test_solfix_exact_error_full_output_and_bounded_capture(self):
+        rejection=json.dumps(dict(type='event_msg',payload=dict(type='task_complete',error=dict(codex_error_info='server_overloaded'))))
+        self.assertTrue(driver.provider_summary(rejection)['provider_rejected'])
+        for bad in (rejection.replace('server_overloaded','server_overloaded_more'),
+                json.dumps(dict(message='server_overloaded')),rejection+'\n'+json.dumps(dict(type='item.completed',item=dict(type='agent_message',text='partial'))),
+                rejection+'\n'+json.dumps(dict(type='response_item',payload=dict(type='message',role='assistant',content=[dict(text='partial')])))):
+            self.assertFalse(driver.provider_summary(bad)['provider_rejected'])
+        self.assertFalse(driver.provider_summary(rejection,'a final response')['provider_rejected'])
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);out=root/'episode';out.mkdir();row=dict(call=1)
+            # Typed rejection before the retained tail is still found in the full stream.
+            stdout=rejection+'\n'+('x'*20000);completed=subprocess.CompletedProcess([],1,stdout,'e'*20000)
+            driver.capture_transport(out,root,row,completed,driver.provider_summary(stdout))
+            self.assertTrue(row['provider_summary']['provider_rejected'])
+            for item in row['transport_artifacts'].values():
+                self.assertLessEqual((root/item['path']).stat().st_size,16384)
+                self.assertEqual(evaluation.sha((root/item['path']).read_bytes()),item['sha256'])
+
+    def test_solfix_streaming_capture_reads_full_events_without_full_output_buffers(self):
+        session='12345678-1234-1234-1234-123456789abc'
+        events=[dict(type='thread.started',thread_id=session),dict(type='error',codex_error_info='server_overloaded')]
+        stdout=('\n'.join(json.dumps(e) for e in events)+'\n'+'é'*20000).encode('utf-8')
+        stderr=('警告'*20000).encode('utf-8')
+        class Process:
+            returncode=1
+            def __init__(self,*args,**kwargs):
+                self.stdout=io.BytesIO(stdout);self.stderr=io.BytesIO(stderr)
+            def __enter__(self):return self
+            def __exit__(self,*args):pass
+            def wait(self,timeout=None):return self.returncode
+            def kill(self):pass
+        with patch.object(driver.subprocess,'Popen',side_effect=Process) as popen:
+            completed=driver.bounded_run(['MOCK-NO-SOL','exec'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=10)
+        self.assertEqual(popen.call_args.kwargs['stdout'],subprocess.PIPE)
+        self.assertNotIn('capture_output',popen.call_args.kwargs)
+        self.assertTrue(completed.provider_summary['provider_rejected']);self.assertEqual(completed.exec_metadata,(session,None))
+        for key,raw in (('stdout',stdout),('stderr',stderr)):
+            captured=completed.transport_capture[key]
+            self.assertLessEqual(len(captured['tail']),16384)
+            self.assertEqual(captured['full_bytes'],len(raw));self.assertEqual(captured['full_sha256'],evaluation.sha(raw))
+            self.assertLessEqual(len(getattr(completed,key).encode('utf-8')),16384)
+        # A message or uninspectable event outside the tail prevents a resend.
+        capture=driver.StreamCapture(parse=True)
+        capture.feed(json.dumps(dict(type='item.completed',item=dict(type='agent_message',text='partial')))+'\n')
+        capture.feed('x'*(driver.EVENT_CHARS+1)+'\n');capture.feed(json.dumps(events[1]));capture.finish()
+        self.assertFalse(capture.summary()['provider_rejected']);self.assertFalse(capture.summary()['parse_complete'])
+        with patch.object(Process,'wait',side_effect=[subprocess.TimeoutExpired('mock',10),1]),patch.object(driver.subprocess,'Popen',side_effect=Process):
+            with self.assertRaises(subprocess.TimeoutExpired) as caught:
+                driver.bounded_run(['MOCK-NO-SOL','exec'],capture_output=True,timeout=10)
+        self.assertLessEqual(len(caught.exception.stdout.encode('utf-8')),16384)
+        self.assertEqual(caught.exception.transport_capture['stdout']['full_bytes'],len(stdout))
+
+    def test_solfix_unlimited_transport_unbudgeted_and_identical(self):
+        rejection=dict(stdout=json.dumps(dict(type='error',codex_error_info='server_overloaded')),stderr='provider refusal')
+        waits=[]
+        with tempfile.TemporaryDirectory() as d:
+            root,r,code,calls,cads,g=self.drive(d,'A5',[rejection]*5+[json.dumps({'needs_clarification':['pocket_depth']})],
+                route='ask',provider=True,sleeper=waits.append,cap=1)
+            self.assertEqual(code,0);self.assertEqual(len(calls),6);self.assertEqual(g.calls,1)
+            self.assertEqual(r['llm_calls'],1);self.assertEqual(r['logical_calls'],1);self.assertEqual(r['provider_rejected_attempts'],5)
+            self.assertEqual(r['budget_counts']['question'],1);self.assertEqual(r['parse_repairs'],0);self.assertEqual(r['repair_calls'],0)
+            self.assertEqual(r['provider_wait_s'],3000);self.assertEqual(sum(waits),3000);self.assertTrue(all(t<=60 for t in waits))
+            self.assertTrue(all(argv==calls[0][0] for argv,_ in calls));self.assertEqual(r['first_response_call'],6)
+            self.assertEqual(len(g.snapshots),6);self.assertTrue(all(c['quota_snapshot']['decision']=='allow' for c in r['calls']))
+            evaluation.check_transport(r,root/'reports/cad-run'/REVIEW_RUN)
+        with tempfile.TemporaryDirectory() as d:
+            root,r,code,calls,cads,g=self.drive(d,'A5',[dict(stdout=json.dumps(dict(type='error',codex_error_info='rate_limit')))],route='ask',provider=True,sleeper=lambda t:self.fail('unknown error retried'))
+            self.assertEqual(len(calls),1);self.assertEqual(g.calls,1);self.assertEqual(r['provider_rejected_attempts'],0)
+
+    def test_solfix_wait_keeps_time_and_quota_stops(self):
+        rejection=dict(stdout=json.dumps(dict(type='error',codex_error_info='server_overloaded')))
+        with tempfile.TemporaryDirectory() as d:
+            clock=[0.0]
+            root,r,code,calls,cads,g=self.drive(d,'A5',[rejection],route='ask',clock=clock,provider=True,sleeper=lambda s:clock.__setitem__(0,clock[0]+s))
+            self.assertEqual(len(calls),1);self.assertEqual(g.calls,0);self.assertEqual(r['llm_calls'],0)
+            self.assertEqual(r['message_code'],'episode_stage_deadline_exceeded');self.assertEqual(r['calls'][0]['wait_requested_s'],600)
+            self.assertLess(r['provider_wait_s'],600);self.assertEqual(r['budget_counts']['question'],0)
+            entry=next(e for e in json.loads((BASE/'run-order.json').read_text())['entries'] if e['case']=='A5')
+            row=evaluation.record(root,entry,REVIEW_RUN)
+            self.assertFalse(row['completed']);self.assertIsNone(row['stop_reason']);self.assertEqual(row['failure_class'],'timeout')
+        with tempfile.TemporaryDirectory() as d:
+            def change_quota(s):
+                p=Path(d)/'quota.json';data=json.loads(p.read_text());data['used_percent']=55;p.write_text(json.dumps(data))
+            root,r,code,calls,cads,g=self.drive(d,'A5',[rejection],route='ask',provider=True,sleeper=change_quota)
+            self.assertEqual(len(calls),1);self.assertEqual(g.calls,0);self.assertEqual(r['message_code'],'quota_soft_stop')
+        with tempfile.TemporaryDirectory() as d:
+            def hard_quota(s):
+                p=Path(d)/'quota.json';data=json.loads(p.read_text());data['used_percent']=60;p.write_text(json.dumps(data))
+            _,r,_,calls,_,g=self.drive(d,'A5',[rejection],route='ask',provider=True,sleeper=hard_quota)
+            self.assertEqual(len(calls),1);self.assertEqual(g.calls,0);self.assertEqual(r['message_code'],'quota_hard_stop')
+        with tempfile.TemporaryDirectory() as d:
+            clock=[0.0]
+            root,r,_,_,_,_=self.drive(d,'C4',[json.dumps(dict(needs_clarification=['plate_thickness'])),rejection],
+                route='completion',clock=clock,provider=True,sleeper=lambda s:clock.__setitem__(0,clock[0]+s))
+            entry=next(e for e in json.loads((BASE/'run-order.json').read_text())['entries'] if e['case']=='C4')
+            row=evaluation.record(root,entry,REVIEW_RUN)
+            self.assertFalse(row['completed']);self.assertIsNone(row['stop_reason'],row.get('error'));self.assertEqual(row['initial_q_score'],1)
+            self.assertEqual(row['q_score'],1);self.assertTrue(row['completion_reached']);self.assertEqual(row['failure_class'],'timeout')
+
+    def test_solfix_manifest_change_allowlist_and_inherited_clock(self):
+        old=dict(schema='cad-harness.verify-sha.v3',profile='verify-v3',version='verify-v3-reviewed-r1',
+            cli={},settings={},agents_sha256={},plan_commit='fd7e215',files={p:'old' for p in evaluation.SOLFIX_CODE})
+        old['files']['gold.json']='unchanged';current=copy.deepcopy(old);current['version']=evaluation.SOLFIX_VERSION
+        current['files'].update({p:'new' for p in evaluation.SOLFIX_CODE});current['files'].update({p:'new' for p in evaluation.SOLFIX_DOCS})
+        with patch.object(evaluation,'verify_frozen'):
+            self.assertEqual(evaluation.transition(ROOT,old,current),sorted(evaluation.SOLFIX_CODE))
+            broken=copy.deepcopy(current);broken['files']['gold.json']='changed'
+            with self.assertRaisesRegex(Stop,'allowlist'):evaluation.transition(ROOT,old,broken)
+            broken=copy.deepcopy(current);broken['settings']['model']='other'
+            with self.assertRaisesRegex(Stop,'identity'):evaluation.transition(ROOT,old,broken)
+        g=Guard('unused',clock=lambda:540000)
+        g.inherit(dict(started_monotonic=534990.093,deadline_monotonic=545790.093,real_calls=54,call_budget=163))
+        self.assertEqual(g.deadline,545790.093);self.assertEqual(g.calls,54);self.assertEqual(g.call_budget-g.calls,109)
+        g=Guard('unused',clock=lambda:550000)
+        g.inherit(dict(started_monotonic=534990.093,deadline_monotonic=545790.093,real_calls=54,call_budget=163),no_deadline=True)
+        self.assertIsNone(g.deadline);self.assertEqual(g.started,534990.093);self.assertEqual(g.calls,54)
+        self.assertTrue(math.isinf(g.remaining()))
+        g.before_episode(109)
+        with self.assertRaisesRegex(Stop,'insufficient_call_budget'):g.before_episode(110)
+        self.assertEqual(Budget(1,clock=lambda:550000).settings()['deadline_s'],900)
+        with self.assertRaisesRegex(Stop,'binding'):
+            g.inherit(dict(started_monotonic=540000,deadline_monotonic=550800,real_calls=54,call_budget=162))
+
+    def test_solfix_resume_and_two_manifest_aggregate_preserve_originals(self):
+        prefix='mock-v3-solfix-resume-r1';order=json.loads((BASE/'run-order.json').read_text(encoding='utf-8'))
+        old=dict(schema='cad-harness.verify-sha.v3',profile='verify-v3',version='verify-v3-reviewed-r1',local_commit='32dab3a',plan_commit='fd7e215',
+            cli=dict(path='MOCK-NO-SOL',version='MOCK CLI',sha256='mock'),settings={},agents_sha256={},files={p:'before-'+p for p in evaluation.SOLFIX_CODE})
+        old['files']['immutable-gold.json']='unchanged'
+        current=copy.deepcopy(old);current['version']=evaluation.SOLFIX_VERSION
+        current['files'].update({p:evaluation.sha((ROOT/p).read_bytes()) for p in evaluation.SOLFIX_CODE|evaluation.SOLFIX_DOCS})
+        original=dict(schema='cad-harness.verify-run.v3',profile='verify-v3',version=old['version'],prefix=prefix,
+            started_monotonic=534990.093,deadline_monotonic=545790.093,wall_s=2366.75,real_calls=54,call_budget=163,stop_reason='harness:missing_report_or_artifact',frozen_sha256=old['files'],rows=[])
+        plan=dict(profile='verify-v3',version=old['version'],entries=order['entries'],started_monotonic=534990.093,deadline_monotonic=545790.093,started_at='2026-10-13T06:08:29.573298+00:00')
+        for e in order['entries']:
+            row=evaluation.empty_row(e,evaluation.run_name(prefix,e))
+            if e['sequence']<=46:row.update(completed=True,passed=True,wall_s=0,sol_calls=e['min_calls'],cad_attempts=0,ended_elapsed_s=1000)
+            if e['sequence']==47:row.update(sol_calls=1,stop_reason='harness:missing_report_or_artifact',ended_elapsed_s=2366.735)
+            if e['id'] in ('geometry-G5-r1','geometry-G1-r2'):row.update(passed=False,failure_class='interpretation')
+            original['rows'].append(row)
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)/'repo';base=root/evaluation.DESIGN;base.mkdir(parents=True)
+            archive=base/'SHA256.run-r1.json';archive.write_text(json.dumps(old),encoding='utf-8')
+            (base/'SHA256.json').write_text(json.dumps(current),encoding='utf-8')
+            digest=evaluation.sha(archive.read_bytes());original['sha_manifest']=plan['sha_manifest']=digest
+            directory=evaluation.paths(root,prefix);directory.mkdir(parents=True)
+            (directory/'suite-run.json').write_text(json.dumps(original),encoding='utf-8');(directory/'plan.json').write_text(json.dumps(plan),encoding='utf-8')
+            prior_name=original['rows'][46]['run'];prior_dir=evaluation.driver_path(root,prior_name);prior_dir.mkdir()
+            prior=dict(calls=[dict(kind='spec',purpose='question',context_sha256='same-context',prompt_sha256='same-prompt',ended_at='2026-10-13T06:47:55.800559+00:00')])
+            (prior_dir/'driver-run.json').write_text(json.dumps(prior),encoding='utf-8')
+            for e in order['entries'][46:]:
+                source=BASE/'test'/e['case'];dest=base/'test'/e['case'];dest.mkdir(parents=True,exist_ok=True)
+                for p in source.iterdir():
+                    if p.is_file():(dest/p.name).write_bytes(p.read_bytes())
+            quota=Path(d)/'quota.json';timepoint=original['started_monotonic']+12000
+            now=datetime.fromisoformat(plan['started_at'])+timedelta(seconds=12000)
+            quota.write_text(json.dumps(dict(snapshot_id='mock',observed_at=now.isoformat(),used_percent=10)))
+            preserved=evaluation.original_artifacts(root,prefix,order);executed=[]
+            def fake_driver(name,codex,raw,gold,**kw):
+                self.assertIsNone(kw['guard'].deadline);self.assertEqual(kw['guard'].call_budget,163)
+                self.assertEqual(kw['guard'].calls,54+len(executed));self.assertTrue(kw['provider_retry'])
+                kw['guard'].before_call();executed.append(name)
+                out=evaluation.driver_path(root,name);out.mkdir()
+                c={**prior['calls'][0], 'provider_rejected':False}
+                r=dict(provider_policy=driver.PROVIDER_POLICY,prior_provider_attempts=kw['prior_provider_attempts'],calls=[c],llm_calls=1)
+                (out/'driver-run.json').write_text(json.dumps(r),encoding='utf-8');return r,0
+            def fake_record(repo,e,name):
+                if not name.endswith('-resume1'):return copy.deepcopy(original['rows'][e['sequence']-1])
+                row=evaluation.empty_row(e,name);row.update(completed=True,passed=True,sol_calls=1,cad_attempts=0,wall_s=0,stop_reason=None,failure_class=None);return row
+            def provider(repo,row):return dict(id=row['id'],run=row['run'],original_score_preserved=row['completed'])
+            with (patch.object(evaluation,'load',return_value=(current,order)),patch.object(evaluation,'verify_frozen'),patch.object(evaluation,'historical_provider',side_effect=provider),
+                    patch.object(driver,'run_driver',side_effect=fake_driver),patch.object(evaluation,'record',side_effect=fake_record),patch.object(evaluation,'legacy_record',side_effect=fake_record)):
+                second=evaluation.resume(prefix,quota,archive,root=root,clock=lambda:timepoint,now=lambda:now)
+                self.assertEqual(executed,[evaluation.run_name(prefix,e)+'-resume1' for e in order['entries'][46:]])
+                self.assertEqual(second['inherited_calls'],54);self.assertEqual(second['total_real_calls'],68);self.assertIsNone(second['deadline_monotonic'])
+                self.assertEqual(second['deadline'],evaluation.RESUME_DEADLINE)
+                self.assertEqual(second['original_deadline_monotonic'],545790.093)
+                self.assertEqual(evaluation.original_artifacts(root,prefix,order),preserved)
+                result=evaluation.aggregate(prefix,'mock-solfix',root=root,clock=lambda:timepoint,run_manifest=archive)
+                self.assertTrue(result['summary']['versions_consistent']);self.assertEqual(result['real_calls'],68)
+                self.assertTrue(result['summary']['deadline_ok']);self.assertIsNone(result['deadline_monotonic'])
+                self.assertEqual(result['segments'][1]['deadline'],evaluation.RESUME_DEADLINE)
+                self.assertTrue(result['segments'][0]['deadline_ok']);self.assertEqual(result['segments'][0]['deadline_monotonic'],545790.093)
+                self.assertEqual(len(result['segments']),2);self.assertEqual(result['segments'][0]['completed_preserved'],46)
+                self.assertFalse(next(r for r in result['groups']['geometry'] if r['id']=='geometry-G5-r1')['passed'])
+                self.assertFalse(next(r for r in result['groups']['geometry'] if r['id']=='geometry-G1-r2')['passed'])
+                self.assertEqual(result['original_partial']['id'],'q-A5-r5');self.assertFalse(result['original_partial']['completed'])
+                self.assertEqual(evaluation.original_artifacts(root,prefix,order),preserved)
+                # A changed archived suite is rejected before any aggregate output.
+                (directory/'plan.json').write_text('{}')
+                with self.assertRaises((Stop,KeyError)):evaluation.aggregate(prefix,'tamper-solfix',root=root,clock=lambda:timepoint,run_manifest=archive)
 
     def test_data_bytes_gold_and_exact_order_caps(self):
         self.assertEqual(evaluation.data_check(),dict(cases=18,episodes=60,planned_calls=83,max_calls=163,sol_calls=0,cad_attempts=0))
@@ -160,6 +354,20 @@ class V3Contracts(unittest.TestCase):
             entry=next(e for e in json.loads((BASE/'run-order.json').read_text())['entries'] if e['case']=='A4')
             row=evaluation.record(root,entry,REVIEW_RUN);self.assertIsNone(row['stop_reason'],row.get('error'));self.assertTrue(row['completed']);self.assertEqual(row['failure_class'],'editability_pre_export')
             self.assertEqual(row['final_stage_statuses']['export'],'not_reached')
+
+    def test_solfix_rejected_P_and_R_remain_unconsumed_time_stops(self):
+        rejection=dict(stdout=json.dumps(dict(type='error',codex_error_info='server_overloaded')))
+        for repair in (False,True):
+            with self.subTest(repair=repair),tempfile.TemporaryDirectory() as d:
+                tick=[0.0];outputs=[json.dumps(spec('A4')) if repair else 'invalid',rejection]
+                root,r,_,calls,cads,guard=self.drive(d,'A4',outputs,fail=repair,provider=True,clock=tick,sleeper=lambda s:tick.__setitem__(0,tick[0]+s))
+                self.assertEqual((len(calls),r['llm_calls'],guard.calls,r['parse_repairs'],r['repair_calls']),(2,1,1,0,0))
+                self.assertEqual(r['calls'][-1]['purpose'],'repair' if repair else 'parse_repair')
+                self.assertEqual(r['message_code'],'episode_stage_deadline_exceeded');self.assertLess(r['provider_wait_s'],600)
+                entry=next(e for e in json.loads((BASE/'run-order.json').read_text())['entries'] if e['case']=='A4')
+                row=evaluation.record(root,entry,REVIEW_RUN)
+                self.assertIsNone(row['stop_reason'],row.get('error'));self.assertFalse(row['completed']);self.assertEqual(row['failure_class'],'timeout')
+                if repair:self.assertEqual(row['initial_stage_statuses']['editability'],'fail');self.assertTrue(row['repair_eligible'])
 
     def test_repair_reservation_is_episode_stop_not_shared_reset(self):
         tick=[0.0]

@@ -13,3 +13,19 @@ Resolved disagreements:
 - Re-freeze as `verify-v3-reviewed-r1-solfix` after archiving SHA256.run-r1.json. The aggregate binds segment 1 to the original manifest and segment 2 to the solfix manifest, using new output files.
 
 Signers: append `consensus: AGREE <JST>` or `consensus: COUNTER <exact>` to your solfix-<you>.md.
+
+## USER DECISION 16:39 JST (overrides retry items; no consensus needed)
+- On a Sol `server_overloaded` rejection, wait 10 minutes and resend the byte-identical call. This is treated as normal and never causes an abnormal stop.
+- There is no retry cap for overloaded. The wall/deadline and quota stops still apply.
+- Overloaded attempts and waits do not count toward the Sol call budget (the 163 cap or P/R) and are not scored as failures. They are recorded separately: attempts, waits, session ids, error info.
+- This replaces "≤3 transport attempts, 30/90 s backoff, counted toward 163" and "3 consecutive provider_unavailable → harness stop".
+
+## USER DECISION 17:08 JST (deadline)
+- The v3 deadline is extended to **20:00 JST** for the resumed segment. This overrides the inherited deadline_monotonic 545790.093 (about 18:08 JST).
+- Implementation: the resume clock is derived from a wall-clock cutoff of 2026-10-13T20:00:00+09:00, converted once at resume start to an absolute monotonic deadline and recorded.
+- Segment 1 keeps its original deadline_ok. Every other strict check is unchanged.
+
+## USER DECISION 17:08 JST, update (supersedes the 20:00 entry above)
+- **No deadline.** v3 continues until complete. The wall-clock/deadline stop is removed for the resumed segment.
+- The quota stops stay: 55% soft (consult) and 60% hard stop. The per-episode 900 s stage budgets and all other checks are unchanged.
+- Segment 1 keeps its original recorded deadline_ok. The aggregate reports segment 2 as `deadline: none (user decision 17:08)`.
