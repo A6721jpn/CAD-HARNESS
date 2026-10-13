@@ -15,7 +15,12 @@ else:
 
 def verify(app, part, request, directory):
     gold_reader, artifact_probe = load_gold, probe
-    if request.get("probe_profile") == "verify-v2":
+    if request.get("probe_profile") == "verify-v3":
+        if __package__:
+            from .cad_verify_v3_probe import load_gold as gold_reader, probe as artifact_probe
+        else:
+            from cad_verify_v3_probe import load_gold as gold_reader, probe as artifact_probe
+    elif request.get("probe_profile") == "verify-v2":
         if __package__:
             from .cad_verify_v2_probe import load_gold as gold_reader, probe as artifact_probe
         else:

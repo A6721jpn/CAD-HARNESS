@@ -34,7 +34,7 @@ def worker_row(kind, payload):
 
 
 def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
-            step_path=None, generator="agent"):
+            step_path=None, generator="agent", profile=None):
     """The actual exception boundary, also exercised with a fake App in unit tests."""
     probe_fn = probe_fn or SPECS[task_id]["probe"]
     result = {"task_id": task_id, "timings_ms": dict.fromkeys(("build", "recompute", "probe", "save")),
@@ -43,6 +43,9 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
               "probe_status": "not_run", "measurements": None, "predicate_diff": None,
               "document_closed": False, "owned_pid": os.getpid(),
               "gui_up": getattr(app, "GuiUp", None), "freecad_version": list(app.Version())}
+    if profile=="verify-v3":
+        result["stage_statuses"]=dict.fromkeys(("build","geometry","editability","export","reimport"),"not_reached")
+        result["stage_measurements"]=dict.fromkeys(result["stage_statuses"])
     doc, phase, owner = None, "launch", "harness"
     emit("ready", {"owned_pid": result["owned_pid"], "gui_up": result["gui_up"]})
     try:
@@ -61,6 +64,7 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
         owner = "harness"
         with stage(result, "recompute"):
             doc.recompute()
+        if profile=="verify-v3":result["stage_statuses"]["build"]="pass"
         emit("event", {"phase": "build", "event": "build_finished", "status": "ok"})
         phase, owner = "probe", "probe"
         with stage(result, "probe"):
@@ -71,8 +75,12 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
                       predicate_diff=[k for k, passed in observed["predicates"].items() if not passed])
         result.update({key: observed.get(key) for key in
                        ("predicate_details", "geometry_ok", "editability_ok", "skill_warnings")})
+        if profile=="verify-v3":
+            for key,flag in (("geometry","geometry_ok"),("editability","editability_ok")):
+                result["stage_statuses"][key]="pass" if observed.get(flag) is True else "fail"
+                result["stage_measurements"][key]=observed.get("measurements") if key=="geometry" else (observed.get("measurements") or {}).get("editability")
         if not result["probe_pass"]:
-            compiler_native = generator == "compiler" and observed.get("editability_ok") is False
+            compiler_native = profile != "verify-v3" and generator == "compiler" and observed.get("editability_ok") is False
             result.update(failed_phase="probe", code_owner="harness" if compiler_native else "script",
                           next_actor="human" if compiler_native else "sol")
         emit("event", {"phase": "probe", "event": "probe_finished",
@@ -86,12 +94,14 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
         if step_path is not None and result["probe_pass"]:
             phase, owner = "export", "harness"
             tick = time.monotonic()
+            if profile=="verify-v3":result["stage_statuses"]["export"]="fail"
             try:
                 import Part
                 # Body.Shape contains the current Tip solid in its world placement.
                 Part.export([body], str(step_path))
                 if not Path(step_path).is_file() or Path(step_path).stat().st_size == 0:
                     raise OSError("step_missing")
+                if profile=="verify-v3":result["stage_statuses"]["export"]="pass"
             finally:
                 result["export_ms"] = (time.monotonic() - tick) * 1000
         result["script_completed"] = True
@@ -99,6 +109,7 @@ def execute(app, builder, model_path, emit, probe_fn=None, task_id=TASK_A,
             result["status"] = "ok"
     except Exception as exc:
         result["status"] = "failed"
+        if profile=="verify-v3" and phase=="build" and result["stage_statuses"]["build"]!="pass":result["stage_statuses"]["build"]="fail"
         if result["failed_phase"] is None:
             result.update(failed_phase=phase, code_owner=owner,
                           next_actor="sol" if owner == "script" else "human",
@@ -139,8 +150,10 @@ def main():
                 namespace = runpy.run_path(str(source))
                 return namespace["build"](doc)
             probe_fn, step_path = None, None
-            if request.get("probe_profile") in ("mvp-v1","verify-v1","verify-v2"):
-                if request["probe_profile"] == "verify-v2":
+            if request.get("probe_profile") in ("mvp-v1","verify-v1","verify-v2","verify-v3"):
+                if request["probe_profile"] == "verify-v3":
+                    from cad_verify_v3_probe import load_gold, probe as spec_probe
+                elif request["probe_profile"] == "verify-v2":
                     from cad_verify_v2_probe import load_gold, probe as spec_probe
                 elif request["probe_profile"] == "verify-v1":
                     from cad_verify_probe import load_gold, probe as spec_probe
@@ -156,7 +169,7 @@ def main():
                 step_path = Path.cwd() / "model.step"
             result = execute(App, builder, Path.cwd() / "model.FCStd", emit, probe_fn,
                              task_id=request.get("task_id", TASK_A), step_path=step_path,
-                             generator=request.get("generator", "agent"))
+                             generator=request.get("generator", "agent"), profile=request.get("probe_profile"))
         except Exception as exc:
             result = {"status": "failed", "failed_phase": "launch", "code_owner": "harness",
                       "next_actor": "human", "script_completed": False, "probe_status": "not_run",

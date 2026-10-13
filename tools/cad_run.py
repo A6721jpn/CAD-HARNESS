@@ -103,7 +103,7 @@ def parser():
     p.add_argument("--timeout-s", required=True, type=int, help="Positive CAD runtime limit")
     p.add_argument("--recipe", choices=("freecadcmd", "console"), default="freecadcmd")
     p.add_argument("--task", default=TASK)
-    p.add_argument("--probe-profile", choices=("legacy", "mvp-v1", "verify-v1", "verify-v2"), default="legacy")
+    p.add_argument("--probe-profile", choices=("legacy", "mvp-v1", "verify-v1", "verify-v2", "verify-v3"), default="legacy")
     p.add_argument("--gold")
     p.add_argument("--generator", choices=("compiler", "agent"), default="agent")
     p.add_argument("--end-to-end-s", type=float, default=900)
@@ -132,11 +132,15 @@ def source_contract(tree):
 
 
 def preflight(args, root=ROOT):
-    mvp = getattr(args, "probe_profile", "legacy") in ("mvp-v1","verify-v1","verify-v2")
+    mvp = getattr(args, "probe_profile", "legacy") in ("mvp-v1","verify-v1","verify-v2","verify-v3")
     if not mvp and args.task not in SPECS:
         raise InputError("invalid_task")
     if mvp:
-        if args.probe_profile == "verify-v2" and __package__:
+        if args.probe_profile == "verify-v3" and __package__:
+            from .cad_verify_v3_probe import load_gold
+        elif args.probe_profile == "verify-v3":
+            from cad_verify_v3_probe import load_gold
+        elif args.probe_profile == "verify-v2" and __package__:
             from .cad_verify_v2_probe import load_gold
         elif args.probe_profile == "verify-v2":
             from cad_verify_v2_probe import load_gold
@@ -154,7 +158,7 @@ def preflight(args, root=ROOT):
             raise InputError("invalid_mvp_contract")
         if load_gold(args.gold)["case_id"] != args.task:
             raise InputError("gold_task_mismatch")
-        if args.probe_profile == "verify-v2" and not 1 <= args.verification_timeout_s <= 300:
+        if args.probe_profile in ("verify-v2","verify-v3") and not 1 <= args.verification_timeout_s <= 300:
             raise InputError("invalid_verify_v2_timeout")
     if args.timeout_s <= 0:
         raise InputError("invalid_timeout")
@@ -285,10 +289,13 @@ def merge_worker(result, worker, proc):
         raise ValueError("worker_protocol")
     fields = ("script_completed", "measurements", "predicate_diff", "reference", "document_closed",
               "predicate_details", "geometry_ok", "editability_ok", "skill_warnings", "export_ms")
-    if result.get("probe_profile") in ("mvp-v1","verify-v1","verify-v2") and any(
+    if result.get("probe_profile") in ("mvp-v1","verify-v1","verify-v2","verify-v3") and any(
             worker.get(k) != result.get(k) for k in ("probe_profile", "gold_sha256", "spec_sha256", "generator")):
         raise ValueError("worker_profile_binding")
     result.update({k: worker.get(k) for k in fields})
+    if result.get("probe_profile")=="verify-v3":
+        result["stage_statuses"]=worker.get("stage_statuses")
+        result["stage_measurements"]=worker.get("stage_measurements")
     result["timings_ms"] = worker.get("timings_ms", dict.fromkeys(("build", "recompute", "probe", "save")))
     if result["failed_phase"] is None:
         result.update(probe_pass=worker.get("probe_pass"), probe_status=worker.get("probe_status"))
@@ -382,7 +389,7 @@ def verify_artifacts(out, result, root, request, run_deadline, popen, scan, even
 
 
 def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
-    mvp = getattr(args, "probe_profile", "legacy") in ("mvp-v1","verify-v1","verify-v2")
+    mvp = getattr(args, "probe_profile", "legacy") in ("mvp-v1","verify-v1","verify-v2","verify-v3")
     run_deadline = time.monotonic() + args.end_to_end_s if mvp else None
     try:
         out, raw, source_hash = preflight(args, root)
@@ -406,7 +413,7 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
         result.update(probe_profile=args.probe_profile, gold_sha256=hashlib.sha256(gold_raw).hexdigest(),
                       spec_sha256=spec_sha, generator=args.generator, verification_pass=False)
         request.update({k: result[k] for k in ("probe_profile", "gold_sha256", "spec_sha256", "generator")})
-        if args.probe_profile == "verify-v2":
+        if args.probe_profile in ("verify-v2","verify-v3"):
             request["verification_timeout_s"] = args.verification_timeout_s
     events, proc, threads = Events(out, result), None, []
     gui_up, consumed, timed_out = None, 0, False
@@ -539,6 +546,10 @@ def run_attempt(args, root=ROOT, popen=subprocess.Popen, scan=window_scan):
                         artifact=stderr.name, data={"stderr_bytes": len(data),
                         "stderr_sha256": hashlib.sha256(data).hexdigest(),
                         "removed_warning_lines": result["removed_warning_lines"]})
+        if result.get("probe_profile")=="verify-v3":
+            if __package__: from .cad_verify_v3_diagnostics import finalize
+            else: from cad_verify_v3_diagnostics import finalize
+            finalize(result)
         events.emit("run", "run_finished", result["status"])
         events.stream.close()
         result["artifacts"].update({"events.jsonl": "events.jsonl", "result.json": "result.json"})
