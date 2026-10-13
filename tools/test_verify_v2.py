@@ -212,7 +212,8 @@ class V2Contracts(unittest.TestCase):
             self.assertEqual((b.counts['parse_repair'],b.counts['repair']),(1,1))
             snapshot=self.snapshot(d)
             full=Guard(snapshot,call_budget=163,now=lambda:NOW)
-            self.assertEqual((full.call_budget,full.deadline-full.started),(163,10800))
+            self.assertEqual(full.call_budget,163)
+            self.assertEqual(full.deadline,full.started+10800)
             for _ in range(163): full.before_call()
             self.assertEqual(full.calls,163)
             with self.assertRaisesRegex(Stop,'budget'): full.before_call()
@@ -274,6 +275,17 @@ class V2Contracts(unittest.TestCase):
         for name in names:
             target=root/name; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes((ROOT/name).read_bytes())
         return root.resolve()
+
+    def test_aggfix_version_cannot_start_a_live_suite(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)/'repo'
+            launch=Mock(side_effect=AssertionError('aggfix must not launch'))
+            with patch.object(evaluation,'load',return_value=({'version':'verify-v2-reviewed-mock-aggfix'},{})),\
+                 patch.object(evaluation,'paths') as paths,patch('subprocess.run',launch):
+                with self.assertRaisesRegex(Stop,'aggfix_no_live_run'):
+                    evaluation.run('blocked',Path(d)/'unused-snapshot.json',root=root,runner=launch)
+            paths.assert_not_called(); launch.assert_not_called()
+            self.assertFalse(root.exists())
 
     def test_frozen_mock_suite_aggregate_completion_denominator_and_repair_binding(self):
         """60 episodes use mock providers/CAD; aggregation must never launch either."""
@@ -404,6 +416,90 @@ class V2Contracts(unittest.TestCase):
             self.assertIsNone(timed_part['wilson95']); self.assertGreaterEqual(timed_part['wall_s']['maximum'],450)
             with self.assertRaisesRegex(ValueError,'aggregate_exists'): evaluation.aggregate('mock-suite','mock-suite',root)
             with self.assertRaisesRegex(ValueError,'prefix_exists'): evaluation.run('mock-suite',snapshot,root=root,runner=launch)
+            # Only temporary mock records are changed. The recorded host pair
+            # reproduces the subtraction error; deadlines themselves stay exact.
+            directory=evaluation.paths(root,'mock-suite')
+            run_path=directory/'suite-run.json'; plan_path=directory/'plan.json'
+            saved_run=run_path.read_bytes(); saved_plan=plan_path.read_bytes()
+            start=514542.359; deadline=525342.3589999999
+            self.assertEqual(deadline-start,10799.999999999942)
+            def mock_pair(end):
+                observed=json.loads(saved_run); planned=json.loads(saved_plan)
+                for value in (observed,planned):
+                    value.update(started_monotonic=start,deadline_monotonic=end)
+                run_path.write_text(json.dumps(observed),encoding='utf-8')
+                plan_path.write_text(json.dumps(planned),encoding='utf-8')
+                return observed,planned
+            with patch('subprocess.run',launch):
+                for span,end,accepted in ((10799.999999999942,deadline,True),
+                                          (10799.9,start+10799.9,False),(10801,start+10801,False)):
+                    with self.subTest(span=span):
+                        mock_pair(end)
+                        if accepted:
+                            rounded=evaluation.aggregate('mock-suite','mock-rounded',root,clock=lambda:start+1)
+                            self.assertEqual(rounded['summary'],doc['summary'])
+                        else:
+                            with self.assertRaisesRegex(ValueError,'suite_record_binding'):
+                                evaluation.aggregate('mock-suite','mock-span-'+('short' if span<10800 else 'long'),root,clock=lambda:start+1)
+                observed,planned=mock_pair(deadline)
+                planned['deadline_monotonic']+=1e-7
+                plan_path.write_text(json.dumps(planned),encoding='utf-8')
+                with self.assertRaisesRegex(ValueError,'suite_record_binding'):
+                    evaluation.aggregate('mock-suite','mock-pair-mismatch',root,clock=lambda:start+1)
+                mock_pair(deadline)
+                expired=evaluation.aggregate('mock-suite','mock-deadline-exact',root,clock=lambda:deadline)
+                self.assertFalse(expired['summary']['deadline_ok']); self.assertFalse(expired['summary']['bar_met'])
+                observed,planned=mock_pair(deadline); observed['wall_s']=10800
+                run_path.write_text(json.dumps(observed),encoding='utf-8')
+                wall=evaluation.aggregate('mock-suite','mock-wall-exact',root,clock=lambda:start+1)
+                self.assertFalse(wall['summary']['deadline_ok'])
+                observed,planned=mock_pair(deadline); observed['rows'][7]['ended_elapsed_s']=10800
+                run_path.write_text(json.dumps(observed),encoding='utf-8')
+                late=evaluation.aggregate('mock-suite','mock-episode-exact',root,clock=lambda:start+1)
+                self.assertFalse(late['groups']['mvp'][0]['passed']); self.assertFalse(late['summary']['bar_met'])
+            run_path.write_bytes(saved_run); plan_path.write_bytes(saved_plan)
+            # Re-freeze is simulated in this temporary repo: the actual project
+            # manifest and reports are never rewritten or aggregated by tests.
+            manifest_path=base/'SHA256.json'; original_bytes=manifest_path.read_bytes()
+            archive=base/'SHA256.run-r1.json'; archive.write_bytes(original_bytes)
+            archive_name=archive.relative_to(root).as_posix()
+            current=json.loads(original_bytes)
+            for name in ('tools/eval_verify_v2.py','tools/test_verify_v2.py'):
+                p=root/name; p.write_bytes(p.read_bytes()+b'\n# MOCK aggregation-only revision\n')
+                current['files'][name]=evaluation.sha(p.read_bytes())
+            current.update(version=frozen['version']+'-aggfix',local_commit='abcdef3',created_at=NOW.isoformat())
+            current_bytes=json.dumps(current).encode('utf-8'); manifest_path.write_bytes(current_bytes)
+            with patch('subprocess.run',launch):
+                fixed=evaluation.aggregate('mock-suite','mock-aggfix',root,clock=lambda:clock[0],run_manifest=archive_name)
+                self.assertEqual(fixed['summary'],doc['summary'])
+                for key in ('version','local_commit','plan_commit','sha_manifest','frozen_sha256'):
+                    self.assertEqual(fixed[key],doc[key])
+                self.assertEqual(fixed['aggregation_identity'],dict(version=current['version'],local_commit='abcdef3',
+                    sha_manifest=evaluation.sha(current_bytes),run_manifest=archive_name))
+                with patch.object(evaluation,'aggregate',return_value=fixed) as forwarded,patch('builtins.print'):
+                    self.assertEqual(evaluation.main(['aggregate','--prefix','mock-suite','--suffix','mock-cli',
+                        '--run-manifest',archive_name]),0)
+                forwarded.assert_called_once_with('mock-suite','mock-cli',run_manifest=archive_name)
+                with self.assertRaisesRegex(ValueError,'suite_record_binding'):
+                    evaluation.aggregate('mock-suite','mock-no-archive',root,clock=lambda:clock[0])
+                archive.write_bytes(original_bytes+b'\n')
+                with self.assertRaisesRegex(ValueError,'suite_record_binding'):
+                    evaluation.aggregate('mock-suite','mock-bad-archive-digest',root,clock=lambda:clock[0],run_manifest=archive_name)
+                archive.write_bytes(original_bytes)
+                with self.assertRaisesRegex(ValueError,'aggregate_exists'):
+                    evaluation.aggregate('mock-suite','mock-aggfix',root,clock=lambda:clock[0],run_manifest=archive_name)
+                skill=root/'skills/freecad-modeling/SKILL.md'; saved_skill=skill.read_bytes()
+                skill.write_bytes(saved_skill+b'\n')
+                extra=json.loads(current_bytes); extra['files']['skills/freecad-modeling/SKILL.md']=evaluation.sha(skill.read_bytes())
+                manifest_path.write_text(json.dumps(extra),encoding='utf-8')
+                with self.assertRaisesRegex(Stop,'aggfix_manifest_binding'):
+                    evaluation.aggregate('mock-suite','mock-third-file',root,clock=lambda:clock[0],run_manifest=archive_name)
+                skill.write_bytes(saved_skill); manifest_path.write_bytes(current_bytes)
+                p=root/'tools/eval_verify_v2.py'; saved_code=p.read_bytes(); p.write_bytes(saved_code+b'\n')
+                with self.assertRaisesRegex(Stop,'sha_mismatch:tools/eval_verify_v2.py'):
+                    evaluation.aggregate('mock-suite','mock-stale-current',root,clock=lambda:clock[0],run_manifest=archive_name)
+                p.write_bytes(saved_code)
+            launch.assert_not_called()
             cli.write_bytes(b'CHANGED MOCK EXECUTABLE')
             with self.assertRaisesRegex(Stop,'cli_sha_mismatch'): evaluation.load(root)
             cli.write_bytes(b'MOCK EXECUTABLE ONLY')

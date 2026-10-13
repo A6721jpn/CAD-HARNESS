@@ -406,7 +406,9 @@ def legacy_record(root,entry,name):
 
 def run(prefix,snapshot,call_budget=163,codex=None,root=ROOT,runner=None,clock=None,now=None):
     root=Path(root).resolve(); guard=Guard(snapshot,call_budget=call_budget,clock=clock,now=now)
-    manifest,order=load(root); directory=paths(root,prefix)
+    manifest,order=load(root)
+    if manifest["version"].endswith("-aggfix"): raise Stop("aggfix_no_live_run")
+    directory=paths(root,prefix)
     executable=manifest["cli"]["path"]
     if codex and Path(shutil.which(codex) or codex).resolve()!=Path(executable): raise Stop("cli_path_changed")
     process_runner=runner or subprocess.run
@@ -533,18 +535,34 @@ def summarize(rows,order,stopped=None,versions_consistent=True,deadline_ok=True)
         parse_repair_calls=sum(r.get("parse_repairs",0) for r in rows),repair_calls=sum(r.get("repair_calls",0) for r in rows))
 
 
-def aggregate(prefix,suffix,root=ROOT,clock=None):
+def aggregate(prefix,suffix,root=ROOT,clock=None,run_manifest=None):
     root=Path(root).resolve(); manifest,order=load(root); directory=paths(root,prefix); eval_mvp.valid_name(suffix)
     outputs=[root/"reports"/("aggregate-verify-v2-"+suffix+ext) for ext in (".json",".csv")]
     if any(p.exists() or p.is_symlink() or p.resolve()!=p for p in outputs): raise ValueError("aggregate_exists_or_linked")
     observed=read_json((directory/"suite-run.json").read_text(encoding="utf-8"))
     plan=read_json((directory/"plan.json").read_text(encoding="utf-8"))
     digest=sha((root/DESIGN/"SHA256.json").read_bytes())
+    aggregation_identity=None
+    if run_manifest is not None:
+        raw=safe_file(root,run_manifest).read_bytes()
+        original=read_json(raw.decode("utf-8"))
+        changed_metadata={"version","created_at","local_commit","files"}
+        if (set(original)!=set(manifest)
+                or any(original[k]!=manifest[k] for k in manifest if k not in changed_metadata)
+                or manifest["version"]!=original["version"]+"-aggfix"
+                or set(original["files"])!=set(manifest["files"])
+                or {n for n in manifest["files"] if original["files"][n]!=manifest["files"][n]}
+                   !={"tools/eval_verify_v2.py","tools/test_verify_v2.py"}):
+            raise Stop("aggfix_manifest_binding")
+        aggregation_identity=dict(version=manifest["version"],local_commit=manifest["local_commit"],
+            sha_manifest=digest,run_manifest=run_manifest)
+        manifest=original; digest=sha(raw)
     if (observed["schema"]!="cad-harness.verify-run.v2" or observed["profile"]!="verify-v2" or observed["prefix"]!=prefix
             or observed["version"]!=manifest["version"] or observed["sha_manifest"]!=digest or plan["sha_manifest"]!=digest
+            or (run_manifest is not None and plan["version"]!=manifest["version"])
             or plan["entries"]!=order["entries"] or [r["id"] for r in observed["rows"]]!=[e["id"] for e in order["entries"]]
             or observed["started_monotonic"]!=plan["started_monotonic"] or observed["deadline_monotonic"]!=plan["deadline_monotonic"]
-            or observed["deadline_monotonic"]-observed["started_monotonic"]!=10800): raise ValueError("suite_record_binding")
+            or abs((observed["deadline_monotonic"]-observed["started_monotonic"])-10800)>1e-6): raise ValueError("suite_record_binding")
     consistent=observed["frozen_sha256"]==manifest["files"]
     rows=[]
     for e,original in zip(order["entries"],observed["rows"]):
@@ -583,6 +601,7 @@ def aggregate(prefix,suffix,root=ROOT,clock=None):
         frozen_sha256=manifest["files"],summary=summary,groups=groups,per_suite={g:metric(rs) for g,rs in groups.items()},
         provider_tokens={g:token_totals(rs) for g,rs in groups.items()},real_calls=real_calls,
         interval_scope="Completed fixed cohorts/parts only. C and dev are outside bar_met; v1 reports are never re-scored.")
+    if aggregation_identity is not None: doc["aggregation_identity"]=aggregation_identity
     write_json(outputs[0],doc)
     fields=("group","case","bar_class","id","run","scored","completed","passed","route_ok","q_score","critical_invention",
         "completion_reached","initial_q_score","wall_s","sol_calls","cad_attempts","parse_repairs","repair_calls","repair_eligible",
@@ -601,6 +620,7 @@ def main(argv=None):
     r=subs.add_parser("run"); r.add_argument("--prefix",required=True); r.add_argument("--quota-snapshot",required=True)
     r.add_argument("--call-budget",type=int,default=163); r.add_argument("--codex")
     a=subs.add_parser("aggregate"); a.add_argument("--prefix",required=True); a.add_argument("--suffix",required=True)
+    a.add_argument("--run-manifest",help="Archived original manifest for a reviewed aggregation-only fix")
     args=parser.parse_args(argv)
     try:
         if args.command=="freeze":
@@ -610,7 +630,7 @@ def main(argv=None):
             result=run(args.prefix,args.quota_snapshot,args.call_budget,args.codex)
             print(json.dumps({"completed":sum(r["completed"] for r in result["rows"]),"planned":len(result["rows"]),"stop_reason":result["stop_reason"]}))
             return 0 if not result["stop_reason"] else 1
-        result=aggregate(args.prefix,args.suffix); print(json.dumps(result["summary"],allow_nan=False))
+        result=aggregate(args.prefix,args.suffix,run_manifest=args.run_manifest); print(json.dumps(result["summary"],allow_nan=False))
         return 0 if result["summary"]["bar_met"] else 1
     except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
         print(json.dumps({"status":"stopped","message_code":str(exc)})); return 2
