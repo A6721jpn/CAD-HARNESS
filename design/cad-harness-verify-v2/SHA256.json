@@ -1,9 +1,9 @@
 {
   "schema": "cad-harness.verify-sha.v2",
   "profile": "verify-v2",
-  "version": "verify-v2-reviewed-r1",
-  "created_at": "2026-10-13T00:05:45.527490+00:00",
-  "local_commit": "1e93a1b",
+  "version": "verify-v2-reviewed-r1-aggfix",
+  "created_at": "2026-10-13T02:31:19.580011+00:00",
+  "local_commit": "dd7225c",
   "plan_commit": "2159ce0",
   "files": {
     "design/cad-harness-mvp/DECISION-01-acceptance-bar.md": "fee078a9ff067a5bc93e9dcf9e760ba08ac3229b7badaa11b0cb39aeb461827d",
@@ -180,7 +180,7 @@
     "tools/cad_verify_v2_probe.py": "18244b29b39630f92f3d27c01a50519266ac77c79bdb3cdfc9feb806b3fd5d1c",
     "tools/eval_mvp.py": "4eac5a9fcf6e9a3498583e43bfd8d88d2ab691ffd38256594931f76ac47a26b9",
     "tools/eval_verify.py": "71b410e9c037f5f8e14cfe2b752d1035f6db0a9b64e82b956e405ec094605fe0",
-    "tools/eval_verify_v2.py": "506231d09324cd11543f14d65cf01192016dbc142c3e5c9fe37e04811db51b27",
+    "tools/eval_verify_v2.py": "2a5ab84204ea04c8ff0dcf10528fc236a179e44fd36e1cab9e59a3867c76308e",
     "tools/fixtures/cad_run_a_broken_mvp.py": "62339c70455d8b5de89f15f64c3b5938e7edc22e682f2d16b0501b6382759f92",
     "tools/fixtures/cad_run_a_build.py": "3ad5c506d84739c4378ce80d9557800919e7c0dd6c8f46cb8ff1cbc3882393dd",
     "tools/fixtures/cad_run_b_broken_mvp.py": "74ec2d2f7c0dde442f4ad4ea4910ead54ad884fa349902612a1881e7d14f5821",
@@ -191,7 +191,7 @@
     "tools/smoke_verify_v2.py": "b1c506c628aa0a70098d9cb45da745c877acbdd4679a405df02b4d427a520952",
     "tools/test_cad_verify.py": "be5657780bf5927862f11da6bc049b9ce1b4cc71b51040c6d3b2b7a0cb193d3e",
     "tools/test_support.py": "29cb4201b072d2879b0d25315355351aaa1713493390842b4b394dddd6e5d243",
-    "tools/test_verify_v2.py": "e65cda96253ce2844622bf3881acba408926873121d8588f42b6e49d668e1b9e",
+    "tools/test_verify_v2.py": "573232319bf0a4b5667f51ee66071ab257b28b3b730c8841c3980b8fd3a53f0b",
     "tools/test_verify_v2_native.py": "b409ee0653a9110494b3b737ac7f4f9b11fe6cd4e7cb151630cf1cc5e5d09ec2"
   },
   "cli": {
