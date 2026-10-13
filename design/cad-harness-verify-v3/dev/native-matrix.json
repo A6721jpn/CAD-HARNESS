@@ -1,0 +1,172 @@
+{
+  "schema": "cad-harness.verify-dev-matrix.v3",
+  "author": "gemini",
+  "entries": [
+    {
+      "id": "direct_depth",
+      "source": "design/cad-harness-verify-v3/dev/sources/direct_depth.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "radius_difference",
+      "source": "design/cad-harness-verify-v3/dev/sources/radius_difference.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "diameter_difference",
+      "source": "design/cad-harness-verify-v3/dev/sources/diameter_difference.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "revolved_profile",
+      "source": "design/cad-harness-verify-v3/dev/sources/revolved_profile.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "annular_cut",
+      "source": "design/cad-harness-verify-v3/dev/sources/annular_cut.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "construction_depth",
+      "source": "design/cad-harness-verify-v3/dev/sources/construction_depth.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "expression_radius",
+      "source": "design/cad-harness-verify-v3/dev/sources/expression_radius.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "symmetric_half_width",
+      "source": "design/cad-harness-verify-v3/dev/sources/symmetric_half_width.py",
+      "expected": {
+        "geometry": true,
+        "editability": true
+      }
+    },
+    {
+      "id": "uncontrolled_bottom",
+      "source": "design/cad-harness-verify-v3/dev/sources/uncontrolled_bottom.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "wrong_role",
+      "source": "design/cad-harness-verify-v3/dev/sources/wrong_role.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "wrong_width",
+      "source": "design/cad-harness-verify-v3/dev/sources/wrong_width.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "connected_unrelated",
+      "source": "design/cad-harness-verify-v3/dev/sources/connected_unrelated.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "disconnected_loop",
+      "source": "design/cad-harness-verify-v3/dev/sources/disconnected_loop.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "disconnected_ray",
+      "source": "design/cad-harness-verify-v3/dev/sources/disconnected_ray.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "unused_sketch",
+      "source": "design/cad-harness-verify-v3/dev/sources/unused_sketch.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "inactive",
+      "source": "design/cad-harness-verify-v3/dev/sources/inactive.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "reference",
+      "source": "design/cad-harness-verify-v3/dev/sources/reference.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "origin_only_depth",
+      "source": "design/cad-harness-verify-v3/dev/sources/origin_only_depth.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    },
+    {
+      "id": "inoperative_property",
+      "source": "design/cad-harness-verify-v3/dev/sources/inoperative_property.py",
+      "expected": {
+        "geometry": true,
+        "editability": false
+      }
+    }
+  ],
+  "parameter_edits": [
+    {
+      "role": "groove_depth",
+      "delta_mm": 0.5,
+      "folder": "design/cad-harness-verify-v3/dev/depth_edit",
+      "source": "design/cad-harness-verify-v3/dev/sources/depth_edit.py"
+    },
+    {
+      "role": "groove_width",
+      "delta_mm": 1.0,
+      "folder": "design/cad-harness-verify-v3/dev/width_edit",
+      "source": "design/cad-harness-verify-v3/dev/sources/width_edit.py"
+    }
+  ]
+}

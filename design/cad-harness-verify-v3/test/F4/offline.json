@@ -1,0 +1,10 @@
+{
+  "positive": {
+    "geometry": true,
+    "editability": true
+  },
+  "negative": {
+    "geometry": false,
+    "editability": false
+  }
+}
