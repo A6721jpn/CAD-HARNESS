@@ -139,8 +139,10 @@ def main():
                 namespace = runpy.run_path(str(source))
                 return namespace["build"](doc)
             probe_fn, step_path = None, None
-            if request.get("probe_profile") in ("mvp-v1","verify-v1"):
-                if request["probe_profile"] == "verify-v1":
+            if request.get("probe_profile") in ("mvp-v1","verify-v1","verify-v2"):
+                if request["probe_profile"] == "verify-v2":
+                    from cad_verify_v2_probe import load_gold, probe as spec_probe
+                elif request["probe_profile"] == "verify-v1":
                     from cad_verify_probe import load_gold, probe as spec_probe
                 else:
                     from cad_spec_probe import load_gold, probe as spec_probe
