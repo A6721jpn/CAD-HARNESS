@@ -36,3 +36,11 @@
   - From resume attempt #2 (inf overflow): suite, q-A5-r5, q-A6-r5 and completion-C4-r1 -resume1 dirs, suffix -aborted-inf-overflow-20261013T1856. Logs: .tmp/v3resume.{out,err}-aborted-inf-overflow-20261013T1856.log.
 - Call charge: the 4 accepted calls from attempt #2 (A5-r5 1, A6-r5 1, C4-r1 2) are charged and unscored. Spent before re-execution: 58 of 163. Worst case: 106.
 - Scope: segment 2 (entries[46:]: A5-r5, then sequences 48–60) is re-executed in full. Scoring, gold, thresholds and order are unchanged. The 46 segment-1 records are unchanged.
+
+## Re-freeze label: solfix-a2 (manifest version stays verify-v3-reviewed-r1-solfix) (2026-10-13 JST)
+- Why: resume attempt #3 stopped at fault-F4-r1 with harness:report_binding / fault_source_binding. The checker hashed the raw CRLF injection, but the driver re-extracts the source (the final CR is dropped). See SOLFIX-ADDENDUM-A2.md.
+- Consensus: solfix-a2-{codex,grok,gemini}.md, all AGREE. Implementation commit: 27de198. 25 tests OK. Checker only; driver, fixtures, scoring, gold, thresholds and order are unchanged.
+- Manifests: the previous manifest is archived (git mv) as SHA256.solfix-a1.json (f5b4aafc2ce203c465b0b85490c781345260049e11a05254c02c361c15cd1fcd). New SHA256.json sha256: f4d13350c3070020d0e655b238be8dc9abff92b352b12964110d37634647cd3c.
+- Archived (renamed, nothing deleted): attempt #3 suite, A5-r5, A6-r5, C4/C5 r1–r3 and F4-r1 -resume1 dirs, plus logs, suffix -aborted-fault-binding-20261013T1930. Their results are informational and unscored.
+- Call charge: attempt #3 spent 17 accepted calls, charged. Spent before re-execution: 54 + 4 + 17 = 75 of 163. Worst case: 123.
+- Scope: segment 2 (entries[46:]) is re-executed in full.
