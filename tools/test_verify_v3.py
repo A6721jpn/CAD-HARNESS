@@ -40,6 +40,12 @@ def spec(case):
         holes=[{k:v for k,v in h.items() if k!='through'} for h in g['holes']],pockets=[{k:v for k,v in p.items() if k!='sharp'} for p in g['pockets']],finish=g['finish'])
 
 class V3Contracts(unittest.TestCase):
+    def test_solfix_a2_fault_source_sha_mirrors_driver_reextraction_for_crlf_fixture(self):
+        crlf=SOURCE.replace('\n','\r\n')
+        expected=hashlib.sha256(cad_agent.source_from_final(crlf).encode('utf-8')).hexdigest()
+        self.assertEqual(evaluation.fault_source_sha(crlf),expected)
+        self.assertEqual(evaluation.fault_source_sha(SOURCE),hashlib.sha256(SOURCE.encode('utf-8')).hexdigest())
+
     def test_solfix_a1_cad_timeout_cap_with_no_deadline_guard(self):
         self.assertEqual(driver.cap_timeout(300,math.inf),300)
         self.assertEqual(driver.cap_timeout(300,120.9),120)

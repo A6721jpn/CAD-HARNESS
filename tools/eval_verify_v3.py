@@ -408,6 +408,12 @@ def check_attempts(root,entry,report,where,gold):
                 raise ValueError("artifact_report_binding")
 
 
+def fault_source_sha(injected):
+    # solfix-a2: mirror the driver, which re-extracts the injected source (source_from_final) before CAD;
+    # with a CRLF fixture checkout that pass drops the final CR, so hashing the raw injection falsely failed (F4-r1).
+    return sha(cad_agent.source_from_final(injected).encode("utf-8"))
+
+
 def check_fault(root,entry,report,where):
     actual=report["fault"]; rule=Fault(root/DESIGN/"test"/entry["case"]/"fault.json")
     if actual["fault_id"]!=rule.record["fault_id"]: raise ValueError("fault_id_binding")
@@ -426,7 +432,7 @@ def check_fault(root,entry,report,where):
     if any(actual.get(k)!=rule.record.get(k) for k in ("reached","injected","original_sha256","injected_sha256","candidate_sha256")):
         raise ValueError("fault_candidate_binding")
     if kind=="source":
-        if first["source_sha256"]!=sha(injected.encode("utf-8")): raise ValueError("fault_source_binding")
+        if first["source_sha256"]!=fault_source_sha(injected): raise ValueError("fault_source_binding")
     else:
         path=where/("build-spec-c%d.json"%c["call"])
         if read_json(path.read_text(encoding="utf-8"))!=injected or first["source_sha256"]!=sha(cad_spec.compile_spec(injected).encode("utf-8")):
