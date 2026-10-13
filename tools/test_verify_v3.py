@@ -40,6 +40,10 @@ def spec(case):
         holes=[{k:v for k,v in h.items() if k!='through'} for h in g['holes']],pockets=[{k:v for k,v in p.items() if k!='sharp'} for p in g['pockets']],finish=g['finish'])
 
 class V3Contracts(unittest.TestCase):
+    def test_solfix_a1_cad_timeout_cap_with_no_deadline_guard(self):
+        self.assertEqual(driver.cap_timeout(300,math.inf),300)
+        self.assertEqual(driver.cap_timeout(300,120.9),120)
+        self.assertEqual(driver.cap_timeout(60,500.0),60)
     def test_active_respects_freecad_datum_api_and_geometric_activity(self):
         types=('Distance','DistanceX','DistanceY','Radius','Diameter','Angle',
             'Coincident','Horizontal','Vertical','Equal','Symmetric','PointOnObject','Parallel')

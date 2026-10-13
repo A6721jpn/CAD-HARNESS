@@ -233,6 +233,10 @@ def feedback(target, candidate, result):
     return {"source" if target == "source" else "build_spec": candidate, "result": observed}
 
 
+def cap_timeout(timeout,remaining):
+    # solfix-a1: a no-deadline guard reports math.inf; floor(inf) overflowed (resume #2 crash at C4-r1).
+    return min(timeout,math.floor(remaining)) if math.isfinite(remaining) else timeout
+
 def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=None, clock=None,
                route="spec", max_calls=None, rubric=None, answer=None, fault=None, guard=None, preview=False,
                provider_retry=False,sleeper=None,prior_provider_attempts=0,prior_call_identity=None):
@@ -471,7 +475,7 @@ def run_driver(name, codex, input_text, gold_path, *, root=agent.ROOT, runner=No
                 source = cad_spec.compile_spec(candidate)
             else: source = candidate
             timeout = math.floor(budget.cad_timeout())
-            if guard:timeout=min(timeout,math.floor(guard.remaining()))
+            if guard:timeout=cap_timeout(timeout,guard.remaining())
             if timeout < 1: raise Stop("episode_stage_deadline_exceeded")
             source_path = out/("input-a%d.py" % (budget.attempts+1))
             source_path.write_bytes(source.encode("utf-8"))
