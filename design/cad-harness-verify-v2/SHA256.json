@@ -1,10 +1,10 @@
 {
   "schema": "cad-harness.verify-sha.v2",
   "profile": "verify-v2",
-  "version": "verify-v2-phase2-uncommitted",
-  "created_at": "2026-10-12T16:46:30.650519+00:00",
-  "local_commit": "pending_supervisor",
-  "plan_commit": "pending_supervisor",
+  "version": "verify-v2-reviewed-r1",
+  "created_at": "2026-10-13T00:05:45.527490+00:00",
+  "local_commit": "1e93a1b",
+  "plan_commit": "2159ce0",
   "files": {
     "design/cad-harness-mvp/DECISION-01-acceptance-bar.md": "fee078a9ff067a5bc93e9dcf9e760ba08ac3229b7badaa11b0cb39aeb461827d",
     "design/cad-harness-mvp/build-schema.json": "616a33e93de34b2068fa1a9c6ec93e6abf8e1fa7316ee73e03454dd6448f1566",
@@ -175,12 +175,12 @@
     "tools/cad_verify_freecad.py": "a2c893a831d634071811fafa5a147bfba6005f6dba48c1de41060201ba41e875",
     "tools/cad_verify_guard.py": "e54bc0ef1f21d115d569df719bebd18dbf1733220a1a9a8ff1ff20acdaa0ae8e",
     "tools/cad_verify_probe.py": "f52d0ec1f2fb086367e4eb5ca37ade9d6623b1b49addc8630cb2bb674982ffbe",
-    "tools/cad_verify_v2_agent.py": "86950a1724324e9db4c534836995115040dbc5fd49c2ee9046ffa518169547eb",
-    "tools/cad_verify_v2_guard.py": "3f046ac16eade1f0c53352c57aa7047cc2215832828c7831415de9ea00bf8412",
+    "tools/cad_verify_v2_agent.py": "2f1a328c1ca37bba1ab8a70adf8b92562ae98e8193352a0df280403921608929",
+    "tools/cad_verify_v2_guard.py": "d07c34b15109d6c66c5c99d10db7cf76e4511538e5aeeb47c99d7866809e27e2",
     "tools/cad_verify_v2_probe.py": "18244b29b39630f92f3d27c01a50519266ac77c79bdb3cdfc9feb806b3fd5d1c",
     "tools/eval_mvp.py": "4eac5a9fcf6e9a3498583e43bfd8d88d2ab691ffd38256594931f76ac47a26b9",
     "tools/eval_verify.py": "71b410e9c037f5f8e14cfe2b752d1035f6db0a9b64e82b956e405ec094605fe0",
-    "tools/eval_verify_v2.py": "4727e213fc00aea7135e4ab6ec8f70dd666392909649d03b8b497a48df3993ee",
+    "tools/eval_verify_v2.py": "506231d09324cd11543f14d65cf01192016dbc142c3e5c9fe37e04811db51b27",
     "tools/fixtures/cad_run_a_broken_mvp.py": "62339c70455d8b5de89f15f64c3b5938e7edc22e682f2d16b0501b6382759f92",
     "tools/fixtures/cad_run_a_build.py": "3ad5c506d84739c4378ce80d9557800919e7c0dd6c8f46cb8ff1cbc3882393dd",
     "tools/fixtures/cad_run_b_broken_mvp.py": "74ec2d2f7c0dde442f4ad4ea4910ead54ad884fa349902612a1881e7d14f5821",
@@ -191,10 +191,14 @@
     "tools/smoke_verify_v2.py": "b1c506c628aa0a70098d9cb45da745c877acbdd4679a405df02b4d427a520952",
     "tools/test_cad_verify.py": "be5657780bf5927862f11da6bc049b9ce1b4cc71b51040c6d3b2b7a0cb193d3e",
     "tools/test_support.py": "29cb4201b072d2879b0d25315355351aaa1713493390842b4b394dddd6e5d243",
-    "tools/test_verify_v2.py": "0a01612c2b3dbf80986767c6048268cee9c77e41f89e8967032f05d6a428a9f9",
+    "tools/test_verify_v2.py": "e65cda96253ce2844622bf3881acba408926873121d8588f42b6e49d668e1b9e",
     "tools/test_verify_v2_native.py": "b409ee0653a9110494b3b737ac7f4f9b11fe6cd4e7cb151630cf1cc5e5d09ec2"
   },
-  "cli": null,
+  "cli": {
+    "path": "C:\\Users\\backo\\.codex\\packages\\standalone\\releases\\0.159.2-x86_64-pc-windows-msvc\\bin\\codex.exe",
+    "sha256": "52f75c649bebb8001102a1dd129c1ea6d02b0940321e6d7e82ee0526753bd58a",
+    "version": "codex-cli 0.159.2"
+  },
   "agents_sha256": {
     "codex_home": "135cce932eef96c57132b759fc5c0904e96fcdc82b281bc01641f03402bfd27b",
     "user_codex": "cc3faf4e5de704a555a711e89bc4f8b244496511ee684d1174c1094dc659377a",
