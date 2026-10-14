@@ -1,4 +1,4 @@
-"""VERIFY v4 Phases 1–2: offline ledger and one recorded request entry point."""
+"""VERIFY v4 ledger, recorded requests, immutable freeze and authorized holdout."""
 import argparse
 import csv
 import json
@@ -7,10 +7,12 @@ from pathlib import Path
 if __package__:
     from . import cad_agent, cad_verify_v3_agent, cad_verify_v4_agent as agent
     from . import cad_verify_v4_ledger as ledger, eval_verify_v3 as v3
+    from . import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
     from .cad_verify_guard import CLARIFICATION_FIELDS, Stop
 else:
     import cad_agent, cad_verify_v3_agent, cad_verify_v4_agent as agent
     import cad_verify_v4_ledger as ledger, eval_verify_v3 as v3
+    import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
     from cad_verify_guard import CLARIFICATION_FIELDS, Stop
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +45,7 @@ def preflight(policy=DESIGN/"policy.json", *, root=ROOT):
     folder = Path(root)/"skills/cad-harness-v4"
     if (folder/"modeling.md").read_bytes() != (Path(root)/"skills/freecad-modeling/SKILL.md").read_bytes():
         raise Stop("modeling_prose_drift")
-    if (folder/"contracts.md").read_bytes() != contract_text(root).encode("utf-8"):
+    if (folder/"contracts.md").read_text(encoding="utf-8") != contract_text(root):
         raise Stop("output_contract_drift")
     skill = agent.bundle(root)
     return dict(status="offline_ready", live_calls=0, live_cad_runs=0,
@@ -187,7 +189,7 @@ def parser():
     command.add_argument("--replay")
     command.add_argument("--rate-source")
     command.add_argument("--run-dir", required=True)
-    command = commands.add_parser("run", help="offline batch only; never a fresh holdout claim")
+    command = commands.add_parser("run", help="recorded batch or frozen-manifest-authorized live holdout")
     command.add_argument("--phase", choices=("holdout", "pilot"), required=True)
     command.add_argument("--manifest")
     command.add_argument("--replay")
@@ -200,16 +202,41 @@ def parser():
     command.add_argument("--holdout")
     command.add_argument("--pilot", default="not_run")
     command.add_argument("--run-dir", required=True)
-    commands.add_parser("freeze", help="unavailable in Phases 1–2")
+    command = commands.add_parser("freeze", help="bind public inputs; live authorization requires its own evidence file")
+    command.add_argument("--policy", default=str(DESIGN/"policy.json"))
+    command.add_argument("--holdout-commitment")
+    command.add_argument("--authorization")
+    command.add_argument("--generator-model", default="openai-codex/gpt-6.1-sol")
+    command.add_argument("--thinking", default="xhigh")
+    command.add_argument("--omp", default="omp")
+    command.add_argument("--quota-snapshot")
+    command.add_argument("--run-dir")
+    command = commands.add_parser("pilot-bundle", help="freeze verbatim original context and declared attachments; never enroll or generate")
+    command.add_argument("--source-jsonl", required=True)
+    command.add_argument("--locator", required=True, type=int)
+    command.add_argument("--request", required=True)
+    command.add_argument("--attachments", required=True)
+    command.add_argument("--conversation-id")
+    command.add_argument("--run-dir", required=True)
     return result
 
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    attempted_live = False
     try:
         if args.command == "freeze":
-            raise Stop("freeze_not_available_in_p12")
-        if args.command == "preflight":
+            if not args.holdout_commitment or not args.run_dir:
+                raise Stop("freeze_requires_public_commitment_and_run_dir")
+            preflight(args.policy)
+            value = freezing.freeze(args.policy, args.holdout_commitment, args.run_dir,
+                                    generator_model=args.generator_model, thinking=args.thinking,
+                                    omp=args.omp, quota_snapshot=args.quota_snapshot,
+                                    authorization_path=args.authorization)
+        elif args.command == "pilot-bundle":
+            value = pilot.bundle(args.source_jsonl, args.locator, args.request, args.attachments,
+                                 args.run_dir, conversation_id=args.conversation_id)
+        elif args.command == "preflight":
             value = preflight(args.policy)
         elif args.command == "ledger":
             value = ledger.backfill(args.source_root, args.run_dir, aggregate=args.aggregate,
@@ -224,11 +251,18 @@ def main(argv=None):
             print(json.dumps(value, ensure_ascii=True, allow_nan=False))
             return code
         elif args.command == "run":
-            if args.sealed_input or args.tasks:
-                raise Stop("p12_no_live_or_private_trial_inputs")
-            preflight()
-            check_manifest(args.manifest)
-            value = run_replay(args.replay, args.run_dir, args.phase)
+            if args.sealed_input:
+                if args.phase != "holdout" or not args.manifest or args.replay or args.tasks:
+                    raise Stop("live_holdout_requires_only_frozen_manifest_and_sealed_input")
+                attempted_live = True
+                value = live.run_holdout(args.manifest, args.sealed_input, args.run_dir)
+                cost_csv(Path(args.run_dir)/"calls.csv", Path(args.run_dir)/"ledger.jsonl")
+            else:
+                if args.tasks:
+                    raise Stop("pilot_requires_frozen_enrollment_not_raw_tasks")
+                preflight()
+                check_manifest(args.manifest)
+                value = run_replay(args.replay, args.run_dir, args.phase)
         else:
             source = args.replay_aggregate
             if source is None:
@@ -245,9 +279,11 @@ def main(argv=None):
         if isinstance(display.get("summary"), dict):
             display["summary"] = {k: display["summary"][k] for k in ("valid_suite", "complete", "thresholds", "bar_met")}
         print(json.dumps(display, ensure_ascii=True, allow_nan=False))
-        return 0
+        return 1 if value.get("status") == "INCOMPLETE" else 0
     except (OSError, ValueError, KeyError, TypeError) as exc:
-        print(json.dumps(dict(status="failed", reason=str(exc), live_calls=0, live_cad_runs=0)))
+        print(json.dumps(dict(status="failed", reason=str(exc),
+                              live_calls=None if attempted_live else 0,
+                              live_cad_runs=None if attempted_live else 0)))
         return 1
 
 
