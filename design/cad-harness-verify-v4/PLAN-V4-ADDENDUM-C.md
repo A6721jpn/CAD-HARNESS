@@ -94,3 +94,10 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
   - (e) a baseline-without-harness CAD-time measurement design and a durable dataset.
 - Open: the U1 tape location; the U2 minimal concave-face contact (judged by Astra plus the user's visual check; no invented number).
 ## C-D (agent-delegated values; to be filled by 3-party consensus)
+- C-D adopted (sol amended proposal c-d-proposal-sol.md, gemini AGREE item by item at 19:33; v4grok sign pending). Summary:
+  - (a) U5 fidelity: mask->contour IoU >= 0.90 and Hausdorff <= 1.5 mm; contour->CAD IoU >= 0.92 and Hausdorff <= 1.0 mm; same frozen transform for both; R >= 0.25 mm on the actual output.
+  - (b) engraving: 5.0 mm height and 0.6 mm depth defaults.
+  - (c) new families: 43 generative items + 4 admission controls; 129 generation + 43 Astra calls = 172.
+  - (d) extended time limits as in c-d-proposal-sol.md section d.
+  - (e) a with/without-harness CAD-time benchmark: 20 pairs, 100 calls, durable dataset `cad-harness.cad-time-benchmark.v1`. It requires named qualified human operators for the without-harness arm (user question).
+- C-A2 recording: gemini AGREE (19:2x), sol AGREE (19:33).
