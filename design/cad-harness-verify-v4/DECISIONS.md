@@ -63,3 +63,6 @@ Pending with the user: #1 pilot tasks, #2 pilot judge and rubric, #3 price sourc
 7. The agents may approve the new-family holdouts (counts/gates) themselves. Extra call budget for them is approved with NO upper limit. The quota rule (consult at 55%, stop at 60%) still applies.
 8. Time limits may be extended. CAD time must be measured precisely, and a durable dataset must compare work WITH vs WITHOUT the CAD harness (time saved). The baseline-without-harness measurement design must be agreed by the three.
 Still open (not answered): the U1 tape location; the U2 "minimal concave-face contact" criterion (until answered: Astra plus the user's visual judgment, with no numeric gate invented).
+
+## USER 2026-10-14 19:47 JST - U1 tape location
+- The U1 double-sided tape location may be anywhere; it is delegated to the agents. The agents choose a sensible location. It is not a pass/fail criterion, except that the tape must fit within the 0.5 mm thickness allowance.

@@ -101,3 +101,4 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
   - (d) extended time limits as in c-d-proposal-sol.md section d.
   - (e) a with/without-harness CAD-time benchmark: 20 pairs, 100 calls, durable dataset `cad-harness.cad-time-benchmark.v1`. It requires named qualified human operators for the without-harness arm (user question).
 - C-A2 recording: gemini AGREE (19:2x), sol AGREE (19:33).
+- C-A2 addendum (USER 19:47): the U1 tape location is delegated to the agents and is not a pass/fail item; only the 0.5 mm tape thickness must be accommodated in the fit. The remaining open item is U2 minimal concave-face contact (Astra plus the user's visual check).
