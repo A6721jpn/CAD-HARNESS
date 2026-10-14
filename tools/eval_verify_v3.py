@@ -40,6 +40,8 @@ SOLFIX_VERSION='verify-v3-reviewed-r1-solfix'
 RESUME_DEADLINE='none (user decision 17:08)'
 SOLFIX_CODE=frozenset(('tools/cad_verify_v3_agent.py','tools/cad_verify_v3_guard.py','tools/eval_verify_v3.py','tools/test_verify_v3.py'))
 SOLFIX_DOCS=frozenset(DESIGN+'/'+n for n in ('SOLFIX-CONSENSUS.md','SOLFIX-BRIEF.md','SOL-FAILURE.md','solfix-codex.md'))
+RERUN2_IDS=frozenset(('geometry-G5-r1','geometry-G1-r2'))
+RERUN2_SPENT=105
 sha=eval_verify.sha
 write_json=eval_verify.write_json
 result_pass=eval_verify.result_pass
@@ -224,7 +226,7 @@ def run_name(prefix,entry): return prefix+"-"+entry["id"]+"-mvp1"
 
 
 def driver_path(root,name):
-    if name.endswith('-mvp1-resume1'):
+    if name.endswith(('-mvp1-resume1','-mvp1-rerun2')):
         eval_mvp.valid_name(name)
         return safe_file(root,'reports/cad-run/'+name)
     return eval_mvp.run_path(root,name)
@@ -703,8 +705,9 @@ def original_binding(root,prefix,manifest_path,current,order):
     return old,observed,plan,archive,changed
 
 
-def original_artifacts(root,prefix,order):
-    directories=[paths(root,prefix),*(driver_path(root,run_name(prefix,e)) for e in order['entries'])]
+def original_artifacts(root,prefix,order,suffix=''):
+    directories=[safe_file(root,paths(root,prefix).relative_to(root).as_posix()+suffix),
+        *(driver_path(root,run_name(prefix,e)+suffix) for e in order['entries'])]
     return {p.relative_to(root).as_posix():sha(safe_file(root,p.relative_to(root).as_posix()).read_bytes()) for d in directories if d.exists() for p in d.rglob('*') if p.is_file()}
 
 
@@ -784,6 +787,146 @@ def resume(prefix,snapshot,run_manifest,codex=None,root=ROOT,runner=None,clock=N
         segment_wall_s=guard.clock()-segment_start,wall_s=guard.clock()-guard.started,stop_reason=stopped,rows=rows,
         inherited_calls=54,real_calls=guard.calls-initial_calls,total_real_calls=guard.calls,call_budget=163,quota_snapshots=guard.snapshots,
         frozen_sha256=manifest['files'],prior_backoff_elapsed_s=waited,additional_provider_wait_s=additional_wait,**bindings)
+    write_json(directory/'suite-run.json',document)
+    return document
+
+
+def rerun2_ids(ids):
+    requested=ids.split(',') if isinstance(ids,str) else list(ids)
+    if len(requested)!=2 or set(requested)!=RERUN2_IDS:raise Stop('rerun2_id_allowlist')
+    return RERUN2_IDS
+
+
+def rerun2_source(root,prefix,run_manifest,manifest,order):
+    """Bind the existing aggregate; do not reconstruct or re-score its other rows."""
+    _,first,_,archive,_=original_binding(root,prefix,run_manifest,manifest,order)
+    matches=[]
+    for candidate in (root/'reports').glob('aggregate-verify-v3-*-solfix.json'):
+        candidate=safe_file(root,candidate.relative_to(root).as_posix())
+        document=read_json(candidate.read_text(encoding='utf-8'))
+        if document.get('prefix')==prefix:matches.append((candidate,document))
+    if len(matches)!=1:raise Stop('rerun2_base_aggregate_required')
+    path,base=matches[0];rows=[r for group in GROUPS for r in base['groups'][group]]
+    original_sha=sha(archive.read_bytes())
+    if (base.get('schema')!='cad-harness.verify-aggregate.v3' or base.get('profile')!='verify-v3'
+            or base.get('version')!=manifest['version'] or base.get('plan_commit')!=manifest['plan_commit']
+            or base.get('real_calls')!=84 or not all(base['summary'].get(k) is True for k in ('valid_suite','complete','versions_consistent'))
+            or base['summary'].get('stop_reason') is not None or len(rows)!=60
+            or [r['id'] for r in rows]!=[e['id'] for e in order['entries']]
+            or any(r['manifest_entry']!=e for r,e in zip(rows,order['entries']))
+            or len(base['segments'])!=2 or base['segments'][0]['sha_manifest']!=original_sha
+            or base['segments'][0]['suite_sha256']!=sha((paths(root,prefix)/'suite-run.json').read_bytes())):
+        raise Stop('rerun2_base_binding')
+    old_files=base['frozen_sha256'];new_files=manifest['files']
+    if (set(old_files)!=set(new_files) or {p for p in old_files if old_files[p]!=new_files[p]}
+            - {'tools/eval_verify_v3.py','tools/test_verify_v3.py'}):raise Stop('rerun2_code_change_allowlist')
+    resumed=safe_file(root,paths(root,prefix).relative_to(root).as_posix()+'-resume1')
+    second=read_json((resumed/'suite-run.json').read_text(encoding='utf-8'))
+    if (base['segments'][1]['suite_sha256']!=sha((resumed/'suite-run.json').read_bytes())
+            or base['sha_manifest']!=second['sha_manifest'] or old_files!=second['frozen_sha256']):raise Stop('rerun2_resume_binding')
+    annotations={a['id']:a for a in base['historical_provider_attempts'] if a.get('original_score_preserved') is True
+        and a.get('summary',{}).get('provider_rejected') is True}
+    if set(annotations)!=RERUN2_IDS:raise Stop('rerun2_provider_allowlist')
+    for row in rows:
+        if row['id'] not in RERUN2_IDS:continue
+        if (not row['completed'] or row['passed'] or row['failure_class']!='interpretation' or row.get('segment')!=1
+                or row['run']!=run_name(prefix,row['manifest_entry'])
+                or historical_provider(root,row)!=annotations[row['id']]):raise Stop('rerun2_original_failure_binding')
+    preserved={**original_artifacts(root,prefix,order),**original_artifacts(root,prefix,order,'-resume1')}
+    for p in (path,path.with_suffix('.csv')):
+        preserved[p.relative_to(root).as_posix()]=sha(safe_file(root,p.relative_to(root).as_posix()).read_bytes())
+    return first,base,dict(original_sha_manifest=original_sha,
+        base_aggregate=dict(path=path.relative_to(root).as_posix(),sha256=sha(path.read_bytes())),original_artifacts=preserved)
+
+
+def verify_rerun2_artifacts(root,preserved):
+    if any(sha(safe_file(root,p).read_bytes())!=digest for p,digest in preserved.items()):raise Stop('rerun2_original_artifacts_changed')
+
+
+def rerun2_driver(name,*args,root=ROOT,**kwargs):
+    """Adapt the new directory suffix without changing the driver's accepted names.
+
+    Execute under a fresh supported name, then relocate only this new directory
+    and its report path metadata. All captured payloads/CAD artifacts stay intact.
+    """
+    execution=name+'-mvp1';source=driver_path(root,execution);target=driver_path(root,name)
+    if any(p.exists() or p.is_symlink() for p in (source,target)):raise Stop('rerun2_prefix_exists')
+    report,code=agent.run_driver(execution,*args,root=root,**kwargs)
+    old=source.relative_to(root).as_posix();new=target.relative_to(root).as_posix()
+    def relocate(value):
+        if not value.startswith(old+'/'):raise Stop('rerun2_driver_path_binding')
+        return new+value[len(old):]
+    report.update(execution_run=execution,run_id=name)
+    for c in report['calls']:
+        artifacts=[*c.get('context_artifacts',{}).values(),*c.get('transport_artifacts',{}).values()]
+        if c.get('provider_artifact'):artifacts.append(c['provider_artifact'])
+        for item in artifacts:item['path']=relocate(item['path'])
+    for attempt in report.get('attempts',[]):attempt['out_dir']=relocate(attempt['out_dir'])
+    if report.get('final_out_dir'):report['final_out_dir']=relocate(report['final_out_dir'])
+    source.rename(target)
+    (target/'driver-run.json').write_text(json.dumps(report,ensure_ascii=False,allow_nan=False),encoding='utf-8')
+    return report,code
+
+
+def rerun2_record(root,entry,name,manifest):
+    row=record(root,entry,name)
+    report=read_json((driver_path(root,name)/'driver-run.json').read_text(encoding='utf-8'))
+    identity=row.get('driver_identity') or {}
+    if (report.get('provider_policy')!=agent.PROVIDER_POLICY or report.get('prior_provider_attempts')!=0
+            or report.get('execution_run')!=name+'-mvp1' or identity.get('cli_version')!=manifest['cli']['version']
+            or identity.get('agents_sha256')!=manifest['agents_sha256']
+            or any((identity.get('settings') or {}).get(k)!=v for k,v in manifest['settings'].items())):
+        raise Stop('rerun2_driver_identity')
+    for key,path in (('skill_sha256','skills/freecad-modeling/SKILL.md'),('schema_sha256','design/cad-harness-mvp/build-schema.json'),
+            ('compiler_sha256','tools/cad_spec.py'),('probe_sha256','tools/cad_verify_v3_probe.py'),('shared_probe_sha256','tools/cad_verify_probe.py')):
+        if identity.get(key)!=manifest['files'][path]:raise Stop('rerun2_driver_identity')
+    return row
+
+
+def rerun(prefix,ids,snapshot,run_manifest,codex=None,root=ROOT,runner=None,clock=None,now=None,sleeper=None):
+    requested=rerun2_ids(ids);root=Path(root).resolve()
+    directory=safe_file(root,paths(root,prefix).relative_to(root).as_posix()+'-rerun2')
+    targets=[directory,*(driver_path(root,run_name(prefix,dict(id=id_))+suffix) for id_ in requested for suffix in ('-rerun2','-rerun2-mvp1'))]
+    if any(p.exists() or p.is_symlink() for p in targets):raise Stop('rerun2_prefix_exists')
+    manifest,order=load(root);first,base,bindings=rerun2_source(root,prefix,run_manifest,manifest,order)
+    selected=[e for e in order['entries'] if e['id'] in requested]
+    if len(selected)!=2:raise Stop('rerun2_id_allowlist')
+    guard=Guard(snapshot,clock=clock,now=now);guard.inherit({**first,'real_calls':RERUN2_SPENT},no_deadline=True)
+    guard.check_versions=lambda:verify_frozen(root,manifest)
+    guard.before_episode(sum(e['max_calls'] for e in selected))
+    executable=manifest['cli']['path']
+    if codex and Path(shutil.which(codex) or codex).resolve()!=Path(executable):raise Stop('cli_path_changed')
+    def bound_runner(argv,**kwargs):
+        completed=(runner or agent.bounded_run)(argv,**kwargs)
+        if len(argv)>1 and argv[1]=='--version' and (completed.returncode or cad_agent.clean(completed.stdout.strip())!=manifest['cli']['version']):raise Stop('cli_version_changed')
+        return completed
+    bindings.update(sha_manifest=sha((root/DESIGN/'SHA256.json').read_bytes()),inherited_calls=RERUN2_SPENT,call_budget=163,
+        deadline_monotonic=None,deadline=RESUME_DEADLINE)
+    directory.mkdir(parents=True,exist_ok=False)
+    write_json(directory/'plan.json',dict(profile='verify-v3',prefix=prefix,version=manifest['version'],entries=selected,**bindings))
+    rows=[];stopped=None;started=guard.clock()
+    with (directory/'progress.jsonl').open('x',encoding='utf-8',newline='\n') as progress:
+        for index,e in enumerate(selected):
+            name=run_name(prefix,e)+'-rerun2';row=empty_row(e,name,stopped);tick=guard.clock()
+            if stopped is None:
+                try:
+                    guard.before_episode(sum(x['max_calls'] for x in selected[index:]))
+                    gold,raw,rubric,answer=inputs(root,e)
+                    rerun2_driver(name,executable,raw.decode('utf-8'),gold,root=root,runner=bound_runner,guard=guard,
+                        route=e['route'],max_calls=e['max_calls'],rubric=rubric,answer=answer,provider_retry=True,sleeper=sleeper)
+                    row=rerun2_record(root,e,name,manifest);verify_frozen(root,manifest)
+                    if row.get('stop_reason'):stopped=row['stop_reason']
+                except (OSError,ValueError,KeyError,TypeError) as exc:
+                    stopped=str(exc);row.update(passed=False,stop_reason=stopped,failure_class=stopped)
+            if row['completed'] or row.get('episode_stop_reason'):row['wall_s']=max(row['wall_s'] or 0,guard.clock()-tick)
+            row.update(original_run=run_name(prefix,e),segment='rerun2',ended_elapsed_s=guard.clock()-guard.started)
+            rows.append(row);progress.write(json.dumps(row,ensure_ascii=False,allow_nan=False)+'\n');progress.flush()
+            print(json.dumps(dict(id=e['id'],completed=row['completed'],passed=row['passed'],stop_reason=stopped)),flush=True)
+    verify_rerun2_artifacts(root,bindings['original_artifacts'])
+    document=dict(schema='cad-harness.verify-rerun.v3',profile='verify-v3',prefix=prefix,version=manifest['version'],
+        created_at=cad_agent.utc(),local_commit=manifest['local_commit'],plan_commit=manifest['plan_commit'],
+        frozen_sha256=manifest['files'],rows=rows,real_calls=guard.calls-RERUN2_SPENT,total_real_calls=guard.calls,
+        quota_snapshots=guard.snapshots,wall_s=guard.clock()-started,stop_reason=stopped,**bindings)
     write_json(directory/'suite-run.json',document)
     return document
 
@@ -944,6 +1087,10 @@ def aggregate_resumed(prefix,suffix,run_manifest,root=ROOT,clock=None):
         started_monotonic=first['started_monotonic'],deadline_monotonic=None,deadline=RESUME_DEADLINE,
         original_deadline_monotonic=first['deadline_monotonic'],
         interval_scope='Signed segmented recovery: original 46 scores preserved; A5-r5 scored only from segment 2. Each segment binds its own manifest. New provider rejections are unscored and uncharged; historical spent54 is inherited conservatively. C/dev remain outside bar_met.')
+    return write_segmented_aggregate(outputs,document,rows)
+
+
+def write_segmented_aggregate(outputs,document,rows):
     write_json(outputs[0],document)
     fields=('group','case','bar_class','id','run','segment','scored','completed','passed','wall_s','sol_calls','cad_attempts','parse_repairs','repair_calls',
         'failure_class','episode_stop_reason','stop_reason',*cad_agent.USAGE_KEYS)
@@ -953,7 +1100,70 @@ def aggregate_resumed(prefix,suffix,run_manifest,root=ROOT,clock=None):
     return document
 
 
-def aggregate(prefix,suffix,root=ROOT,clock=None,run_manifest=None):
+def aggregate_rerun2(prefix,suffix,root=ROOT,clock=None,run_manifest=None):
+    root=Path(root).resolve();eval_mvp.valid_name(suffix)
+    if not suffix.endswith('-rerun2'):raise Stop('rerun2_aggregate_new_suffix_required')
+    outputs=[root/'reports'/('aggregate-verify-v3-'+suffix+ext) for ext in ('.json','.csv')]
+    if any(p.exists() or p.is_symlink() or p.resolve()!=p for p in outputs):raise Stop('aggregate_exists_or_linked')
+    manifest,order=load(root)
+    _,base,bindings=rerun2_source(root,prefix,run_manifest or root/DESIGN/'SHA256.run-r1.json',manifest,order)
+    directory=safe_file(root,paths(root,prefix).relative_to(root).as_posix()+'-rerun2')
+    saved=read_json((directory/'suite-run.json').read_text(encoding='utf-8'))
+    plan=read_json((directory/'plan.json').read_text(encoding='utf-8'))
+    selected=[e for e in order['entries'] if e['id'] in RERUN2_IDS]
+    digest=sha((root/DESIGN/'SHA256.json').read_bytes())
+    expected={**bindings,'sha_manifest':digest,'inherited_calls':RERUN2_SPENT,'call_budget':163,
+        'deadline_monotonic':None,'deadline':RESUME_DEADLINE}
+    if (saved.get('schema')!='cad-harness.verify-rerun.v3' or saved.get('profile')!='verify-v3'
+            or saved.get('prefix')!=prefix or plan.get('prefix')!=prefix
+            or saved.get('version')!=manifest['version'] or plan.get('version')!=manifest['version']
+            or saved.get('frozen_sha256')!=manifest['files'] or plan.get('entries')!=selected
+            or [r['id'] for r in saved['rows']]!=[e['id'] for e in selected]
+            or any(saved.get(k)!=v or plan.get(k)!=v for k,v in expected.items())):raise Stop('rerun2_suite_binding')
+    replacements={};providers=list(base.get('provider_rejected_attempts',[]));attempts=0;consistent=base['summary']['versions_consistent']
+    for e,original in zip(selected,saved['rows']):
+        name=run_name(prefix,e)+'-rerun2'
+        if (original['run']!=name or original['manifest_entry']!=e or original.get('original_run')!=run_name(prefix,e)
+                or original.get('segment')!='rerun2'):raise Stop('rerun2_row_binding')
+        has_driver=(driver_path(root,name)/'driver-run.json').is_file()
+        row=rerun2_record(root,e,name,manifest) if has_driver else empty_row(e,name,original.get('stop_reason'))
+        if row['passed']!=original['passed'] or row['completed']!=original['completed']:consistent=False
+        if row['completed'] or row.get('episode_stop_reason'):row['wall_s']=max(row['wall_s'] or 0,original.get('wall_s') or 0)
+        row.update(original_run=run_name(prefix,e),segment='rerun2',ended_elapsed_s=original.get('ended_elapsed_s'))
+        replacements[e['id']]=row
+        if has_driver:
+            report=read_json((driver_path(root,name)/'driver-run.json').read_text(encoding='utf-8'))
+            attempts+=len(report['calls'])
+            providers.extend(dict(id=e['id'],run=name,**c) for c in report['calls'] if c['provider_rejected'])
+    calls=sum(r['sol_calls'] or 0 for r in replacements.values())
+    if (type(saved['real_calls']) is not int or not 0<=saved['real_calls']<=sum(e['max_calls'] for e in selected)
+            or saved['total_real_calls']!=RERUN2_SPENT+saved['real_calls'] or saved['total_real_calls']>163):raise Stop('rerun2_call_budget_binding')
+    consistent &= calls==saved['real_calls']
+    rows=[];substituted=[]
+    for group in GROUPS:
+        for original in base['groups'][group]:
+            row=replacements.get(original['id'],original);rows.append(row)
+            if original['id'] in replacements:substituted.append(dict(id=original['id'],original=original,replacement=row))
+    stopped=saved.get('stop_reason') or next((r.get('stop_reason') for r in rows if r.get('stop_reason')),None)
+    groups={g:[r for r in rows if r['group']==g] for g in GROUPS}
+    document={**base,'created_at':cad_agent.utc(),'local_commit':manifest['local_commit'],'sha_manifest':digest,
+        'frozen_sha256':manifest['files'],'base_aggregate':bindings['base_aggregate'],'substituted_rows':substituted,
+        'groups':groups,'summary':summarize(rows,order,stopped,consistent,base['summary']['deadline_ok']),
+        'per_suite':{g:metric(rs) for g,rs in groups.items()},'provider_tokens':{g:token_totals(rs) for g,rs in groups.items()},
+        'real_calls':base['real_calls']+saved['real_calls'],'rerun2_calls':saved['real_calls'],
+        'total_charged_calls':saved['total_real_calls'],'archived_charged_calls':RERUN2_SPENT-base['real_calls'],
+        'provider_rejected_attempts':providers,'provider_rejected_attempt_count':len(providers),
+        'provider_wait_s':sum(c.get('backoff_s',0) for c in providers),'transport_attempts':base['transport_attempts']+attempts,
+        'segments':[*base['segments'],dict(segment='rerun2',version=manifest['version'],sha_manifest=digest,
+            suite_sha256=sha((directory/'suite-run.json').read_bytes()),wall_s=saved['wall_s'],real_calls=saved['real_calls'],
+            stop_reason=saved['stop_reason'],deadline=RESUME_DEADLINE,deadline_monotonic=None)],
+        'interval_scope':'User decision 2026-10-14 08:58 JST: substitute only geometry-G5-r1 and geometry-G1-r2. Original rows remain in substituted_rows; the other 58 rows are copied unchanged from the bound two-segment aggregate. C/dev remain outside bar_met.'}
+    verify_rerun2_artifacts(root,bindings['original_artifacts'])
+    return write_segmented_aggregate(outputs,document,rows)
+
+
+def aggregate(prefix,suffix,root=ROOT,clock=None,run_manifest=None,rerun2=False):
+    if rerun2:return aggregate_rerun2(prefix,suffix,root,clock,run_manifest)
     if run_manifest is not None:return aggregate_resumed(prefix,suffix,run_manifest,root,clock)
     root=Path(root).resolve(); manifest,order=load(root); directory=paths(root,prefix); eval_mvp.valid_name(suffix)
     outputs=[root/"reports"/("aggregate-verify-v3-"+suffix+ext) for ext in (".json",".csv")]
@@ -1025,8 +1235,11 @@ def main(argv=None):
     r.add_argument("--call-budget",type=int,default=163); r.add_argument("--codex")
     r=subs.add_parser('resume');r.add_argument('--prefix',required=True);r.add_argument('--run-manifest',required=True)
     r.add_argument('--quota-snapshot',required=True);r.add_argument('--codex')
+    r=subs.add_parser('rerun');r.add_argument('--prefix',required=True);r.add_argument('--ids',required=True)
+    r.add_argument('--run-manifest',required=True);r.add_argument('--quota-snapshot',required=True);r.add_argument('--codex')
     a=subs.add_parser("aggregate"); a.add_argument("--prefix",required=True); a.add_argument("--suffix",required=True)
     a.add_argument('--run-manifest')
+    a.add_argument('--rerun2',action='store_true')
     args=parser.parse_args(argv)
     try:
         if args.command=="freeze":
@@ -1041,7 +1254,12 @@ def main(argv=None):
             print(json.dumps(dict(segment=2,completed=sum(r['completed'] for r in result['rows']),planned=len(result['rows']),
                 real_calls=result['total_real_calls'],stop_reason=result['stop_reason'])))
             return 0 if not result['stop_reason'] else 1
-        result=aggregate(args.prefix,args.suffix,run_manifest=args.run_manifest); print(json.dumps(result["summary"],allow_nan=False))
+        if args.command=='rerun':
+            result=rerun(args.prefix,args.ids,args.quota_snapshot,args.run_manifest,args.codex)
+            print(json.dumps(dict(completed=sum(r['completed'] for r in result['rows']),planned=len(result['rows']),
+                real_calls=result['total_real_calls'],stop_reason=result['stop_reason'])))
+            return 0 if not result['stop_reason'] else 1
+        result=aggregate(args.prefix,args.suffix,run_manifest=args.run_manifest,rerun2=args.rerun2); print(json.dumps(result["summary"],allow_nan=False))
         return 0 if result["summary"]["bar_met"] else 1
     except (OSError,ValueError,KeyError,TypeError,AttributeError) as exc:
         print(json.dumps({"status":"stopped","message_code":str(exc)})); return 2

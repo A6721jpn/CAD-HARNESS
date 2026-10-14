@@ -98,7 +98,7 @@ class V3Contracts(unittest.TestCase):
                         allocation.assert_not_called();launch.assert_not_called();data.assert_not_called()
                     path.write_bytes(original)
 
-    def drive(self,d,case,outputs,fail=False,route='spec',clock=None,after_cad=None,fault=None,preview=False,provider=False,sleeper=None,cap=163):
+    def drive(self,d,case,outputs,fail=False,route='spec',clock=None,after_cad=None,fault=None,preview=False,provider=False,sleeper=None,cap=163,rerun_name=None):
         root=Path(d)/'repo';folder=BASE/'test'/case;calls=[];cads=[]
         for name in ('skills/freecad-modeling/SKILL.md','design/cad-harness-mvp/build-schema.json'):
             p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes())
@@ -133,9 +133,141 @@ class V3Contracts(unittest.TestCase):
         guard=Guard(snapshot,call_budget=cap,clock=(lambda:clock[0]) if clock else None,now=lambda:NOW)
         rubric=json.loads((folder/'rubric.json').read_text(encoding='utf-8')) if (folder/'rubric.json').is_file() else None
         answer=(folder/'answer.txt').read_text(encoding='utf-8') if route=='completion' else None
-        report,code=driver.run_driver(REVIEW_RUN,'MOCK-NO-SOL',(folder/'description.txt').read_text(encoding='utf-8'),folder/'gold.json' if (folder/'gold.json').is_file() else None,
+        invoke=evaluation.rerun2_driver if rerun_name else driver.run_driver
+        report,code=invoke(rerun_name or REVIEW_RUN,'MOCK-NO-SOL',(folder/'description.txt').read_text(encoding='utf-8'),folder/'gold.json' if (folder/'gold.json').is_file() else None,
             root=root,runner=runner,guard=guard,route=route,rubric=rubric,answer=answer,fault=fault,preview=preview,provider_retry=provider,sleeper=sleeper)
         return root,report,code,calls,cads,guard
+
+    def test_rerun2_allowlist_rejects_other_partial_and_duplicate_ids(self):
+        wanted='geometry-G5-r1,geometry-G1-r2'
+        self.assertEqual(evaluation.rerun2_ids(wanted),{'geometry-G5-r1','geometry-G1-r2'})
+        with patch.object(evaluation,'load') as load,patch.object(driver,'run_driver') as launch:
+            for bad in ('geometry-G6-r1,geometry-G1-r2','geometry-G5-r1','geometry-G5-r1,geometry-G5-r1',wanted+',q-A5-r5'):
+                with self.subTest(ids=bad),self.assertRaisesRegex(Stop,'rerun2_id_allowlist'):
+                    evaluation.rerun('mock-rerun2',bad,'unused','unused')
+            load.assert_not_called();launch.assert_not_called()
+
+    def test_rerun2_existing_targets_refused_before_loading_or_launching(self):
+        for tail in ('suite','geometry-G5-r1','geometry-G1-r2','execution'):
+            with self.subTest(target=tail),tempfile.TemporaryDirectory() as d:
+                root=Path(d).resolve();prefix='mock-rerun2'
+                if tail=='suite':target=Path(str(evaluation.paths(root,prefix))+'-rerun2')
+                else:target=evaluation.driver_path(root,evaluation.run_name(prefix,dict(id='geometry-G5-r1' if tail=='execution' else tail))+'-rerun2'+('-mvp1' if tail=='execution' else ''))
+                target.mkdir(parents=True)
+                with patch.object(evaluation,'load') as load,patch.object(driver,'run_driver') as launch:
+                    with self.assertRaisesRegex(Stop,'rerun2_prefix_exists'):
+                        evaluation.rerun(prefix,'geometry-G5-r1,geometry-G1-r2','unused','unused',root=root)
+                    load.assert_not_called();launch.assert_not_called()
+
+    def test_rerun2_unchanged_driver_and_relocated_artifact_bindings(self):
+        name='mock-rerun2-geometry-G5-r1-mvp1-rerun2'
+        with tempfile.TemporaryDirectory() as d:
+            root,report,code,calls,cads,guard=self.drive(d,'G5',[json.dumps({'unsupported':['native source required']}),SOURCE],
+                route='source',provider=True,rerun_name=name)
+            self.assertEqual((code,len(calls),len(cads),guard.calls),(0,2,1,2))
+            self.assertEqual(report['run_id'],name);self.assertEqual(report['execution_run'],name+'-mvp1')
+            where=evaluation.driver_path(root,name)
+            self.assertTrue(where.is_dir());self.assertFalse(evaluation.driver_path(root,name+'-mvp1').exists())
+            self.assertEqual(json.loads((where/'driver-run.json').read_text(encoding='utf-8')),report)
+            evaluation.check_transport(report,where)
+            for c in report['calls']:
+                for key,item in c['context_artifacts'].items():
+                    self.assertTrue((root/item['path']).is_relative_to(where))
+                    self.assertEqual(evaluation.sha((root/item['path']).read_bytes()),c[key+'_sha256'])
+            attempt=report['attempts'][0]
+            self.assertEqual(evaluation.sha((root/attempt['out_dir']/'input.py').read_bytes()),attempt['source_sha256'])
+
+    def test_rerun2_mock_execution_and_substitution_preserve_every_other_row(self):
+        prefix='mock-rerun2';order=json.loads((BASE/'run-order.json').read_text(encoding='utf-8'))
+        identity_files=('skills/freecad-modeling/SKILL.md','design/cad-harness-mvp/build-schema.json','tools/cad_spec.py',
+            'tools/cad_verify_v3_probe.py','tools/cad_verify_probe.py')
+        old=dict(schema='cad-harness.verify-sha.v3',profile='verify-v3',version='verify-v3-reviewed-r1',local_commit='32dab3a',plan_commit='fd7e215',
+            cli=dict(path='MOCK-NO-SOL',version='MOCK CLI',sha256='mock'),settings=dict(model=cad_agent.MODEL),agents_sha256={},
+            files={p:'original-'+p for p in (*evaluation.SOLFIX_CODE,*identity_files)})
+        base_manifest=copy.deepcopy(old);base_manifest['version']=evaluation.SOLFIX_VERSION
+        base_manifest['files'].update({p:'solfix-'+p for p in evaluation.SOLFIX_CODE|evaluation.SOLFIX_DOCS})
+        current=copy.deepcopy(base_manifest)
+        current['files'].update({p:'rerun2-'+p for p in ('tools/eval_verify_v3.py','tools/test_verify_v3.py')})
+        driver_identity=dict(cli_version='MOCK CLI',agents_sha256={},settings=current['settings'],
+            **{k:current['files'][p] for k,p in zip(('skill_sha256','schema_sha256','compiler_sha256','probe_sha256','shared_probe_sha256'),identity_files)})
+        with tempfile.TemporaryDirectory() as d:
+            root=(Path(d)/'repo').resolve();base=root/evaluation.DESIGN;base.mkdir(parents=True)
+            archive=base/'SHA256.run-r1.json';evaluation.write_json(archive,old);evaluation.write_json(base/'SHA256.json',current)
+            evaluation.write_json(base/'run-order.json',order)
+            first=dict(schema='cad-harness.verify-run.v3',profile='verify-v3',version=old['version'],prefix=prefix,
+                started_monotonic=1000,deadline_monotonic=11800,wall_s=2366.75,real_calls=54,call_budget=163,
+                sha_manifest=evaluation.sha(archive.read_bytes()),frozen_sha256=old['files'],rows=[])
+            rows=[]
+            for e in order['entries']:
+                original=evaluation.empty_row(e,evaluation.run_name(prefix,e))
+                if e['sequence']<=46:original.update(completed=True,passed=e['id'] not in evaluation.RERUN2_IDS,sol_calls=e['min_calls'])
+                if e['id'] in evaluation.RERUN2_IDS:original['failure_class']='interpretation'
+                if e['sequence']==47:original['sol_calls']=1
+                first['rows'].append(original)
+                row=copy.deepcopy(original) if e['sequence']<=46 else evaluation.empty_row(e,evaluation.run_name(prefix,e)+'-resume1')
+                row.update(completed=True,passed=e['id'] not in evaluation.RERUN2_IDS,sol_calls=e['min_calls'],cad_attempts=0,wall_s=1,
+                    segment=1 if e['sequence']<=46 else 2,initial_q_score=1,completion_reached=e['group']=='completion')
+                if e['group']=='fault':row.update(fault=dict(reached=True,established=True,detected=True),repair_calls=1)
+                rows.append(row)
+            original_dir=evaluation.paths(root,prefix);original_dir.mkdir(parents=True)
+            evaluation.write_json(original_dir/'suite-run.json',first)
+            evaluation.write_json(original_dir/'plan.json',dict(version=old['version'],sha_manifest=first['sha_manifest'],entries=order['entries'],
+                started_monotonic=1000,deadline_monotonic=11800))
+            resumed=Path(str(original_dir)+'-resume1');resumed.mkdir()
+            evaluation.write_json(resumed/'suite-run.json',dict(sha_manifest='solfix-manifest',frozen_sha256=base_manifest['files']))
+            evaluation.write_json(resumed/'plan.json',dict(mock=True))
+            annotations=[dict(id=id_,run=evaluation.run_name(prefix,next(e for e in order['entries'] if e['id']==id_)),
+                original_score_preserved=True,summary=dict(provider_rejected=True)) for id_ in sorted(evaluation.RERUN2_IDS)]
+            prior=dict(schema='cad-harness.verify-aggregate.v3',profile='verify-v3',prefix=prefix,version=evaluation.SOLFIX_VERSION,
+                plan_commit='fd7e215',sha_manifest='solfix-manifest',frozen_sha256=base_manifest['files'],real_calls=84,transport_attempts=84,
+                groups={g:[r for r in rows if r['group']==g] for g in evaluation.GROUPS},summary=evaluation.summarize(rows,order),
+                historical_provider_attempts=annotations,provider_rejected_attempts=[],
+                segments=[dict(sha_manifest=first['sha_manifest'],suite_sha256=evaluation.sha((original_dir/'suite-run.json').read_bytes())),
+                    dict(suite_sha256=evaluation.sha((resumed/'suite-run.json').read_bytes()))])
+            source=root/'reports/aggregate-verify-v3-mock-solfix.json';evaluation.write_json(source,prior);source.with_suffix('.csv').write_text('mock csv',encoding='utf-8')
+            for case in ('G5','G1'):
+                dest=base/'test'/case;dest.mkdir(parents=True)
+                for p in (BASE/'test'/case).iterdir():
+                    if p.is_file():(dest/p.name).write_bytes(p.read_bytes())
+            quota=root/'quota.json';evaluation.write_json(quota,dict(snapshot_id='mock',observed_at=NOW.isoformat(),used_percent=20))
+            preserved={p:p.read_bytes() for p in root.rglob('*') if p.is_file()};executed=[]
+            def fake_driver(name,codex,raw,gold,**kw):
+                guard=kw['guard'];self.assertIsNone(guard.deadline);self.assertEqual(guard.call_budget,163)
+                self.assertEqual(guard.calls,105+2*len(executed));self.assertTrue(kw['provider_retry'])
+                self.assertEqual((kw['route'],kw['max_calls']),('source',4))
+                kw['runner']([codex,'--version'])
+                guard.before_call();guard.before_call();executed.append(name)
+                out=cad_agent.new_run_dir(root,name)
+                report=dict(provider_policy=driver.PROVIDER_POLICY,prior_provider_attempts=0,calls=[dict(provider_rejected=False)]*2,
+                    attempts=[],run_id=name,llm_calls=2)
+                evaluation.write_json(out/'driver-run.json',report);return report,0
+            def fake_record(repo,e,name):
+                self.assertIn(e['id'],evaluation.RERUN2_IDS)
+                row=evaluation.empty_row(e,name);row.update(completed=True,passed=True,sol_calls=2,cad_attempts=0,wall_s=1,
+                    unsupported_to_source=True,unsupported_origin='model',driver_identity=driver_identity)
+                return row
+            def evidence(repo,row):return next(a for a in annotations if a['id']==row['id'])
+            def mock_runner(argv,**kw):return subprocess.CompletedProcess(argv,0,'MOCK CLI','')
+            with (patch.object(evaluation,'verify_frozen'),patch.object(evaluation,'historical_provider',side_effect=evidence),
+                    patch.object(driver,'run_driver',side_effect=fake_driver),patch.object(evaluation,'record',side_effect=fake_record) as scored):
+                result=evaluation.rerun(prefix,'geometry-G1-r2,geometry-G5-r1',quota,archive,root=root,runner=mock_runner,clock=lambda:20000,now=lambda:NOW)
+                selected=[e for e in order['entries'] if e['id'] in evaluation.RERUN2_IDS]
+                self.assertEqual(executed,[evaluation.run_name(prefix,e)+'-rerun2-mvp1' for e in selected])
+                self.assertEqual((result['inherited_calls'],result['real_calls'],result['total_real_calls']),(105,4,109))
+                self.assertIsNone(result['stop_reason']);self.assertEqual(len(result['quota_snapshots']),4)
+                final=evaluation.aggregate(prefix,'mock-solfix-rerun2',root=root,run_manifest=archive,rerun2=True)
+                self.assertTrue(final['summary']['bar_met']);self.assertEqual(final['total_charged_calls'],109)
+                self.assertEqual((final['real_calls'],final['archived_charged_calls']),(88,21))
+                self.assertEqual({r['id'] for r in final['substituted_rows']},evaluation.RERUN2_IDS)
+                before=[r for rs in prior['groups'].values() for r in rs];after=[r for rs in final['groups'].values() for r in rs]
+                self.assertEqual([r for r in before if r['id'] not in evaluation.RERUN2_IDS],[r for r in after if r['id'] not in evaluation.RERUN2_IDS])
+                for pair in final['substituted_rows']:
+                    self.assertEqual(pair['original'],next(r for r in before if r['id']==pair['id']))
+                    self.assertFalse(pair['original']['passed']);self.assertTrue(pair['replacement']['passed'])
+                self.assertEqual(scored.call_count,4)
+                with self.assertRaisesRegex(Stop,'aggregate_exists_or_linked'):
+                    evaluation.aggregate(prefix,'mock-solfix-rerun2',root=root,run_manifest=archive,rerun2=True)
+                self.assertTrue(all(p.read_bytes()==data for p,data in preserved.items()))
 
     def test_solfix_exact_error_full_output_and_bounded_capture(self):
         rejection=json.dumps(dict(type='event_msg',payload=dict(type='task_complete',error=dict(codex_error_info='server_overloaded'))))
