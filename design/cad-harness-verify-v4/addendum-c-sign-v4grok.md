@@ -9,3 +9,5 @@ C-EXIT still requires U3 G3 and says missing tolerances are never chosen by agen
 C-U5 is empty. Fill it before freeze, labelled agent-chosen. An empty C-U5 is not a frozen default.
 
 No live calls, CAD, private holdout access, or commit.
+
+C-S: AGREE
