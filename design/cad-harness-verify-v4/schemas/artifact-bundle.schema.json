@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.artifact-bundle.v4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "profile", "evidence_mode", "native", "step", "output_object", "probes", "extensions"],
+  "properties": {
+    "schema": {"const": "cad-harness.artifact-bundle.v4"},
+    "profile": {"enum": ["c-s1", "c-s2", "c-s3"]},
+    "evidence_mode": {"const": "independent_dev"},
+    "native": {"$ref": "#/$defs/file"},
+    "step": {"$ref": "#/$defs/file"},
+    "output_object": {"type": ["string", "null"], "minLength": 1, "maxLength": 128},
+    "probes": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/probe"}},
+    "extensions": {
+      "type": "array", "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["module", "path", "sha256", "bytes"],
+        "properties": {
+          "module": {"type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*$"},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "bytes": {"type": "integer", "minimum": 1}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "file": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "delta_vector": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "probe": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "object", "property", "delta"],
+          "properties": {
+            "kind": {"const": "scalar"}, "object": {"type": "string", "minLength": 1, "maxLength": 128},
+            "property": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"}, "delta": {"type": "number"}
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "object", "property", "delta_mm"],
+          "properties": {
+            "kind": {"const": "vector"}, "object": {"type": "string", "minLength": 1, "maxLength": 128},
+            "property": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"}, "delta_mm": {"$ref": "#/$defs/delta_vector"}
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "object", "property", "index", "delta_mm"],
+          "properties": {
+            "kind": {"const": "vector_list"}, "object": {"type": "string", "minLength": 1, "maxLength": 128},
+            "property": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"},
+            "index": {"type": "integer", "minimum": 0}, "delta_mm": {"$ref": "#/$defs/delta_vector"}
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "object", "constraint", "delta"],
+          "properties": {
+            "kind": {"const": "sketch_constraint"}, "object": {"type": "string", "minLength": 1, "maxLength": 128},
+            "constraint": {"type": "integer", "minimum": 0}, "delta": {"type": "number"}
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "object", "property", "suffix"],
+          "properties": {
+            "kind": {"const": "text"}, "object": {"type": "string", "minLength": 1, "maxLength": 128},
+            "property": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"},
+            "suffix": {"type": "string", "minLength": 1, "maxLength": 16}
+          }
+        }
+      ]
+    }
+  }
+}

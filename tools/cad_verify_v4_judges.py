@@ -624,11 +624,11 @@ def _engravings(shape,body,plan,manifest,c,tol,context):
     placement=App.Placement(App.Vector(*engraving['origin_mm']),App.Rotation(App.Vector(*engraving['rotation_axis']),engraving['rotation_deg']))
     cutter=face.extrude(App.Vector(0,0,-depth));cutter.Placement=placement
     baseline=context.get('baseline_shapes', {}).get(index, context.get('baseline_shape'))
-    if baseline is None and hasattr(body, 'Group'):
+    if baseline is None and context.get('allow_history_baseline', True) and hasattr(body, 'Group'):
         feature = next((o for o in body.Group if o.Name == 'Engraving' + str(index)), None)
         if feature is not None and hasattr(feature, 'Base'):
             baseline = feature.Base.Shape
-    if baseline is None and hasattr(body,'Group'):
+    if baseline is None and context.get('allow_history_baseline', True) and hasattr(body,'Group'):
         group=[o for o in body.Group if hasattr(o,'Shape') and not o.Shape.isNull()]
         for obj in group:
             if getattr(obj,'Name','').lower().startswith(('base','stock','contourextrude')):
@@ -638,6 +638,18 @@ def _engravings(shape,body,plan,manifest,c,tol,context):
     expected=baseline.common(cutter)
     removed=expected.Volume-shape.common(expected).Volume
     remaining=shape.common(expected).Volume
+    # Ink counters are retained stock, not merely absent expected cutter volume.
+    # Without measuring them, an O-shaped recess and a filled square recess
+    # would receive the same glyph score. Use the same card-derived volume bound.
+    counter_stock = None
+    for loop, wire in zip(outline['loops'], wires):
+        if loop['role'] == 'hole':
+            counter = Part.Face(wire).extrude(App.Vector(0,0,-depth))
+            counter.Placement = placement
+            stock = baseline.common(counter).cut(cutter)
+            counter_stock = stock if counter_stock is None else counter_stock.fuse(stock)
+    counter_lost = (0. if counter_stock is None else
+                    max(0., counter_stock.Volume-shape.common(counter_stock).Volume))
     vol_tol=max(tol,depth_tol)*face.Area
     minimum=_number(c['minimum_removed_mm3'],'minimum_removed_mm3',0)
     # A slab just below the declared depth must remain; this distinguishes a
@@ -648,17 +660,34 @@ def _engravings(shape,body,plan,manifest,c,tol,context):
     below=baseline.common(deeper).cut(guard)
     lost_below=below.Volume-shape.common(below).Volume
     depth_volume_tol=tol*face.Area
-    status='PASS' if removed>=minimum and expected.Volume>=minimum and remaining<=vol_tol and lost_below<=depth_volume_tol else 'FAIL'
-    return status,dict(expected_cut_mm3=expected.Volume,removed_mm3=removed,remaining_in_glyph_mm3=remaining,lost_below_depth_mm3=lost_below),dict(font_sha256=outline['font_sha256'],text=engraving['text'],depth_mm=depth,volume_uncertainty_mm3=vol_tol,claim='recessed_font_geometry_with_counters')
+    status='PASS' if removed>=minimum and expected.Volume>=minimum and remaining<=vol_tol and counter_lost<=vol_tol and lost_below<=depth_volume_tol else 'FAIL'
+    return status,dict(expected_cut_mm3=expected.Volume,removed_mm3=removed,remaining_in_glyph_mm3=remaining,lost_counter_stock_mm3=counter_lost,lost_below_depth_mm3=lost_below),dict(font_sha256=outline['font_sha256'],text=engraving['text'],depth_mm=depth,volume_uncertainty_mm3=vol_tol,claim='recessed_font_geometry_with_counters')
+
+
+def _contour_registration(data, prepared=None):
+    """One fixed-frame metrology registration for owned and neutral inputs."""
+    if data.get('schema') == 'cad-harness.artifact-context.v4':
+        registration = data.get('contour')
+        if not registration:
+            raise Unknown('contour_measurement_registration_missing')
+        return registration
+    if data.get('family') != 'contour_extrude':
+        raise Unknown('output_section_requires_matching_contour_family')
+    registration = dict(contour_id=data['contour_id'], origin_mm=data['origin_mm'],
+                        thickness_mm=data['thickness_mm'])
+    if prepared is not None:
+        record = prepared['assets'][data['contour_id']]
+        registration['scale'] = data['width_mm'] / record['nominal_width_mm']
+    return registration
 
 
 def _output_section(plan, shape, criterion):
     """Remeasure the handed-over extrusion, including operative size changes."""
-    if (plan.get('family') != 'contour_extrude'
-            or criterion['contour_id'] != plan.get('contour_id')):
+    registration = _contour_registration(plan)
+    if criterion['contour_id'] != registration['contour_id']:
         raise Unknown('output_section_requires_matching_contour_family')
-    origin = _vector(plan['origin_mm'], 3, 'origin_mm')
-    thickness = _number(plan['thickness_mm'], 'thickness_mm', 0)
+    origin = _vector(registration['origin_mm'], 3, 'origin_mm')
+    thickness = _number(registration['thickness_mm'], 'thickness_mm', 0)
     z = criterion.get('projection_z_mm', origin[2] + thickness / 2)
     return _shape_record(shape, z), z
 
@@ -763,13 +792,15 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                             continue
                     else:
                         _required(c,'projection_z_mm');b,eb=planar_geometry(_shape_record(shape,c['projection_z_mm']),c['curve_tolerance_mm'])
-                        # Width scaling and placement are actual planned transform, never bbox fitting.
-                        if plan['family']!='contour_extrude':raise Unknown('contour_output_registration_requires_contour_plan')
+                        # Fixed preregistered scale/origin, never candidate bbox fitting.
+                        registration = _contour_registration(plan, prepared)
+                        if c['contour_id'] != registration['contour_id']:
+                            raise Unknown('contour_output_registration_mismatch')
                         from shapely.affinity import scale,translate
-                        _required(record,'nominal_width_mm')
-                        factor=plan['width_mm']/record['nominal_width_mm']
-                        a=translate(scale(a,xfact=factor,yfact=factor,origin=(0,0)),xoff=plan['origin_mm'][0],yoff=plan['origin_mm'][1]);ea*=factor
-                        evidence['registration']=dict(scale=factor,origin_mm=plan['origin_mm'],projection_z_mm=c['projection_z_mm'])
+                        factor = _number(registration['scale'], 'scale', 0)
+                        origin = _vector(registration['origin_mm'], 3, 'origin_mm')
+                        a=translate(scale(a,xfact=factor,yfact=factor,origin=(0,0)),xoff=origin[0],yoff=origin[1]);ea*=factor
+                        evidence['registration']=dict(scale=factor,origin_mm=list(origin),projection_z_mm=c['projection_z_mm'])
                     source_topology,target_topology=_topology(a),_topology(b)
                     topology_matches=source_topology==target_topology
                     evidence.update(source_topology=source_topology,target_topology=target_topology,
@@ -791,7 +822,7 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                     else:raise ValueError('judge_unhandled_metric')
         except Unknown as exc:
             checks.append(_check(c,'UNVERIFIED',reason=str(exc)))
-        except (ValueError,KeyError,TypeError,IndexError) as exc:
+        except (ValueError,KeyError,TypeError,IndexError,AttributeError,RuntimeError,OSError,OverflowError) as exc:
             checks.append(_check(c,'UNVERIFIED',reason='invalid_or_missing_input:'+str(exc)))
     status='FAIL' if any(x['status']=='FAIL' for x in checks) else 'UNVERIFIED' if any(x['status']!='PASS' for x in checks) else 'PASS'
     return dict(schema=SCHEMA,profile='c-s1',status=status,checks=checks)

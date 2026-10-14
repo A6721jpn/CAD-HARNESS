@@ -210,6 +210,7 @@ def _verify(App, job, out):
 
 def _identity(App):
     ledger = _module('cad_verify_v4_ledger')
+    inventory = _module('cad_verify_v4_runtime').native_files()
     modules = {}
     for name in ('FreeCAD', 'Part', 'Sketcher', 'numpy', 'scipy', 'PIL', 'shapely', 'contourpy', 'fontTools', 'OCC'):
         module = importlib.import_module(name)
@@ -223,17 +224,17 @@ def _identity(App):
                          for root in list(roots) if (Path(root).parent / (Path(root).name + '.libs')).is_dir())
             files = {path}
             for root in roots:
-                for suffix in ('*.py', '*.pyd', '*.dll', '*.so', '*.json'):
+                for suffix in ('*.py', '*.pyc', '*.pyo', '*.pyd', '*.dll', '*.so', '*.json'):
                     files.update(Path(root).rglob(suffix))
-            record['files'] = [{'path': str(file), 'sha256': ledger.file_sha(file),
+            record['files'] = [{'path': str(file), 'sha256': inventory[str(file)],
                                 'bytes': file.stat().st_size} for file in sorted(files)]
         modules[name] = record
     import Part
     native_bin = Path(sys.executable).parent
-    libraries = [{'path': str(path), 'sha256': ledger.file_sha(path), 'bytes': path.stat().st_size}
+    libraries = [{'path': str(path), 'sha256': inventory[str(path)], 'bytes': path.stat().st_size}
                  for path in sorted(native_bin.glob('*.dll'))]
     return {'status': 'PASS', 'dependencies': modules, 'native_libraries': libraries,
-            'occt_version': getattr(Part, 'OCC_VERSION', None)}
+            'occt_version': getattr(Part, 'OCC_VERSION', None), 'sdk_files': inventory}
 
 
 OPERATIONS = {
@@ -241,6 +242,7 @@ OPERATIONS = {
     'compile': {'operation', 'manifest', 'prepared', 'plan', 'card', 'out'},
     'verify': {'operation', 'manifest', 'prepared', 'plan', 'card', 'out'},
     'judge': {'operation', 'manifest', 'prepared', 'plan', 'card', 'out'},
+    'artifact-verify': {'operation', 'manifest', 'prepared', 'card', 'context', 'bundle', 'runtime_binding', 'out'},
     'prepare-step': {'operation', 'manifest', 'asset_id', 'recipe', 'out'},
     'contour': {'operation', 'manifest', 'asset_id', 'recipe', 'out'},
     'text': {'operation', 'manifest', 'font_id', 'text', 'height_mm', 'out'},
@@ -256,13 +258,13 @@ def execute(job):
     profile = job.get('profile', 'c-s1')
     if profile not in ('c-s1', 'c-s2', 'c-s3'):
         raise ValueError('worker_profile')
-    if profile in ('c-s2', 'c-s3') and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step'):
+    if profile in ('c-s2', 'c-s3') and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step', 'artifact-verify'):
         raise ValueError('worker_operation_not_in_profile')
     optional = {'profile'} | ({'candidate_dir'} if operation in ('verify', 'judge') else set())
     if not OPERATIONS[operation] <= set(job) or set(job) - OPERATIONS[operation] - optional:
         raise ValueError('worker_job_fields')
     # Validate every supplied path before opening a document. Parent allocates output.
-    for field in ('manifest', 'prepared', 'plan', 'card'):
+    for field in ('manifest', 'prepared', 'plan', 'card', 'context', 'bundle', 'runtime_binding'):
         if field in job:
             _safe(job[field])
     if 'recipe' in job and not isinstance(job['recipe'], dict):
@@ -277,9 +279,15 @@ def execute(job):
     output_name = 'verify-result.json' if operation == 'verify' else 'judge-result.json' if operation == 'judge' else 'result.json'
     if (out / output_name).exists():
         raise ValueError('worker_result_exists')
-    schema = 'cad-harness.compile-result.v4c' if operation == 'compile' else 'cad-harness.verify-result.v4c' if operation in ('verify', 'judge') else 'cad-harness.native-worker.v4c'
+    schema = {'compile': 'cad-harness.compile-result.v4c', 'verify': 'cad-harness.verify-result.v4c',
+              'judge': 'cad-harness.verify-result.v4c',
+              'artifact-verify': 'cad-harness.artifact-check-result.v4'}.get(operation, 'cad-harness.native-worker.v4c')
     result = {'schema': schema, 'profile': profile,
               'operation': operation, 'status': 'FAIL', **_runtime(App), 'document_closed': False}
+    if operation == 'artifact-verify':
+        binding_path = _safe(job['runtime_binding'])
+        result['runtime_binding'] = dict(path=str(binding_path), sha256=ledger.file_sha(binding_path),
+                                        bytes=binding_path.stat().st_size)
     try:
         if App.GuiUp != 0 or App.listDocuments():
             raise ValueError('headless_clean_runtime_required')
@@ -293,6 +301,8 @@ def execute(job):
             result.update(_compile(App, job, out))
         elif operation in ('verify', 'judge'):
             result.update(_verify(App, job, out))
+        elif operation == 'artifact-verify':
+            result.update(_module('cad_verify_v4_artifacts').verify_native(App, job, out))
         elif operation == 'prepare-step':
             inputs = _module('cad_verify_v4_inputs')
             packet = inputs.inspect_step(job['manifest'], job['asset_id'], job['recipe'], out)
@@ -311,7 +321,7 @@ def execute(job):
                       job['text'], job['height_mm'], out / 'text-outline.json')
             result.update(status='PASS', outline=outline)
     except Exception as exc:
-        unsupported = profile == 'c-s3' and isinstance(exc, NotImplementedError)
+        unsupported = (profile == 'c-s3' or operation == 'artifact-verify') and isinstance(exc, NotImplementedError)
         result.update(status='UNVERIFIED' if unsupported else 'FAIL',
                       error_type=type(exc).__name__, error=str(exc))
     finally:
@@ -323,12 +333,7 @@ def execute(job):
             result['status'] = 'FAIL'
     result['runtime'] = {**_runtime(App), 'document_closed': result['document_closed']}
     if operation == 'identity' and result['status'] == 'PASS':
-        result['runtime']['files'] = {item['path']: item['sha256']
-                                      for record in result['dependencies'].values()
-                                      for item in record['files']}
-        result['runtime']['files'].update({item['path']: item['sha256']
-                                            for item in result['native_libraries']})
-        result['runtime']['files'][sys.executable] = ledger.file_sha(sys.executable)
+        result['runtime']['files'] = result['sdk_files']
     ledger.write_json(out / output_name, result)
     return result
 

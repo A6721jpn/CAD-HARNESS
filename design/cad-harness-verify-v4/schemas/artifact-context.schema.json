@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.artifact-context.v4",
+  "description": "Checker-only frozen registration and expected measurement data. Never a constructor plan or generator input.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "profile", "family", "manifest_sha256", "prepared_sha256", "card_sha256", "reference", "contour", "engravings"],
+  "properties": {
+    "schema": {"const": "cad-harness.artifact-context.v4"},
+    "profile": {"enum": ["c-s1", "c-s2", "c-s3"]},
+    "family": {"enum": ["C1", "C2", "C3", "C4", "C5"]},
+    "manifest_sha256": {"$ref": "#/$defs/sha"},
+    "prepared_sha256": {"$ref": "#/$defs/sha"},
+    "card_sha256": {"$ref": "#/$defs/sha"},
+    "reference": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/reference"}]},
+    "contour": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/contour"}]},
+    "engravings": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/engraving"}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "asset": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"},
+    "face": {"type": "string", "pattern": "^Face[1-9][0-9]*$"},
+    "vector": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+    "reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["asset_id", "source_sha256"],
+      "properties": {
+        "asset_id": {"$ref": "#/$defs/asset"},
+        "source_sha256": {"$ref": "#/$defs/sha"},
+        "grid": {"type": "array", "minItems": 1, "maxItems": 256, "items": {"type": "array", "minItems": 1, "maxItems": 256, "items": {"$ref": "#/$defs/cell"}}}
+      }
+    },
+    "cell": {
+      "type": "object", "additionalProperties": false,
+      "required": ["face_id", "signature", "adjacent_face_ids", "swap_uv", "reverse_u", "reverse_v"],
+      "properties": {
+        "face_id": {"$ref": "#/$defs/face"},
+        "signature": {"$ref": "#/$defs/sha"},
+        "adjacent_face_ids": {"type": "array", "maxItems": 4096, "uniqueItems": true, "items": {"$ref": "#/$defs/face"}},
+        "swap_uv": {"type": "boolean"}, "reverse_u": {"type": "boolean"}, "reverse_v": {"type": "boolean"}
+      }
+    },
+    "contour": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contour_id", "scale", "origin_mm", "thickness_mm"],
+      "properties": {
+        "contour_id": {"$ref": "#/$defs/asset"},
+        "scale": {"type": "number", "exclusiveMinimum": 0},
+        "origin_mm": {"$ref": "#/$defs/vector"},
+        "thickness_mm": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "engraving": {
+      "type": "object", "additionalProperties": false,
+      "required": ["font_id", "text", "height_mm", "depth_mm", "origin_mm", "rotation_axis", "rotation_deg", "baseline_asset_id"],
+      "properties": {
+        "font_id": {"$ref": "#/$defs/asset"},
+        "text": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "height_mm": {"type": "number", "exclusiveMinimum": 0},
+        "depth_mm": {"type": "number", "exclusiveMinimum": 0},
+        "origin_mm": {"$ref": "#/$defs/vector"},
+        "rotation_axis": {"$ref": "#/$defs/vector"},
+        "rotation_deg": {"type": "number"},
+        "baseline_asset_id": {"$ref": "#/$defs/asset"}
+      }
+    }
+  }
+}

@@ -16,12 +16,14 @@ if __package__:
     from . import cad_run, cad_agent, cad_verify_v4_agent as agent
     from . import cad_verify_v4_freeze as freezing, cad_verify_v4_ledger as ledger
     from . import cad_verify_v4_live as live
+    from . import cad_verify_v4_runtime as runtime_binding
     from .cad_verify_guard import Stop
     from .cad_verify_v3_guard import Budget
 else:
     import cad_run, cad_agent, cad_verify_v4_agent as agent
     import cad_verify_v4_freeze as freezing, cad_verify_v4_ledger as ledger
     import cad_verify_v4_live as live
+    import cad_verify_v4_runtime as runtime_binding
     from cad_verify_guard import Stop
     from cad_verify_v3_guard import Budget
 
@@ -168,9 +170,9 @@ def _hashes(directory):
 def native_work(operation, out, journal, *, timeout=300, process=None, profile=PROFILE, **fields):
     """Run a data-only worker job; raw streams survive both success and failure."""
     _stage(profile)
-    if profile in ("c-s2", "c-s3") and operation not in ("prepare-step", "compile", "verify", "identity"):
+    if profile in ("c-s2", "c-s3") and operation not in ("prepare-step", "compile", "verify", "identity", "artifact-verify"):
         raise ValueError("s2_worker_operation")
-    if operation not in ("prepare-step", "contour", "text", "compile", "verify", "identity"):
+    if operation not in ("prepare-step", "contour", "text", "compile", "verify", "identity", "artifact-verify"):
         raise ValueError("s1_worker_operation")
     if type(timeout) not in (int, float) or not math.isfinite(timeout) or timeout <= 0:
         raise ValueError("s1_worker_timeout")
@@ -178,17 +180,28 @@ def native_work(operation, out, journal, *, timeout=300, process=None, profile=P
     job = dict(operation=operation, out=str(out), **fields)
     if profile != PROFILE:
         job["profile"] = profile
-    for key in ("manifest", "prepared", "plan", "card"):
+    for key in ("manifest", "prepared", "plan", "card", "context", "bundle"):
         if key in job:
             job[key] = str(safe_path(job[key], regular=True))
     if "candidate_dir" in job:
         job["candidate_dir"] = str(safe_path(job["candidate_dir"]))
+    execution_snapshot = None
+    if operation == "artifact-verify":
+        if "runtime_binding" in job:
+            raise ValueError("artifact_runtime_binding_is_collector_owned")
+        import importlib
+        adapter = importlib.import_module(("tools." if __package__ else "") + "cad_verify_v4_artifacts")
+        _, _, extensions = adapter.load_bundle(job["bundle"], profile=profile)
+        execution_snapshot = runtime_binding.capture(ROOT, extension_paths=extensions.values())
+        runtime_path = out.parent / (out.name + ".runtime.json")
+        ledger.write_json(runtime_path, execution_snapshot)
+        job["runtime_binding"] = str(runtime_path)
     job_path = out.parent / (out.name + ".job.json")
     ledger.write_json(job_path, job)
     argv = live.trusted_worker_argv(job_path, root=ROOT)
     work_id = "work-%06d" % (journal.sequence + 1)
     inputs = {key: ledger.file_sha(value) for key, value in job.items()
-              if key in ("manifest", "prepared", "plan", "card")}
+              if key in ("manifest", "prepared", "plan", "card", "context", "bundle", "runtime_binding")}
     code_bindings = implementation_bindings(ROOT, profile=profile)
     journal.append("work_started", work_id=work_id, work_kind=operation, profile=profile,
                    inputs=inputs, code_bindings=code_bindings, submitted_sha256=ledger.file_sha(job_path),
@@ -225,6 +238,11 @@ def native_work(operation, out, journal, *, timeout=300, process=None, profile=P
                     raise ValueError("s1_owned_headless_cleanup_evidence")
             if implementation_bindings(ROOT, profile=profile) != code_bindings:
                 raise ValueError("s1_native_implementation_changed_during_work")
+            if execution_snapshot is not None:
+                runtime_binding.verify(execution_snapshot, root=ROOT, extension_paths=extensions.values())
+                record = dict(path=str(runtime_path), sha256=ledger.file_sha(runtime_path), bytes=runtime_path.stat().st_size)
+                if result.get("runtime_binding") != record or ledger.read_json(runtime_path) != execution_snapshot:
+                    raise ValueError("artifact_execution_runtime_binding_mismatch")
         else:
             parse_error = "native_result_missing"
     except (OSError, ValueError, TypeError) as exc:

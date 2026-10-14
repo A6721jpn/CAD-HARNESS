@@ -1,0 +1,494 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "cad-harness.integrated-lock.v4"
+    },
+    "stage": {
+      "const": "implementation"
+    },
+    "status": {
+      "const": "offline_locked"
+    },
+    "root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "freeze_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authorization": {
+      "type": "null"
+    },
+    "final_v4_ready": {
+      "const": false
+    },
+    "evidence_mode": {
+      "const": "independent_dev"
+    },
+    "live_calls": {
+      "type": "integer",
+      "const": 0
+    },
+    "git": {
+      "$ref": "#/$defs/git"
+    },
+    "files": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/file"
+      }
+    },
+    "profiles": {
+      "$ref": "#/$defs/profiles"
+    },
+    "archives": {
+      "type": "object",
+      "properties": {
+        "original-profile-snapshot.zip": {
+          "$ref": "#/$defs/file"
+        },
+        "s1-profile-snapshot.zip": {
+          "$ref": "#/$defs/file"
+        },
+        "s2-profile-snapshot.zip": {
+          "$ref": "#/$defs/file"
+        }
+      },
+      "required": [
+        "original-profile-snapshot.zip",
+        "s1-profile-snapshot.zip",
+        "s2-profile-snapshot.zip"
+      ],
+      "additionalProperties": false
+    },
+    "fonts": {
+      "type": "object",
+      "properties": {
+        "DejaVuSansMono": {
+          "type": "object",
+          "properties": {
+            "font": {
+              "$ref": "#/$defs/file"
+            },
+            "license": {
+              "$ref": "#/$defs/file"
+            }
+          },
+          "required": [
+            "font",
+            "license"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "DejaVuSansMono"
+      ],
+      "additionalProperties": false
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/file"
+      },
+      "uniqueItems": true
+    },
+    "proof": {
+      "$ref": "#/$defs/file"
+    },
+    "dependencies": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/file"
+      }
+    },
+    "runtime": {
+      "$ref": "#/$defs/runtime"
+    },
+    "sha256_file": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schema",
+    "stage",
+    "status",
+    "root",
+    "freeze_dir",
+    "authorization",
+    "final_v4_ready",
+    "evidence_mode",
+    "live_calls",
+    "git",
+    "files",
+    "profiles",
+    "archives",
+    "fonts",
+    "recipes",
+    "proof",
+    "dependencies",
+    "runtime",
+    "sha256_file"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "file": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "bytes"
+      ],
+      "additionalProperties": false
+    },
+    "preflight": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "cad-harness.preflight.v4c"
+        },
+        "profile": {
+          "enum": [
+            "c-s1",
+            "c-s2",
+            "c-s3"
+          ]
+        },
+        "status": {
+          "const": "offline_ready"
+        },
+        "implementation_stage": {
+          "enum": [
+            "S1",
+            "S2",
+            "S3"
+          ]
+        },
+        "skill_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "original_profile_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "live_calls": {
+          "const": 0
+        },
+        "live_cad_runs": {
+          "const": 0
+        },
+        "holdout": {
+          "const": "not_run"
+        },
+        "pilot": {
+          "const": "not_run"
+        },
+        "final_v4_ready": {
+          "const": false
+        },
+        "pending_final_freeze": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "prior_stage_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "schema",
+        "profile",
+        "status",
+        "implementation_stage",
+        "skill_sha256",
+        "policy_sha256",
+        "original_profile_snapshot_sha256",
+        "live_calls",
+        "live_cad_runs",
+        "holdout",
+        "pilot",
+        "final_v4_ready",
+        "pending_final_freeze"
+      ],
+      "additionalProperties": false
+    },
+    "original-preflight": {
+      "type": "object",
+      "properties": {
+        "status": {"const": "offline_ready"},
+        "live_calls": {"const": 0},
+        "live_cad_runs": {"const": 0},
+        "skill_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "manifest": {"const": "not_frozen"},
+        "holdout": {"const": "not_run"},
+        "pilot": {"const": "not_run"},
+        "overload_robustness": {"const": "UNVERIFIED"},
+        "pending": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["status", "live_calls", "live_cad_runs", "skill_sha256", "policy_sha256",
+                   "manifest", "holdout", "pilot", "overload_robustness", "pending"],
+      "additionalProperties": false
+    },
+    "original-profile": {
+      "type": "object",
+      "properties": {
+        "skill_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "preflight": {"$ref": "#/$defs/original-preflight"}
+      },
+      "required": ["skill_sha256", "policy_sha256", "preflight"],
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "skill_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "preflight": {
+          "$ref": "#/$defs/preflight"
+        }
+      },
+      "required": [
+        "skill_sha256",
+        "policy_sha256",
+        "preflight"
+      ],
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "object",
+      "properties": {
+        "original": {
+          "$ref": "#/$defs/original-profile"
+        },
+        "c-s1": {
+          "$ref": "#/$defs/profile"
+        },
+        "c-s2": {
+          "$ref": "#/$defs/profile"
+        },
+        "c-s3": {
+          "$ref": "#/$defs/profile"
+        }
+      },
+      "required": [
+        "original",
+        "c-s1",
+        "c-s2",
+        "c-s3"
+      ],
+      "additionalProperties": false
+    },
+    "git": {
+      "type": "object",
+      "properties": {
+        "head": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+        },
+        "files": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "blob": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+              },
+              "mode": {
+                "enum": [
+                  null,
+                  "100644",
+                  "100755"
+                ]
+              },
+              "overlay": {
+                "enum": [
+                  "clean",
+                  "modified",
+                  "untracked"
+                ]
+              }
+            },
+            "required": [
+              "blob",
+              "mode",
+              "overlay"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "head",
+        "tree",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "sdk_root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "freecad_version": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3
+        },
+        "python_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "python_executable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occt_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modules": {
+          "type": "object",
+          "properties": {
+            "FreeCAD": {
+              "type": "string",
+              "minLength": 1
+            },
+            "Part": {
+              "type": "string",
+              "minLength": 1
+            },
+            "Sketcher": {
+              "type": "string",
+              "minLength": 1
+            },
+            "numpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "scipy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "PIL": {
+              "type": "string",
+              "minLength": 1
+            },
+            "shapely": {
+              "type": "string",
+              "minLength": 1
+            },
+            "contourpy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fontTools": {
+              "type": "string",
+              "minLength": 1
+            },
+            "OCC": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "FreeCAD",
+            "Part",
+            "Sketcher",
+            "numpy",
+            "scipy",
+            "PIL",
+            "shapely",
+            "contourpy",
+            "fontTools",
+            "OCC"
+          ],
+          "additionalProperties": false
+        },
+        "files": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/file"
+          }
+        },
+        "evidence": {
+          "$ref": "#/$defs/file"
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "ledger.jsonl": {"$ref": "#/$defs/file"},
+            "runtime.job.json": {"$ref": "#/$defs/file"},
+            "runtime.stdout.bin": {"$ref": "#/$defs/file"},
+            "runtime.stderr.bin": {"$ref": "#/$defs/file"},
+            "runtime.ready.json": {"$ref": "#/$defs/file"}
+          },
+          "required": ["ledger.jsonl", "runtime.job.json", "runtime.stdout.bin", "runtime.stderr.bin"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "sdk_root",
+        "freecad_version",
+        "python_version",
+        "python_executable",
+        "occt_version",
+        "modules",
+        "files",
+        "evidence",
+        "execution"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

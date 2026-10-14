@@ -9,12 +9,14 @@ if __package__:
     from . import cad_verify_v4_ledger as ledger, eval_verify_v3 as v3
     from . import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
     from . import cad_verify_v4_s1 as s1
+    from . import cad_verify_v4_artifacts as artifacts, cad_verify_v4_integrated as integrated
     from .cad_verify_guard import CLARIFICATION_FIELDS, Stop
 else:
     import cad_agent, cad_verify_v3_agent, cad_verify_v4_agent as agent
     import cad_verify_v4_ledger as ledger, eval_verify_v3 as v3
     import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
     import cad_verify_v4_s1 as s1
+    import cad_verify_v4_artifacts as artifacts, cad_verify_v4_integrated as integrated
     from cad_verify_guard import CLARIFICATION_FIELDS, Stop
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -267,6 +269,20 @@ def parser():
         command.add_argument("--run-dir", required=True)
         if name == "judge":
             command.add_argument("--candidate-dir", required=True)
+    command = commands.add_parser("judge-artifacts", help="same-card neutral FCStd/STEP check; no construction plan")
+    command.add_argument("--profile", choices=("c-s1", "c-s2", "c-s3"), default="c-s1")
+    command.add_argument("--input-manifest", required=True)
+    command.add_argument("--prepared", required=True)
+    command.add_argument("--card", required=True)
+    command.add_argument("--context", required=True)
+    command.add_argument("--artifact-bundle", required=True)
+    command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("integrated-lock", help="zero-live current-HEAD implementation lock for all four profiles")
+    command.add_argument("--neutral-proof", required=True)
+    command.add_argument("--recipe", action="append", default=[])
+    command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("verify-integrated-lock", help="recheck HEAD, files, profiles, runtime and neutral proof; never authorize")
+    command.add_argument("--manifest", required=True)
     return result
 
 
@@ -297,6 +313,13 @@ def main(argv=None):
                                     generator_model=args.generator_model, thinking=args.thinking,
                                     omp=args.omp, quota_snapshot=args.quota_snapshot,
                                     authorization_path=args.authorization)
+        elif args.command == "integrated-lock":
+            value = integrated.create(args.run_dir, proof_path=args.neutral_proof, recipe_paths=args.recipe)
+        elif args.command == "verify-integrated-lock":
+            value = integrated.verify(args.manifest)
+        elif args.command == "judge-artifacts":
+            value = artifacts.check(args.input_manifest, args.prepared, args.card, args.context,
+                                    args.artifact_bundle, args.run_dir, profile=args.profile)
         elif args.command in ("prepare-step", "image-to-contour"):
             value = s1.prepare("contour" if args.command == "image-to-contour" else "prepare-step",
                                args.input_manifest, args.run_dir, asset_id=args.asset_id,
