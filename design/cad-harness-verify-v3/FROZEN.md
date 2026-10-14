@@ -44,3 +44,11 @@
 - Archived (renamed, nothing deleted): attempt #3 suite, A5-r5, A6-r5, C4/C5 r1–r3 and F4-r1 -resume1 dirs, plus logs, suffix -aborted-fault-binding-20261013T1930. Their results are informational and unscored.
 - Call charge: attempt #3 spent 17 accepted calls, charged. Spent before re-execution: 54 + 4 + 17 = 75 of 163. Worst case: 123.
 - Scope: segment 2 (entries[46:]) is re-executed in full.
+
+## Re-freeze label: rerun2 (manifest version stays verify-v3-reviewed-r1-solfix) (2026-10-14 JST)
+- Why: user decision 2026-10-14 08:58 JST (option 1). Re-run ONLY geometry-G5-r1 and geometry-G1-r2, the two segment-1 interpretation failures caused by provider server_overloaded. A minimal code addition (rerun-by-ID subcommand plus aggregate substitution) is allowed.
+- Brief: RERUN2-BRIEF.md. Implementation (codex): c345617, rerun2-impl-notes.md, 29 tests OK. Reviews: rerun2-review-grok.md READY, rerun2-review-gemini.md READY.
+- Unchanged: driver, scoring, gold, thresholds, order, controls.
+- Previous manifest archived (git mv) as SHA256.solfix-a2.json (f4d13350c3070020d0e655b238be8dc9abff92b352b12964110d37634647cd3c). New SHA256.json sha256: 024ecb52c38194d12f7fa7b89217a96e64d6853893fc4dfced7ccd430ab09714.
+- Original segment-1 rows and the existing *-solfix aggregate are preserved. The new aggregate suffix is host-reviewed-r1-solfix-rerun2; substituted_rows keeps both the original and the replacement rows.
+- Call charge starts at 105 of 163. Worst case: +8 = 113.

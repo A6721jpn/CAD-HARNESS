@@ -2,8 +2,8 @@
   "schema": "cad-harness.verify-sha.v3",
   "profile": "verify-v3",
   "version": "verify-v3-reviewed-r1-solfix",
-  "created_at": "2026-10-13T10:37:09.867730+00:00",
-  "local_commit": "27de198",
+  "created_at": "2026-10-14T00:18:52.815011+00:00",
+  "local_commit": "c345617",
   "plan_commit": "fd7e215",
   "files": {
     "design/cad-harness-mvp/DECISION-01-acceptance-bar.md": "fee078a9ff067a5bc93e9dcf9e760ba08ac3229b7badaa11b0cb39aeb461827d",
@@ -151,7 +151,7 @@
     "tools/cad_verify_v3_probe.py": "787340110697e1c9f54b24ebdef733322cc1e3968c632f9302102994d5e224f1",
     "tools/eval_mvp.py": "4eac5a9fcf6e9a3498583e43bfd8d88d2ab691ffd38256594931f76ac47a26b9",
     "tools/eval_verify.py": "71b410e9c037f5f8e14cfe2b752d1035f6db0a9b64e82b956e405ec094605fe0",
-    "tools/eval_verify_v3.py": "1b81c0f540adfff0929146ca42862c12e4f97a1361983066412320deb0da54d7",
+    "tools/eval_verify_v3.py": "0e962dce609467736711c1645f9360a8072d2a54993dabe4eea70e41203d8918",
     "tools/fixtures/cad_run_a_broken_mvp.py": "62339c70455d8b5de89f15f64c3b5938e7edc22e682f2d16b0501b6382759f92",
     "tools/fixtures/cad_run_a_build.py": "3ad5c506d84739c4378ce80d9557800919e7c0dd6c8f46cb8ff1cbc3882393dd",
     "tools/fixtures/cad_run_b_broken_mvp.py": "74ec2d2f7c0dde442f4ad4ea4910ead54ad884fa349902612a1881e7d14f5821",
@@ -162,7 +162,7 @@
     "tools/smoke_verify_v3.py": "1fc8cc4978695453ef091110ae1c099fb130a3a8f9eb0d1d8d177e04ff36994a",
     "tools/test_cad_verify.py": "be5657780bf5927862f11da6bc049b9ce1b4cc71b51040c6d3b2b7a0cb193d3e",
     "tools/test_support.py": "29cb4201b072d2879b0d25315355351aaa1713493390842b4b394dddd6e5d243",
-    "tools/test_verify_v3.py": "aac97725ae59b85f363163c685e4a101e84e295807aded4a0f34fda69853ecbc"
+    "tools/test_verify_v3.py": "3db407025e13219f1b17f9311934d8cfdf520d92de861ae24a0b6844c9709788"
   },
   "cli": {
     "path": "C:\\Users\\backo\\.codex\\packages\\standalone\\releases\\0.159.2-x86_64-pc-windows-msvc\\bin\\codex.exe",
