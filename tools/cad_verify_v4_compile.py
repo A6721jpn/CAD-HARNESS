@@ -31,14 +31,16 @@ def _vector(value, name):
     return [_number(v, name) for v in value]
 
 
-def _solid(shape):
-    if shape.isNull() or not shape.isValid() or len(shape.Solids) != 1 or shape.Volume <= 0:
-        raise ValueError('single_valid_solid_required')
+def _solid(shape, expected_solids=1):
+    if type(expected_solids) is not int or expected_solids < 1:
+        raise ValueError('invalid_expected_solid_count')
+    if shape.isNull() or not shape.isValid() or len(shape.Solids) != expected_solids or shape.Volume <= 0:
+        raise ValueError('single_valid_solid_required' if expected_solids == 1 else 'declared_valid_solids_required')
     return shape
 
 
-def shape_measurements(shape, *, tight_bounds=False):
-    _solid(shape)
+def shape_measurements(shape, *, tight_bounds=False, expected_solids=1):
+    _solid(shape, expected_solids)
     # S2 dimensions must bound trimmed geometry, not extended spline supports.
     b = shape.optimalBoundingBox(False, False) if tight_bounds else shape.BoundBox
     return {'bounds_mm': [b.XMin, b.XMax, b.YMin, b.YMax, b.ZMin, b.ZMax],
@@ -126,6 +128,9 @@ class _FrozenProxy:
     def onDocumentRestored(self, obj):
         obj.touch()
 
+    def expected_solids(self, obj):
+        return 1
+
     def execute(self, obj):
         import Part
         # Clear first: an exception or failed recompute can never retain a valid stale Shape.
@@ -133,7 +138,7 @@ class _FrozenProxy:
         obj.BuildStatus = 'computing'
         try:
             shape = self.construct(obj)
-            obj.Shape = _solid(shape)
+            obj.Shape = _solid(shape, self.expected_solids(obj))
             obj.BuildStatus = 'ok'
         except Exception as exc:
             obj.Shape = Part.Shape()
@@ -142,6 +147,10 @@ class _FrozenProxy:
 
 
 class ContourProxy(_FrozenProxy):
+    def expected_solids(self, obj):
+        _, inputs, _ = _imports()
+        return inputs.contour_solid_count(json.loads(obj.ContourData))
+
     def construct(self, obj):
         import FreeCAD as App
         if __package__:
@@ -160,12 +169,18 @@ class ContourProxy(_FrozenProxy):
 
 
 class EngravingProxy(_FrozenProxy):
+    def expected_solids(self, obj):
+        if obj.Base is None:
+            raise ValueError('engraving_base_missing')
+        proxy = obj.Base.Proxy if 'Proxy' in obj.Base.PropertiesList else None
+        return proxy.expected_solids(obj.Base) if type(proxy) in (ContourProxy, EngravingProxy) else 1
+
     def construct(self, obj):
         import FreeCAD as App
         _, _, text_module = _imports()
         if obj.Base is None:
             raise ValueError('engraving_base_missing')
-        base = _solid(obj.Base.Shape)
+        base = _solid(obj.Base.Shape, self.expected_solids(obj))
         raw = base64.b64decode(obj.FontData, validate=True)
         if hashlib.sha256(raw).hexdigest() != obj.FontDigest:
             raise ValueError('embedded_font_digest')
@@ -189,7 +204,7 @@ class EngravingProxy(_FrozenProxy):
             raise ValueError('engraving_entry_not_exposed')
         if floor.cut(base).Volume > max(1e-12, floor.Volume * 1e-6):
             raise ValueError('engraving_has_no_recess_floor')
-        result = _solid(base.cut(tool))
+        result = _solid(base.cut(tool), self.expected_solids(obj))
         if result.Volume >= base.Volume:
             raise ValueError('engraving_no_removed_material')
         return result
@@ -208,12 +223,17 @@ def build_plan(doc, plan, manifest_path, prepared):
     else:
         from cad_verify_v4_plans import validate_plan
     plan = validate_plan(plan, manifest_path, prepared)
+    expected = inputs.contour_solid_count(prepared['assets'][plan['contour_id']]) if plan['family'] == 'contour_extrude' else 1
+    multiple = expected > 1
     if plan['family'] == 'reference_fixture':
         body = cad_spec.build_native(doc, cad_spec.validate_spec(plan['build_spec']))
     elif plan['family'] == 'contour_extrude':
-        body = doc.addObject('PartDesign::Body', 'Model')
-        feature = body.newObject('PartDesign::FeaturePython', 'ContourExtrude')
         record = prepared['assets'][plan['contour_id']]
+        if multiple:
+            feature = body = doc.addObject('Part::FeaturePython', 'ContourExtrude')
+        else:
+            body = doc.addObject('PartDesign::Body', 'Model')
+            feature = body.newObject('PartDesign::FeaturePython', 'ContourExtrude')
         _property(feature, 'App::PropertyString', 'ContourData', json.dumps(record, allow_nan=False))
         feature.setEditorMode('ContourData', 1)
         _property(feature, 'App::PropertyLength', 'Width', plan['width_mm'])
@@ -222,9 +242,10 @@ def build_plan(doc, plan, manifest_path, prepared):
         _property(feature, 'App::PropertyString', 'BuildStatus', 'new')
         feature.setEditorMode('BuildStatus', 1)
         feature.Proxy = ContourProxy()
-        body.Tip = feature
+        if not multiple:
+            body.Tip = feature
         doc.recompute()
-        _solid(feature.Shape)
+        _solid(feature.Shape, expected)
     else:
         raise ValueError('unsupported_s1_family')
     for index, entry in enumerate(plan['engravings']):
@@ -234,8 +255,9 @@ def build_plan(doc, plan, manifest_path, prepared):
         raw = asset['path'].read_bytes()
         if hashlib.sha256(raw).hexdigest() != asset['digest']:
             raise ValueError('font_changed_during_compile')
-        previous = body.Tip
-        feature = body.newObject('PartDesign::FeaturePython', 'Engraving' + str(index))
+        previous = body if multiple else body.Tip
+        feature = (doc.addObject('Part::FeaturePython', 'Engraving' + str(index)) if multiple else
+                   body.newObject('PartDesign::FeaturePython', 'Engraving' + str(index)))
         for kind, name, value in (
             ('App::PropertyLink', 'Base', previous),
             ('App::PropertyString', 'Text', entry['text']),
@@ -253,27 +275,59 @@ def build_plan(doc, plan, manifest_path, prepared):
         for name in ('FontId', 'FontDigest', 'FontData', 'GlyphRegistry', 'BuildStatus'):
             feature.setEditorMode(name, 1)
         feature.Proxy = EngravingProxy()
-        body.Tip = feature
+        if multiple:
+            body = feature
+        else:
+            body.Tip = feature
         doc.recompute()
-        _solid(feature.Shape)
+        _solid(feature.Shape, expected)
     doc.recompute()
     check_document(doc, body)
     return body
 
 
+def output_for_plan(doc, plan, prepared):
+    """Select the actual frozen graph output; no native count override is trusted."""
+    _, inputs, _ = _imports()
+    expected = (inputs.contour_solid_count(prepared['assets'][plan['contour_id']])
+                if plan.get('profile') == 'c-s1' and plan.get('family') == 'contour_extrude' else 1)
+    if expected > 1:
+        name = 'Engraving' + str(len(plan['engravings']) - 1) if plan['engravings'] else 'ContourExtrude'
+        output = doc.getObject(name)
+        proxy_type = EngravingProxy if plan['engravings'] else ContourProxy
+        root = doc.getObject('ContourExtrude')
+        if (output is None or output.TypeId != 'Part::FeaturePython' or type(output.Proxy) is not proxy_type or
+                root is None or type(root.Proxy) is not ContourProxy or
+                json.loads(root.ContourData) != prepared['assets'][plan['contour_id']]):
+            raise ValueError('native_compound_output_graph')
+    else:
+        bodies = [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body']
+        if len(bodies) != 1:
+            raise ValueError('native_body_count')
+        output = bodies[0]
+    check_document(doc, output)
+    return output
+
+
 def check_document(doc, body):
-    if body.TypeId != 'PartDesign::Body' or body.Tip is None:
-        raise ValueError('native_body_tip')
+    multiple = body.TypeId == 'Part::FeaturePython' and type(body.Proxy) in (ContourProxy, EngravingProxy)
+    expected = body.Proxy.expected_solids(body) if multiple else 1
     bodies = [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body']
-    if bodies != [body]:
+    if multiple:
+        if expected <= 1 or bodies:
+            raise ValueError('native_compound_output_graph')
+    elif body.TypeId != 'PartDesign::Body' or body.Tip is None:
+        raise ValueError('native_body_tip')
+    elif bodies != [body]:
         raise ValueError('native_body_count')
     for obj in doc.Objects:
         if 'BuildStatus' in obj.PropertiesList and obj.BuildStatus != 'ok':
             raise ValueError('native_feature_recompute:' + obj.Name)
         if any(state in ('Invalid', 'Error', 'Touched') for state in obj.State):
             raise ValueError('native_document_state:' + obj.Name)
-    _solid(body.Tip.Shape)
-    _solid(body.Shape)
+    if not multiple:
+        _solid(body.Tip.Shape)
+    _solid(body.Shape, expected)
     return True
 
 
@@ -281,7 +335,8 @@ def operative_evidence(doc, body):
     """Exercise native property edits, recompute, restore; never save altered probes."""
     check_document(doc, body)
     evidence = []
-    for obj in body.Group:
+    features = body.Group if body.TypeId == 'PartDesign::Body' else doc.Objects
+    for obj in features:
         if isinstance(obj.Proxy if 'Proxy' in obj.PropertiesList else None, ContourProxy):
             names = ('Width', 'Thickness')
         elif isinstance(obj.Proxy if 'Proxy' in obj.PropertiesList else None, EngravingProxy):
@@ -308,13 +363,23 @@ def operative_evidence(doc, body):
                 doc.recompute()
                 after = obj.Shape
                 invalidated = after.isNull() and 'BuildStatus' in obj.PropertiesList and obj.BuildStatus.startswith('failed:')
+                changed_indices = []
                 if after.isNull():
                     operative = invalidated
                 else:
                     # Symmetric-difference volume proves geometry changed, including placement/text.
                     operative = before.cut(after).Volume + after.cut(before).Volume > 1e-10
-                evidence.append({'feature': obj.Name, 'property': name, 'operative': operative,
-                                 'invalidated_on_rejected_edit': invalidated})
+                    if len(before.Solids) > 1:
+                        _solid(after, len(before.Solids))
+                        changed_indices = [i for i, (a, b) in enumerate(zip(before.Solids, after.Solids))
+                                           if a.cut(b).Volume + b.cut(a).Volume > 1e-10]
+                        if name in ('Width', 'Thickness'):
+                            operative = operative and len(changed_indices) == len(before.Solids)
+                row = {'feature': obj.Name, 'property': name, 'operative': operative,
+                       'invalidated_on_rejected_edit': invalidated}
+                if len(before.Solids) > 1:
+                    row['changed_solid_indices'] = changed_indices
+                evidence.append(row)
             finally:
                 setattr(obj, name, old)
                 doc.recompute()
@@ -329,7 +394,8 @@ def check_model_inputs(body, plan, prepared, manifest_path):
     _, inputs, _ = _imports()
     doc = body.Document
     expected_python = len(plan['engravings']) + (plan['family'] == 'contour_extrude')
-    if len([obj for obj in doc.Objects if obj.TypeId == 'PartDesign::FeaturePython']) != expected_python:
+    expected_type = 'Part::FeaturePython' if body.TypeId == 'Part::FeaturePython' else 'PartDesign::FeaturePython'
+    if len([obj for obj in doc.Objects if obj.TypeId == expected_type]) != expected_python:
         raise ValueError('unexpected_native_python_features')
     if plan['family'] == 'contour_extrude':
         feature = doc.getObject('ContourExtrude')

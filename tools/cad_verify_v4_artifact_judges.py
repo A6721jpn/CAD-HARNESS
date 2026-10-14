@@ -72,6 +72,8 @@ def _measurements(value, manifest_path, prepared, card):
         record = prepared['assets'].get(contour['contour_id'])
         if not record or record['schema'] != 'cad-harness.contour.v4c' or record['units'] != 'mm':
             raise ValueError('context_contour_prerequisite')
+        if family == 'C2':
+            inputs.contour_solid_count(record)
     for engraving in engravings:
         _module('cad_verify_v4_plans')._axis(engraving['rotation_axis'])
         baseline = inputs.resolve_asset(manifest_path, engraving['baseline_asset_id'], 'step')
@@ -131,6 +133,26 @@ def validate_context(value, manifest_path, prepared_path, card_path, *, profile=
     return _CheckedContext(value, paths)
 
 
+def expected_solid_count(context, prepared):
+    """Derive C2 cardinality only from the authenticated measurement binding."""
+    inputs = _module('cad_verify_v4_inputs')
+    ledger = _module('cad_verify_v4_ledger')
+    if not isinstance(context, _CheckedContext):
+        raise ValueError('context_requires_validate_context')
+    if inputs.canonical_sha(context) != context._commitment:
+        raise ValueError('context_frozen_measurements_changed')
+    admitted = validate_context(context, *context._paths, profile=context['profile'])
+    bound = ledger.read_json(context._paths[1])
+    if inputs.canonical_sha(prepared) != inputs.canonical_sha(bound):
+        raise ValueError('context_supplied_prepared_or_card_mismatch')
+    if admitted['profile'] != 'c-s1' or admitted['family'] != 'C2':
+        return 1
+    contour = admitted['contour']
+    if contour is None:
+        return 1
+    return inputs.contour_solid_count(bound['assets'][contour['contour_id']])
+
+
 def judge(context, manifest_path, prepared, body_or_shape, card, *, native_evidence=None):
     """Score ordinary native/STEP geometry through exactly the existing kernels.
 
@@ -152,6 +174,7 @@ def judge(context, manifest_path, prepared, body_or_shape, card, *, native_evide
             or inputs.canonical_sha(card) != inputs.canonical_sha(bound_card)):
         raise ValueError('context_supplied_prepared_or_card_mismatch')
     stage = _module(STAGES[admitted['profile']])
+    expected_solids = expected_solid_count(admitted, prepared)
     if admitted['profile'] != 'c-s1':
         result = stage.judge(admitted['reference'], manifest_path, prepared, body_or_shape,
                              card, native_evidence=native_evidence)
@@ -164,7 +187,8 @@ def judge(context, manifest_path, prepared, body_or_shape, card, *, native_evide
                 try:
                     baseline = Part.Shape()
                     baseline.read(str(asset['path']))
-                    if not baseline.isNull() and baseline.isValid() and len(baseline.Solids) == 1 and baseline.Volume > 0:
+                    if (not baseline.isNull() and baseline.isValid()
+                            and len(baseline.Solids) == expected_solids and baseline.Volume > 0):
                         baselines[index] = baseline
                 except (RuntimeError, OSError, ValueError):
                     pass  # Absent native certificate becomes UNVERIFIED in the shared kernel.

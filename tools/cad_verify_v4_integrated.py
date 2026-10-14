@@ -226,7 +226,14 @@ def _recipe_commitments(prepared, profile, recipes):
     return list(resolved.values())
 
 
-def _geometry_result(result, card):
+def _geometry_result(result, card, *, context=None, prepared=None):
+    expected_solids = 1
+    if context is not None:
+        if __package__:
+            from . import cad_verify_v4_artifact_judges as neutral
+        else:
+            import cad_verify_v4_artifact_judges as neutral
+        expected_solids = neutral.expected_solid_count(context, prepared)
     def number(value):
         return type(value) in (int, float) and math.isfinite(value)
     measurements = result.get('measurements', {})
@@ -236,7 +243,7 @@ def _geometry_result(result, card):
         shape = measurements.get(representation, {})
         bounds = shape.get('bounds_mm')
         volume = shape.get('volume_mm3')
-        if (shape.get('valid') is not True or type(shape.get('solids')) is not int or shape['solids'] != 1
+        if (shape.get('valid') is not True or type(shape.get('solids')) is not int or shape['solids'] != expected_solids
                 or not number(volume) or volume <= 0 or not isinstance(bounds, list) or len(bounds) != 6
                 or not all(number(value) for value in bounds)
                 or any(bounds[i] >= bounds[i + 1] for i in (0, 2, 4))):
@@ -258,7 +265,7 @@ def _geometry_result(result, card):
         raise Stop('integrated_neutral_roundtrip_evidence_inconsistent')
 
 
-def _editability_result(edit, bundle):
+def _editability_result(edit, bundle, *, expected_solids=1):
     probes = edit.get('probes')
     if edit.get('status') != 'PASS' or not isinstance(probes, list) or not probes:
         raise Stop('integrated_neutral_edit_probe_missing')
@@ -270,6 +277,7 @@ def _editability_result(edit, bundle):
     else:
         import cad_verify_v4_artifacts as artifacts
     schema = _json(_path(artifacts.SCHEMA))
+    covered = set()
     for row in probes:
         if (not isinstance(row, dict) or row.get('operative') is not True or row.get('restored') is not True
                 or not isinstance(row.get('probe'), dict) or 'old' not in row or 'new' not in row
@@ -302,6 +310,15 @@ def _editability_result(edit, bundle):
                 raise Stop('integrated_neutral_edit_probe_contradictory')
         elif invalidated is not False or not number(difference) or difference <= floor:
             raise Stop('integrated_neutral_edit_probe_nonoperative')
+        if expected_solids > 1:
+            indices = row.get('changed_solid_indices')
+            if (not isinstance(indices, list) or not indices
+                    or any(type(index) is not int or not 0 <= index < expected_solids for index in indices)
+                    or len(indices) != len(set(indices))):
+                raise Stop('integrated_neutral_edit_piece_evidence_missing')
+            covered.update(indices)
+    if expected_solids > 1 and covered != set(range(expected_solids)):
+        raise Stop('integrated_neutral_edit_piece_coverage_missing')
 
 
 def _proof_runtime(result, snapshot, root, native_files, extension_paths, frozen=None):
@@ -439,8 +456,9 @@ def _proof(proof_path, *, root=ROOT, recipes=(), runtime=None):
             evidence = result.get('native_evidence', {})
             if any(evidence.get(key) is not True for key in ('fcstd_reopened', 'step_reopened', 'editable')):
                 raise Stop('integrated_neutral_reopen_editability_missing')
-            _geometry_result(result, card)
-            _editability_result(result.get('editability', {}), bundle)
+            _geometry_result(result, card, context=context, prepared=prepared)
+            _editability_result(result.get('editability', {}), bundle,
+                                expected_solids=neutral.expected_solid_count(context, prepared))
             judges = result.get('judges')
             if not isinstance(judges, dict) or set(judges) != {'fcstd', 'step'}:
                 raise Stop('integrated_neutral_judges_missing')

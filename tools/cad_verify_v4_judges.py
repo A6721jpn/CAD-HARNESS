@@ -90,6 +90,30 @@ def _segment_points(segment, tolerance):
     return points, radius*(1-math.cos(abs(sweep)/count/2))
 
 
+def _loop_points(loop, tolerance):
+    points = []
+    error = join_error = 0.
+    for segment in loop['segments']:
+        part, bound = _segment_points(segment, tolerance)
+        if points:
+            gap = math.dist(points[-1], part[0])
+            if gap > 1e-8:
+                raise ValueError('judge_open_segment_chain')
+            join_error = max(join_error, gap)
+        points.extend(part if not points else part[1:])
+        error = max(error, bound)
+    if not points:
+        raise ValueError('judge_open_loop')
+    gap = math.dist(points[0], points[-1])
+    if gap > 1e-8:
+        raise ValueError('judge_open_loop')
+    # A native closed wire can evaluate its shared vertex a few ulps apart.
+    # Represent the ALREADY accepted closure exactly, not as a tiny extra edge;
+    # retain its displacement in the symmetric approximation error enclosure.
+    points[-1] = points[0]
+    return points, error + max(join_error, gap)
+
+
 def planar_geometry(record, tolerance_mm):
     """Return polygon and symmetric boundary approximation bound, independent of reports."""
     from shapely.geometry import Polygon
@@ -101,15 +125,8 @@ def planar_geometry(record, tolerance_mm):
         raise ValueError('judge_contour_units_or_empty')
     outer, holes, epsilon = [], [], 0.
     for loop in record['loops']:
-        points = []
-        for segment in loop['segments']:
-            part, error = _segment_points(segment, tolerance)
-            if points and math.dist(points[-1], part[0]) > 1e-8:
-                raise ValueError('judge_open_segment_chain')
-            points.extend(part if not points else part[1:])
-            epsilon = max(epsilon, error)
-        if not points or math.dist(points[0], points[-1]) > 1e-8:
-            raise ValueError('judge_open_loop')
+        points, error = _loop_points(loop, tolerance)
+        epsilon = max(epsilon, error)
         poly = Polygon(points)
         if not poly.is_valid or poly.area == 0:
             raise ValueError('judge_invalid_planar_loop')
@@ -171,6 +188,67 @@ def hausdorff_bounds(a, b, step_mm, error_a_mm=0., error_b_mm=0.):
 def _topology(region):
     polygons=list(region.geoms) if hasattr(region,'geoms') else [region]
     return dict(components=len(polygons),holes=sum(len(p.interiors) for p in polygons))
+
+
+def _overlap_correspondence(source, target):
+    """A fixed-frame bijection; no component translation or bbox fitting."""
+    if len(source) != len(target):
+        return None
+    mapping = []
+    for piece in source:
+        overlaps = [(piece.intersection(other).area, j) for j, other in enumerate(target)]
+        if not overlaps:
+            return None
+        overlaps.sort(reverse=True)
+        if overlaps[0][0] <= 0 or len(overlaps) > 1 and overlaps[0][0] == overlaps[1][0]:
+            return None
+        mapping.append(overlaps[0][1])
+    return mapping if len(set(mapping)) == len(mapping) else None
+
+
+def _nesting_matches(a, b):
+    """Match material pieces and their holes, then verify containment relations."""
+    from shapely.geometry import Polygon
+    source = list(a.geoms) if hasattr(a, 'geoms') else [a]
+    target = list(b.geoms) if hasattr(b, 'geoms') else [b]
+    mapping = _overlap_correspondence(source, target)
+    if mapping is None:
+        return False
+    holes_a = [[Polygon(ring) for ring in piece.interiors] for piece in source]
+    holes_b = [[Polygon(ring) for ring in piece.interiors] for piece in target]
+    hole_maps = []
+    for i, j in enumerate(mapping):
+        matches = _overlap_correspondence(holes_a[i], holes_b[j])
+        if matches is None:
+            return False
+        hole_maps.append(matches)
+    def owner(piece, holes):
+        candidates = [(hole.area, i, j) for i, group in enumerate(holes)
+                      for j, hole in enumerate(group) if hole.contains(piece)]
+        return min(candidates)[1:] if candidates else None
+    for i, j in enumerate(mapping):
+        old, new = owner(source[i], holes_a), owner(target[j], holes_b)
+        expected = (mapping[old[0]], hole_maps[old[0]][old[1]]) if old is not None else None
+        if new != expected:
+            return False
+    return True
+
+
+def _piece_records(record, tolerance):
+    """Partition exact native loops independently by immediate geometric owner."""
+    from shapely.geometry import Polygon
+    outers, holes = [], []
+    for loop in record['loops']:
+        points, _ = _loop_points(loop, tolerance)
+        polygon = Polygon(points)
+        (outers if loop['role'] == 'outer' else holes).append((loop, polygon))
+    assigned = [[] for _ in outers]
+    for loop, polygon in holes:
+        owners = [(outer.area, i) for i, (_, outer) in enumerate(outers) if outer.contains(polygon)]
+        if not owners:
+            raise ValueError('judge_orphan_hole')
+        assigned[min(owners)[1]].append(loop)
+    return [dict(units='mm', loops=[outer] + assigned[i]) for i, (outer, _) in enumerate(outers)]
 
 
 def _tangent(segment, at_end):
@@ -277,7 +355,14 @@ def tool_access(record, criterion):
     possible_parts = list(possible_centers.geoms) if hasattr(possible_centers, 'geoms') else [possible_centers]
     certainly_occupied = sum(not p.intersection(safe_centers).is_empty for p in possible_parts if not p.is_empty)
     if criterion['require_connected']:
-        if possible_centers.is_empty or certainly_occupied > 1:
+        if _topology(region)['components'] > 1:
+            pieces = [tool_access(piece, criterion) for piece in _piece_records(record, criterion['curve_tolerance_mm'])]
+            topology_stable = all(piece['topology_stable'] for piece in pieces)
+            if any(piece['status'] == 'FAIL' for piece in pieces):
+                status = 'FAIL'
+            elif status != 'FAIL' and any(piece['status'] != 'PASS' for piece in pieces):
+                status = 'UNVERIFIED'
+        elif possible_centers.is_empty or certainly_occupied > 1:
             status = 'FAIL'
         elif not topology_stable and status != 'FAIL':
             status = 'UNVERIFIED'
@@ -692,6 +777,22 @@ def _output_section(plan, shape, criterion):
     return _shape_record(shape, z), z
 
 
+def _expected_solid_count(data, prepared):
+    c2 = data.get('profile') == 'c-s1' and (
+        data.get('schema') == 'cad-harness.artifact-context.v4' and data.get('family') == 'C2'
+        or data.get('family') == 'contour_extrude')
+    if not c2:
+        return 1
+    registration = _contour_registration(data)
+    record = prepared['assets'].get(registration['contour_id'])
+    # Missing multi-piece authority cannot relax the default one-solid gate.
+    if not record:
+        return 1
+    if record.get('recipe', {}).get('topology', {}).get('components') != 'preserve':
+        return 1
+    return _module('cad_verify_v4_inputs').contour_solid_count(record)
+
+
 def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
     """Judge actual candidate against original assets and explicit independent card.
 
@@ -709,8 +810,9 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                 raise Unknown('missing_required:linear_tolerance_mm')
             tol=_number(card['linear_tolerance_mm'],'linear_tolerance_mm',0)
             if metric=='solid_valid':
-                valid=not shape.isNull() and shape.isValid() and len(shape.Solids)==1 and shape.Volume>0
-                checks.append(_check(c,'PASS' if valid else 'FAIL',dict(valid=shape.isValid(),solids=len(shape.Solids),volume_mm3=shape.Volume),dict(valid=True,solids=1),0,0,source='actual_native_brep'))
+                expected = _expected_solid_count(plan, prepared)
+                valid=not shape.isNull() and shape.isValid() and len(shape.Solids)==expected and shape.Volume>0
+                checks.append(_check(c,'PASS' if valid else 'FAIL',dict(valid=shape.isValid(),solids=len(shape.Solids),volume_mm3=shape.Volume),dict(valid=True,solids=expected),0,0,source='actual_native_brep'))
             elif metric=='bounds':
                 _required(c,'expected_mm');target=_vector(c['expected_mm'],6,'expected_mm');actual=_bounds(shape)
                 error=max(abs(a-b) for a,b in zip(actual,target))
@@ -802,7 +904,7 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                         a=translate(scale(a,xfact=factor,yfact=factor,origin=(0,0)),xoff=origin[0],yoff=origin[1]);ea*=factor
                         evidence['registration']=dict(scale=factor,origin_mm=list(origin),projection_z_mm=c['projection_z_mm'])
                     source_topology,target_topology=_topology(a),_topology(b)
-                    topology_matches=source_topology==target_topology
+                    topology_matches=source_topology==target_topology and _nesting_matches(a,b)
                     evidence.update(source_topology=source_topology,target_topology=target_topology,
                                     topology_matches=topology_matches)
                     if metric=='boundary_hausdorff':

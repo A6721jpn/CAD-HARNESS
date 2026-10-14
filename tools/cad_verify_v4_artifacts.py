@@ -152,7 +152,12 @@ def _import_extensions(extensions):
                 raise
 
 
-def _body(doc, name):
+def _body(doc, name, *, expected_solids=1):
+    if expected_solids > 1:
+        output = doc.getObject(name) if name is not None else None
+        if output is None or output.TypeId not in ('Part::Feature', 'Part::FeaturePython', 'Part::Compound'):
+            raise ValueError('native_named_compound_output_required')
+        return output
     bodies = [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body']
     if len(bodies) != 1 or (name is not None and bodies[0].Name != name):
         raise ValueError('native_single_output_body_required')
@@ -222,28 +227,34 @@ def _edit_probe(App, doc, probe):
     return lambda: setattr(obj, name, old), detail
 
 
-def check_document(doc, body):
+def check_document(doc, body, *, expected_solids=1):
     """Native structure/state only: no harness-specific status-token fields."""
     compiler = _module('cad_verify_v4_compile')
-    if body.TypeId != 'PartDesign::Body' or body.Tip is None:
-        raise ValueError('native_body_tip')
-    if [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body'] != [body]:
-        raise ValueError('native_body_count')
+    if body.Document != doc or doc.getObject(body.Name) != body:
+        raise ValueError('native_output_document')
+    if expected_solids == 1:
+        if body.TypeId != 'PartDesign::Body' or body.Tip is None:
+            raise ValueError('native_body_tip')
+        if [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body'] != [body]:
+            raise ValueError('native_body_count')
+        compiler.shape_measurements(body.Tip.Shape)
+    elif body.TypeId not in ('Part::Feature', 'Part::FeaturePython', 'Part::Compound'):
+        raise ValueError('native_compound_output_type')
     for obj in doc.Objects:
         if any(state in ('Invalid', 'Error', 'Touched') for state in obj.State):
             raise ValueError('native_document_state:' + obj.Name)
-    compiler._solid(body.Tip.Shape)
-    compiler._solid(body.Shape)
+    compiler.shape_measurements(body.Shape, expected_solids=expected_solids)
 
 
-def operative(App, doc, body, supplied):
-    """Prove actual in-memory geometry consumption and restore, not metadata."""
-    check_document(doc, body)
+def operative(App, doc, body, supplied, *, expected_solids=1):
+    """Prove output consumption/restoration, covering every source solid."""
+    check_document(doc, body, expected_solids=expected_solids)
     records = []
     specs = _probes(doc, supplied)
     for probe in specs:
         before = body.Shape.copy()
         numerical_floor = max(1e-10, before.Volume * 1e-12)
+        changed_solids = []
         restore, row = None, dict(probe=probe, operative=False, restored=False,
                                   numerical_floor_mm3=numerical_floor)
         try:
@@ -255,24 +266,36 @@ def operative(App, doc, body, supplied):
             row['invalidated_on_rejected_edit'] = invalidated
             if invalidated:
                 row['operative'] = True
+                changed_solids = list(range(expected_solids))
             else:
+                _module('cad_verify_v4_compile').shape_measurements(
+                    after, expected_solids=expected_solids)
                 difference = _shape_difference(before, after)
                 row.update(symmetric_difference_mm3=difference,
                            operative=math.isfinite(difference) and difference > numerical_floor)
+                # Each submitted piece must participate in an actual output edit;
+                # an operative Pad on one body cannot certify unrelated cached pieces.
+                changed_solids = [index for index, solid in enumerate(before.Solids)
+                                  if min(_shape_difference(solid, other) for other in after.Solids)
+                                  > max(1e-10, solid.Volume * 1e-12)]
         except Exception as exc:
             row.update(error_type=type(exc).__name__, error=str(exc))
         finally:
             if restore is not None:
                 restore()
                 doc.recompute()
-                check_document(doc, body)
+                check_document(doc, body, expected_solids=expected_solids)
                 difference = _shape_difference(before, body.Shape)
                 row.update(restore_difference_mm3=difference,
                            restored=math.isfinite(difference) and difference <= numerical_floor)
                 if not row['restored']:
                     raise ValueError('native_probe_did_not_restore_geometry')
         records.append(row)
-    editable = bool(records) and all(row['operative'] and row['restored'] for row in records)
+        row['changed_solid_indices'] = changed_solids
+    covered = {index for row in records if row['operative'] and row['restored']
+               for index in row['changed_solid_indices']}
+    editable = (bool(records) and all(row['operative'] and row['restored'] for row in records)
+                and covered == set(range(expected_solids)))
     return {'status': 'PASS' if editable else 'FAIL' if records else 'UNVERIFIED', 'probes': records}, editable
 
 
@@ -290,6 +313,7 @@ def verify_native(App, job, out):
     if manifest['evidence_mode'] != 'independent_dev':
         raise ValueError('neutral_checker_independent_dev_only')
     prepared, card = ledger.read_json(paths['prepared']), ledger.read_json(paths['card'])
+    expected_solids = metrics.expected_solid_count(context, prepared)
     bundle, files, extensions = load_bundle(paths['bundle'], profile=profile)
     execution = _module('cad_verify_v4_runtime')
     runtime_path = s1.safe_path(job['runtime_binding'], regular=True)
@@ -304,7 +328,7 @@ def verify_native(App, job, out):
     doc = App.openDocument(str(files['native']))
     if doc is None:
         raise ValueError('native_document_open_failed')
-    body = _body(doc, bundle['output_object'])
+    body = _body(doc, bundle['output_object'], expected_solids=expected_solids)
     for obj in doc.Objects:
         if obj.TypeId.endswith('Python') and 'Proxy' in obj.PropertiesList:
             proxy = obj.Proxy
@@ -312,17 +336,28 @@ def verify_native(App, job, out):
                 raise ValueError('native_python_feature_not_restored')
         obj.touch()
     doc.recompute()
-    check_document(doc, body)
-    editability, editable = operative(App, doc, body, bundle['probes'])
-    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'))
+    check_document(doc, body, expected_solids=expected_solids)
+    editability, editable = operative(App, doc, body, bundle['probes'], expected_solids=expected_solids)
+    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'),
+                                           expected_solids=expected_solids)
     step_doc = App.newDocument('NeutralSTEP')
-    Part.insert(str(files['step']), step_doc.Name)
-    step_doc.recompute()
-    shapes = [obj.Shape for obj in step_doc.Objects if hasattr(obj, 'Shape') and not obj.Shape.isNull()]
-    if len(shapes) != 1:
-        raise ValueError('step_single_output_object_required')
-    step_shape = shapes[0]
-    imported = compiler.shape_measurements(step_shape, tight_bounds=profile in ('c-s2', 'c-s3'))
+    if expected_solids > 1:
+        # STEP readers may expose one object per transferred solid. Read the
+        # complete file topology as one compound, without fusing or dropping it.
+        step_shape = Part.Shape()
+        step_shape.read(str(files['step']))
+        feature = step_doc.addObject('Part::Feature', 'ImportedCompound')
+        feature.Shape = step_shape
+        step_doc.recompute()
+    else:
+        Part.insert(str(files['step']), step_doc.Name)
+        step_doc.recompute()
+        shapes = [obj.Shape for obj in step_doc.Objects if hasattr(obj, 'Shape') and not obj.Shape.isNull()]
+        if len(shapes) != 1:
+            raise ValueError('step_single_output_object_required')
+        step_shape = shapes[0]
+    imported = compiler.shape_measurements(step_shape, tight_bounds=profile in ('c-s2', 'c-s3'),
+                                           expected_solids=expected_solids)
     bound_delta = max(abs(a-b) for a,b in zip(restored['bounds_mm'], imported['bounds_mm']))
     volume_delta = abs(restored['volume_mm3'] - imported['volume_mm3'])
     evidence = {'fcstd_reopened': True, 'step_reopened': True, 'editable': editable,

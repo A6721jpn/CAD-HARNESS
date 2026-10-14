@@ -199,8 +199,18 @@ class C2ProductionNative(unittest.TestCase):
         self.assertEqual(self.ring['topology']['source'], self.ring['topology']['output'])
         self.assertEqual([loop['role'] for loop in self.ring['loops']], ['outer', 'hole'])
         self.assertEqual(self.ring['loops'][1]['parent'], 0)
-        for asset, reason in (('empty', 'empty_mask'), ('island', 'multiple_islands'),
-                              ('diagonal', 'nonmanifold')):
+        island = self.prepare('island')
+        self.assertEqual(island['topology']['source']['components'], 2)
+        self.assertEqual(island['topology']['source'], island['topology']['output'])
+        doc, body, _, _ = self.build(island)
+        self.assertTrue(body.Shape.isValid())
+        self.assertEqual(len(body.Shape.Solids), 2)
+        self.close(doc.Name)
+        strict = copy.deepcopy(self.recipe)
+        strict['topology'] = dict(components=1, holes='preserve', islands='reject')
+        with self.assertRaisesRegex(ValueError, 'multiple_islands'):
+            self.prepare('island', strict)
+        for asset, reason in (('empty', 'empty_mask'), ('diagonal', 'nonmanifold')):
             with self.subTest(asset=asset), self.assertRaisesRegex(ValueError, reason):
                 self.prepare(asset)
 

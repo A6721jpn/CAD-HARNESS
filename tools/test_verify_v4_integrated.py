@@ -131,9 +131,10 @@ class IntegratedLockHost(unittest.TestCase):
             destination = self.root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((integrated.ROOT / relative).read_bytes())
-        source = self.design / 'dev-c2-production/generate.py'
-        source.parent.mkdir(parents=True, exist_ok=True)
-        source.write_text('independent_recipe_fixture = 19\n', encoding='utf-8')
+        for relative in ('dev-c2-production/generate.py', 'dev-c2-multipiece/generate.py'):
+            source = self.design / relative
+            source.parent.mkdir(parents=True, exist_ok=True)
+            source.write_text('independent_recipe_fixture = 19\n', encoding='utf-8')
         # Only the lock's real public schema is reused, never production evidence.
         source_schema = integrated.ROOT / integrated.DESIGN / 'schemas/integrated-lock.schema.json'
         target = self.design / 'schemas/integrated-lock.schema.json'

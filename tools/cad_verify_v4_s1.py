@@ -556,7 +556,7 @@ def implementation_bindings(root=ROOT, *, profile=PROFILE):
     files = freezing.bindings(root)
     files.update(c2_recipe.bindings(root))
     names = ["capability-policy.json", "PLAN-V4-ADDENDUM-C.md", "original-profile-snapshot.zip",
-             "dev-c2-production/generate.py"]
+             "dev-c2-production/generate.py", "dev-c2-multipiece/generate.py"]
     if profile == "c-s2":
         names += ["policy-c-s2.json", "s1-profile-snapshot.zip", "dev-c-s2/generate.py"]
     if profile == "c-s3":

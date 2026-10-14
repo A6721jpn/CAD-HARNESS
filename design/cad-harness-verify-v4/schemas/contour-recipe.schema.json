@@ -83,6 +83,10 @@
           "type": "number",
           "exclusiveMinimum": 0
         },
+        "canonical_height_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
         "origin_mm": {
           "type": "array",
           "items": {
@@ -93,9 +97,30 @@
         }
       },
       "required": [
-        "mm_per_pixel",
         "origin_mm"
       ],
+      "oneOf": [
+        {"required": ["mm_per_pixel"]},
+        {"required": ["canonical_height_mm"]}
+      ],
+      "additionalProperties": false
+    },
+    "curve_fit": {
+      "type": "object",
+      "properties": {
+        "method": {"const": "periodic_cubic_biarc_v1"},
+        "maximum_error_pixels": {"type": "number", "exclusiveMinimum": 0},
+        "tangent_span_pixels": {"type": "number", "exclusiveMinimum": 0},
+        "smoothing_rms_pixels": {"type": "number", "exclusiveMinimum": 0},
+        "sample_spacing_pixels": {"type": "number", "exclusiveMinimum": 0},
+        "biarc_error_pixels": {"type": "number", "exclusiveMinimum": 0},
+        "maximum_fit_passes": {"type": "integer", "minimum": 1, "maximum": 8},
+        "corner_angle_degrees": {
+          "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 180
+        }
+      },
+      "required": ["method", "maximum_error_pixels", "tangent_span_pixels", "corner_angle_degrees",
+                   "smoothing_rms_pixels", "sample_spacing_pixels", "biarc_error_pixels", "maximum_fit_passes"],
       "additionalProperties": false
     },
     "simplify": {
@@ -186,13 +211,13 @@
       "type": "object",
       "properties": {
         "components": {
-          "const": 1
+          "enum": [1, "preserve"]
         },
         "holes": {
           "const": "preserve"
         },
         "islands": {
-          "const": "reject"
+          "enum": ["reject", "preserve"]
         }
       },
       "required": [
@@ -200,7 +225,11 @@
         "holes",
         "islands"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "oneOf": [
+        {"properties": {"components": {"const": 1}, "islands": {"const": "reject"}}},
+        {"properties": {"components": {"const": "preserve"}, "islands": {"const": "preserve"}}}
+      ]
     }
   },
   "required": [

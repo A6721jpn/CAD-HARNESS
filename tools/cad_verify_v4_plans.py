@@ -113,6 +113,50 @@ def _check(value, node, root, where, loaded=None):
             _check(value, clause, root, where, loaded)
 
 
+def _validate_contour_topology(record):
+    """Host structural admission; native validation certifies spatial nesting."""
+    analytic = record.get('provenance', {}).get('kind') == 'independent_analytic_source'
+    policy = record.get('recipe', {}).get('topology')
+    multi = not analytic and policy == {
+        'components': 'preserve', 'holes': 'preserve', 'islands': 'preserve'}
+    if not analytic and not multi and policy != {
+            'components': 1, 'holes': 'preserve', 'islands': 'reject'}:
+        raise ValueError('contour_topology_policy')
+    counts = []
+    for key in (('loops',) if analytic else ('source_loops', 'loops')):
+        loops = record[key]
+        stack = []
+        components = holes = 0
+        for index, loop in enumerate(loops):
+            # The unchanged analytic schema permits implicit parent 0 for counters.
+            parent = loop.get('parent', 0 if analytic and index > 0 else None)
+            if parent is None:
+                if 'parent' in loop or loop['role'] != 'outer':
+                    raise ValueError('contour_root_parent')
+                stack = []
+            else:
+                if type(parent) is not int or parent < 0 or parent >= index or parent not in stack:
+                    raise ValueError('contour_parent_preorder')
+                stack = stack[:stack.index(parent) + 1]
+                if loops[parent]['role'] == loop['role']:
+                    raise ValueError('contour_parent_role')
+            if not multi and (index == 0 and loop['role'] != 'outer'
+                              or index > 0 and (loop['role'] != 'hole' or parent != 0)):
+                raise ValueError('contour_single_piece_required')
+            stack.append(index)
+            components += loop['role'] == 'outer'
+            holes += loop['role'] == 'hole'
+        if components < 1 or not multi and components != 1:
+            raise ValueError('contour_component_count')
+        counts.append(dict(components=components, holes=holes,
+                           euler_characteristic=components - holes))
+    if analytic:
+        if record['topology'] != {key: counts[0][key] for key in ('components', 'holes')}:
+            raise ValueError('contour_topology_count_mismatch')
+    elif record['topology'] != dict(source=counts[0], output=counts[1]) or counts[0] != counts[1]:
+        raise ValueError('contour_topology_count_mismatch')
+
+
 def validate_document(value, schema_name, *, profile=PROFILE):
     if profile == 'c-s3':
         if __package__:
@@ -133,6 +177,12 @@ def validate_document(value, schema_name, *, profile=PROFILE):
                 'prepared': 'prepared-inputs', 'plan': 'capability-plan'}.get(schema_name, schema_name)
     schema = ledger.read_json(SCHEMAS / (filename + '.schema.json'))
     _check(value, schema, schema, schema_name)
+    if schema_name == 'contour':
+        _validate_contour_topology(value)
+    elif schema_name == 'prepared':
+        for record in value['assets'].values():
+            if record.get('schema') == 'cad-harness.contour.v4c':
+                _validate_contour_topology(record)
     return copy.deepcopy(value)
 
 

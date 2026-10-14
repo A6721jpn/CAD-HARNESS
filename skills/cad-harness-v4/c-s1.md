@@ -22,6 +22,8 @@ Face IDs are the imported shape's ordered `Face1`, `Face2`, … atlas. Signature
 
 Contour preprocessing permissions come exclusively from the explicit supervisor recipe. The generator cannot invent smoothing, bridging, deletion of holes/islands, physical scale, or polarity. Digest-bound independent analytic source contours are a separate provenance branch, not pretend raster preprocessing. Preserve nesting and exact segment geometry.
 
+Declared raster C2 multi-piece contours preserve every disconnected piece, material island, hole and source-relative position in one native document and one STEP compound. Never bridge, back, join, delete or independently reposition pieces. Use one global uniform registration and the final ALL-piece Y extent of 50 mm; width/origin/thickness edits operate on the whole compound. All other families, strict raster recipes and analytic contours remain single-solid. Both fidelity legs, actual minimum radius and tool access cover every piece; aggregate area cannot excuse a defective small piece.
+
 ## Result interpretation
 
 Only the independent checker interprets the explicit user/dev judge card. Missing acceptance information yields `UNVERIFIED`, not a fabricated default. PASS requires every required criterion to PASS and independent native round-trip/editability checks. A successful construction or nonempty STEP is not acceptance. Tool-center access is the declared geometric translation/contour check, not a generic CAM or physical guarantee. No live holdout/pilot evidence is produced by S1 implementation tests.

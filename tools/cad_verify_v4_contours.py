@@ -144,8 +144,12 @@ def validate_recipe(recipe):
     _number(recipe["limits"]["max_deviation_mm"], nonnegative=True)
     _number(recipe["limits"]["approximation_tolerance_mm"], positive=True)
     _fields(recipe["topology"], ("components", "holes", "islands"))
-    if type(recipe["topology"]["components"]) is not int or recipe["topology"] != {"components": 1, "holes": "preserve", "islands": "reject"}:
+    strict = {"components": 1, "holes": "preserve", "islands": "reject"}
+    multiple = {"components": "preserve", "holes": "preserve", "islands": "preserve"}
+    if recipe["topology"] not in (strict, multiple) or isinstance(recipe["topology"]["components"], bool):
         _fail("one_solid_policy_incompatible")
+    if recipe["topology"] == multiple and any(recipe[name]["allowed"] for name in ("simplify", "rounding")):
+        _fail("multi_piece_cannot_simplify_or_round")
     return recipe
 
 
@@ -345,12 +349,12 @@ def _area(points):
 
 def _line_loop(points, role, parent=None):
     result = {"role": role, "segments": [{"kind": "line", "p0": a, "p1": b} for a, b in zip(points, points[1:])]}
-    if role == "hole":
+    if role == "hole" or parent is not None:
         result["parent"] = parent
     return result
 
 
-def _mask_loops(mask, scale, origin):
+def _mask_loops(mask, scale, origin, *, allow_multiple=False):
     """Trace the exact cell union. Degree != 2 refuses diagonal contacts."""
     height, width = mask.shape
     successors = {}
@@ -393,16 +397,53 @@ def _mask_loops(mask, scale, origin):
         ring = [[origin[0] + p[0] * scale, origin[1] + p[1] * scale] for p in keep]
         ring.append(ring[0])
         rings.append(ring)
-    outer = sorted((r for r in rings if _area(r) > 0), key=lambda r: r[0])
-    holes = sorted((r for r in rings if _area(r) < 0), key=lambda r: r[0])
-    if len(outer) != 1:
-        _fail("multiple_islands_one_solid_refused")
-    return [_line_loop(outer[0], "outer")] + [_line_loop(r, "hole", 0) for r in holes]
+    if not allow_multiple:
+        outer = sorted((r for r in rings if _area(r) > 0), key=lambda r: r[0])
+        holes = sorted((r for r in rings if _area(r) < 0), key=lambda r: r[0])
+        if len(outer) != 1:
+            _fail("multiple_islands_one_solid_refused")
+        return [_line_loop(outer[0], "outer")] + [_line_loop(r, "hole", 0) for r in holes]
+    parents = _ring_parents(rings)
+    children = {}
+    for i, parent in enumerate(parents):
+        children.setdefault(parent, []).append(i)
+    for siblings in children.values():
+        siblings.sort(key=lambda i: rings[i][0])
+    pending = list(reversed(children.get(None, [])))
+    result, indices = [], {}
+    while pending:
+        i = pending.pop()
+        parent = parents[i]
+        indices[i] = len(result)
+        result.append(_line_loop(rings[i], "outer" if _area(rings[i]) > 0 else "hole",
+                                 indices[parent] if parent is not None else None))
+        pending.extend(reversed(children.get(i, [])))
+    return result
 
 
-def _polygon(rings):
+def _ring_parents(rings):
+    """Immediate geometric containment, never centroid-inside-child inference."""
     from shapely.geometry import Polygon
-    polygon = Polygon(rings[0], rings[1:])
+    from shapely.strtree import STRtree
+    polygons = [Polygon(ring) for ring in rings]
+    if any(p.is_empty or not p.is_valid or p.area <= 0 for p in polygons):
+        _fail("invalid_or_changed_topology")
+    tree = STRtree(polygons)
+    result = []
+    for i, polygon in enumerate(polygons):
+        owners = [int(j) for j in tree.query(polygon, predicate="within") if j != i]
+        result.append(min(owners, key=lambda j: polygons[j].area) if owners else None)
+    return result
+
+
+def _polygon(rings, parents=None):
+    from shapely.geometry import Polygon, MultiPolygon
+    if parents is None:
+        parents = _ring_parents(rings)
+    pieces = [Polygon(ring, [rings[j] for j, parent in enumerate(parents)
+                            if parent == i and _area(rings[j]) < 0])
+              for i, ring in enumerate(rings) if _area(ring) > 0]
+    polygon = pieces[0] if len(pieces) == 1 else MultiPolygon(pieces)
     if polygon.is_empty or not polygon.is_valid or polygon.area <= 0:
         _fail("invalid_or_changed_topology")
     return polygon
@@ -584,13 +625,21 @@ def _check_geometry(loops, tolerance):
     from shapely.strtree import STRtree
     if sum(len(loop["segments"]) for loop in loops) > MAX_BOUNDARY_SEGMENTS:
         _fail("boundary_complexity_limit")
-    if not loops or loops[0]["role"] != "outer" or any(l["role"] != "hole" or l.get("parent") != 0 for l in loops[1:]):
+    if not loops:
         _fail("unsupported_loop_nesting")
     rings, error = flatten_loops({"loops": loops}, tolerance)
     for loop, ring in zip(loops, rings):
         if (_area(ring) > 0) != (loop["role"] == "outer"):
             _fail("loop_orientation")
-    _polygon(rings)
+    parents = _ring_parents(rings)
+    for i, (loop, parent) in enumerate(zip(loops, parents)):
+        if loop.get("parent") != parent or parent is not None and (
+                type(loop.get("parent")) is not int or parent >= i or
+                loops[parent]["role"] == loop["role"]):
+            _fail("unsupported_loop_nesting")
+        if parent is None and ("parent" in loop or loop["role"] != "outer"):
+            _fail("unsupported_loop_nesting")
+    _polygon(rings, parents)
     # Distinct boundaries must be separated by their full chord-error
     # envelopes; approximation validity alone is not a topology certificate.
     lines = [LineString(r) for r in rings]
@@ -703,8 +752,9 @@ def _geometry_from_mask(mask, recipe):
     """Derive geometry AND its single registration; never normalize after scoring."""
     settings = recipe["scale"]
     canonical = "canonical_height_mm" in settings
+    allow_multiple = recipe["topology"]["components"] == "preserve"
     if canonical or "curve_fit" in recipe:
-        pixels = _mask_loops(mask, 1., [0., 0.])
+        pixels = _mask_loops(mask, 1., [0., 0.], allow_multiple=allow_multiple)
         fitted = pixels
         if "curve_fit" in recipe:
             if __package__:
@@ -723,7 +773,7 @@ def _geometry_from_mask(mask, recipe):
         loops = _affine_loops(fitted, scale, origin)
     else:
         scale, origin = settings["mm_per_pixel"], settings["origin_mm"]
-        source = _mask_loops(mask, scale, origin)
+        source = _mask_loops(mask, scale, origin, allow_multiple=allow_multiple)
         loops = _processed_loops(source, recipe)
     transform = {"scale_mm_per_pixel": scale, "origin_mm": origin,
                  "image_height_pixels": int(mask.shape[0]), "y_axis": "up",

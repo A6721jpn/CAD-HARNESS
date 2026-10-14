@@ -185,6 +185,19 @@ def _validate_facts(record):
                 raise ValueError('facts_adjacency_asymmetric')
 
 
+def contour_solid_count(record):
+    """Derive C2 solid count from admitted source topology, never caller overrides."""
+    if not isinstance(record, dict) or record.get('schema') != 'cad-harness.contour.v4c' or record.get('profile') != 'c-s1':
+        raise ValueError('contour_record_required')
+    admitted = plans.validate_document(record, 'contour')
+    if admitted.get('provenance', {}).get('kind') == 'independent_analytic_source':
+        return 1
+    count = admitted['topology']['source']['components']
+    if type(count) is not int or count < 1:
+        raise ValueError('contour_component_count')
+    return count
+
+
 def verify_prepared(packet_or_path, manifest_path):
     packet = ledger.read_json(guarded_path(packet_or_path)) if isinstance(packet_or_path, (str, os.PathLike)) else packet_or_path
     profile = packet.get('profile') if isinstance(packet, dict) else plans.PROFILE

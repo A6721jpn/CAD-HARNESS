@@ -88,6 +88,13 @@ def _editor(profile, compiler):
     return compiler
 
 
+def _expected_solids(profile, plan, prepared):
+    if profile == 'c-s1' and plan['family'] == 'contour_extrude':
+        return _module('cad_verify_v4_inputs').contour_solid_count(
+            prepared['assets'][plan['contour_id']])
+    return 1
+
+
 def _compile(App, job, out):
     import Part
     compiler = _module('cad_verify_v4_compile')
@@ -98,7 +105,8 @@ def _compile(App, job, out):
     doc = App.newDocument(profile[2:].upper() + 'Candidate')
     body = editor.build_plan(doc, plan, job['manifest'], prepared)
     editability = editor.operative_evidence(doc, body)
-    measurements = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'))
+    measurements = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'),
+                                               expected_solids=_expected_solids(profile, plan, prepared))
     # A new directory is the only destination; no existing artifacts are overwritten.
     doc.saveAs(str(out / 'model.FCStd'))
     Part.export([body], str(out / 'model.step'))
@@ -147,17 +155,21 @@ def _verify(App, job, out):
     if built.get('bindings') != before or built.get('artifacts') != _artifacts(candidate):
         raise ValueError('artifact_input_binding_mismatch')
     doc = App.openDocument(str(_safe(candidate / 'model.FCStd')))
-    bodies = [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body']
-    if len(bodies) != 1:
-        raise ValueError('reopen_body_count')
-    body = bodies[0]
+    expected_solids = _expected_solids(profile, plan, prepared)
+    if profile == 'c-s1' and plan['family'] == 'contour_extrude':
+        body = compiler.output_for_plan(doc, plan, prepared)
+    else:
+        bodies = [obj for obj in doc.Objects if obj.TypeId == 'PartDesign::Body']
+        if len(bodies) != 1:
+            raise ValueError('reopen_body_count')
+        body = bodies[0]
     allowed_proxies = ((editor.SurfaceRebuildProxy,) if profile == 'c-s3' else
                       (editor.DirectEditProxy,) if profile == 'c-s2' else
                       (compiler.ContourProxy, compiler.EngravingProxy))
     # Proxy restoration executes only the frozen installed implementation. A missing or
     # changed proxy is not accepted even if a cached Shape happens to remain valid.
-    for obj in body.Group:
-        if obj.TypeId == 'PartDesign::FeaturePython':
+    for obj in (doc.Objects if expected_solids > 1 else body.Group):
+        if obj.TypeId in ('PartDesign::FeaturePython', 'Part::FeaturePython'):
             if type(obj.Proxy) not in allowed_proxies:
                 raise ValueError('untrusted_or_missing_feature_proxy')
     for obj in doc.Objects:
@@ -165,16 +177,25 @@ def _verify(App, job, out):
     doc.recompute()
     compiler.check_document(doc, body)
     editor.check_model_inputs(body, plan, prepared, job['manifest'])
-    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'))
+    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'),
+                                          expected_solids=expected_solids)
     editability = editor.operative_evidence(doc, body)
     step_doc = App.newDocument('S1IndependentSTEP')
-    Part.insert(str(_safe(candidate / 'model.step')), step_doc.Name)
-    step_doc.recompute()
-    shapes = [obj.Shape for obj in step_doc.Objects if hasattr(obj, 'Shape') and not obj.Shape.isNull()]
-    if len(shapes) != 1:
-        raise ValueError('step_candidate_object_count')
-    step_shape = shapes[0]
-    imported = compiler.shape_measurements(step_shape, tight_bounds=profile in ('c-s2', 'c-s3'))
+    if expected_solids > 1:
+        step_shape = Part.Shape()
+        step_shape.read(str(_safe(candidate / 'model.step')))
+        feature = step_doc.addObject('Part::Feature', 'ImportedCompound')
+        feature.Shape = step_shape
+        step_doc.recompute()
+    else:
+        Part.insert(str(_safe(candidate / 'model.step')), step_doc.Name)
+        step_doc.recompute()
+        shapes = [obj.Shape for obj in step_doc.Objects if hasattr(obj, 'Shape') and not obj.Shape.isNull()]
+        if len(shapes) != 1:
+            raise ValueError('step_candidate_object_count')
+        step_shape = shapes[0]
+    imported = compiler.shape_measurements(step_shape, tight_bounds=profile in ('c-s2', 'c-s3'),
+                                          expected_solids=expected_solids)
     base = built['measurements']
     bound_delta = max(abs(a - b) for measurement in (restored, imported)
                       for a, b in zip(base['bounds_mm'], measurement['bounds_mm']))
