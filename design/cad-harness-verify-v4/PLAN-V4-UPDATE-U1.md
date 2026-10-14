@@ -62,3 +62,18 @@
 - **R3-3:** in U1 §4, the sentences "v4gemini never read that directory" and "validates the released items only after the run inputs are hashed" are **SUPERSEDED** by R2-2.
   - v4gemini receives a pre-freeze review copy only after authoring is done, and validates it before the hash commit and the freeze.
   - The implementer v4codex never reads the review copy or the private directory.
+
+## U1 addendum B: pilot reopening (user decision 2026-10-14 13:36 JST) - DRAFT for 3-party sign
+User decision: request text stays verbatim; the ORIGINAL conversation context and attachments (from history.db / the jsonl paths in pilot-candidates.md) are supplied. This supersedes E1/E2 of addendum A and the N=0 not_run of pilot-roster.md (that roster is kept as history, not overwritten).
+- **B1 context:** a deterministic CLI extracts, from the candidate's listed jsonl (read-only), the user and assistant message texts of the same conversation strictly BEFORE the request locator, verbatim, in order. Tool calls and tool outputs are excluded. Window: the most recent turns that fit in 40,000 characters, cut at message boundaries; the cut is recorded. The extract is hashed and frozen before the trial. Missing or unreadable jsonl means exclude (E6).
+- **B2 attachments:** every file, folder or geometry the request or the context window references must exist now at that path and be readable. It is copied into an immutable pilot bundle and hashed before the trial. If any required attachment is missing, the candidate is excluded (E7). Nothing is reconstructed or substituted.
+- **E3, E4, E5 stay unchanged.** E3 also excludes requests whose deliverable must be a Fusion, SolidWorks or other non-FreeCAD native file, or an assembly, CAE or drawing-only output. FreeCAD 1.1.4 headless on DPC-019 only.
+- **No rewriting:** the request, context and attachments are passed as typed runtime data. There is no paraphrase, summary or added instruction beyond the frozen skill.
+- **Selection:** file order; the first 10 that are not excluded; each of the 3 screens independently, and disagreement means exclude. If fewer than 10 remain, N = the remaining count. N=0 means not_run.
+- **Pass criteria, fixed before the trial:**
+  - Per-task critical dimensions and tolerances are taken only from the request or context text and agreed by the 3 parties. They are committed in pilot-rubric.json.
+  - A task passes when its first handover needs no edits, or needs fixes of 5 minutes or less.
+  - Any critical dimension error or fabrication is a fail.
+  - The pilot passes when at least ceil(0.7×N) tasks pass.
+  - Judge: Astra Max (`openai-codex/gpt-6-astra`, thinking max, via omp), then the user's visual double-check. The user's verdict overrides.
+- **Order and budget:** the pilot runs after the holdout and uses the same frozen implementation, with 40 calls at no more than 4 per task.
