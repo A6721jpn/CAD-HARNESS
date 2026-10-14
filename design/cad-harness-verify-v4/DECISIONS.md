@@ -69,3 +69,7 @@ Still open (not answered): the U1 tape location; the U2 "minimal concave-face co
 
 ## USER 2026-10-14 21:09 JST - without-harness benchmark arm
 - The no-harness comparison arm is run by Codex WITHOUT the harness: the same model and the same requests, with no cad_run, no CAD-harness skills and no harness CLI. It replaces the "named qualified human operators" assumption in C-D(e).
+
+## USER 2026-10-14 22:02/22:03 JST - v4grok access path
+- v4grok's backend is replaced: it now runs Grok Build natively (grok CLI 1.0.52, logged in with grok.com, model grok-4.7) in herdr w8 pane w8:p2, not via OpenCode Go and not wrapped in omp/Orca.
+- The model is the same family and version (previously opencode-go/grok-4.7); only the access path changed. The role is unchanged: reviewer and the existing holdout author/custodian (option B).
