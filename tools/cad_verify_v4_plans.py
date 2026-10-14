@@ -114,6 +114,12 @@ def _check(value, node, root, where, loaded=None):
 
 
 def validate_document(value, schema_name, *, profile=PROFILE):
+    if profile == 'c-s3':
+        if __package__:
+            from . import cad_verify_v4_s3_contracts
+        else:
+            import cad_verify_v4_s3_contracts
+        return cad_verify_v4_s3_contracts.validate_document(value, schema_name)
     if profile == 'c-s2':
         if __package__:
             from . import cad_verify_v4_s2_contracts
@@ -139,6 +145,12 @@ def _axis(value):
 
 
 def validate_plan(value, manifest_path=None, prepared=None, *, profile=PROFILE):
+    if profile == 'c-s3':
+        if __package__:
+            from . import cad_verify_v4_s3_contracts
+        else:
+            import cad_verify_v4_s3_contracts
+        return cad_verify_v4_s3_contracts.validate_plan(value, manifest_path, prepared)
     if profile == 'c-s2':
         if __package__:
             from . import cad_verify_v4_s2_contracts
@@ -180,6 +192,12 @@ def validate_plan(value, manifest_path=None, prepared=None, *, profile=PROFILE):
 
 
 def validate_judge_card(value, *, profile=PROFILE):
+    if profile == 'c-s3':
+        if __package__:
+            from . import cad_verify_v4_s3_contracts
+        else:
+            import cad_verify_v4_s3_contracts
+        return cad_verify_v4_s3_contracts.validate_judge_card(value)
     if profile == 'c-s2':
         if __package__:
             from . import cad_verify_v4_s2_contracts

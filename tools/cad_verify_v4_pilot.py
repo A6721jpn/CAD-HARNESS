@@ -530,7 +530,7 @@ def verify_prepared_bundle(path):
                 "eligibility", "pilot", "live_calls"}
     if (not isinstance(document, dict) or set(document) != required
             or document.get("schema") != "cad-harness.prepared-request-bundle.v4c"
-            or document.get("profile") not in ("c-s1", "c-s2") or document.get("origin") != "direct_user"
+            or document.get("profile") not in ("c-s1", "c-s2", "c-s3") or document.get("origin") != "direct_user"
             or document.get("evidence_mode") != "independent_dev"
             or document.get("integrity_only") is not True or document.get("eligibility") is not None
             or document.get("pilot") != "not_run" or document.get("live_calls") != 0

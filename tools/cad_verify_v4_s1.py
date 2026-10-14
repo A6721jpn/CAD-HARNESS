@@ -46,6 +46,13 @@ STAGES = {
     "c-s1": dict(policy="capability-policy.json", label="S1", schema_prefix="", pending=PENDING),
     "c-s2": dict(policy="policy-c-s2.json", label="S2", schema_prefix="s2-",
                  pending=["S1/S2 external reviews and S3 implementation/review"] + PENDING[1:]),
+    "c-s3": dict(policy="policy-c-s3.json", label="S3", schema_prefix="s3-",
+                 pending=["S1/S2/S3 external reviews",
+                          "final code/skill/recipe/judge lock before independent fresh family authoring",
+                          "fresh family cohorts, custody, controls, pass gates and separate call/model-judge budgets",
+                          "remaining acceptance/measurement consensus and C-U5 defaults",
+                          "final execution freeze binding complete U1-U5 roster and approved cards/commitments",
+                          "all five pilot inputs; Astra Max judgement and authoritative user visual verdict"]),
 }
 
 
@@ -99,7 +106,7 @@ def preflight(root=ROOT, *, policy_path=None, profile=PROFILE):
     skill = agent.bundle(root, profile=profile)
     names = ("input-manifest", "prepared-inputs", "capability-plan", "judge-card",
              "judge-result", "capability-manifest")
-    names += ("step-facts", "step-recipe") if profile == "c-s2" else ("contour",)
+    names += ("step-facts", "step-recipe") if profile in ("c-s2", "c-s3") else ("contour",)
     for name in names:
         schema = ledger.read_json(root / DESIGN / "schemas" / (stage["schema_prefix"] + name + ".schema.json"))
         if not isinstance(schema, dict) or not (schema.get("type") == "object" or isinstance(schema.get("oneOf"), list)):
@@ -139,8 +146,12 @@ def verify_original_snapshot(path, *, stage=None):
 def _prior_snapshot(root, profile):
     if profile == "c-s1":
         return {}
-    path = safe_path(root / DESIGN / "s1-profile-snapshot.zip", regular=True)
-    verify_original_snapshot(path, stage="c-s1")
+    prior = "c-s2" if profile == "c-s3" else "c-s1"
+    path = safe_path(root / DESIGN / (prior[2:] + "-profile-snapshot.zip"), regular=True)
+    verify_original_snapshot(path, stage=prior)
+    if profile == "c-s3":
+        verify_original_snapshot(safe_path(root / DESIGN / "s1-profile-snapshot.zip", regular=True),
+                                 stage="c-s1")
     return dict(prior_stage_snapshot_sha256=ledger.file_sha(path))
 
 
@@ -157,7 +168,7 @@ def _hashes(directory):
 def native_work(operation, out, journal, *, timeout=300, process=None, profile=PROFILE, **fields):
     """Run a data-only worker job; raw streams survive both success and failure."""
     _stage(profile)
-    if profile == "c-s2" and operation not in ("prepare-step", "compile", "verify", "identity"):
+    if profile in ("c-s2", "c-s3") and operation not in ("prepare-step", "compile", "verify", "identity"):
         raise ValueError("s2_worker_operation")
     if operation not in ("prepare-step", "contour", "text", "compile", "verify", "identity"):
         raise ValueError("s1_worker_operation")
@@ -251,7 +262,7 @@ def prepare(operation, manifest_path, run_dir, *, asset_id=None, recipe_path=Non
             font_id=None, text=None, height_mm=None, process=None, profile=PROFILE):
     manifest_path, _, _ = _manifest_inputs(manifest_path, profile=profile)
     fields = dict(manifest=str(manifest_path))
-    if profile == "c-s2" and operation != "prepare-step":
+    if profile in ("c-s2", "c-s3") and operation != "prepare-step":
         raise ValueError("s2_preparation_operation")
     if operation in ("prepare-step", "contour"):
         if not isinstance(asset_id, str) or not asset_id or recipe_path is None:
@@ -525,6 +536,9 @@ def implementation_bindings(root=ROOT, *, profile=PROFILE):
     names = ["capability-policy.json", "PLAN-V4-ADDENDUM-C.md", "original-profile-snapshot.zip"]
     if profile == "c-s2":
         names += ["policy-c-s2.json", "s1-profile-snapshot.zip", "dev-c-s2/generate.py"]
+    if profile == "c-s3":
+        names += ["policy-c-s3.json", "s1-profile-snapshot.zip", "s2-profile-snapshot.zip",
+                  "dev-c-s3/generate.py"]
     for name in names:
         path = safe_path(root / DESIGN / name, regular=True)
         files[path.relative_to(root).as_posix()] = ledger.file_sha(path)
@@ -583,8 +597,9 @@ def implementation_lock(run_dir, *, root=ROOT, manifest_path=None, prepared_path
                                                 sha256=readiness["original_profile_snapshot_sha256"]),
                  generators=json.loads(json.dumps(PHASE_MODELS)), judge=dict(JUDGE), recipes=recipes,
                  dev=dev, pending_final_freeze=list(_stage(profile)["pending"]), final_v4_ready=False)
-    if profile == "c-s2":
-        value["prior_stage_snapshot"] = dict(profile="c-s1", path=DESIGN + "/s1-profile-snapshot.zip",
+    if profile in ("c-s2", "c-s3"):
+        prior = "c-s2" if profile == "c-s3" else "c-s1"
+        value["prior_stage_snapshot"] = dict(profile=prior, path=DESIGN + "/" + prior[2:] + "-profile-snapshot.zip",
                                              sha256=readiness["prior_stage_snapshot_sha256"])
     ledger.write_json(out / "SHA256.json", value)
     value["sha256_file"] = ledger.file_sha(out / "SHA256.json")
@@ -602,7 +617,7 @@ def verify_implementation_lock(manifest_path, *, root=ROOT, profile=None):
     required = {"schema", "profile", "stage", "status", "authorization", "freeze_dir", "files",
                 "skill_sha256", "policy_sha256", "host", "runtime", "original_profile_snapshot",
                 "generators", "judge", "recipes", "dev", "pending_final_freeze", "final_v4_ready", "sha256_file"}
-    if profile == "c-s2":
+    if profile in ("c-s2", "c-s3"):
         required.add("prior_stage_snapshot")
     if (not isinstance(value, dict) or set(value) != required
             or value.get("schema") != "cad-harness.capability-manifest.v4c"
@@ -622,8 +637,12 @@ def verify_implementation_lock(manifest_path, *, root=ROOT, profile=None):
     if (value["host"] != freezing._host() or value["skill_sha256"] != ready["skill_sha256"]
             or value["policy_sha256"] != ready["policy_sha256"]):
         raise Stop("s1_implementation_identity_mismatch")
-    if profile == "c-s2" and value["prior_stage_snapshot"]["sha256"] != ready["prior_stage_snapshot_sha256"]:
-        raise Stop("s2_prior_stage_snapshot_changed")
+    if profile in ("c-s2", "c-s3"):
+        prior = "c-s2" if profile == "c-s3" else "c-s1"
+        if value["prior_stage_snapshot"] != dict(profile=prior,
+                path=DESIGN + "/" + prior[2:] + "-profile-snapshot.zip",
+                sha256=ready["prior_stage_snapshot_sha256"]):
+            raise Stop("prior_stage_snapshot_changed")
     for collection in (value["recipes"], value["dev"]):
         if not isinstance(collection, dict):
             raise Stop("s1_implementation_dependency_contract")

@@ -1,0 +1,18 @@
+{
+  "schema":"cad-harness.capability-policy.v4c",
+  "profile":"c-s3","stage":"implementation",
+  "live_authorized_calls":0,"provider_calls_allowed":false,"model_calls_allowed":false,
+  "development_evidence_mode":"independent_dev",
+  "forbidden_path_components":["pilot-user","v4-holdout-private"],
+  "families":["surface_rebuild"],"continuity":"G2",
+  "selectors":"original_sha256_geometric_signature_and_complete_adjacency_unique",
+  "source_axes":"preserved_X_Y_Z_no_alignment_fit",
+  "native_history":"operative_surface_poles_not_recovered_source_history",
+  "candidate_solid_count":1,
+  "acceptance":"explicit_cards_no_inherited_or_agent_user_tolerances",
+  "numerical_uncertainty":"separate_from_acceptance_never_silently_widen",
+  "unsupported_certificate":"UNVERIFIED_never_sampled_global_PASS",
+  "original_holdout_calls":163,"original_holdout_changed":false,
+  "s1_profile_policy_changed":false,"s2_profile_policy_changed":false,
+  "final_v4_ready":false
+}

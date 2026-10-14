@@ -184,7 +184,7 @@ def parser():
     command.add_argument("--run-dir", required=True)
     command = commands.add_parser("preflight", help="offline policy/skill equivalence, no executable probing")
     command.add_argument("--policy")
-    command.add_argument("--profile", choices=("original", "c-s1", "c-s2"), default="original")
+    command.add_argument("--profile", choices=("original", "c-s1", "c-s2", "c-s3"), default="original")
     command = commands.add_parser("request", help="one request through the unchanged driver with recorded responses")
     command.add_argument("--request", required=True)
     command.add_argument("--acceptance", required=True)
@@ -192,7 +192,7 @@ def parser():
     command.add_argument("--replay")
     command.add_argument("--rate-source")
     command.add_argument("--run-dir", required=True)
-    command.add_argument("--profile", choices=("original", "c-s1", "c-s2"), default="original")
+    command.add_argument("--profile", choices=("original", "c-s1", "c-s2", "c-s3"), default="original")
     command.add_argument("--input-manifest")
     command.add_argument("--prepared")
     command.add_argument("--selection")
@@ -203,7 +203,7 @@ def parser():
     command.add_argument("--sealed-input")
     command.add_argument("--tasks")
     command.add_argument("--run-dir", required=True)
-    command.add_argument("--profile", choices=("original", "c-s1", "c-s2"), default="original")
+    command.add_argument("--profile", choices=("original", "c-s1", "c-s2", "c-s3"), default="original")
     command = commands.add_parser("aggregate", help="re-evaluate recorded rows with existing v3 predicates")
     command.add_argument("--replay-aggregate")
     command.add_argument("--manifest")
@@ -219,7 +219,7 @@ def parser():
     command.add_argument("--omp", default="omp")
     command.add_argument("--quota-snapshot")
     command.add_argument("--run-dir")
-    command.add_argument("--profile", choices=("original", "c-s1", "c-s2"), default="original")
+    command.add_argument("--profile", choices=("original", "c-s1", "c-s2", "c-s3"), default="original")
     command.add_argument("--input-manifest")
     command.add_argument("--prepared")
     command.add_argument("--card")
@@ -232,7 +232,7 @@ def parser():
     command.add_argument("--conversation-id")
     command.add_argument("--run-dir", required=True)
     command = commands.add_parser("prepared-bundle", help="direct verbatim dev intake; integrity only, no historical JSONL required")
-    command.add_argument("--profile", choices=("c-s1", "c-s2"), default="c-s1")
+    command.add_argument("--profile", choices=("c-s1", "c-s2", "c-s3"), default="c-s1")
     command.add_argument("--request", required=True)
     command.add_argument("--input-manifest", required=True)
     command.add_argument("--prepared", required=True)
@@ -240,7 +240,7 @@ def parser():
     command.add_argument("--run-dir", required=True)
     for name in ("prepare-step", "image-to-contour"):
         command = commands.add_parser(name, help="deterministic preparation of a hash-bound independent dev asset")
-        command.add_argument("--profile", choices=("c-s1", "c-s2") if name == "prepare-step" else ("c-s1",), default="c-s1")
+        command.add_argument("--profile", choices=("c-s1", "c-s2", "c-s3") if name == "prepare-step" else ("c-s1",), default="c-s1")
         command.add_argument("--input-manifest", required=True)
         command.add_argument("--asset-id", required=True)
         command.add_argument("--recipe", required=True)
@@ -253,13 +253,13 @@ def parser():
     command.add_argument("--height-mm", required=True, type=float)
     command.add_argument("--run-dir", required=True)
     command = commands.add_parser("merge-prepared", help="verify and combine prepared packets for one immutable manifest")
-    command.add_argument("--profile", choices=("c-s1", "c-s2"), default="c-s1")
+    command.add_argument("--profile", choices=("c-s1", "c-s2", "c-s3"), default="c-s1")
     command.add_argument("--input-manifest", required=True)
     command.add_argument("--packet", action="append", required=True)
     command.add_argument("--output", required=True)
     for name in ("compile-plan", "judge"):
         command = commands.add_parser(name, help="trusted capability-stage native build or independent verification")
-        command.add_argument("--profile", choices=("c-s1", "c-s2"), default="c-s1")
+        command.add_argument("--profile", choices=("c-s1", "c-s2", "c-s3"), default="c-s1")
         command.add_argument("--input-manifest", required=True)
         command.add_argument("--prepared", required=True)
         command.add_argument("--plan", required=True)
@@ -275,7 +275,7 @@ def main(argv=None):
     attempted_live = False
     try:
         if args.command == "freeze":
-            if args.profile in ("c-s1", "c-s2"):
+            if args.profile in ("c-s1", "c-s2", "c-s3"):
                 if args.authorization or args.holdout_commitment or args.quota_snapshot:
                     raise Stop("s1_implementation_lock_is_not_final_live_authorization")
                 if args.generator_model != freezing.MODEL or args.thinking != freezing.THINKING or args.omp != "omp":
@@ -324,7 +324,7 @@ def main(argv=None):
                                     rate_source=args.rate_source)
             cost_csv(Path(args.run_dir)/"calls.csv", Path(args.run_dir)/"ledger.jsonl")
         elif args.command == "request":
-            if args.profile in ("c-s1", "c-s2"):
+            if args.profile in ("c-s1", "c-s2", "c-s3"):
                 if not args.input_manifest or not args.prepared or args.manifest or args.rate_source:
                     raise Stop("s1_request_requires_dev_manifest_prepared_and_replay")
                 selection = ledger.read_json(s1.safe_path(args.selection, regular=True)) if args.selection else None
@@ -343,7 +343,7 @@ def main(argv=None):
             print(json.dumps(value, ensure_ascii=True, allow_nan=False))
             return code
         elif args.command == "run":
-            if args.profile in ("c-s1", "c-s2"):
+            if args.profile in ("c-s1", "c-s2", "c-s3"):
                 if args.phase != "development" or args.manifest or args.sealed_input or args.tasks:
                     raise Stop("s1_is_development_only_not_final_trial_authorization")
                 value = s1.run_development(args.replay, args.run_dir, profile=args.profile)

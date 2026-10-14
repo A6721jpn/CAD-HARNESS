@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.plan.v4c.c-s3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "profile",
+    "family",
+    "asset_id",
+    "source_sha256",
+    "continuity",
+    "fit_tolerance_mm",
+    "kernel_tolerance_mm",
+    "max_degree",
+    "max_poles",
+    "grid"
+  ],
+  "properties": {
+    "schema": {
+      "const": "cad-harness.plan.v4c"
+    },
+    "profile": {
+      "const": "c-s3"
+    },
+    "family": {
+      "const": "surface_rebuild"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+    },
+    "source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "continuity": {
+      "const": "G2"
+    },
+    "fit_tolerance_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "kernel_tolerance_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "max_degree": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 25
+    },
+    "max_poles": {
+      "type": "integer",
+      "minimum": 4,
+      "maximum": 65536
+    },
+    "grid": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "face_id",
+            "signature",
+            "adjacent_face_ids",
+            "swap_uv",
+            "reverse_u",
+            "reverse_v"
+          ],
+          "properties": {
+            "face_id": {
+              "type": "string",
+              "pattern": "^Face[1-9][0-9]*$"
+            },
+            "signature": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "adjacent_face_ids": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^Face[1-9][0-9]*$"
+              }
+            },
+            "swap_uv": {
+              "type": "boolean"
+            },
+            "reverse_u": {
+              "type": "boolean"
+            },
+            "reverse_v": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+}

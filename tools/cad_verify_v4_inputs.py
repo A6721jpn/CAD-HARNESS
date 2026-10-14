@@ -155,6 +155,17 @@ def _validate_facts(record):
                 raise ValueError('facts_normal_validity')
             if face['normal_kind'] == 'surface_parameter_midpoint' and face['normal_reason'] != 'local_surface_normal_not_global_face_normal':
                 raise ValueError('facts_normal_validity')
+        if record['profile'] == 'c-s3':
+            parameterization = face['parameterization']
+            domain = parameterization['domain_uv']
+            if not domain[0] < domain[1] or not domain[2] < domain[3]:
+                raise ValueError('facts_parameter_domain')
+            degrees = (parameterization['degree_u'], parameterization['degree_v'])
+            if any(degree is None for degree in degrees):
+                if degrees != (None, None) or parameterization['reason'] != 'non_spline_surface':
+                    raise ValueError('facts_parameter_degrees')
+            elif parameterization['reason'] is not None:
+                raise ValueError('facts_parameter_degrees')
         if face['ambiguous']:
             expected_missing.append(face['id'] + ':ambiguous_signature')
         if face['normal_reason']:
@@ -163,7 +174,7 @@ def _validate_facts(record):
         raise ValueError('facts_coverage_mismatch')
     if any(record['bounds_mm'][i] > record['bounds_mm'][i+1] for i in (0, 2, 4)):
         raise ValueError('facts_bounds')
-    if record['profile'] == 'c-s2':
+    if record['profile'] in ('c-s2', 'c-s3'):
         by_id = {face['id']: face for face in record['faces']}
         for face in record['faces']:
             adjacent = face['adjacent_face_ids']
@@ -226,16 +237,16 @@ def model_inputs(packet, manifest_path=None):
     result = {'schema': 'cad-harness.model-inputs.v4c', 'profile': packet['profile'],
               'source_manifest_sha256': packet['source_manifest_sha256'], 'assets': {}, 'fonts': {}}
     path, manifest = _manifest(manifest_path) if manifest_path is not None else (None, None)
-    if packet['profile'] == 'c-s2' and manifest is None:
+    if packet['profile'] in ('c-s2', 'c-s3') and manifest is None:
         raise ValueError('s2_generator_input_requires_manifest_roles')
     for asset_id in sorted(packet['assets']):
-        if packet['profile'] == 'c-s2' and manifest['assets'][asset_id]['role'] != 'reference':
+        if packet['profile'] in ('c-s2', 'c-s3') and manifest['assets'][asset_id]['role'] != 'reference':
             continue
         record = packet['assets'][asset_id]
         if record['schema'] == 'cad-harness.step-facts.v4c':
             _validate_facts(record)
         keys = ('schema', 'profile', 'asset_id', 'source_sha256', 'units', 'bounds_mm', 'topology', 'frame', 'faces', 'coverage') if record['schema'] == 'cad-harness.step-facts.v4c' else ('schema', 'profile', 'asset_id', 'units', 'bounds_mm', 'nominal_width_mm', 'loops', 'topology')
-        if packet['profile'] == 'c-s2':
+        if packet['profile'] in ('c-s2', 'c-s3'):
             keys += ('signature_precision_mm',)
         result['assets'][asset_id] = {key: copy.deepcopy(record[key]) for key in keys}
     if manifest_path is not None:
@@ -344,7 +355,7 @@ def inspect_step(manifest_path, asset_id, recipe, out):
                           'center_quantized': [round(v / precision) for v in center],
                           'bounds_quantized': [round(v / precision) for v in bounds],
                           'normal_quantized': None if normal is None else [round(v, 12) for v in normal]}
-        if profile == 'c-s2' and normal is not None:
+        if profile in ('c-s2', 'c-s3') and normal is not None:
             # Textual BREP roundtrip may flip the sign of a rounded zero.
             # S2 hashes numeric zero canonically; physical normal data is unchanged.
             signature_data['normal_quantized'] = [
@@ -354,6 +365,18 @@ def inspect_step(manifest_path, asset_id, recipe, out):
                       'ambiguous': False, 'surface_type': surface_type, 'area_mm2': float(face.Area),
                       'center_mm': center, 'bounds_mm': bounds, 'normal': normal,
                       'normal_kind': normal_kind, 'normal_reason': normal_reason})
+        if profile == 'c-s3':
+            domain = [float(value) for value in face.ParameterRange]
+            u0, u1, v0, v1 = domain
+            corners = [face.valueAt(u, v) for u, v in ((u0, v0), (u1, v0), (u0, v1), (u1, v1))]
+            surface = face.Surface
+            spline = isinstance(surface, (Part.BSplineSurface, Part.BezierSurface))
+            faces[-1]['parameterization'] = dict(
+                domain_uv=domain,
+                corner_points_mm=[[float(point.x), float(point.y), float(point.z)] for point in corners],
+                degree_u=int(surface.UDegree) if spline else None,
+                degree_v=int(surface.VDegree) if spline else None,
+                reason=None if spline else 'non_spline_surface')
     counts = {}
     for face in faces:
         counts[face['signature']] = counts.get(face['signature'], 0) + 1
@@ -369,7 +392,7 @@ def inspect_step(manifest_path, asset_id, recipe, out):
     if manifest_before != manifest_after or resolved['digest'] != asset_after:
         raise ValueError('input_changed_during_preparation')
     facts = {'schema': 'cad-harness.step-facts.v4c', 'profile': profile, 'asset_id': asset_id,
-             'source_sha256': resolved['digest'], 'units': 'mm', 'bounds_mm': _bounds(shape, tight=profile == 'c-s2'),
+             'source_sha256': resolved['digest'], 'units': 'mm', 'bounds_mm': _bounds(shape, tight=profile in ('c-s2', 'c-s3')),
              'topology': {'solids': len(shape.Solids), 'shells': len(shape.Shells), 'faces': len(shape.Faces), 'edges': len(shape.Edges)},
              'frame': {'source_axes': recipe['source_axes'], 'source_units': units,
                        'import_units': 'mm', 'axis_transform': 'identity',
@@ -379,7 +402,7 @@ def inspect_step(manifest_path, asset_id, recipe, out):
              'provenance': {'manifest_sha256_before': manifest_before, 'manifest_sha256_after': manifest_after,
                             'asset_sha256_before': resolved['digest'], 'asset_sha256_after': asset_after,
                             'importer': 'FreeCAD.Part.Shape.read', 'freecad_version': '.'.join(FreeCAD.Version()[:3])}}
-    if profile == 'c-s2':
+    if profile in ('c-s2', 'c-s3'):
         facts['signature_precision_mm'] = precision
         for face, adjacent in zip(facts['faces'], _adjacency(shape)):
             face['adjacent_face_ids'] = adjacent

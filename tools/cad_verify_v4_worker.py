@@ -58,6 +58,10 @@ def _loaded(job):
         raise ValueError('worker_input_profile_mismatch')
     plan = plans.validate_plan(_read(job['plan']), job['manifest'], prepared, profile=profile)
     card = plans.validate_judge_card(_read(job['card']), profile=profile)
+    if profile == 'c-s3':
+        required = {'solid_valid', 'face_count', 'surface_deviation', 'g2_continuity', 'native_roundtrip'}
+        if not required <= {criterion['metric'] for criterion in card['criteria']}:
+            raise ValueError('s3_pipeline_incomplete_judge_card')
     return plan, prepared, card
 
 
@@ -74,16 +78,27 @@ def _artifacts(out):
             for key, name in (('native', 'model.FCStd'), ('step', 'model.step'))}
 
 
+def _editor(profile, compiler):
+    if profile == 'c-s3':
+        return _module('cad_verify_v4_s3_rebuild')
+    if profile == 'c-s2':
+        return _module('cad_verify_v4_s2_edit')
+    if profile != 'c-s1':
+        raise ValueError('worker_profile')
+    return compiler
+
+
 def _compile(App, job, out):
     import Part
     compiler = _module('cad_verify_v4_compile')
     plan, prepared, card = _loaded(job)
     before = _bindings(job)
-    editor = _module('cad_verify_v4_s2_edit') if job.get('profile') == 'c-s2' else compiler
-    doc = App.newDocument('S2Candidate' if job.get('profile') == 'c-s2' else 'S1Candidate')
+    profile = job.get('profile', 'c-s1')
+    editor = _editor(profile, compiler)
+    doc = App.newDocument(profile[2:].upper() + 'Candidate')
     body = editor.build_plan(doc, plan, job['manifest'], prepared)
     editability = editor.operative_evidence(doc, body)
-    measurements = compiler.shape_measurements(body.Shape, tight_bounds=job.get('profile') == 'c-s2')
+    measurements = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'))
     # A new directory is the only destination; no existing artifacts are overwritten.
     doc.saveAs(str(out / 'model.FCStd'))
     Part.export([body], str(out / 'model.step'))
@@ -96,7 +111,7 @@ def _compile(App, job, out):
             'bindings': before, 'artifacts': _artifacts(out),
             'source_paths': {key: str(_safe(job[key])) for key in ('manifest', 'prepared', 'plan', 'card')},
             'family': plan['family'], 'plan_sha256': before['plan_sha256'],
-            **({'operation_report': editor.operation_report(body)} if job.get('profile') == 'c-s2' else {})}
+            **({'operation_report': editor.operation_report(body)} if profile in ('c-s2', 'c-s3') else {})}
 
 
 def _roundtrip_criteria(card, evidence):
@@ -119,8 +134,9 @@ def _verify(App, job, out):
     import Part
     compiler = _module('cad_verify_v4_compile')
     profile = job.get('profile', 'c-s1')
-    editor = _module('cad_verify_v4_s2_edit') if profile == 'c-s2' else compiler
-    judges = _module('cad_verify_v4_s2_judges' if profile == 'c-s2' else 'cad_verify_v4_judges')
+    editor = _editor(profile, compiler)
+    judges = _module('cad_verify_v4_s3_judges' if profile == 'c-s3' else
+                     'cad_verify_v4_s2_judges' if profile == 'c-s2' else 'cad_verify_v4_judges')
     plan, prepared, card = _loaded(job)
     before = _bindings(job)
     candidate = _out(job.get('candidate_dir', job['out']))
@@ -135,8 +151,9 @@ def _verify(App, job, out):
     if len(bodies) != 1:
         raise ValueError('reopen_body_count')
     body = bodies[0]
-    allowed_proxies = ((editor.DirectEditProxy,) if profile == 'c-s2' else
-                       (compiler.ContourProxy, compiler.EngravingProxy))
+    allowed_proxies = ((editor.SurfaceRebuildProxy,) if profile == 'c-s3' else
+                      (editor.DirectEditProxy,) if profile == 'c-s2' else
+                      (compiler.ContourProxy, compiler.EngravingProxy))
     # Proxy restoration executes only the frozen installed implementation. A missing or
     # changed proxy is not accepted even if a cached Shape happens to remain valid.
     for obj in body.Group:
@@ -148,7 +165,7 @@ def _verify(App, job, out):
     doc.recompute()
     compiler.check_document(doc, body)
     editor.check_model_inputs(body, plan, prepared, job['manifest'])
-    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile == 'c-s2')
+    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'))
     editability = editor.operative_evidence(doc, body)
     step_doc = App.newDocument('S1IndependentSTEP')
     Part.insert(str(_safe(candidate / 'model.step')), step_doc.Name)
@@ -157,7 +174,7 @@ def _verify(App, job, out):
     if len(shapes) != 1:
         raise ValueError('step_candidate_object_count')
     step_shape = shapes[0]
-    imported = compiler.shape_measurements(step_shape, tight_bounds=profile == 'c-s2')
+    imported = compiler.shape_measurements(step_shape, tight_bounds=profile in ('c-s2', 'c-s3'))
     base = built['measurements']
     bound_delta = max(abs(a - b) for measurement in (restored, imported)
                       for a, b in zip(base['bounds_mm'], measurement['bounds_mm']))
@@ -237,9 +254,9 @@ def execute(job):
         raise ValueError('unknown_worker_operation')
     operation = job['operation']
     profile = job.get('profile', 'c-s1')
-    if profile not in ('c-s1', 'c-s2'):
+    if profile not in ('c-s1', 'c-s2', 'c-s3'):
         raise ValueError('worker_profile')
-    if profile == 'c-s2' and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step'):
+    if profile in ('c-s2', 'c-s3') and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step'):
         raise ValueError('worker_operation_not_in_profile')
     optional = {'profile'} | ({'candidate_dir'} if operation in ('verify', 'judge') else set())
     if not OPERATIONS[operation] <= set(job) or set(job) - OPERATIONS[operation] - optional:
@@ -294,7 +311,9 @@ def execute(job):
                       job['text'], job['height_mm'], out / 'text-outline.json')
             result.update(status='PASS', outline=outline)
     except Exception as exc:
-        result.update(status='FAIL', error_type=type(exc).__name__, error=str(exc))
+        unsupported = profile == 'c-s3' and isinstance(exc, NotImplementedError)
+        result.update(status='UNVERIFIED' if unsupported else 'FAIL',
+                      error_type=type(exc).__name__, error=str(exc))
     finally:
         try:
             result['document_closed'] = _close(App)
