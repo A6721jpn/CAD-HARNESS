@@ -54,3 +54,10 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
   - After S1-S3 and the reviews, lock the code, skill, recipes and judges BEFORE family authoring. The final freeze binds those locks plus the cards, cohorts, custody, budgets and the 5 pilot inputs.
   - Any post-failure change starts a separately authorized cycle: fresh dev material, a new lock, and fresh blind validation for the changed families.
   - Each cycle runs the complete U1-U5 roster once. Exit requires 5/5 within the same manifest. Successes from different cycles are never combined, and old outcomes are kept.
+
+## C-A (USER 14:57 answers)
+- Q1: U3 passes with G2 continuity (not G3) and <=0.005 mm absolute deviation.
+- Q2: the U5 plate outline, default thickness and default logo size are delegated to sol + gemini. They are recorded in C-U5 below before the freeze and stay parametric. These are agent-chosen defaults, labelled as such; they are not user dimensions.
+- Q3: U2 has no maximum outer size.
+- C-R1-2 and C-R1-3/C-R2-2 are adopted as final.
+## C-U5 (defaults; to be filled by sol+gemini consensus)
