@@ -17,6 +17,7 @@ if __package__:
     from . import cad_verify_v4_freeze as freezing, cad_verify_v4_ledger as ledger
     from . import cad_verify_v4_live as live
     from . import cad_verify_v4_runtime as runtime_binding
+    from . import cad_verify_v4_c2_recipe as c2_recipe
     from .cad_verify_guard import Stop
     from .cad_verify_v3_guard import Budget
 else:
@@ -24,6 +25,7 @@ else:
     import cad_verify_v4_freeze as freezing, cad_verify_v4_ledger as ledger
     import cad_verify_v4_live as live
     import cad_verify_v4_runtime as runtime_binding
+    import cad_verify_v4_c2_recipe as c2_recipe
     from cad_verify_guard import Stop
     from cad_verify_v3_guard import Budget
 
@@ -106,6 +108,7 @@ def preflight(root=ROOT, *, policy_path=None, profile=PROFILE):
     if policy.get("profile") != profile or policy.get("live_authorized_calls") != 0:
         raise Stop("s1_policy_not_offline")
     skill = agent.bundle(root, profile=profile)
+    c2_recipe.load(root)
     names = ("input-manifest", "prepared-inputs", "capability-plan", "judge-card",
              "judge-result", "capability-manifest")
     names += ("step-facts", "step-recipe") if profile in ("c-s2", "c-s3") else ("contour",)
@@ -551,7 +554,9 @@ def implementation_bindings(root=ROOT, *, profile=PROFILE):
     root = safe_path(root)
     _stage(profile)
     files = freezing.bindings(root)
-    names = ["capability-policy.json", "PLAN-V4-ADDENDUM-C.md", "original-profile-snapshot.zip"]
+    files.update(c2_recipe.bindings(root))
+    names = ["capability-policy.json", "PLAN-V4-ADDENDUM-C.md", "original-profile-snapshot.zip",
+             "dev-c2-production/generate.py"]
     if profile == "c-s2":
         names += ["policy-c-s2.json", "s1-profile-snapshot.zip", "dev-c-s2/generate.py"]
     if profile == "c-s3":

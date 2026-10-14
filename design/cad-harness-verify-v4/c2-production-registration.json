@@ -1,0 +1,14 @@
+{
+  "schema": "cad-harness.c2-production-registration.v4c",
+  "entries": [
+    {
+      "family": "C2",
+      "profile": "c-s1",
+      "recipe": {
+        "path": "design/cad-harness-verify-v4/c2-production-recipe.json",
+        "sha256": "ae1db1b48dfab10d9642c58d834068098f649855c00610cbfeb505c20bdbaf00",
+        "canonical_sha256": "361235a66c015765b65fbd1041c031a84b1b369c671a205dc1b4363d63eb8c06"
+      }
+    }
+  ]
+}

@@ -90,7 +90,7 @@ def _unit(a):
 
 
 def validate_recipe(recipe):
-    _fields(recipe, ("schema", "profile", "foreground", "alpha", "scale", "simplify", "rounding", "limits", "topology"))
+    _fields(recipe, ("schema", "profile", "foreground", "alpha", "scale", "simplify", "rounding", "limits", "topology"), ("curve_fit",))
     if recipe["schema"] != RECIPE_SCHEMA or recipe["profile"] != "c-s1":
         _fail("recipe_schema")
     fg = recipe["foreground"]
@@ -108,9 +108,24 @@ def validate_recipe(recipe):
             _fail("alpha_threshold")
     elif "threshold" in alpha:
         _fail("unused_alpha_threshold")
-    _fields(recipe["scale"], ("mm_per_pixel", "origin_mm"))
-    _number(recipe["scale"]["mm_per_pixel"], positive=True)
-    _point(recipe["scale"]["origin_mm"])
+    scale = recipe["scale"]
+    quantity = "canonical_height_mm" if "canonical_height_mm" in scale else "mm_per_pixel"
+    _fields(scale, (quantity, "origin_mm"))
+    _number(scale[quantity], positive=True)
+    _point(scale["origin_mm"])
+    if "curve_fit" in recipe:
+        fit = recipe["curve_fit"]
+        _fields(fit, ("method", "maximum_error_pixels", "tangent_span_pixels", "corner_angle_degrees",
+                      "smoothing_rms_pixels", "sample_spacing_pixels", "biarc_error_pixels", "maximum_fit_passes"))
+        if fit["method"] != "periodic_cubic_biarc_v1":
+            _fail("curve_fit_method")
+        for name in ("maximum_error_pixels", "tangent_span_pixels", "smoothing_rms_pixels",
+                     "sample_spacing_pixels", "biarc_error_pixels"):
+            _number(fit[name], positive=True)
+        if type(fit["maximum_fit_passes"]) is not int or not 1 <= fit["maximum_fit_passes"] <= 8:
+            _fail("curve_fit_pass_limit")
+        if not 0 < _number(fit["corner_angle_degrees"]) < 180:
+            _fail("curve_fit_corner_angle")
     for name, quantity in (("simplify", "tolerance_mm"), ("rounding", "radius_mm")):
         section = recipe[name]
         _fields(section, ("allowed",), (quantity,))
@@ -122,6 +137,9 @@ def validate_recipe(recipe):
             _number(section[quantity], positive=True)
         elif quantity in section:
             _fail("unapproved_" + name)
+    if ("canonical_height_mm" in scale or "curve_fit" in recipe) and any(
+            recipe[name]["allowed"] for name in ("simplify", "rounding")):
+        _fail("curve_fit_or_canonical_scale_cannot_simplify_or_round")
     _fields(recipe["limits"], ("max_deviation_mm", "approximation_tolerance_mm"))
     _number(recipe["limits"]["max_deviation_mm"], nonnegative=True)
     _number(recipe["limits"]["approximation_tolerance_mm"], positive=True)
@@ -673,6 +691,46 @@ def _processed_loops(source, recipe):
     return loops
 
 
+def _affine_loops(loops, scale, origin):
+    return [dict(loop, segments=[
+        {key: ([origin[0] + value[0] * scale, origin[1] + value[1] * scale]
+               if key in ("p0", "pm", "p1") else value)
+         for key, value in segment.items()} for segment in loop["segments"]])
+            for loop in loops]
+
+
+def _geometry_from_mask(mask, recipe):
+    """Derive geometry AND its single registration; never normalize after scoring."""
+    settings = recipe["scale"]
+    canonical = "canonical_height_mm" in settings
+    if canonical or "curve_fit" in recipe:
+        pixels = _mask_loops(mask, 1., [0., 0.])
+        fitted = pixels
+        if "curve_fit" in recipe:
+            if __package__:
+                from .cad_verify_v4_biarcs import fit_loops
+            else:
+                from cad_verify_v4_biarcs import fit_loops
+            fitted = fit_loops(pixels, recipe["curve_fit"])
+        if canonical:
+            bounds = _geometry_bounds(fitted)
+            scale = settings["canonical_height_mm"] / (bounds[3] - bounds[2])
+            origin = [settings["origin_mm"][0] - bounds[0] * scale,
+                      settings["origin_mm"][1] - bounds[2] * scale]
+        else:
+            scale, origin = settings["mm_per_pixel"], settings["origin_mm"]
+        source = _affine_loops(pixels, scale, origin)
+        loops = _affine_loops(fitted, scale, origin)
+    else:
+        scale, origin = settings["mm_per_pixel"], settings["origin_mm"]
+        source = _mask_loops(mask, scale, origin)
+        loops = _processed_loops(source, recipe)
+    transform = {"scale_mm_per_pixel": scale, "origin_mm": origin,
+                 "image_height_pixels": int(mask.shape[0]), "y_axis": "up",
+                 "pixel_convention": "closed unit cells; centers at (col+0.5,row+0.5)"}
+    return source, loops, transform
+
+
 def _deviation(source, loops, tolerance):
     source_rings, _ = _check_geometry(source, tolerance)
     output_rings, error = _check_geometry(loops, tolerance)
@@ -713,16 +771,22 @@ def _provenance(recipe):
     import PIL
     import numpy
     import shapely
-    return {
+    result = {
         "decoder": f"Pillow {PIL.__version__} PNG RGBA8; NumPy {numpy.__version__}; Shapely {shapely.__version__}",
         "luminance": "integer Rec.601: (299R+587G+114B+500)//1000; no gamma linearization",
         "threshold_comparison": "dark <=; light >=; alpha >=",
-        "extraction": f"cell-union-fillet-v1: exact foreground closed-cell union; diagonal contacts refused; resource caps {MAX_PIXELS} pixels / {MAX_CELL_EDGES} exposed cell edges / {MAX_BOUNDARY_SEGMENTS} segments",
+        "extraction": f"exact-closed-cell-union-v1: exact foreground closed-cell union; diagonal contacts refused; resource caps {MAX_PIXELS} pixels / {MAX_CELL_EDGES} exposed cell edges / {MAX_BOUNDARY_SEGMENTS} segments",
         "simplification": "Shapely topology-preserving polygon simplification" if recipe["simplify"]["allowed"] else "none",
         "rounding": "exact tangent circular fillets; infeasible trim refused" if recipe["rounding"]["allowed"] else "none",
         "hash_encoding": "sorted-key compact UTF-8 JSON, no NaN",
         "source_checks": "raw image and manifest SHA256 before/after",
     }
+    if "curve_fit" in recipe:
+        import scipy
+        result["curve_approximation"] = f"periodic_cubic_biarc_v1; SciPy {scipy.__version__}: source-local uniform arclength pixel samples; periodic cubic FITPACK RMS fit with bounded RMS halvings until original-source error is certified, except at hard-corner loops; shared-tangent equal-distance biarcs; recursive biarc/polyline enclosure and final two-sided original-cell-boundary enclosure; no radius target"
+    if "canonical_height_mm" in recipe["scale"]:
+        result["scale_order"] = "decode/threshold; exact pixel cell-union; declared pixel approximation; exact canonical extrema; uniform final-height scale; one shared source/contour registration; no later normalization"
+    return result
 
 def geometry_bounds(record):
     """Exact line/circle bounds and analytic quadratic/cubic Bezier extrema."""
@@ -820,14 +884,12 @@ def validate_contour(record):
                 _fail("mask_runs")
             mask[y, run[0]:run[1]] = True
             previous = run[1]
-    scale = recipe["scale"]
-    expected_transform = {"scale_mm_per_pixel": scale["mm_per_pixel"], "origin_mm": scale["origin_mm"], "image_height_pixels": height, "y_axis": "up", "pixel_convention": "closed unit cells; centers at (col+0.5,row+0.5)"}
+    source, loops, expected_transform = _geometry_from_mask(mask, recipe)
     if record["pixel_to_mm"] != expected_transform:
         _fail("transform_mismatch")
-    source = _mask_loops(mask, scale["mm_per_pixel"], scale["origin_mm"])
     if source != record["source_loops"]:
         _fail("source_mask_geometry_mismatch")
-    if _processed_loops(source, recipe) != record["loops"]:
+    if loops != record["loops"]:
         _fail("geometry_not_derived_from_recipe")
     for loop in record["loops"]:
         _fields(loop, ("role", "segments"), ("parent",))
@@ -842,7 +904,12 @@ def validate_contour(record):
         _fail("source_deviation_budget_exceeded")
     _fields(record["reports"], ("minimum_radius_mm", "source_boundary_hausdorff_upper_mm"))
     _fields(record["approximation"], ("flatten_tolerance_mm", "flatten_error_bound_mm", "source_deviation_upper_mm", "deviation_method"))
-    _fields(record["provenance"], ("decoder", "luminance", "threshold_comparison", "extraction", "simplification", "rounding", "hash_encoding", "source_checks"))
+    expected_provenance = _provenance(recipe)
+    _fields(record["provenance"], ("decoder", "luminance", "threshold_comparison", "extraction", "simplification", "rounding", "hash_encoding", "source_checks"),
+            tuple(key for key in ("curve_approximation", "scale_order") if key in expected_provenance))
+    for key in ("curve_approximation", "scale_order"):
+        if record["provenance"].get(key) != expected_provenance.get(key):
+            _fail("processing_provenance_mismatch")
     if any(not isinstance(v, str) or not v for v in record["provenance"].values()):
         _fail("provenance_value")
     if record["approximation"]["deviation_method"] != DEVIATION_METHOD:
@@ -861,7 +928,7 @@ def validate_contour(record):
 
 
 def prepare_contour(manifest_path, asset_id, recipe, out):
-    """Resolve independent input, extract/round real curves, write out/contour.json.
+    """Resolve independent input, derive real curves and write out/contour.json.
 
     out must be new or an existing empty supervisor-owned directory. Evidence
     embeds the unchanged source mask and exact pre-processing cell boundaries;
@@ -876,9 +943,7 @@ def prepare_contour(manifest_path, asset_id, recipe, out):
     manifest_digest = file_sha(manifest_path)
     mask, rgba_digest = _decode(asset["path"], recipe)
     source_mask = _mask_record(mask)
-    scale = recipe["scale"]
-    source = _mask_loops(mask, scale["mm_per_pixel"], scale["origin_mm"])
-    loops = _processed_loops(source, recipe)
+    source, loops, transform = _geometry_from_mask(mask, recipe)
     tolerance = recipe["limits"]["approximation_tolerance_mm"]
     deviation, error = _deviation(source, loops, tolerance)
     if deviation > recipe["limits"]["max_deviation_mm"]:
@@ -891,7 +956,7 @@ def prepare_contour(manifest_path, asset_id, recipe, out):
               "source_image_sha256": asset["digest"], "source_manifest_sha256": manifest_digest,
               "decoded_rgba_sha256": rgba_digest, "mask_sha256": _hash(source_mask),
               "recipe_sha256": _hash(recipe), "units": "mm",
-              "pixel_to_mm": {"scale_mm_per_pixel": scale["mm_per_pixel"], "origin_mm": scale["origin_mm"], "image_height_pixels": int(mask.shape[0]), "y_axis": "up", "pixel_convention": "closed unit cells; centers at (col+0.5,row+0.5)"},
+              "pixel_to_mm": transform,
               "bounds_mm": bounds, "nominal_width_mm": bounds[1] - bounds[0],
               "loops": loops, "source_loops": source, "source_mask": source_mask, "recipe": recipe,
               "topology": {"source": _topology(source), "output": _topology(loops)},

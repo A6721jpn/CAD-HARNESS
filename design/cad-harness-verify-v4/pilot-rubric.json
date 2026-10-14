@@ -1,21 +1,196 @@
 {
   "schema": "cad-harness.pilot-rubric.v4",
-  "status": "not_run",
+  "status": "draft",
+  "trial_status": "not_run",
   "preregistered": false,
   "tasks_source": "user_only",
-  "tasks": [],
-  "human_judge": null,
-  "judge_agreement": null,
-  "enrolled_target": 10,
-  "minimum_successes": 7,
-  "success_requires": ["human_adoption", "existing_quality_gates", "no_edit_or_verified_corrections_within_300_elapsed_seconds"],
-  "edit_clock": "first_edit_to_successful_headless_reverification_including_waits",
-  "critical_or_fabrication": "fatal_at_first_proposed_or_later_handover_even_if_corrected",
-  "fatal_quality_does_not_remove_task_or_authorize_replacement": true,
-  "all_enrolled_tasks_in_denominator": true,
-  "critical_dimensions_and_tolerances": null,
-  "allowed_defaults": null,
-  "screening_log": null,
-  "order_commitment": null,
-  "missing_reason": "user_tasks_human_judge_and_trial_agreement_pending"
+  "sources": [
+    "design/cad-harness-verify-v4/DECISIONS.md",
+    "design/cad-harness-verify-v4/pilot-user-requests.md",
+    "design/cad-harness-verify-v4/PLAN-V4-ADDENDUM-C.md sections C-A, C-A2, C-U5, C-R3-1, C-D(a), C-D(b)"
+  ],
+  "judge": {
+    "first": "Astra Max",
+    "model": "openai-codex/gpt-6-astra",
+    "thinking": "max",
+    "final": "user visual",
+    "pilot_generator": "openai-codex/gpt-6-astra thinking max",
+    "same_model_caveat": "RESULTS must state that the pilot judge and the pilot generator are the same model. The user visual verdict remains authoritative.",
+    "source": "DECISIONS.md USER 12:58, 14:07, and 14:40"
+  },
+  "exit": {
+    "rule": "Passing all 5 of U1-U5 is a mandatory v4 exit criterion.",
+    "source": "DECISIONS.md USER 14:40",
+    "intake_exclusion": "pilot-user-requests.md records that U3 and U4 stay excluded (E3) in this pilot: scope is not expanded now and will eventually be covered. Both facts are recorded. This draft does not drop or add a criterion to reconcile them."
+  },
+  "unspecified_marker": "Astra+user visual",
+  "omitted": "Counts and clocks from the previous template are not criteria. They are not values in the cited sources.",
+  "tasks": [
+    {
+      "id": "U1",
+      "eligibility": "in this pilot",
+      "pass": [
+        {
+          "item": "Fits JEJ Astage NF-13CR inner 245 x 365 x 140 mm.",
+          "source": "pilot-user-requests.md user answers (catalogue figure, user-confirmed). DECISIONS.md 14:25 relay confirms NF13."
+        },
+        {
+          "item": "Part Y is the longest outer axis and is vertical.",
+          "source": "DECISIONS.md USER 17:28; pilot-user-requests.md user answers."
+        },
+        {
+          "item": "Play <= 0.5 mm per side.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        },
+        {
+          "item": "Y-vertical angle tolerance 3 degrees per side.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        },
+        {
+          "item": "Double-sided tape thickness 0.5 mm must be accommodated in the fit.",
+          "source": "DECISIONS.md USER 19:47; PLAN-V4-ADDENDUM-C.md C-A2 addendum."
+        },
+        {
+          "item": "Numbers are engraved. Count is unspecified.",
+          "source": "pilot-user-requests.md user answers."
+        },
+        {
+          "item": "Where engraving applies, agent defaults are 5.0 mm height and 0.6 mm depth. These are labelled agent defaults, not user dimensions.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-D(b). DECISIONS.md USER 17:28 delegates engraving size and depth."
+        }
+      ],
+      "not_pass_fail": [
+        {
+          "item": "Tape location. It may be anywhere the agents choose. It is not a pass/fail item.",
+          "source": "DECISIONS.md USER 19:47; PLAN-V4-ADDENDUM-C.md C-A2 addendum."
+        }
+      ],
+      "astra_user_visual": [
+        "The engraved number string is not given.",
+        "Any fit, placement, or appearance item without a value in the cited sources."
+      ]
+    },
+    {
+      "id": "U2",
+      "eligibility": "in this pilot",
+      "pass": [
+        {
+          "item": "Glass thickness 1.3 mm.",
+          "source": "DECISIONS.md USER 14:25 relay; pilot-user-requests.md user answers."
+        },
+        {
+          "item": "Capacity 10 pieces.",
+          "source": "pilot-user-requests.md U2 request."
+        },
+        {
+          "item": "No contact on the 1.3 mm perimeter band.",
+          "source": "pilot-user-requests.md user answers; DECISIONS.md USER 14:25 relay."
+        },
+        {
+          "item": "Perimeter-band gap >= 0.5 mm.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        },
+        {
+          "item": "Play <= 0.5 mm per side.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        },
+        {
+          "item": "Standing angle tolerance 3 degrees per side.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        },
+        {
+          "item": "The convex face may contact.",
+          "source": "DECISIONS.md USER 14:25 relay; pilot-user-requests.md user answers."
+        },
+        {
+          "item": "No maximum outer size.",
+          "source": "DECISIONS.md USER 14:57; PLAN-V4-ADDENDUM-C.md C-A Q3."
+        }
+      ],
+      "not_pass_fail": [],
+      "astra_user_visual": [
+        "Minimal concave-face contact has no numeric gate.",
+        "Any clearance, envelope, or appearance item without a value in the cited sources."
+      ]
+    },
+    {
+      "id": "U3",
+      "eligibility": "excluded (E3) in this pilot",
+      "eligibility_source": "pilot-user-requests.md user answers: scope is not expanded now and will eventually be covered.",
+      "pass": [
+        {
+          "item": "G2 continuity, not G3, and <= 0.005 mm absolute deviation. C-A supersedes the earlier G3 line. The 0.005 mm bound is unchanged.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-A; DECISIONS.md USER 14:57. The original request text asked for G3 and 0.005 mm."
+        }
+      ],
+      "not_pass_fail": [],
+      "astra_user_visual": [
+        "Which freeform design-surface seams are in scope is not given a further numeric rule here.",
+        "Any continuity residual other than the signed G2 plus 0.005 mm absolute criterion."
+      ]
+    },
+    {
+      "id": "U4",
+      "eligibility": "excluded (E3) in this pilot",
+      "eligibility_source": "pilot-user-requests.md user answers: scope is not expanded now and will eventually be covered.",
+      "pass": [
+        {
+          "item": "Freeform wall thickness 2 mm.",
+          "source": "pilot-user-requests.md U4 request."
+        },
+        {
+          "item": "Surrounding outer dimensions unchanged.",
+          "source": "pilot-user-requests.md U4 request."
+        },
+        {
+          "item": "Tolerance ±0.1 mm on the 2 mm thickness and on the unchanged outer dimensions.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        }
+      ],
+      "not_pass_fail": [],
+      "astra_user_visual": [
+        "Reconnection of features that meet the underside has no numeric gate.",
+        "Any face choice or blend item without a value in the cited sources."
+      ]
+    },
+    {
+      "id": "U5",
+      "eligibility": "in this pilot",
+      "pass": [
+        {
+          "item": "Deliverable is a cut-out logo part, not a plate with an aperture.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2 and C-R3-1."
+        },
+        {
+          "item": "The 100 x 100 mm plate outline in C-U5 is void. It is not a pass dimension.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-R3-1."
+        },
+        {
+          "item": "Thickness 3 mm, a parametric agent-chosen default, not a user dimension.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-R3-1 and C-A2; DECISIONS.md USER 17:28."
+        },
+        {
+          "item": "Logo total height 50 mm, defined as the contour Y extent, with aspect preserved. Parametric agent-chosen default, not a user dimension.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-R3-1 and C-U5."
+        },
+        {
+          "item": "Minimum tool R 0.25 mm on the actual output.",
+          "source": "pilot-user-requests.md U5 request; PLAN-V4-ADDENDUM-C.md C-R3-1 and C-D(a)."
+        },
+        {
+          "item": "Mask to contour: IoU >= 0.90 and Hausdorff <= 1.5 mm. Same frozen transform.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-D(a)."
+        },
+        {
+          "item": "Contour to CAD: IoU >= 0.92 and Hausdorff <= 1.0 mm. Same frozen transform.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-D(a)."
+        }
+      ],
+      "not_pass_fail": [],
+      "astra_user_visual": [
+        "Logo likeness beyond the C-D(a) fidelity numbers. The user said the logo only needs to match roughly and that model correctness matters more.",
+        "Any outline, margin, or placement item without a value in the cited sources."
+      ]
+    }
+  ]
 }

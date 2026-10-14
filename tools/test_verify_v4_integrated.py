@@ -124,6 +124,16 @@ class IntegratedLockHost(unittest.TestCase):
             path = self.design / ('dev-' + profile) / 'generate.py'
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('fixture_number = 17\n', encoding='utf-8')
+        # The production recipe is public policy, not a reused case or gold.
+        from tools import cad_verify_v4_c2_recipe
+        for relative in (cad_verify_v4_c2_recipe.RECIPE_PATH,
+                         cad_verify_v4_c2_recipe.REGISTRATION_PATH):
+            destination = self.root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes((integrated.ROOT / relative).read_bytes())
+        source = self.design / 'dev-c2-production/generate.py'
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text('independent_recipe_fixture = 19\n', encoding='utf-8')
         # Only the lock's real public schema is reused, never production evidence.
         source_schema = integrated.ROOT / integrated.DESIGN / 'schemas/integrated-lock.schema.json'
         target = self.design / 'schemas/integrated-lock.schema.json'
