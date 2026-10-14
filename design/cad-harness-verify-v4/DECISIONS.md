@@ -52,3 +52,14 @@ Pending with the user: #1 pilot tasks, #2 pilot judge and rubric, #3 price sourc
 - (b) U5: the plate outline, the default thickness and the default logo size are delegated to the agents. sol and gemini set reasonable defaults, which are stated explicitly in addendum C (C-U5) before the freeze. They stay parametric.
 - (c) U2: no maximum outer size.
 - C-R1-2 (separate retry budget, INCOMPLETE on exhaustion) and C-R1-3/C-R2-2 (contour pre-extracted and hash-locked before the freeze) are adopted.
+
+## USER 2026-10-14 17:28 JST - answers to C-Q4..Q10 and the U5 deliverable (relayed)
+1. U5 deliverable: a part cut out in the logo shape (not a plate with an aperture). C-U5's plate outline therefore does not apply; the thickness (3 mm default) and logo height (50 mm default) stay as parametric defaults.
+2. U1: play <= 0.5 mm PER SIDE; Y-vertical angle tolerance 3 degrees per side.
+3. U2: same as U1 (play <= 0.5 mm per side, angle 3 degrees per side). The perimeter-band "no contact" criterion requires a minimum gap of 0.5 mm.
+4. U4: tolerance ±0.1 mm on the 2 mm thickness and on the unchanged outer dimensions.
+5. U5: the logo only needs to match roughly; model correctness matters more. The agents set lenient IoU/Hausdorff thresholds; the user checks visually.
+6. Engraving size and depth: delegated to the agents.
+7. The agents may approve the new-family holdouts (counts/gates) themselves. Extra call budget for them is approved with NO upper limit. The quota rule (consult at 55%, stop at 60%) still applies.
+8. Time limits may be extended. CAD time must be measured precisely, and a durable dataset must compare work WITH vs WITHOUT the CAD harness (time saved). The baseline-without-harness measurement design must be agreed by the three.
+Still open (not answered): the U1 tape location; the U2 "minimal concave-face contact" criterion (until answered: Astra plus the user's visual judgment, with no numeric gate invented).

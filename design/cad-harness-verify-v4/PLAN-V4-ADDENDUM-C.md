@@ -83,3 +83,14 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
 >
 > Preserve consensus section 5 and C-EXIT/C-R2: all required gates, unchanged first-handover/critical-dimension/fabrication rules, Astra Max judging followed by authoritative user visual judgment, and no combining results across manifests. This defaults agreement is not trial authorization.
 
+
+## C-A2 (USER 17:28 answers; see DECISIONS.md for the full text)
+- U5 = a cut-out logo part, with 3 mm thickness and 50 mm logo height as defaults; the plate outline in C-U5 is void. U1/U2: play <= 0.5 mm per side, angle 3 degrees per side; U2 perimeter-band gap >= 0.5 mm. U4: ±0.1 mm.
+- Delegated to the agents (3-party consensus required; record in C-D):
+  - (a) lenient U5 IoU/Hausdorff thresholds;
+  - (b) engraving size and depth;
+  - (c) new-family holdout counts, gates and budgets (no upper limit; quota 55/60 still applies);
+  - (d) extended time limits;
+  - (e) a baseline-without-harness CAD-time measurement design and a durable dataset.
+- Open: the U1 tape location; the U2 minimal concave-face contact (judged by Astra plus the user's visual check; no invented number).
+## C-D (agent-delegated values; to be filled by 3-party consensus)
