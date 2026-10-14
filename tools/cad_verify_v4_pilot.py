@@ -507,7 +507,7 @@ def bundle_prepared_request(request_path, input_manifest, prepared_path, run_dir
         _fail("E7", "direct_source_changed")
     files = {path.relative_to(out).as_posix(): dict(sha256=ledger.file_sha(path), bytes=path.stat().st_size)
              for path in sorted(out.rglob("*")) if path.is_file()}
-    document = dict(schema="cad-harness.prepared-request-bundle.v4c", profile="c-s1",
+    document = dict(schema="cad-harness.prepared-request-bundle.v4c", profile=manifest["profile"],
                     origin="direct_user", evidence_mode="independent_dev", source_sha256=original,
                     request="request.txt", input_manifest="inputs.json", prepared="prepared.json",
                     context="context.txt" if context_path is not None else None, files=files,
@@ -530,7 +530,7 @@ def verify_prepared_bundle(path):
                 "eligibility", "pilot", "live_calls"}
     if (not isinstance(document, dict) or set(document) != required
             or document.get("schema") != "cad-harness.prepared-request-bundle.v4c"
-            or document.get("profile") != "c-s1" or document.get("origin") != "direct_user"
+            or document.get("profile") not in ("c-s1", "c-s2") or document.get("origin") != "direct_user"
             or document.get("evidence_mode") != "independent_dev"
             or document.get("integrity_only") is not True or document.get("eligibility") is not None
             or document.get("pilot") != "not_run" or document.get("live_calls") != 0
@@ -568,6 +568,8 @@ def verify_prepared_bundle(path):
         if member is not None and document["files"][member]["sha256"] != source_hashes[source]:
             _fail("E7", "direct_source_changed")
     manifest = inputs.load_manifest(path.parent / document["input_manifest"])
+    if manifest["profile"] != document["profile"]:
+        _fail("E7", "direct_bundle_profile_mismatch")
     if manifest["evidence_mode"] != "independent_dev":
         _fail("E7", "direct_bundle_evidence_mode")
     inputs.verify_prepared(path.parent / document["prepared"], path.parent / document["input_manifest"])

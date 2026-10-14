@@ -62,7 +62,9 @@ def guarded_path(path, *, regular=True):
 
 def _manifest(path):
     path = guarded_path(path)
-    manifest = plans.validate_document(ledger.read_json(path), 'inputs')
+    value = ledger.read_json(path)
+    profile = value.get('profile') if isinstance(value, dict) else plans.PROFILE
+    manifest = plans.validate_document(value, 'inputs', profile=profile)
     for asset_id, record in manifest['assets'].items():
         _lexical(record['path'], relative=True)
         if record['kind'] == 'font':
@@ -108,7 +110,7 @@ def _resolve(path, manifest, asset_id, expected_kind=None):
         if kind == 'contour':
             plans.validate_document(document, 'contour-source')
         else:
-            plans.validate_document(document, 'step-facts')
+            plans.validate_document(document, 'step-facts', profile=manifest['profile'])
     if kind == 'license':
         if not target.read_text(encoding='utf-8').strip():
             raise ValueError('empty_font_license')
@@ -161,12 +163,24 @@ def _validate_facts(record):
         raise ValueError('facts_coverage_mismatch')
     if any(record['bounds_mm'][i] > record['bounds_mm'][i+1] for i in (0, 2, 4)):
         raise ValueError('facts_bounds')
+    if record['profile'] == 'c-s2':
+        by_id = {face['id']: face for face in record['faces']}
+        for face in record['faces']:
+            adjacent = face['adjacent_face_ids']
+            if (face['id'] in adjacent or set(adjacent) - set(by_id)
+                    or adjacent != sorted(set(adjacent), key=lambda name: int(name[4:]))):
+                raise ValueError('facts_adjacency_invalid')
+            if any(face['id'] not in by_id[name]['adjacent_face_ids'] for name in adjacent):
+                raise ValueError('facts_adjacency_asymmetric')
 
 
 def verify_prepared(packet_or_path, manifest_path):
     packet = ledger.read_json(guarded_path(packet_or_path)) if isinstance(packet_or_path, (str, os.PathLike)) else packet_or_path
-    packet = plans.validate_document(packet, 'prepared')
+    profile = packet.get('profile') if isinstance(packet, dict) else plans.PROFILE
+    packet = plans.validate_document(packet, 'prepared', profile=profile)
     path, manifest = _manifest(manifest_path)
+    if manifest['profile'] != profile:
+        raise ValueError('prepared_profile_mismatch')
     load_manifest(path)
     if packet['source_manifest_sha256'] != ledger.file_sha(path):
         raise ValueError('prepared_manifest_mismatch')
@@ -207,17 +221,24 @@ def verify_prepared(packet_or_path, manifest_path):
 
 def model_inputs(packet, manifest_path=None):
     """Allowlist generator context. No original paths, masks, recipes or checker targets."""
-    packet = verify_prepared(packet, manifest_path) if manifest_path is not None else plans.validate_document(packet, 'prepared')
-    result = {'schema': 'cad-harness.model-inputs.v4c', 'profile': 'c-s1',
+    packet = (verify_prepared(packet, manifest_path) if manifest_path is not None else
+              plans.validate_document(packet, 'prepared', profile=packet.get('profile')))
+    result = {'schema': 'cad-harness.model-inputs.v4c', 'profile': packet['profile'],
               'source_manifest_sha256': packet['source_manifest_sha256'], 'assets': {}, 'fonts': {}}
+    path, manifest = _manifest(manifest_path) if manifest_path is not None else (None, None)
+    if packet['profile'] == 'c-s2' and manifest is None:
+        raise ValueError('s2_generator_input_requires_manifest_roles')
     for asset_id in sorted(packet['assets']):
+        if packet['profile'] == 'c-s2' and manifest['assets'][asset_id]['role'] != 'reference':
+            continue
         record = packet['assets'][asset_id]
         if record['schema'] == 'cad-harness.step-facts.v4c':
             _validate_facts(record)
         keys = ('schema', 'profile', 'asset_id', 'source_sha256', 'units', 'bounds_mm', 'topology', 'frame', 'faces', 'coverage') if record['schema'] == 'cad-harness.step-facts.v4c' else ('schema', 'profile', 'asset_id', 'units', 'bounds_mm', 'nominal_width_mm', 'loops', 'topology')
+        if packet['profile'] == 'c-s2':
+            keys += ('signature_precision_mm',)
         result['assets'][asset_id] = {key: copy.deepcopy(record[key]) for key in keys}
     if manifest_path is not None:
-        path, manifest = _manifest(manifest_path)
         for font_id in sorted(manifest['assets']):
             record = manifest['assets'][font_id]
             if record['kind'] == 'font':
@@ -228,9 +249,28 @@ def model_inputs(packet, manifest_path=None):
     return result
 
 
-def _bounds(shape):
-    box = shape.BoundBox
+def _bounds(shape, *, tight=False):
+    box = shape.optimalBoundingBox(False, False) if tight else shape.BoundBox
     return [float(box.XMin), float(box.XMax), float(box.YMin), float(box.YMax), float(box.ZMin), float(box.ZMax)]
+
+
+def _adjacency(shape):
+    """Topological shared edges, including seam deduplication and hash collisions."""
+    groups = {}
+    neighbors = [set() for _ in shape.Faces]
+    for index, face in enumerate(shape.Faces):
+        for edge in face.Edges:
+            bucket = groups.setdefault(edge.hashCode(), [])
+            match = next((row for row in bucket if edge.isSame(row[0])), None)
+            if match is None:
+                match = (edge, set())
+                bucket.append(match)
+            match[1].add(index)
+    for bucket in groups.values():
+        for _, indices in bucket:
+            for index in indices:
+                neighbors[index].update(indices - {index})
+    return [['Face' + str(index + 1) for index in sorted(indices)] for indices in neighbors]
 
 
 def _step_units(path):
@@ -256,9 +296,12 @@ def _step_units(path):
 
 
 def inspect_step(manifest_path, asset_id, recipe, out):
-    recipe = plans.validate_document(recipe, 'step-recipe')
+    profile = recipe.get('profile') if isinstance(recipe, dict) else plans.PROFILE
+    recipe = plans.validate_document(recipe, 'step-recipe', profile=profile)
     manifest_path = guarded_path(manifest_path)
     manifest_before = ledger.file_sha(manifest_path)
+    if load_manifest(manifest_path)['profile'] != profile:
+        raise ValueError('step_recipe_profile_mismatch')
     resolved = resolve_asset(manifest_path, asset_id, 'step')
     if ledger.file_sha(manifest_path) != manifest_before:
         raise ValueError('input_changed_during_preparation')
@@ -301,6 +344,12 @@ def inspect_step(manifest_path, asset_id, recipe, out):
                           'center_quantized': [round(v / precision) for v in center],
                           'bounds_quantized': [round(v / precision) for v in bounds],
                           'normal_quantized': None if normal is None else [round(v, 12) for v in normal]}
+        if profile == 'c-s2' and normal is not None:
+            # Textual BREP roundtrip may flip the sign of a rounded zero.
+            # S2 hashes numeric zero canonically; physical normal data is unchanged.
+            signature_data['normal_quantized'] = [
+                0.0 if component == 0 else component
+                for component in signature_data['normal_quantized']]
         faces.append({'id': 'Face' + str(index), 'signature': canonical_sha(signature_data),
                       'ambiguous': False, 'surface_type': surface_type, 'area_mm2': float(face.Area),
                       'center_mm': center, 'bounds_mm': bounds, 'normal': normal,
@@ -319,8 +368,8 @@ def inspect_step(manifest_path, asset_id, recipe, out):
     asset_after = resolve_asset(manifest_path, asset_id, 'step')['digest']
     if manifest_before != manifest_after or resolved['digest'] != asset_after:
         raise ValueError('input_changed_during_preparation')
-    facts = {'schema': 'cad-harness.step-facts.v4c', 'profile': 'c-s1', 'asset_id': asset_id,
-             'source_sha256': resolved['digest'], 'units': 'mm', 'bounds_mm': _bounds(shape),
+    facts = {'schema': 'cad-harness.step-facts.v4c', 'profile': profile, 'asset_id': asset_id,
+             'source_sha256': resolved['digest'], 'units': 'mm', 'bounds_mm': _bounds(shape, tight=profile == 'c-s2'),
              'topology': {'solids': len(shape.Solids), 'shells': len(shape.Shells), 'faces': len(shape.Faces), 'edges': len(shape.Edges)},
              'frame': {'source_axes': recipe['source_axes'], 'source_units': units,
                        'import_units': 'mm', 'axis_transform': 'identity',
@@ -330,8 +379,12 @@ def inspect_step(manifest_path, asset_id, recipe, out):
              'provenance': {'manifest_sha256_before': manifest_before, 'manifest_sha256_after': manifest_after,
                             'asset_sha256_before': resolved['digest'], 'asset_sha256_after': asset_after,
                             'importer': 'FreeCAD.Part.Shape.read', 'freecad_version': '.'.join(FreeCAD.Version()[:3])}}
-    packet = {'schema': 'cad-harness.prepared.v4c', 'profile': 'c-s1', 'source_manifest_sha256': manifest_before, 'assets': {asset_id: facts}}
-    plans.validate_document(packet, 'prepared')
+    if profile == 'c-s2':
+        facts['signature_precision_mm'] = precision
+        for face, adjacent in zip(facts['faces'], _adjacency(shape)):
+            face['adjacent_face_ids'] = adjacent
+    packet = {'schema': 'cad-harness.prepared.v4c', 'profile': profile, 'source_manifest_sha256': manifest_before, 'assets': {asset_id: facts}}
+    plans.validate_document(packet, 'prepared', profile=profile)
     output = Path(out)
     _lexical(output)
     if output.suffix.lower() == '.json':

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.plan.v4c",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema", "profile", "family", "asset_id", "source_sha256", "selection", "operation", "kernel_tolerance_mm"],
+  "properties": {
+    "schema": {"const": "cad-harness.plan.v4c"},
+    "profile": {"const": "c-s2"},
+    "family": {"const": "step_direct_edit"},
+    "asset_id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"},
+    "source_sha256": {"$ref": "#/$defs/hash"},
+    "selection": {"$ref": "#/$defs/selector"},
+    "kernel_tolerance_mm": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.001},
+    "operation": {"oneOf": [
+      {"type": "object", "additionalProperties": false, "required": ["kind", "distance_mm", "reconnect"], "properties": {
+        "kind": {"const": "offset"}, "distance_mm": {"type": "number", "minimum": -1000, "maximum": 1000},
+        "reconnect": {"const": "extend_intersect_trim"}
+      }},
+      {"type": "object", "additionalProperties": false, "required": ["kind", "replacement_asset_id", "replacement_source_sha256", "replacement_selection", "reconnect", "extension_limit_mm"], "properties": {
+        "kind": {"const": "replace"}, "replacement_asset_id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"},
+        "replacement_source_sha256": {"$ref": "#/$defs/hash"}, "replacement_selection": {"$ref": "#/$defs/selector"},
+        "reconnect": {"const": "extend_intersect_trim"}, "extension_limit_mm": {"type": "number", "exclusiveMinimum": 0, "maximum": 1000}
+      }}
+    ]}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "selector": {"type": "object", "additionalProperties": false, "required": ["face_id", "signature", "adjacent_face_ids"], "properties": {
+      "face_id": {"type": "string", "pattern": "^Face[1-9][0-9]*$"}, "signature": {"$ref": "#/$defs/hash"},
+      "adjacent_face_ids": {"type": "array", "uniqueItems": true, "maxItems": 256, "items": {"type": "string", "pattern": "^Face[1-9][0-9]*$"}}
+    }}
+  }
+}

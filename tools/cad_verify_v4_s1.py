@@ -1,4 +1,4 @@
-"""Opt-in S1 deterministic facade; development evidence never authorizes a trial.
+"""Opt-in capability-stage facade; development evidence never authorizes a trial.
 
 All native execution is owned, stdin-closed, captured and separately verified.
 No provider launcher, ambient attachment discovery or acceptance defaults live here.
@@ -42,6 +42,18 @@ PENDING = [
     "final execution freeze binding complete U1-U5 roster and all approved cards/commitments",
     "Astra Max judging then authoritative user visual verdict; same-model pilot judge caveat",
 ]
+STAGES = {
+    "c-s1": dict(policy="capability-policy.json", label="S1", schema_prefix="", pending=PENDING),
+    "c-s2": dict(policy="policy-c-s2.json", label="S2", schema_prefix="s2-",
+                 pending=["S1/S2 external reviews and S3 implementation/review"] + PENDING[1:]),
+}
+
+
+def _stage(profile):
+    if not isinstance(profile, str) or profile not in STAGES:
+        raise ValueError("unknown_capability_profile")
+    return STAGES[profile]
+
 FORBIDDEN = {"pilot-user", "v4-holdout-private"}
 
 
@@ -76,36 +88,42 @@ def _modules():
     return cad_verify_v4_inputs, cad_verify_v4_plans
 
 
-def preflight(root=ROOT, *, policy_path=None):
+def preflight(root=ROOT, *, policy_path=None, profile=PROFILE):
+    stage = _stage(profile)
     root = safe_path(root)
-    policy = ledger.read_json(root / DESIGN / "capability-policy.json")
+    policy = ledger.read_json(root / DESIGN / stage["policy"])
     if policy_path is not None and ledger.read_json(safe_path(policy_path, regular=True)) != policy:
         raise Stop("s1_policy_override_not_bound")
-    if policy.get("profile") != PROFILE or policy.get("live_authorized_calls") != 0:
+    if policy.get("profile") != profile or policy.get("live_authorized_calls") != 0:
         raise Stop("s1_policy_not_offline")
-    skill = agent.bundle(root, profile=PROFILE)
-    for name in ("input-manifest", "prepared-inputs", "contour", "capability-plan",
-                 "judge-card", "judge-result", "capability-manifest"):
-        schema = ledger.read_json(root / DESIGN / "schemas" / (name + ".schema.json"))
+    skill = agent.bundle(root, profile=profile)
+    names = ("input-manifest", "prepared-inputs", "capability-plan", "judge-card",
+             "judge-result", "capability-manifest")
+    names += ("step-facts", "step-recipe") if profile == "c-s2" else ("contour",)
+    for name in names:
+        schema = ledger.read_json(root / DESIGN / "schemas" / (stage["schema_prefix"] + name + ".schema.json"))
         if not isinstance(schema, dict) or not (schema.get("type") == "object" or isinstance(schema.get("oneOf"), list)):
             raise ValueError("s1_schema_contract:" + name)
     snapshot = root / DESIGN / "original-profile-snapshot.zip"
     verify_original_snapshot(snapshot)
-    return dict(schema="cad-harness.preflight.v4c", profile=PROFILE, status="offline_ready",
-                implementation_stage="S1", skill_sha256=ledger.sha(skill),
-                policy_sha256=ledger.file_sha(root / DESIGN / "capability-policy.json"),
+    return dict(schema="cad-harness.preflight.v4c", profile=profile, status="offline_ready",
+                implementation_stage=stage["label"], skill_sha256=ledger.sha(skill),
+                policy_sha256=ledger.file_sha(root / DESIGN / stage["policy"]),
                 original_profile_snapshot_sha256=ledger.file_sha(snapshot),
                 live_calls=0, live_cad_runs=0, holdout="not_run", pilot="not_run",
-                final_v4_ready=False, pending_final_freeze=list(PENDING))
+                final_v4_ready=False, pending_final_freeze=list(stage["pending"]),
+                **_prior_snapshot(root, profile))
 
 
-def verify_original_snapshot(path):
+def verify_original_snapshot(path, *, stage=None):
     """Audit archive bytes without executing or extracting the original profile."""
     path = safe_path(path, regular=True)
     with zipfile.ZipFile(path) as archive:
         metadata = json.loads(archive.read("snapshot.json"))
         files = metadata.get("files")
-        if metadata.get("schema") != "cad-harness.original-snapshot.v4" or not isinstance(files, dict):
+        expected_schema = "cad-harness.stage-snapshot.v4c" if stage else "cad-harness.original-snapshot.v4"
+        if (metadata.get("schema") != expected_schema or not isinstance(files, dict)
+                or stage is not None and metadata.get("profile") != stage):
             raise ValueError("original_snapshot_contract")
         if set(archive.namelist()) != set(files) | {"snapshot.json"}:
             raise ValueError("original_snapshot_file_set")
@@ -118,6 +136,14 @@ def verify_original_snapshot(path):
     return metadata
 
 
+def _prior_snapshot(root, profile):
+    if profile == "c-s1":
+        return {}
+    path = safe_path(root / DESIGN / "s1-profile-snapshot.zip", regular=True)
+    verify_original_snapshot(path, stage="c-s1")
+    return dict(prior_stage_snapshot_sha256=ledger.file_sha(path))
+
+
 def _hashes(directory):
     root = safe_path(directory)
     result = {}
@@ -128,14 +154,19 @@ def _hashes(directory):
     return result
 
 
-def native_work(operation, out, journal, *, timeout=300, process=None, **fields):
+def native_work(operation, out, journal, *, timeout=300, process=None, profile=PROFILE, **fields):
     """Run a data-only worker job; raw streams survive both success and failure."""
+    _stage(profile)
+    if profile == "c-s2" and operation not in ("prepare-step", "compile", "verify", "identity"):
+        raise ValueError("s2_worker_operation")
     if operation not in ("prepare-step", "contour", "text", "compile", "verify", "identity"):
         raise ValueError("s1_worker_operation")
     if type(timeout) not in (int, float) or not math.isfinite(timeout) or timeout <= 0:
         raise ValueError("s1_worker_timeout")
     out = ledger.new_directory(safe_path(out))
     job = dict(operation=operation, out=str(out), **fields)
+    if profile != PROFILE:
+        job["profile"] = profile
     for key in ("manifest", "prepared", "plan", "card"):
         if key in job:
             job[key] = str(safe_path(job[key], regular=True))
@@ -147,8 +178,8 @@ def native_work(operation, out, journal, *, timeout=300, process=None, **fields)
     work_id = "work-%06d" % (journal.sequence + 1)
     inputs = {key: ledger.file_sha(value) for key, value in job.items()
               if key in ("manifest", "prepared", "plan", "card")}
-    code_bindings = freezing.bindings(ROOT)
-    journal.append("work_started", work_id=work_id, work_kind=operation, profile=PROFILE,
+    code_bindings = implementation_bindings(ROOT, profile=profile)
+    journal.append("work_started", work_id=work_id, work_kind=operation, profile=profile,
                    inputs=inputs, code_bindings=code_bindings, submitted_sha256=ledger.file_sha(job_path),
                    argv=argv, cwd=str(ROOT), stdin="DEVNULL", evidence_mode="independent_dev")
     captures = {key: ledger.StreamCapture(out.parent / (out.name + "." + key + ".bin"))
@@ -170,6 +201,8 @@ def native_work(operation, out, journal, *, timeout=300, process=None, **fields)
             result = ledger.read_json(safe_path(result_path, regular=True))
             if not isinstance(result, dict) or result.get("status") not in ("PASS", "FAIL", "UNVERIFIED"):
                 raise ValueError("s1_worker_result_contract")
+            if result.get("profile") != profile:
+                raise ValueError("native_result_profile_mismatch")
             if (result["status"] == "FAIL" and result.get("error_type") in
                     {"ImportError", "ModuleNotFoundError", "OSError", "PermissionError", "FileNotFoundError", "MemoryError"}):
                 raise ValueError("s1_native_environment_failure:" + result["error_type"])
@@ -179,7 +212,7 @@ def native_work(operation, out, journal, *, timeout=300, process=None, **fields)
                         or native.get("cleanup_status") != "exited"
                         or result.get("gui_up") != 0 or result.get("document_closed") is not True):
                     raise ValueError("s1_owned_headless_cleanup_evidence")
-            if freezing.bindings(ROOT) != code_bindings:
+            if implementation_bindings(ROOT, profile=profile) != code_bindings:
                 raise ValueError("s1_native_implementation_changed_during_work")
         else:
             parse_error = "native_result_missing"
@@ -188,7 +221,7 @@ def native_work(operation, out, journal, *, timeout=300, process=None, **fields)
     if not failure and not parse_error and (code not in (0, 1) or result is None
             or (code == 0) != (result["status"] == "PASS")):
         parse_error = "s1_native_worker_exit_status_mismatch"
-    journal.append("work_finished", work_id=work_id, work_kind=operation, profile=PROFILE,
+    journal.append("work_finished", work_id=work_id, work_kind=operation, profile=profile,
                    wall_s=time.monotonic()-tick, exit_code=code, streams=streams,
                    outputs=_hashes(out), status=result["status"] if result and not failure and not parse_error else "INCOMPLETE",
                    failure=str(failure) if failure else parse_error, live_calls=0,
@@ -201,10 +234,13 @@ def native_work(operation, out, journal, *, timeout=300, process=None, **fields)
     return result
 
 
-def _manifest_inputs(manifest_path, prepared_path=None):
+def _manifest_inputs(manifest_path, prepared_path=None, *, profile=PROFILE):
     inputs, _ = _modules()
+    _stage(profile)
     manifest_path = safe_path(manifest_path, regular=True)
     manifest = inputs.load_manifest(manifest_path)
+    if manifest["profile"] != profile:
+        raise ValueError("capability_input_profile_mismatch")
     if manifest.get("evidence_mode") != "independent_dev":
         raise Stop("s1_implementation_accepts_independent_dev_only")
     prepared = inputs.verify_prepared(safe_path(prepared_path, regular=True), manifest_path) if prepared_path else None
@@ -212,30 +248,35 @@ def _manifest_inputs(manifest_path, prepared_path=None):
 
 
 def prepare(operation, manifest_path, run_dir, *, asset_id=None, recipe_path=None,
-            font_id=None, text=None, height_mm=None, process=None):
-    manifest_path, _, _ = _manifest_inputs(manifest_path)
+            font_id=None, text=None, height_mm=None, process=None, profile=PROFILE):
+    manifest_path, _, _ = _manifest_inputs(manifest_path, profile=profile)
     fields = dict(manifest=str(manifest_path))
+    if profile == "c-s2" and operation != "prepare-step":
+        raise ValueError("s2_preparation_operation")
     if operation in ("prepare-step", "contour"):
         if not isinstance(asset_id, str) or not asset_id or recipe_path is None:
             raise ValueError("s1_preparation_asset_recipe_required")
-        fields.update(asset_id=asset_id, recipe=ledger.read_json(safe_path(recipe_path, regular=True)))
+        recipe = ledger.read_json(safe_path(recipe_path, regular=True))
+        _modules()[1].validate_document(recipe, "step-recipe" if operation == "prepare-step" else "contour-recipe",
+                                        profile=profile)
+        fields.update(asset_id=asset_id, recipe=recipe)
     elif operation == "text":
         fields.update(font_id=font_id, text=text, height_mm=height_mm)
     else:
         raise ValueError("s1_preparation_operation")
     out = ledger.new_directory(safe_path(run_dir))
-    with ledger.Journal(out / "ledger.jsonl", out.name, "s1-development") as journal:
+    with ledger.Journal(out / "ledger.jsonl", out.name, profile[2:] + "-development") as journal:
         tick = time.monotonic()
-        journal.append("run_started", profile=PROFILE, evidence_mode="independent_dev", live_calls=0)
+        journal.append("run_started", profile=profile, evidence_mode="independent_dev", live_calls=0)
         try:
-            result = native_work(operation, out / "native", journal, process=process, **fields)
+            result = native_work(operation, out / "native", journal, process=process, profile=profile, **fields)
         except BaseException as exc:
             journal.append("run_finished", wall_s=time.monotonic()-tick, active_s=time.monotonic()-tick,
                            stop_reason=str(exc), live_calls=0)
             raise
         journal.append("run_finished", wall_s=time.monotonic()-tick, active_s=time.monotonic()-tick,
                        stop_reason=None, live_calls=0)
-    summary = dict(schema="cad-harness.preparation.v4c", profile=PROFILE,
+    summary = dict(schema="cad-harness.preparation.v4c", profile=profile,
                    evidence_mode="independent_dev", status=result["status"],
                    result_path=str(out / "native/result.json"), result=result,
                    live_calls=0, live_cad_runs=0, native_work=1, holdout="not_run", pilot="not_run")
@@ -243,9 +284,9 @@ def prepare(operation, manifest_path, run_dir, *, asset_id=None, recipe_path=Non
     return summary
 
 
-def merge_prepared(manifest_path, packet_paths, output_path):
+def merge_prepared(manifest_path, packet_paths, output_path, *, profile=PROFILE):
     """Combine immutable prepared packets only after rechecking every source."""
-    manifest_path, _, _ = _manifest_inputs(manifest_path)
+    manifest_path, _, _ = _manifest_inputs(manifest_path, profile=profile)
     inputs, _ = _modules()
     assets = {}
     for path in packet_paths:
@@ -255,7 +296,7 @@ def merge_prepared(manifest_path, packet_paths, output_path):
         assets.update(packet["assets"])
     if not assets:
         raise ValueError("s1_prepared_packets_required")
-    result = dict(schema="cad-harness.prepared.v4c", profile=PROFILE,
+    result = dict(schema="cad-harness.prepared.v4c", profile=profile,
                   source_manifest_sha256=ledger.file_sha(manifest_path), assets=assets)
     inputs.verify_prepared(result, manifest_path)
     ledger.write_json(safe_path(output_path), result)
@@ -263,25 +304,25 @@ def merge_prepared(manifest_path, packet_paths, output_path):
 
 
 def compile_candidate(manifest_path, prepared_path, plan_path, card_path, run_dir, *,
-                      candidate_dir=None, process=None, journal=None, timeout=300, budget=None):
-    manifest_path, _, prepared = _manifest_inputs(manifest_path, prepared_path)
+                      candidate_dir=None, process=None, journal=None, timeout=300, budget=None, profile=PROFILE):
+    manifest_path, _, prepared = _manifest_inputs(manifest_path, prepared_path, profile=profile)
     _, plans = _modules()
     plan_path, card_path = safe_path(plan_path, regular=True), safe_path(card_path, regular=True)
-    plans.validate_plan(ledger.read_json(plan_path), manifest_path, prepared)
-    plans.validate_judge_card(ledger.read_json(card_path))
+    plans.validate_plan(ledger.read_json(plan_path), manifest_path, prepared, profile=profile)
+    plans.validate_judge_card(ledger.read_json(card_path), profile=profile)
     if budget is None:
         budget = Budget(4)
         if candidate_dir is None:
             budget.cad()
     if journal is None:
         out = ledger.new_directory(safe_path(run_dir))
-        with ledger.Journal(out / "ledger.jsonl", out.name, "s1-development") as own:
+        with ledger.Journal(out / "ledger.jsonl", out.name, profile[2:] + "-development") as own:
             tick = time.monotonic()
-            own.append("run_started", profile=PROFILE, evidence_mode="independent_dev", live_calls=0)
+            own.append("run_started", profile=profile, evidence_mode="independent_dev", live_calls=0)
             try:
                 result = compile_candidate(manifest_path, prepared_path, plan_path, card_path,
                                            out / "candidate", candidate_dir=candidate_dir,
-                                           process=process, journal=own, timeout=timeout, budget=budget)
+                                           process=process, journal=own, timeout=timeout, budget=budget, profile=profile)
             except BaseException as exc:
                 own.append("run_finished", wall_s=time.monotonic()-tick,
                            active_s=time.monotonic()-tick, stop_reason=str(exc), live_calls=0)
@@ -293,10 +334,10 @@ def compile_candidate(manifest_path, prepared_path, plan_path, card_path, run_di
     fields = dict(manifest=str(manifest_path), prepared=str(safe_path(prepared_path, regular=True)),
                   plan=str(plan_path), card=str(card_path))
     if candidate_dir is None:
-        build = native_work("compile", run_dir, journal, process=process,
+        build = native_work("compile", run_dir, journal, process=process, profile=profile,
                             timeout=min(timeout, budget.cad_timeout()), **fields)
         if build["status"] != "PASS":
-            return dict(schema="cad-harness.candidate.v4c", profile=PROFILE, status=build["status"],
+            return dict(schema="cad-harness.candidate.v4c", profile=profile, status=build["status"],
                         compile=build, verification=None, live_calls=0, native_work=1,
                         evidence_mode="independent_dev", holdout="not_run", pilot="not_run")
         source = safe_path(run_dir)
@@ -304,18 +345,18 @@ def compile_candidate(manifest_path, prepared_path, plan_path, card_path, run_di
         source = safe_path(candidate_dir)
         build = ledger.read_json(safe_path(source / "result.json", regular=True))
     verify_out = safe_path(str(run_dir) + "-verify")
-    verify = native_work("verify", verify_out, journal, process=process,
+    verify = native_work("verify", verify_out, journal, process=process, profile=profile,
                          timeout=min(timeout, 90 if budget.stage == "repair" else 300, budget.remaining()),
                          candidate_dir=str(source), **fields)
     budget.remaining()
-    return dict(schema="cad-harness.candidate.v4c", profile=PROFILE, status=verify["status"],
+    return dict(schema="cad-harness.candidate.v4c", profile=profile, status=verify["status"],
                 compile=build, verification=verify, candidate_dir=str(source),
                 live_calls=0, native_work=1 if candidate_dir is not None else 2,
                 evidence_mode="independent_dev", holdout="not_run", pilot="not_run",
                 final_v4_ready=False)
 
 
-def repair_observations(result):
+def repair_observations(result, *, profile=PROFILE):
     """Send measured diagnostics, never checker targets, cards or file locations."""
     absent = object()
     denied = ("target", "expected", "path", "card", "recipe", "mask", "source", "search_extent")
@@ -344,7 +385,7 @@ def repair_observations(result):
     error_code = native_error if isinstance(native_error, str) and re.fullmatch(r"[a-z][a-z0-9_]{1,100}", native_error) else None
     geometry = {key: value for key, value in (compiled.get("measurements") or {}).items()
                 if key in ("bounds_mm", "volume_mm3", "solids")}
-    return dict(schema="cad-harness.observations.v4c", profile=PROFILE,
+    return dict(schema="cad-harness.observations.v4c", profile=profile,
                 status=result["status"], geometry=visible(geometry), checks=checks,
                 compile_failed=compiled.get("status") == "FAIL",
                 compile_error_code=error_code,
@@ -353,12 +394,13 @@ def repair_observations(result):
 
 class PlanReplay:
     """Explicit fake-model responses; no physical attempt, billing or provider claim."""
-    def __init__(self, path, request_raw, prepared_path):
+    def __init__(self, path, request_raw, prepared_path, *, profile=PROFILE):
+        _stage(profile)
         document = ledger.read_json(safe_path(path, regular=True))
         required = {"schema", "profile", "request_sha256", "prepared_sha256", "responses"}
         if (not isinstance(document, dict) or set(document) != required
                 or document.get("schema") != "cad-harness.plan-replay.v4c"
-                or document.get("profile") != PROFILE
+                or document.get("profile") != profile
                 or document.get("request_sha256") != ledger.sha(request_raw)
                 or document.get("prepared_sha256") != ledger.file_sha(prepared_path)
                 or not isinstance(document.get("responses"), list)):
@@ -378,7 +420,7 @@ class PlanReplay:
 
 
 def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
-            replay=None, model=None, selection=None, process=None, root=ROOT):
+            replay=None, model=None, selection=None, process=None, root=ROOT, profile=PROFILE):
     """Typed plan route using the existing P1/R1/CAD2/active-time invariants."""
     if replay is None and model is None:
         raise Stop("s1_development_replay_required_no_live_authorization")
@@ -391,21 +433,21 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
     def check_request_inputs():
         if any(ledger.file_sha(safe_path(path, regular=True)) != digest for path, digest in input_hashes.items()):
             raise Stop("s1_request_inputs_changed")
-    manifest_path, _, prepared = _manifest_inputs(manifest_path, prepared_path)
+    manifest_path, _, prepared = _manifest_inputs(manifest_path, prepared_path, profile=profile)
     inputs, plans = _modules()
     request_raw = request_path.read_bytes()
     request_text = request_raw.decode("utf-8")
-    plans.validate_judge_card(ledger.read_json(card_path))
-    adapter = agent.PlanSkillAdapter(agent.bundle(root, profile=PROFILE), request_text,
+    plans.validate_judge_card(ledger.read_json(card_path), profile=profile)
+    adapter = agent.PlanSkillAdapter(agent.bundle(root, profile=profile), request_text,
                                      manifest_path, prepared, selection)
-    model = model if model is not None else PlanReplay(replay, request_raw, prepared_path)
+    model = model if model is not None else PlanReplay(replay, request_raw, prepared_path, profile=profile)
     out = ledger.new_directory(safe_path(run_dir))
     budget = Budget(4)
     response_count, result, error = 0, None, None
-    with ledger.Journal(out / "ledger.jsonl", out.name, "s1-development") as journal:
+    with ledger.Journal(out / "ledger.jsonl", out.name, profile[2:] + "-development") as journal:
         tick = time.monotonic()
-        journal.append("run_started", profile=PROFILE, evidence_mode="unit_mock", live_calls=0,
-                       skill_sha256=ledger.sha(agent.bundle(root, profile=PROFILE)),
+        journal.append("run_started", profile=profile, evidence_mode="unit_mock", live_calls=0,
+                       skill_sha256=ledger.sha(agent.bundle(root, profile=profile)),
                        request_sha256=input_hashes[request_path], input_manifest_sha256=input_hashes[manifest_path],
                        prepared_sha256=input_hashes[prepared_path], card_sha256=input_hashes[card_path])
         def generate(purpose, observations=None):
@@ -414,7 +456,7 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
             data = dict(target="plan", stage="parse_repair" if purpose == "parse_repair" else budget.stage,
                         inputs=adapter.inputs, selection=adapter.selection)
             if observations is not None:
-                data["observations"] = repair_observations(observations) if purpose == "repair" else observations
+                data["observations"] = repair_observations(observations, profile=profile) if purpose == "repair" else observations
             adapter.context(data)
             if inputs.model_inputs(prepared, manifest_path) != adapter.inputs:
                 raise ValueError("plan_runtime_provenance")
@@ -432,7 +474,7 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
             response_count = number
             with (out / ("response-%d.txt" % number)).open("x", encoding="utf-8", newline="") as file:
                 file.write(text)
-            journal.append("replay_response", profile=PROFILE, purpose=purpose,
+            journal.append("replay_response", profile=profile, purpose=purpose,
                            response_index=number, wall_s=time.monotonic()-started,
                            payload_sha256=ledger.file_sha(out / ("payload-%d.json" % number)),
                            response_sha256=ledger.sha(text.encode("utf-8")),
@@ -440,12 +482,12 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
             return text
         def parse(text):
             try:
-                return plans.validate_plan(cad_agent.loads(text), manifest_path, prepared)
+                return plans.validate_plan(cad_agent.loads(text), manifest_path, prepared, profile=profile)
             except (ValueError, KeyError, TypeError) as exc:
                 if budget.counts["parse_repair"]:
                     raise
                 repaired = generate("parse_repair", {"invalid_response": text, "error": str(exc)})
-                return plans.validate_plan(cad_agent.loads(repaired), manifest_path, prepared)
+                return plans.validate_plan(cad_agent.loads(repaired), manifest_path, prepared, profile=profile)
         try:
             plan = parse(generate("source"))
             for attempt in (1, 2):
@@ -455,7 +497,7 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
                 budget.cad()
                 result = compile_candidate(manifest_path, prepared_path, plan_path, card_path,
                                            out / ("candidate-%d" % attempt), journal=journal,
-                                           process=process, timeout=budget.cad_timeout(), budget=budget)
+                                           process=process, timeout=budget.cad_timeout(), budget=budget, profile=profile)
                 check_request_inputs()
                 if result["status"] == "PASS" or attempt == 2:
                     break
@@ -465,7 +507,7 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
             error = str(exc)
         journal.append("run_finished", wall_s=time.monotonic()-tick,
                        active_s=time.monotonic()-tick, stop_reason=error, live_calls=0)
-    value = dict(schema="cad-harness.request.v4c", profile=PROFILE,
+    value = dict(schema="cad-harness.request.v4c", profile=profile,
                  evidence_mode="unit_mock", status=result["status"] if result and not error else "INCOMPLETE",
                  request_sha256=ledger.sha(request_raw), result=result, stop_reason=error,
                  replayed_responses=response_count, physical_model_attempts=0, live_calls=0,
@@ -476,10 +518,13 @@ def request(request_path, card_path, run_dir, *, manifest_path, prepared_path,
     return value, 0 if value["status"] == "PASS" else 1
 
 
-def implementation_bindings(root=ROOT):
+def implementation_bindings(root=ROOT, *, profile=PROFILE):
     root = safe_path(root)
+    _stage(profile)
     files = freezing.bindings(root)
     names = ["capability-policy.json", "PLAN-V4-ADDENDUM-C.md", "original-profile-snapshot.zip"]
+    if profile == "c-s2":
+        names += ["policy-c-s2.json", "s1-profile-snapshot.zip", "dev-c-s2/generate.py"]
     for name in names:
         path = safe_path(root / DESIGN / name, regular=True)
         files[path.relative_to(root).as_posix()] = ledger.file_sha(path)
@@ -490,13 +535,13 @@ def implementation_bindings(root=ROOT):
 
 
 def implementation_lock(run_dir, *, root=ROOT, manifest_path=None, prepared_path=None,
-                        card_path=None, recipe_paths=(), process=None):
-    """S1 development lock only, never a partial/final trial authorization."""
+                        card_path=None, recipe_paths=(), process=None, profile=PROFILE):
+    """Stage development lock only, never partial/final trial authorization."""
     root = safe_path(root)
-    readiness = preflight(root)
+    readiness = preflight(root, profile=profile)
     dev = {}
     if manifest_path is not None:
-        manifest_path, _, _ = _manifest_inputs(manifest_path, prepared_path)
+        manifest_path, _, _ = _manifest_inputs(manifest_path, prepared_path, profile=profile)
         dev["input_manifest"] = dict(path=str(manifest_path), sha256=ledger.file_sha(manifest_path))
         if prepared_path is not None:
             prepared_path = safe_path(prepared_path, regular=True)
@@ -505,7 +550,7 @@ def implementation_lock(run_dir, *, root=ROOT, manifest_path=None, prepared_path
         raise ValueError("s1_prepared_requires_input_manifest")
     if card_path is not None:
         card_path = safe_path(card_path, regular=True)
-        _modules()[1].validate_judge_card(ledger.read_json(card_path))
+        _modules()[1].validate_judge_card(ledger.read_json(card_path), profile=profile)
         dev["judge_card"] = dict(path=str(card_path), sha256=ledger.file_sha(card_path))
     recipes = {}
     import re
@@ -522,39 +567,46 @@ def implementation_lock(run_dir, *, root=ROOT, manifest_path=None, prepared_path
         kind = kinds.get(recipe.get("schema")) if isinstance(recipe, dict) else None
         if kind is None:
             raise ValueError("s1_recipe_schema")
-        _modules()[1].validate_document(recipe, kind)
+        _modules()[1].validate_document(recipe, kind, profile=profile)
         recipes[recipe_id] = dict(path=str(path), sha256=ledger.file_sha(path))
     out = ledger.new_directory(safe_path(run_dir))
-    with ledger.Journal(out / "ledger.jsonl", out.name, "s1-implementation-lock") as journal:
-        identity = native_work("identity", out / "runtime", journal, process=process)
+    with ledger.Journal(out / "ledger.jsonl", out.name, profile[2:] + "-implementation-lock") as journal:
+        identity = native_work("identity", out / "runtime", journal, process=process, profile=profile)
     if identity["status"] != "PASS":
         raise Stop("s1_native_runtime_identity_unverified")
-    value = dict(schema="cad-harness.capability-manifest.v4c", profile=PROFILE,
+    value = dict(schema="cad-harness.capability-manifest.v4c", profile=profile,
                  stage="implementation", status="offline_locked", authorization=None,
-                 freeze_dir=str(out), files=implementation_bindings(root),
+                 freeze_dir=str(out), files=implementation_bindings(root, profile=profile),
                  skill_sha256=readiness["skill_sha256"], policy_sha256=readiness["policy_sha256"],
                  host=freezing._host(), runtime=identity,
                  original_profile_snapshot=dict(path=DESIGN + "/original-profile-snapshot.zip",
                                                 sha256=readiness["original_profile_snapshot_sha256"]),
                  generators=json.loads(json.dumps(PHASE_MODELS)), judge=dict(JUDGE), recipes=recipes,
-                 dev=dev, pending_final_freeze=list(PENDING), final_v4_ready=False)
+                 dev=dev, pending_final_freeze=list(_stage(profile)["pending"]), final_v4_ready=False)
+    if profile == "c-s2":
+        value["prior_stage_snapshot"] = dict(profile="c-s1", path=DESIGN + "/s1-profile-snapshot.zip",
+                                             sha256=readiness["prior_stage_snapshot_sha256"])
     ledger.write_json(out / "SHA256.json", value)
     value["sha256_file"] = ledger.file_sha(out / "SHA256.json")
-    _modules()[1].validate_document(value, "capability")
+    _modules()[1].validate_document(value, "capability", profile=profile)
     ledger.write_json(out / "manifest.json", value)
     return value
 
 
-def verify_implementation_lock(manifest_path, *, root=ROOT):
+def verify_implementation_lock(manifest_path, *, root=ROOT, profile=None):
     path = safe_path(manifest_path, regular=True)
     value = ledger.read_json(path)
-    _modules()[1].validate_document(value, "capability")
+    profile = value.get("profile") if profile is None and isinstance(value, dict) else profile
+    _stage(profile)
+    _modules()[1].validate_document(value, "capability", profile=profile)
     required = {"schema", "profile", "stage", "status", "authorization", "freeze_dir", "files",
                 "skill_sha256", "policy_sha256", "host", "runtime", "original_profile_snapshot",
                 "generators", "judge", "recipes", "dev", "pending_final_freeze", "final_v4_ready", "sha256_file"}
+    if profile == "c-s2":
+        required.add("prior_stage_snapshot")
     if (not isinstance(value, dict) or set(value) != required
             or value.get("schema") != "cad-harness.capability-manifest.v4c"
-            or value.get("profile") != PROFILE or value.get("stage") != "implementation"
+            or value.get("profile") != profile or value.get("stage") != "implementation"
             or value.get("status") != "offline_locked" or value.get("authorization") is not None
             or value.get("final_v4_ready") is not False or value.get("generators") != PHASE_MODELS
             or value.get("judge") != JUDGE
@@ -564,12 +616,14 @@ def verify_implementation_lock(manifest_path, *, root=ROOT):
     payload = {key: item for key, item in value.items() if key != "sha256_file"}
     if ledger.file_sha(sha_path) != value["sha256_file"] or ledger.read_json(sha_path) != payload:
         raise Stop("s1_implementation_sha_mismatch")
-    if value["files"] != implementation_bindings(root):
+    if value["files"] != implementation_bindings(root, profile=profile):
         raise Stop("s1_implementation_file_binding_mismatch")
-    ready = preflight(root)
+    ready = preflight(root, profile=profile)
     if (value["host"] != freezing._host() or value["skill_sha256"] != ready["skill_sha256"]
             or value["policy_sha256"] != ready["policy_sha256"]):
         raise Stop("s1_implementation_identity_mismatch")
+    if profile == "c-s2" and value["prior_stage_snapshot"]["sha256"] != ready["prior_stage_snapshot_sha256"]:
+        raise Stop("s2_prior_stage_snapshot_changed")
     for collection in (value["recipes"], value["dev"]):
         if not isinstance(collection, dict):
             raise Stop("s1_implementation_dependency_contract")
@@ -580,7 +634,7 @@ def verify_implementation_lock(manifest_path, *, root=ROOT):
                 raise Stop("s1_implementation_dependency_changed")
     if "input_manifest" in value["dev"]:
         _manifest_inputs(value["dev"]["input_manifest"]["path"],
-                         value["dev"].get("prepared", {}).get("path"))
+                         value["dev"].get("prepared", {}).get("path"), profile=profile)
     runtime = value["runtime"]
     if not isinstance(runtime, dict) or runtime.get("status") != "PASS":
         raise Stop("s1_runtime_identity_contract")
@@ -596,14 +650,15 @@ def verify_implementation_lock(manifest_path, *, root=ROOT):
     return value
 
 
-def run_development(replay_path, run_dir):
+def run_development(replay_path, run_dir, *, profile=PROFILE):
     """Execute a declared independent-dev mock batch, not a pilot/holdout."""
+    _stage(profile)
     replay_path = safe_path(replay_path, regular=True)
     document = ledger.read_json(replay_path)
     if (not isinstance(document, dict)
             or set(document) != {"schema", "profile", "evidence_mode", "entries"}
             or document.get("schema") != "cad-harness.plan-batch-replay.v4c"
-            or document.get("profile") != PROFILE
+            or document.get("profile") != profile
             or document.get("evidence_mode") != "independent_dev"
             or not isinstance(document.get("entries"), list) or not document["entries"]):
         raise ValueError("s1_development_batch_contract")
@@ -628,13 +683,13 @@ def run_development(replay_path, run_dir):
             if not path.is_relative_to(base):
                 raise ValueError("s1_development_entry_outside_bundle")
             entry[key] = path
-        _manifest_inputs(entry["input_manifest"], entry["prepared"])
+        _manifest_inputs(entry["input_manifest"], entry["prepared"], profile=profile)
         entries.append(entry)
     out = ledger.new_directory(safe_path(run_dir))
     rows = []
-    with ledger.Journal(out / "ledger.jsonl", out.name, "s1-development") as journal:
+    with ledger.Journal(out / "ledger.jsonl", out.name, profile[2:] + "-development") as journal:
         tick = time.monotonic()
-        journal.append("run_started", profile=PROFILE, evidence_mode="unit_mock", live_calls=0)
+        journal.append("run_started", profile=profile, evidence_mode="unit_mock", live_calls=0)
         for index, entry in enumerate(entries, 1):
             journal.append("episode_started", episode_id=entry["id"], route="plan")
             started = time.monotonic()
@@ -642,7 +697,7 @@ def run_development(replay_path, run_dir):
                 selection = ledger.read_json(entry["selection"]) if "selection" in entry else None
                 value, _ = request(entry["request"], entry["card"], out / ("episode-%03d" % index),
                                    manifest_path=entry["input_manifest"], prepared_path=entry["prepared"],
-                                   replay=entry["replay"], selection=selection)
+                                   replay=entry["replay"], selection=selection, profile=profile)
                 rows.append(dict(id=entry["id"], status=value["status"],
                                  summary_path=str(out / ("episode-%03d/summary.json" % index))))
             except (OSError, ValueError, KeyError, TypeError) as exc:
@@ -651,7 +706,7 @@ def run_development(replay_path, run_dir):
                            wall_s=time.monotonic()-started, active_s=time.monotonic()-started)
         journal.append("run_finished", wall_s=time.monotonic()-tick,
                        active_s=time.monotonic()-tick, stop_reason=None)
-    value = dict(schema="cad-harness.development-batch.v4c", profile=PROFILE,
+    value = dict(schema="cad-harness.development-batch.v4c", profile=profile,
                  status="PASS" if all(row["status"] == "PASS" for row in rows) else "INCOMPLETE",
                  evidence_mode="unit_mock", entries=rows, physical_model_attempts=0,
                  live_calls=0, holdout="not_run", pilot="not_run", final_v4_ready=False)

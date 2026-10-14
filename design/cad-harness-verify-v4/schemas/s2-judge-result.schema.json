@@ -1,0 +1,113 @@
+{
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "cad-harness.judgement.v4c"
+    },
+    "profile": {
+      "const": "c-s2"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "UNVERIFIED"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+          },
+          "metric": {
+            "enum": [
+              "solid_valid",
+              "face_count",
+              "unchanged_dimension",
+              "preserved_region",
+              "thickness_distribution",
+              "native_roundtrip"
+            ]
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "UNVERIFIED"
+            ]
+          },
+          "measured": {
+            "$ref": "#/$defs/value"
+          },
+          "target": {
+            "$ref": "#/$defs/value"
+          },
+          "tolerance": {
+            "$ref": "#/$defs/value"
+          },
+          "uncertainty": {
+            "$ref": "#/$defs/value"
+          },
+          "evidence": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        "required": [
+          "id",
+          "metric",
+          "status",
+          "measured",
+          "target",
+          "tolerance",
+          "uncertainty",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema",
+    "profile",
+    "status",
+    "checks"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.s2-judge-result.v4c",
+  "$defs": {
+    "value": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        }
+      ]
+    }
+  }
+}

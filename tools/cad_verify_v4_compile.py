@@ -37,9 +37,10 @@ def _solid(shape):
     return shape
 
 
-def shape_measurements(shape):
+def shape_measurements(shape, *, tight_bounds=False):
     _solid(shape)
-    b = shape.BoundBox
+    # S2 dimensions must bound trimmed geometry, not extended spline supports.
+    b = shape.optimalBoundingBox(False, False) if tight_bounds else shape.BoundBox
     return {'bounds_mm': [b.XMin, b.XMax, b.YMin, b.YMax, b.ZMin, b.ZMax],
             'volume_mm3': shape.Volume, 'solids': len(shape.Solids), 'valid': shape.isValid()}
 

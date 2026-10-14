@@ -27,6 +27,22 @@ MARKER = "\n<runtime_data>\n"
 def bundle(root=ROOT, *, profile="original"):
     root = Path(root)
     folder = root / "skills/cad-harness-v4"
+    if profile == "c-s2":
+        policy = ledger.read_json(root / "design/cad-harness-verify-v4/policy-c-s2.json")
+        required = dict(schema="cad-harness.capability-policy.v4c", profile="c-s2",
+                        stage="implementation", live_authorized_calls=0,
+                        provider_calls_allowed=False, model_calls_allowed=False,
+                        families=["step_direct_edit"], operations=["offset", "replace"],
+                        candidate_solid_count=1, original_holdout_calls=163,
+                        original_holdout_changed=False, s3_features_allowed=False,
+                        final_v4_ready=False)
+        if any(type(policy.get(key)) is not type(value) or policy[key] != value
+               for key, value in required.items()):
+            raise ValueError("s2_capability_policy_not_offline")
+        parts = [(folder / name).read_bytes()
+                 for name in ("c-s2.md", "modeling.md", "contracts-c-s2.md")]
+        parts.append(json.dumps(policy, sort_keys=True, ensure_ascii=False, allow_nan=False).encode("utf-8"))
+        return b"\n".join(parts)
     if profile == "c-s1":
         policy = ledger.read_json(root / "design/cad-harness-verify-v4/capability-policy.json")
         if (policy.get("schema") != "cad-harness.capability-policy.v4c"
@@ -229,6 +245,8 @@ class PlanSkillAdapter(SkillAdapter):
         for item in values:
             if not isinstance(item, dict) or set(item) != {"asset_id", "face_id", "signature"}:
                 raise ValueError("selection_fields")
+            if self.prepared['profile'] == 'c-s2' and item['asset_id'] not in self.inputs['assets']:
+                raise ValueError('selection_not_generator_asset')
             facts = self.prepared["assets"].get(item["asset_id"])
             matches = [face for face in (facts or {}).get("faces", [])
                        if face.get("id") == item["face_id"] and face.get("signature") == item["signature"]]

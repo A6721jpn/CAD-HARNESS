@@ -52,9 +52,12 @@ def _bindings(job):
 def _loaded(job):
     inputs = _module('cad_verify_v4_inputs')
     plans = _module('cad_verify_v4_plans')
+    profile = job.get('profile', 'c-s1')
     prepared = inputs.verify_prepared(job['prepared'], job['manifest'])
-    plan = plans.validate_plan(_read(job['plan']), job['manifest'], prepared)
-    card = plans.validate_judge_card(_read(job['card']))
+    if prepared['profile'] != profile:
+        raise ValueError('worker_input_profile_mismatch')
+    plan = plans.validate_plan(_read(job['plan']), job['manifest'], prepared, profile=profile)
+    card = plans.validate_judge_card(_read(job['card']), profile=profile)
     return plan, prepared, card
 
 
@@ -76,10 +79,11 @@ def _compile(App, job, out):
     compiler = _module('cad_verify_v4_compile')
     plan, prepared, card = _loaded(job)
     before = _bindings(job)
-    doc = App.newDocument('S1Candidate')
-    body = compiler.build_plan(doc, plan, job['manifest'], prepared)
-    editability = compiler.operative_evidence(doc, body)
-    measurements = compiler.shape_measurements(body.Shape)
+    editor = _module('cad_verify_v4_s2_edit') if job.get('profile') == 'c-s2' else compiler
+    doc = App.newDocument('S2Candidate' if job.get('profile') == 'c-s2' else 'S1Candidate')
+    body = editor.build_plan(doc, plan, job['manifest'], prepared)
+    editability = editor.operative_evidence(doc, body)
+    measurements = compiler.shape_measurements(body.Shape, tight_bounds=job.get('profile') == 'c-s2')
     # A new directory is the only destination; no existing artifacts are overwritten.
     doc.saveAs(str(out / 'model.FCStd'))
     Part.export([body], str(out / 'model.step'))
@@ -91,7 +95,8 @@ def _compile(App, job, out):
             'bounds_mm': measurements['bounds_mm'], 'volume_mm3': measurements['volume_mm3'],
             'bindings': before, 'artifacts': _artifacts(out),
             'source_paths': {key: str(_safe(job[key])) for key in ('manifest', 'prepared', 'plan', 'card')},
-            'family': plan['family'], 'plan_sha256': before['plan_sha256']}
+            'family': plan['family'], 'plan_sha256': before['plan_sha256'],
+            **({'operation_report': editor.operation_report(body)} if job.get('profile') == 'c-s2' else {})}
 
 
 def _roundtrip_criteria(card, evidence):
@@ -113,12 +118,15 @@ def _roundtrip_criteria(card, evidence):
 def _verify(App, job, out):
     import Part
     compiler = _module('cad_verify_v4_compile')
-    judges = _module('cad_verify_v4_judges')
+    profile = job.get('profile', 'c-s1')
+    editor = _module('cad_verify_v4_s2_edit') if profile == 'c-s2' else compiler
+    judges = _module('cad_verify_v4_s2_judges' if profile == 'c-s2' else 'cad_verify_v4_judges')
     plan, prepared, card = _loaded(job)
     before = _bindings(job)
     candidate = _out(job.get('candidate_dir', job['out']))
     built = _read(candidate / 'result.json')
-    if built.get('status') != 'PASS' or built.get('document_closed') is not True:
+    if (built.get('profile') != profile or built.get('status') != 'PASS'
+            or built.get('document_closed') is not True):
         raise ValueError('compile_not_successful')
     if built.get('bindings') != before or built.get('artifacts') != _artifacts(candidate):
         raise ValueError('artifact_input_binding_mismatch')
@@ -127,19 +135,21 @@ def _verify(App, job, out):
     if len(bodies) != 1:
         raise ValueError('reopen_body_count')
     body = bodies[0]
+    allowed_proxies = ((editor.DirectEditProxy,) if profile == 'c-s2' else
+                       (compiler.ContourProxy, compiler.EngravingProxy))
     # Proxy restoration executes only the frozen installed implementation. A missing or
     # changed proxy is not accepted even if a cached Shape happens to remain valid.
     for obj in body.Group:
         if obj.TypeId == 'PartDesign::FeaturePython':
-            if type(obj.Proxy) not in (compiler.ContourProxy, compiler.EngravingProxy):
+            if type(obj.Proxy) not in allowed_proxies:
                 raise ValueError('untrusted_or_missing_feature_proxy')
     for obj in doc.Objects:
         obj.touch()
     doc.recompute()
     compiler.check_document(doc, body)
-    compiler.check_model_inputs(body, plan, prepared, job['manifest'])
-    restored = compiler.shape_measurements(body.Shape)
-    editability = compiler.operative_evidence(doc, body)
+    editor.check_model_inputs(body, plan, prepared, job['manifest'])
+    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile == 'c-s2')
+    editability = editor.operative_evidence(doc, body)
     step_doc = App.newDocument('S1IndependentSTEP')
     Part.insert(str(_safe(candidate / 'model.step')), step_doc.Name)
     step_doc.recompute()
@@ -147,7 +157,7 @@ def _verify(App, job, out):
     if len(shapes) != 1:
         raise ValueError('step_candidate_object_count')
     step_shape = shapes[0]
-    imported = compiler.shape_measurements(step_shape)
+    imported = compiler.shape_measurements(step_shape, tight_bounds=profile == 'c-s2')
     base = built['measurements']
     bound_delta = max(abs(a - b) for measurement in (restored, imported)
                       for a, b in zip(base['bounds_mm'], measurement['bounds_mm']))
@@ -158,7 +168,7 @@ def _verify(App, job, out):
     # Judge each independently reopened representation; STEP cannot prove parametrics,
     # so the operative FCStd proof is passed as explicit context rather than inferred.
     baselines = {index: doc.getObject('Engraving' + str(index)).Base.Shape.copy()
-                 for index in range(len(plan['engravings']))}
+                 for index in range(len(plan.get('engravings', [])))}
     fcstd_judge = judges.judge(plan, job['manifest'], prepared, body, card,
                                native_evidence=evidence, baseline_shapes=baselines)
     step_judge = judges.judge(plan, job['manifest'], prepared, step_shape, card,
@@ -226,7 +236,12 @@ def execute(job):
     if not isinstance(job, dict) or job.get('operation') not in OPERATIONS:
         raise ValueError('unknown_worker_operation')
     operation = job['operation']
-    optional = {'candidate_dir'} if operation in ('verify', 'judge') else set()
+    profile = job.get('profile', 'c-s1')
+    if profile not in ('c-s1', 'c-s2'):
+        raise ValueError('worker_profile')
+    if profile == 'c-s2' and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step'):
+        raise ValueError('worker_operation_not_in_profile')
+    optional = {'profile'} | ({'candidate_dir'} if operation in ('verify', 'judge') else set())
     if not OPERATIONS[operation] <= set(job) or set(job) - OPERATIONS[operation] - optional:
         raise ValueError('worker_job_fields')
     # Validate every supplied path before opening a document. Parent allocates output.
@@ -235,6 +250,8 @@ def execute(job):
             _safe(job[field])
     if 'recipe' in job and not isinstance(job['recipe'], dict):
         raise ValueError('worker_recipe_requires_data_object')
+    if 'recipe' in job and job['recipe'].get('profile') != profile:
+        raise ValueError('worker_recipe_profile_mismatch')
     if 'candidate_dir' in job:
         _safe(job['candidate_dir'], regular=False)
     out = _out(job['out'])
@@ -244,7 +261,7 @@ def execute(job):
     if (out / output_name).exists():
         raise ValueError('worker_result_exists')
     schema = 'cad-harness.compile-result.v4c' if operation == 'compile' else 'cad-harness.verify-result.v4c' if operation in ('verify', 'judge') else 'cad-harness.native-worker.v4c'
-    result = {'schema': schema, 'profile': 'c-s1',
+    result = {'schema': schema, 'profile': profile,
               'operation': operation, 'status': 'FAIL', **_runtime(App), 'document_closed': False}
     try:
         if App.GuiUp != 0 or App.listDocuments():
@@ -298,6 +315,8 @@ def execute(job):
 
 
 def main(argv=None):
+    # The captured JSON wire is UTF-8, independent of the Windows console locale.
+    sys.stdout.reconfigure(encoding='utf-8', errors='strict')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--job', required=True)
     args = parser.parse_args(argv)

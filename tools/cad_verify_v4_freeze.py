@@ -397,15 +397,15 @@ def claim(manifest_path, run_dir):
 
 
 def freeze_implementation(run_dir, *, root=ROOT, manifest_path=None, prepared_path=None,
-                          card_path=None, recipe_paths=(), process=None):
-    """Separate S1 offline lock: no reinterpretation of original authorization."""
+                          card_path=None, recipe_paths=(), process=None, profile="c-s1"):
+    """Offline capability-stage lock; original authorization is never reinterpreted."""
     if __package__:
         from . import cad_verify_v4_s1
     else:
         import cad_verify_v4_s1
     return cad_verify_v4_s1.implementation_lock(
         run_dir, root=root, manifest_path=manifest_path, prepared_path=prepared_path,
-        card_path=card_path, recipe_paths=recipe_paths, process=process)
+        card_path=card_path, recipe_paths=recipe_paths, process=process, profile=profile)
 
 
 def verify_implementation(manifest_path, *, root=ROOT):
