@@ -47,3 +47,6 @@ Stdin MUST be closed or redirected (for example `-RedirectStandardInput $env:Sys
   - From outside, commands may resolve to "the UI-focused pane, which can belong to the user or another client".
   - The rule therefore prevents acting on someone else's panes or session.
 - Mitigation used here: explicit pane IDs and agent names only, never `--current` or the focused pane, a separate workspace and worktree, and `--no-focus`.
+
+## USER 2026-10-14 22:08 JST - Grok effort
+- Grok always runs at High effort. v4grok stays on native Grok Build, model grok-4.7, effort high, on every restart (launch: grok -m grok-4.7 --cwd C:\dev\CAD-HARNESS-herdr in w8:p2; confirm the footer shows "Grok 4.7 (high)").

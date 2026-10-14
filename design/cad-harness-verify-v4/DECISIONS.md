@@ -73,3 +73,6 @@ Still open (not answered): the U1 tape location; the U2 "minimal concave-face co
 ## USER 2026-10-14 22:02/22:03 JST - v4grok access path
 - v4grok's backend is replaced: it now runs Grok Build natively (grok CLI 1.0.52, logged in with grok.com, model grok-4.7) in herdr w8 pane w8:p2, not via OpenCode Go and not wrapped in omp/Orca.
 - The model is the same family and version (previously opencode-go/grok-4.7); only the access path changed. The role is unchanged: reviewer and the existing holdout author/custodian (option B).
+
+## USER 2026-10-14 22:08 JST - Grok effort
+- Grok always runs at High effort. v4grok stays on native Grok Build, model grok-4.7, effort high, on every restart (launch: grok -m grok-4.7 --cwd C:\dev\CAD-HARNESS-herdr in w8:p2; confirm the footer shows "Grok 4.7 (high)").
