@@ -61,3 +61,9 @@ Invariants Honored: Zero pilot attachments (`pilot-user/`) or private holdout fi
 The S1 implementation authored by Codex strictly complies with Addendum C, Decision 2026-10-14 14:28 JST, and the C-R2-2 fidelity requirements. All 141 tests (119 host + 22 native) pass deterministically on DPC-019.
 
 Gemini verdict: **READY** for Stage S1 implementation lock.
+
+---
+
+## 3. Erratum: Engraving Depth Judge Verification
+
+The review text in §1.F erroneously cited an informal `[0.3, 1.0] mm` range. The actual implementation in `tools/cad_verify_v4_judges.py:_engravings` contains no hardcoded depth interval; it evaluates the planned `depth_mm` dynamically against the judge card's declared `depth_tolerance_mm` and `minimum_removed_mm3` via boolean common volume subtraction and independent FreeType glyph counter verification.

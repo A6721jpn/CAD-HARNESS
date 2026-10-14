@@ -97,3 +97,15 @@ Under the delegated defaults, Astra Max and the automated judges evaluate U5 as 
 | **Through-Cut Check** | Ray test through logo interior | Ray passes through ($Z$ through-cut) | **Fatal Fail** |
 | **Parametric Test** | Regenerate with $t=5.0\text{ mm}$, $H=60.0\text{ mm}$ | Solid remains valid, dimensions update | Critical |
 | **Astra Max Visual** | Visual check against canonical silhouette | Proportions, leaf orientation, bite-out placement | Subject to User Override |
+
+---
+
+## 5. Cross-Check & Sign-off on Sol's Final Proposed C-U5 Text
+
+Verdict: **AGREE**
+
+Gemini confirms agreement with Sol's proposed C-U5 text in `u5-defaults-sol.md:29-41`:
+1. **Nominal Defaults Bound**: Square plate $100 \times 100\text{ mm}$, thickness $3\text{ mm}$, and total logo height $50\text{ mm}$ centered on the plate bounding-box center are adopted strictly as agent-chosen nominal defaults per C-A Q2, without asserting ungrounded physical machining, vise compatibility, or material stock claims.
+2. **Contour-Derived Facts**: Actual logo width, leaf gaps, and edge margins are derived strictly from the committed canonical contour by the blinded custodian/checker; all informal geometric approximations (e.g. ratio $\approx 0.83$, gap $2.5\text{--}3\text{ mm}$) are withdrawn.
+3. **Strict Constraints & Fidelity**: The user's minimum tool radius $R = 0.25\text{ mm}$ remains strict (no relaxed $0.245\text{ mm}$ allowance). Full two-leg fidelity (image $\to$ contour and contour $\to$ CAD) and actual-output tool accessibility/min-R geometry are verified without silent widening or topology alteration.
+4. **Tolerances & Deliverable Interpretation**: Informally proposed tolerances ($\pm 0.2\text{ mm}$, $\pm 0.5\text{ mm}$) and parametric ranges are withdrawn from acceptance gates; applicable tolerances, measurement uncertainties, and confirmation of retained material (plate with aperture vs. cutout logo) are tracked as pre-freeze user/rubric resolutions under C-Q.

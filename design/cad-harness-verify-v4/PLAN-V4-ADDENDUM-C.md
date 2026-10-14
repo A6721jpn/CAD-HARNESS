@@ -66,3 +66,20 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
 - C-EXIT "U3: <=0.005 mm absolute, G3" is SUPERSEDED by C-A: U3 is G2 plus <=0.005 mm absolute.
 - C-EXIT "Missing tolerances are asked of the user ... never chosen by agents" is SUPERSEDED for the U5 plate outline, default thickness and default logo size only. Those are agent-chosen defaults (C-A Q2), labelled as such and frozen in C-U5 before the trial. All other missing values (Q4-Q10) remain user questions; agents never choose them.
 - C-U5 must be filled by sol+gemini consensus before the freeze; an empty C-U5 blocks the freeze.
+
+### C-U5 text (sol proposal, gemini AGREE 17:40; v4grok sign pending)
+
+> **C-U5 — agent-chosen U5 defaults (sol proposal for sol+gemini consensus)**
+>
+> Under C-A Q2, choose a square nominal outer plate outline **100 × 100 mm**, nominal thickness **3 mm**, and nominal logo total height **50 mm**. These are agent-chosen defaults, not user-specified dimensions or tolerances. Thickness and logo size remain operative CAD parameters. No supported operating range or additional dimension is implied.
+>
+> Define logo height as the total Y extent of the complete committed logo contour, including all of its components, rather than the image canvas. Preserve its original aspect ratio and relative component placement. Centre its bounding box on the plate bounding-box centre. Actual logo width, gaps and edge margins are derived facts of the committed contour, not assumed values. Do not invent a canonical aspect ratio, replace the supplied artwork, or add/delete/bridge components to force feasibility.
+>
+> Full-thickness cutting means no residual floor. The retained-material choice must be explicit: a punched-out logo and a surrounding plate with a logo-shaped through-aperture are different deliverables. The latter is Gemini's proposed construction, not a new user fact established by these nominal defaults. If that interpretation is not already confirmed, resolve it before freeze; do not silently add a carrier, floor, bridge or topology change.
+>
+> Keep the user's **minimum tool R 0.25 mm** unchanged. The defaults do not certify CNC feasibility. The custodian alone prepares the supplied raster once through the dev-frozen deterministic CLI, and locks the original-image/mask hashes, recipe/software identity, scale transform, canonical contour, topology correspondence and transformation report under C-R1-3/C-R2-2. The generator receives typed contour/runtime data only. Implementers do not inspect the attachment or tune on its result.
+>
+> Pass criteria must not adopt the proposed ±0.2 mm, ±0.5 mm, R0.245, unapproved parameter ranges or mandatory alternate dimensions. Applicable dimension/placement tolerances, numerical uncertainty, both image→contour and contour→output fidelity bounds, and any allowed boundary/topology transformations must be resolved with the user and preregistered before freeze. Keep nominal targets distinct from acceptance tolerances. Failure to establish feasibility or required acceptance values blocks freeze; it does not authorize adapting the defaults after inspecting U5.
+>
+> Preserve consensus section 5 and C-EXIT/C-R2: all required gates, unchanged first-handover/critical-dimension/fabrication rules, Astra Max judging followed by authoritative user visual judgment, and no combining results across manifests. This defaults agreement is not trial authorization.
+
