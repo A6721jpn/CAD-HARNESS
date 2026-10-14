@@ -25,3 +25,11 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
   7. pilot run of U1-U5, one attempt each, under the frozen manifest, with no retake after seeing results.
 - U1-U5 are never opened by implementers. Per-task pass criteria use user-given values only (U1: NF-13CR inner 245x365x140, part Y vertical, play <=0.5 mm, tape 0.5 mm, engraved numbers; U2: glass 1.3 mm, no contact on the 1.3 mm perimeter band, convex face may contact, concave face minimal contact, 10 pieces; U3: <=0.005 mm absolute, G3; U4: 2 mm thickness, surrounding outer dimensions unchanged; U5: parametric thickness and size, min tool R 0.25). Missing tolerances are asked of the user before the freeze, never chosen by agents.
 - If any of U1-U5 fails, v4 does not exit. The response is a further development cycle on fresh dev fixtures, followed by a NEW pilot attempt under a new manifest. Old results are kept and never overwritten.
+
+## C-R1 (gemini BLOCK fixes that need no user numbers; proposed for 3-party agreement)
+- **C-R1-2 (budget):** each further development/pilot cycle after a failure needs its own separately authorized call budget and a fresh quota check before launch. Nothing is borrowed from #5. Exhausting a budget or hitting a quota stop ends that attempt as `INCOMPLETE` (reason `budget_exhausted` or `quota_stop`). It is never PASS, never looped and never extended.
+- **C-R1-3 (U5 contour):** before the freeze, the deterministic S1 image-to-contour CLI runs once on pilot-user/U5_logo.png in the custodian/bundle step, never by implementers. It writes contour.json (closed loops, units, scale reference, min-R report), which is SHA-256 locked in the manifest. The generator receives it only as typed runtime data; it never sees the PNG and never traces. CLI parameters are frozen from dev fixtures before the run, with no tuning on U5.
+## C-Q (user questions; implementation continues meanwhile)
+- Q1 (U3): OCCT/FreeCAD 1.1.4 has no native G3 constraint solver (G1/G2 at most). Is G2 acceptable, or should G3 be judged numerically with a user-given tolerance on the curvature derivative?
+- Q2 (U5): default plate outline/outer dimensions, default thickness, and default logo size? (Parametric, but the defaults are needed for judging.)
+- Q3 (U2): maximum outer size of the box (printer bed)?
