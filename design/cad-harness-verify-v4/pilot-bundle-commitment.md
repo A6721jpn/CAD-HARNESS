@@ -100,3 +100,48 @@ Directory: `C:\dev\v4-holdout-private\pilot-v2\`. Staging used for the CLI was d
 | native.stderr.bin | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | native.stdout.bin | 934 | `b07c927556abb8c677bfb3418d6439454e04d1f08db391b0ee9a105a870b8e90` |
 | summary.json | 1483 | `fd3f579d8ca6b05bfe22dd04809dc4b5bd4ffc2b250cf0b242dcfcdbda2cc0c6` |
+
+## Pilot v3 (cycle 2)
+
+One image-to-contour invocation, after the cycle-2 C2 cohort was recorded in `holdout-families-commitment.md`. The cycle-2 recipe file was not edited. Zero model generation calls. No second attempt.
+
+## Recipe
+
+- Recipe file: `design/cad-harness-verify-v4/c2-production-recipe-cycle2.json`
+- File SHA-256: `0b6d09b67c67a050de5247e9c28f95abc454ee33b2c8cef604f5839ea7dc7e04`
+- Bytes: 847
+- Foreground: alpha channel, polarity light, threshold 128. Alpha policy `ignore`.
+- Scale: `canonical_height_mm` 50.0, origin `[0.0, 0.0]`. Curve fit `periodic_cubic_biarc_v1`. Simplify not allowed. Rounding not allowed.
+- Topology: components preserved, holes preserved, islands preserved.
+- The same PNG bytes as the pilot-v1 input were used. SHA-256 `cff917e0b7e317eff88977aafea0379a99522e3ab120b36b7d73ee5626bfdd3b`, 39139 bytes. `evidence_mode` was `independent_dev`. The file SHA-256 was the same before and after the run.
+
+## CLI result
+
+- Command: `tools/eval_verify_v4.py image-to-contour --profile c-s1 --asset-id logo --recipe c2-production-recipe-cycle2.json`
+- Invocations: 1. Exit code 1.
+- Status: `FAIL`. Error: `ValueError` `contour_curve_fit_error_budget_unattainable`.
+- Software: FreeCAD 1.1.4 (`4fd3bf320d9566a27e60069fc8387448aaa3a094`), worker Python 3.11.14. Document closed. `gui_up` 0.
+- `live_calls` 0. `live_cad_runs` 0.
+- Piece count: not produced. No topology record was written.
+- Contour SHA-256: not produced. No `contour.json`.
+- Mask SHA-256: not produced. No mask record was written.
+- Registration: not produced. No pixel-to-mm scale, origin, or image-height record.
+- Leg-1 IoU and Hausdorff: not produced. They were not compared with C-D(a) mask→contour IoU >= 0.90 and Hausdorff <= 1.5 mm. This is not a pass against those limits.
+- min-R report: not produced. The 0.25 mm minimum was not measured. No CAD body was built, so CAD output min-R was not measured.
+- Contour→CAD: not run. C-D(a) limits for that leg remain IoU >= 0.92 and Hausdorff <= 1.0 mm, unmeasured.
+
+The curve fit could not meet its error budget. This run stopped there. No contour coordinates are in this file.
+
+## Private artifacts
+
+Directory: `C:\dev\v4-holdout-private\pilot-v3\`. Staging used for the CLI was deleted after these copies.
+
+| File | Bytes | SHA-256 |
+| --- | ---: | --- |
+| ledger.jsonl | 19993 | `db7825a31b2cd3f0b8db64698794e295ed3e5cd828569b45efda42b46d469abd` |
+| native/result.json | 1080 | `32137c76f7057451e92d899ad628caeec868d28c9cc5bfdd55571ca113a1f09e` |
+| native.job.json | 1157 | `6cafc50c09e97eef462d7d2e69302f722bb9c196f4810ba4b96d3c9a4cf01a52` |
+| native.ready.json | 390 | `e9af1ceb17b327ad230d2b129392a0cef090ff2d4e63607326d767596db23eba` |
+| native.stderr.bin | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| native.stdout.bin | 935 | `4772d6ad712c64f930992fb5c885c35f6a8f735476f2c716d6b495e3c6167460` |
+| summary.json | 1488 | `af756d0461704760f9c4547c93d597449d394333695c199b4e88cb8a05f871ea` |

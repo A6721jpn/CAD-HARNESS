@@ -36,7 +36,7 @@ Holdout generator: `openai-codex/gpt-6.1-sol` / `xhigh`. Astra Max is the judge.
 
 ## Admission
 
-63 generative and benchmark items were admitted by `cad_verify_v4_artifact_judges.validate_context` and `cad_verify_v4_artifacts.load_bundle` before this C2 retirement. Every bundle has `evidence_mode` `independent_dev` and `output_object` null. These bundles are pre-generation schema shells. No generation ran. The 14 retired C2 bundles remain that history. The 14 fresh C2 bundles were admitted again by the same two checkers after preparation with the production contour recipe. No model generation ran.
+63 generative and benchmark items were admitted by `cad_verify_v4_artifact_judges.validate_context` and `cad_verify_v4_artifacts.load_bundle` before this C2 retirement. Every bundle has `evidence_mode` `independent_dev` and `output_object` null. These bundles are pre-generation schema shells. No generation ran. The 14 retired C2 bundles remain that history in `retired-c2-v1/`. The cycle-1 fresh C2 bundles were admitted again by the same two checkers after preparation with `c2-production-recipe.json`, and those bundles are now history in `retired-c2-cycle1/`. The cycle-2 C2 bundles were admitted by the same two checkers. No model generation ran.
 
 The four admission controls were replayed with the pinned FreeCAD 1.1.4 interpreter. Each remained refused, and the reason codes matched `admission/results.json`:
 
@@ -84,16 +84,16 @@ Authoring used the interim lock as evidence history. Bound HEAD in `impl-notes-i
 
 ## Sealed archive
 
-`families-v1.sealed.zip` is inside the private directory. SHA-256 `588db92fa91cc276ff5d3dc13a7fdf16fa49395d6e420e6a81e0d56396c21dcf`. Bytes 3206379. Members: 708. Member names are lexicographic POSIX paths. ZIP timestamp is 2026-01-01 00:00:00. Compression is deflate level 9. The archive contains the other private files from that seal and omits its own filename. It is unchanged by this C2 retirement. It does not contain the fresh C2 cohort or the `retired-c2-v1` copies. The sealed tree had 709 private files including the archive. The live private tree now has 854 files.
+`families-v1.sealed.zip` is inside the private directory. SHA-256 `588db92fa91cc276ff5d3dc13a7fdf16fa49395d6e420e6a81e0d56396c21dcf`. Bytes 3206379. Members: 708. Member names are lexicographic POSIX paths. ZIP timestamp is 2026-01-01 00:00:00. Compression is deflate level 9. The archive contains the other private files from that seal and omits its own filename. It is unchanged by this C2 retirement and by the cycle-2 retirement. It does not contain the fresh C2 cohort, the cycle-2 cohort, or the `retired-c2-v1` or `retired-c2-cycle1` copies. The sealed tree had 709 private files including the archive. The live private tree now has 999 files.
 
 
 ## C2 retirement and fresh cohort
 
 The previous C2 generative items C2-01..C2-10 and the C2 benchmark pairs B05..B08 are retired. Their bytes were moved, not edited, to `retired-c2-v1/`. `retired-c2-v1/RETIRED.txt` marks that directory as history. Those items are not the active cohort. The sealed archive above remains the pre-retirement snapshot and is not rebuilt.
 
-The active cohort uses the same ids and the same signed strata. Generative: convex C2-01..C2-03, connected_holes C2-04..C2-07, notch_tool_access C2-08..C2-10. Benchmark: convex B05 and B08, connected_holes B06, notch_tool_access B07. Counts stay 10 generative items and 4 benchmark pairs. Other families and the four admission controls are unchanged.
+The cycle-1 fresh cohort used the same ids and the same signed strata. Those bytes now live in `retired-c2-cycle1/` and are not the active cohort. Generative: convex C2-01..C2-03, connected_holes C2-04..C2-07, notch_tool_access C2-08..C2-10. Benchmark: convex B05 and B08, connected_holes B06, notch_tool_access B07. Counts stay 10 generative items and 4 benchmark pairs. Other families and the four admission controls are unchanged.
 
-Each active contour was prepared from an independent synthetic transparent RGBA mark by the unmodified production recipe `design/cad-harness-verify-v4/c2-production-recipe.json`. File SHA-256 `ae1db1b48dfab10d9642c58d834068098f649855c00610cbfeb505c20bdbaf00`. Bytes 836. `rounding.allowed` is false. Canonical height is 50 mm. Live calls: 0. The 14 fresh bundles were admitted by `cad_verify_v4_artifact_judges.validate_context` and `cad_verify_v4_artifacts.load_bundle`, with `evidence_mode` `independent_dev` and `output_object` null. This file records no contour coordinates.
+Each contour in that cycle-1 cohort was prepared from an independent synthetic transparent RGBA mark by the unmodified production recipe `design/cad-harness-verify-v4/c2-production-recipe.json`. File SHA-256 `ae1db1b48dfab10d9642c58d834068098f649855c00610cbfeb505c20bdbaf00`. Bytes 836. `rounding.allowed` is false. Canonical height is 50 mm. Live calls: 0. The 14 fresh bundles were admitted by `cad_verify_v4_artifact_judges.validate_context` and `cad_verify_v4_artifacts.load_bundle`, with `evidence_mode` `independent_dev` and `output_object` null. This file records no contour coordinates.
 
 Retired list:
 
@@ -113,6 +113,16 @@ Retired list:
 | B06 | benchmark_pair | connected_holes | `retired-c2-v1/benchmark/B06` |
 | B07 | benchmark_pair | notch_tool_access | `retired-c2-v1/benchmark/B07` |
 | B08 | benchmark_pair | convex | `retired-c2-v1/benchmark/B08` |
+
+## C2 cycle 2
+
+The cycle-1 fresh cohort was moved, not edited, from the original ids to `retired-c2-cycle1/`. `retired-c2-cycle1/RETIRED.txt` marks that directory as history. It had been prepared with `design/cad-harness-verify-v4/c2-production-recipe.json`, SHA-256 `ae1db1b48dfab10d9642c58d834068098f649855c00610cbfeb505c20bdbaf00`, 836 bytes. It is not the active cohort. `retired-c2-v1/` and the sealed archive are unchanged.
+
+The active cohort uses the same ids and the same signed strata. Generative: convex C2-01..C2-03, connected_holes C2-04..C2-07, notch_tool_access C2-08..C2-10. Benchmark: convex B05 and B08, connected_holes B06, notch_tool_access B07. Counts stay 10 generative items and 4 benchmark pairs. Other families, the four admission controls, and the roster item identities are unchanged.
+
+Each active contour was prepared from an independent synthetic transparent RGBA mark by the unmodified cycle-2 recipe `design/cad-harness-verify-v4/c2-production-recipe-cycle2.json`. File SHA-256 `0b6d09b67c67a050de5247e9c28f95abc454ee33b2c8cef604f5839ea7dc7e04`. Bytes 847. `rounding.allowed` is false. Topology preserves components, holes, and islands. Canonical height is 50 mm. Live calls: 0. The 14 bundles were admitted by `cad_verify_v4_artifact_judges.validate_context` and `cad_verify_v4_artifacts.load_bundle`, with `evidence_mode` `independent_dev` and `output_object` null. No model generation ran. This file records no contour coordinates.
+
+Multi-piece items, from source topology only: C2-03 has 2 components and 0 holes; C2-07 has 2 components and 2 holes; C2-10 has 2 components and 0 holes; B08 has 2 components and 0 holes. Separate pieces stay separate solids in one document. No bridges, backing, or joins were added.
 
 ## SHA-256
 
@@ -182,49 +192,49 @@ f65ec8d226be2474c62893a7e79660fec21f38db4bb3d1900cd06c15159ee2fc  5386  benchmar
 e2415f95ea9dece4de9ceef06518eb5cd660009ecf5a018f27f735dea746b6bd  6906  benchmark/B04/reference.step
 cb641113b3d561d05753ae70003dce35f019c7d561784af3345c82a5b3b3ad4e  154  benchmark/B04/request.txt
 3b928f82b9444a047714e8651238e947aab111ffd082061f4b2495e7dcaae73c  190  benchmark/B04/schema-shell.fcstd
-a2c49a8117ff526a11674b8f46438856ef3e1bfd861ec9ee1bcfccc5ece9804d  287  benchmark/B05/bundle-carrier.step
-a2c49a8117ff526a11674b8f46438856ef3e1bfd861ec9ee1bcfccc5ece9804d  287  benchmark/B05/bundle-source.step
-4cbe26139e54fcdbafc827dec6f4469287d61a96234c9868c648cfa498a441fa  471  benchmark/B05/bundle.json
-f3c0535100b2482096c0d14377d9fb7d9152dc65a2d47bd0349a3e2a22a3f800  1233  benchmark/B05/card.json
-6778362c469642a4c5a02c748d2686b9780f78bc56d650fbe5d16a575c7d5642  531  benchmark/B05/context.json
-bff5c3c3fa00025725c062739f74e1bd9388756a079c46577d9787a8276f0b53  317  benchmark/B05/manifest.json
-7a30298ce8987aa96fe541042203dcd27caf514d3a6c335e8d2d2093166d31b8  1467  benchmark/B05/mark.png
-6d89be112883359bec3be07414703d4cba819d4172803bfc0437306a7df43c33  608  benchmark/B05/pair.json
-0612b13d5e2490235e9addb2c4cca2fcbe6bf7ccef8c9a26d116f98fbfc8f9fe  141289  benchmark/B05/prepared.json
-5d816a675afd3f21c4dbbf8d6178d73916b268f9af70ae2a7f76c42ef6180347  267  benchmark/B05/request.txt
+9bd76e068a7c82b0deb80cc9ff697d402e15929ba608173ed3c69b0321daa2e2  289  benchmark/B05/bundle-carrier.step
+9bd76e068a7c82b0deb80cc9ff697d402e15929ba608173ed3c69b0321daa2e2  289  benchmark/B05/bundle-source.step
+9470134c6a7305c7d3d767a480b2a77d7e94b5e90bb2a7bb29e879184ba90860  471  benchmark/B05/bundle.json
+c12f25ad83e6c921188b49a5135c1d35b251b80c4e73f1944f652211172f602f  1234  benchmark/B05/card.json
+4e316b313f8bdab12902c1af59db29e10d65cce104834767ec1842a61deb9139  531  benchmark/B05/context.json
+c6c2ecc39ddd4e33ae5784b155c4c06596cf22cca5ce6121d55b6bd37a20e53a  317  benchmark/B05/manifest.json
+e71e8b6106a49d03eff75132f9f8d8fb1f722c61485d3aa758fa825b804cbf58  1747  benchmark/B05/mark.png
+0e516d2a22452c60b662714b69185c22760d5f006ab623e39a88ebbdd18fa937  608  benchmark/B05/pair.json
+f1f2cb914ce5b201d4b0b2f4a2235f800cff0a10f078744f35fcdf3c792618fb  157654  benchmark/B05/prepared.json
+bcc4ff3fb1868902e1fc8836b76c1c2a85c165c448ad5bcd73032905c132c684  353  benchmark/B05/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  benchmark/B05/schema-shell.fcstd
-ba561d0ecd36e8e11c5a271035ab7bba96ba5d7eaa404782ff452733aa69c543  287  benchmark/B06/bundle-carrier.step
-ba561d0ecd36e8e11c5a271035ab7bba96ba5d7eaa404782ff452733aa69c543  287  benchmark/B06/bundle-source.step
-08fde1e37aaea9cacab423720e3d5d44107c6d741541f7d64a0546157030ac01  471  benchmark/B06/bundle.json
-dff58af7ab9820099257ef2d0d8503ef403bce5d0430dff2f22bda30e90da709  1232  benchmark/B06/card.json
-390c6c55b699bbbadf4ab09428db55bd43161aff0a81c115994fb552fc6aa9e3  531  benchmark/B06/context.json
-75faf3ddad70ac49ba67893c6c9cffcbdb1348e9423230d1b8168344f9d63042  317  benchmark/B06/manifest.json
-847f52c65388e7e2e50edb9e28ffc36e8452f92881aace199d359c1d059b8c9f  2277  benchmark/B06/mark.png
-026938a509043e483a507a34757568ded53d0ddd58a7d1cf377684159337d3e2  617  benchmark/B06/pair.json
-dd31ce69021c54f499f1eba9cfabee00a6c315c4e21ed395927c23ebf7ff75af  276534  benchmark/B06/prepared.json
-f6991cb3684ba96e359a4a892f71e49dc324121aa87b1b02b148a432c064de76  286  benchmark/B06/request.txt
+657c8c5e5cee8ae522a00fe2635958f6b1237a19b21ae4dc91bf0b442ce71a8c  289  benchmark/B06/bundle-carrier.step
+657c8c5e5cee8ae522a00fe2635958f6b1237a19b21ae4dc91bf0b442ce71a8c  289  benchmark/B06/bundle-source.step
+8920d531800f44d9c55a9a00053f4c0f7b1a1e3a6f654545876922a5d2016d77  471  benchmark/B06/bundle.json
+e992103d9d2c3573e90bec72279ebde31fcd01c550473e2e6d09ae5597a680e5  1234  benchmark/B06/card.json
+32553571206063f48a9a619b0a0d6ac2cf20678c5a1fe8eab310c613a8147b7a  531  benchmark/B06/context.json
+aa3b725b51982c93bd8b44b4b2170ccd6dbd0156a5da4b2f17abc44ba8588040  317  benchmark/B06/manifest.json
+ee46dd10a40a927bfd18b1ae69158fdfd2c4dd4422b36ab0d7f269cf54c68374  2422  benchmark/B06/mark.png
+50803d92b8df1550a225334cf785eb41421b28b574a17b6a0de4d5e4653fa829  617  benchmark/B06/pair.json
+74f9ba41a04f02f5f98c986d7544dba3c04a65c39a58b259eef212de0519df09  266628  benchmark/B06/prepared.json
+f2174e7326b87607c47686bee135b322a43b256dbd4aeca8e3dbc73fe14b5e26  369  benchmark/B06/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  benchmark/B06/schema-shell.fcstd
-b96bf45d51f4dcfda91f22204725b5754c39f38d4ef891b1f30d06a9e382e1ca  287  benchmark/B07/bundle-carrier.step
-b96bf45d51f4dcfda91f22204725b5754c39f38d4ef891b1f30d06a9e382e1ca  287  benchmark/B07/bundle-source.step
-7c196dcd4cbfe3254ff93030562ad3509e325b57a111d1a405774679e1d6cf4c  471  benchmark/B07/bundle.json
-54e23ac0dcf256ecc2fe8b796be7fdf32699d9a8e796ced7ec25da8715d699c3  1232  benchmark/B07/card.json
-f23b09f56deae89b68fec8f433172b28de246223c2fc23a1de12ff504bca1d89  531  benchmark/B07/context.json
-19676cf9e6961e79fa62ec2b127d1a147e75af94f9709d4bc358261273288802  317  benchmark/B07/manifest.json
-7be46db2f2eec2fc10f6d135183a692c558e871fdac62e8869df9ffc602d3564  1924  benchmark/B07/mark.png
-e5efb14f35fe2f074615989fffee164d792b122eb63852c269cc9d605b46ebf6  619  benchmark/B07/pair.json
-446441708f7c961481403756820c6c0ec2c39723feaf2573889da9a203585c2c  172692  benchmark/B07/prepared.json
-2dd69d593cd719e8ff4d7fb5b1851581cc878c8cedad5fa54b91799d83bf55aa  292  benchmark/B07/request.txt
+d03adc207d4458c77b3187c0f38110ac83b819d6bd8124af1103718507313c0d  289  benchmark/B07/bundle-carrier.step
+d03adc207d4458c77b3187c0f38110ac83b819d6bd8124af1103718507313c0d  289  benchmark/B07/bundle-source.step
+016097964bde5485986c18c199066640c14c2e1b58f1ceaab4f3bbb35a2ae395  471  benchmark/B07/bundle.json
+f62c6e8822460b29a9bb33753241464086d4cb83ac4b1f7fd0d503968d6d159e  1236  benchmark/B07/card.json
+aa6b3b7788f22a76045e2c27bce767fc2cd58ef9f3f4273f565f2344b58e66f5  531  benchmark/B07/context.json
+5b8b7897edbfeb3e53ca0217d826809c06a04f161f91925c633f3e5f442a86e2  317  benchmark/B07/manifest.json
+c119d484e64622d5d23a81fb64639c9e0e0f10bfc200fdd0c9c9ef366fbba7cc  2117  benchmark/B07/mark.png
+e4bdc9a81f93362762a443434f817ea57e620347585f87c6747421ebb1318db8  619  benchmark/B07/pair.json
+bcf5ca289007c425da31a60fac73f22971bb8fdd1523557e70a09ddc495ca359  222134  benchmark/B07/prepared.json
+0896e100afef93e394454f300720fcbe8569dae6ad55b73661fb759e566d0475  374  benchmark/B07/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  benchmark/B07/schema-shell.fcstd
-f28152ae976a53ae84dbc9487ba08d922a4f12c198d254b73d28496c9c805e10  287  benchmark/B08/bundle-carrier.step
-f28152ae976a53ae84dbc9487ba08d922a4f12c198d254b73d28496c9c805e10  287  benchmark/B08/bundle-source.step
-11f9674a8ccf19706015a0b2d6f2fd67fe0f2be24f6813df0033b38276796598  471  benchmark/B08/bundle.json
-e2b9f96152257f479cd8a91a82aa7eed782a7f49a487874c000b1ae847a8164e  1232  benchmark/B08/card.json
-f97f534471bbe0ba0a1df756e6e1e194a6f8351c6bf03d2cbf73899e1d2bede0  531  benchmark/B08/context.json
-c13aec8f0734b5862ee473b7ec98bc017b8f3f839ca178a4d51a2f00777d3146  316  benchmark/B08/manifest.json
-8cc72628857dcbfb63728b5dee9636a2713d4a1fc3e88c0d625682d9c082784a  919  benchmark/B08/mark.png
-60fc16ffac17659854b7b1b540352e499309f57164984cdb7cb9781b8d7ce1d8  608  benchmark/B08/pair.json
-0a32545c8999c8546f8838156f6522b0ebfc5e0cf7443388c004e3fe07a4167b  100279  benchmark/B08/prepared.json
-0430d224e3d429ffd23e3b96476085367470fb6f093044c6f0fab5e1e65af182  267  benchmark/B08/request.txt
+1ec93a50656715316956f676d818c678453915eb1a310077807a0cf71087152d  289  benchmark/B08/bundle-carrier.step
+1ec93a50656715316956f676d818c678453915eb1a310077807a0cf71087152d  289  benchmark/B08/bundle-source.step
+7c64d4a4009ca5fc9983aee7c80831bc8726527062e339148c35ffe8119d2c02  471  benchmark/B08/bundle.json
+3692c365297e2cd6127bbb5cb8ec3281c5f626a744696c0890539b25450012f5  1234  benchmark/B08/card.json
+7ace664614f4725eb195279145e5cc8853891cc35b39fca1f364db6c7f1a6690  531  benchmark/B08/context.json
+456e31d25ce0f65083bd329941417e4b2a31f32e6f409509e5e0064c72095234  317  benchmark/B08/manifest.json
+413a3cd753e8e6fa95a642a7d9e60f62c9d1765a8a0df6109100cae951209ae1  2001  benchmark/B08/mark.png
+ec7768ea03b3f3e78098fc36de84368c76701dd33bb1e7297548eac5f250c5bc  608  benchmark/B08/pair.json
+69c4ebce272be6613d4cee464bd6b668dd43c915fa54c7f2d3f560477d1e74eb  235573  benchmark/B08/prepared.json
+68f8fa9834e2d3766ea74ad904e7091db3695d65e43c8eba5a292bb780a79470  353  benchmark/B08/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  benchmark/B08/schema-shell.fcstd
 2311d753682b24d15a9f665c44a297d4bbfc82c7ca812124206a4affea80dc73  6868  benchmark/B09/baseline.step
 2311d753682b24d15a9f665c44a297d4bbfc82c7ca812124206a4affea80dc73  6868  benchmark/B09/bundle-source.step
@@ -467,105 +477,105 @@ b4b8cd94db46dce9577acae46ca09347a38ceb50cb90f8856e91c8a823be4d1c  7023  generati
 11569a76fef6d80bb2ab7542e1fb89fa73bc74c64918a6e94124e45e9a954dc6  9758  generative/C1-10/reference.step
 b50e2c54d2883de6785beedc765a908fb9b6a3729bcbafd0b8d52da93135b8ca  334  generative/C1-10/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C1-10/schema-shell.fcstd
-8ab40385738ebf9523bbf0d05114ccc4ae6dd1e3519f552b53a1b178373173d2  291  generative/C2-01/bundle-carrier.step
-8ab40385738ebf9523bbf0d05114ccc4ae6dd1e3519f552b53a1b178373173d2  291  generative/C2-01/bundle-source.step
-b53ada550bbb40a01a5ef200f63edb1014f639ecbd1039d8eeb6991cc80f01a4  471  generative/C2-01/bundle.json
-a3b658b70744df7620e53d84909d63fd0b435facd67452303b66333daf76325c  1233  generative/C2-01/card.json
-d2d3021bc9f8d8310d084285c5465bdbbdb748fe98382095a942061dda80b938  531  generative/C2-01/context.json
-e2a3d043fb12ac7fdc223acd68d4e310c1a62615c86f44935fa0cea5263f267c  317  generative/C2-01/manifest.json
-27344ee5c07519cee2ca20b044beb725c8bc553fdfbb2224055c643555ba9497  1401  generative/C2-01/mark.png
-d4a6c44be03e37bd73b3c43956211b61472b895f4228b99f13631326f7947b4a  119324  generative/C2-01/prepared.json
-20f387f01a88c9c83a5989a6d14901eb834fd71f05c27f590876a78c52cbd617  267  generative/C2-01/request.txt
+9d594e9a1412046b8f899e6648ffe67e1046db04de24c909e6493a8bf427d338  293  generative/C2-01/bundle-carrier.step
+9d594e9a1412046b8f899e6648ffe67e1046db04de24c909e6493a8bf427d338  293  generative/C2-01/bundle-source.step
+512a76a6e86dfa1bee5f5ddac0481a4cd57847141382a7e284dbbc40cbe63e24  471  generative/C2-01/bundle.json
+c16103b811b77dd6f5ff0bf0f3616f89e26861331b2a6130fad36074a56a0782  1232  generative/C2-01/card.json
+db7df15208d2f89dddd5d2fc46d2b0d519967a72245c292424797795c3c4f1f0  531  generative/C2-01/context.json
+cd89b5d2b20904c35e6bfac2b79332ab46d8ca867ef61d14b7dce062e3cb0800  317  generative/C2-01/manifest.json
+9dd97c52dd7c350777f022c536d3ca7e992bf93aaf517185eeebec9ce53f9394  1548  generative/C2-01/mark.png
+a9d7c1f154d14b12cf97f19c0ad6e88ecdcc1f77755654ef9034a3aaa552b736  156964  generative/C2-01/prepared.json
+8ca5c7ca5bfaaf129e96f12881253537f5535431523c54cfff3d9467ef0a97dd  353  generative/C2-01/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-01/schema-shell.fcstd
-2aa0d87684205fe9862d5fb9dae5bfafd709a7519b71e425d8b7f4a579b12871  291  generative/C2-02/bundle-carrier.step
-2aa0d87684205fe9862d5fb9dae5bfafd709a7519b71e425d8b7f4a579b12871  291  generative/C2-02/bundle-source.step
-c71908e3b6e365febd21173ca530ae5641239ccb3daa443161709c1b0379623e  471  generative/C2-02/bundle.json
-5a6abf3dedf6de5da39125b5c9fc7fcc22144628026042dad3483e852b1d8acf  1234  generative/C2-02/card.json
-2878b02a92fcbaf49075faff6282e63c17d778454f46b3021baf8b69b352a091  531  generative/C2-02/context.json
-016c35264bf6b23a288c0fd4bdd0e78c91dc383a638a566789c598ee97dbb775  317  generative/C2-02/manifest.json
-3102245d3678698814a4c437669773950ed55b7644519fd67b5f3ef57ee36851  1134  generative/C2-02/mark.png
-b0e51e206cb10eb573b84ed71299bc1166e71ef439b6377d2c91a0811896468a  68638  generative/C2-02/prepared.json
-5b45ce0a7961fe4ab4462a31824b1753e90777a64b56cf3ea75ab5658c42b8d1  267  generative/C2-02/request.txt
+6045dc89dcb8f8d92f006aa86fedb8a25e586c53cc903c2534c908aab8620eb9  293  generative/C2-02/bundle-carrier.step
+6045dc89dcb8f8d92f006aa86fedb8a25e586c53cc903c2534c908aab8620eb9  293  generative/C2-02/bundle-source.step
+9c5b3697a1dcbbe8e7e9c9b21b42b748caa02da88cd9aae6b0de4b39c40b042b  471  generative/C2-02/bundle.json
+c71860eed113bb64a1fe14cc8a76450472c7da962252fa20820986ca6a2ffb5e  1233  generative/C2-02/card.json
+60f286aa519c8c60e7ab08001d27a09be5d48f22f275370daf3477cba5f0169a  531  generative/C2-02/context.json
+e14100abe8420180d4ee26e6d4b4bef27ff7cbf32ba1fd05ca6e2e431d1ad2da  317  generative/C2-02/manifest.json
+b873f6949509310383ee2c59bd2d89b7b74846e48d55e1e89d329869634b37bd  1508  generative/C2-02/mark.png
+eeba741d771c61da6102ebf238694851fcd2f60b145a7751ce16114d65d6e8f0  108707  generative/C2-02/prepared.json
+4e83c6e157b20034d053d0a35b3f7a78f7dba54bd6256824182a10ca29baf0df  353  generative/C2-02/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-02/schema-shell.fcstd
-0b5da090c0707f418deb235ba712f573d278a9112fad2e11b4960637b9dc9307  291  generative/C2-03/bundle-carrier.step
-0b5da090c0707f418deb235ba712f573d278a9112fad2e11b4960637b9dc9307  291  generative/C2-03/bundle-source.step
-edf6caa11ae5fb8a9fbe88c6c01677c77fec757c672ecb1b4de3438b41884d33  471  generative/C2-03/bundle.json
-6f3dc3632e56ee2b2fa4083dc8b80bb613363850cc7a2fc5b15cc4e5c69715db  1232  generative/C2-03/card.json
-0487dd30a4a69708783260c2940b9162b0f2ff471e3bf2e1c85e2b1f04916f40  531  generative/C2-03/context.json
-3f7d633af5eb8b38f1e0184298b4e7a0db0a2afd4c21a46b9c5df50bb5311d0f  317  generative/C2-03/manifest.json
-2c00ce07b42076eeab1c8f06f3a30b0f3f1b3fd580a8d60d298835f40321deac  1240  generative/C2-03/mark.png
-7a5e0bc2052faa880cc61c9c299c33ef5fdaccea0b0237493e38d57bf72e88ef  64493  generative/C2-03/prepared.json
-010fdf2a09fd4b2ff14bca6e22a519498e647e60a7d1cbf0ff1a4c181912d022  267  generative/C2-03/request.txt
+6cdd6d752b12fe705a23f8820a33da46dd32a14bb6db062389b2d272c155a9e4  293  generative/C2-03/bundle-carrier.step
+6cdd6d752b12fe705a23f8820a33da46dd32a14bb6db062389b2d272c155a9e4  293  generative/C2-03/bundle-source.step
+44b78a16e21262b44894142b7b40ac9d389d3749ff50ccb6649c9e4db5fd6a8f  471  generative/C2-03/bundle.json
+1875ec5e4d4aa4f02c35caa907932a0b8b3f01cde47275cc139cc3c5db558a5d  1233  generative/C2-03/card.json
+a089eec1a56b2deb568de2bb05c2d3169fdeae269fe0c34fc795688421543a79  531  generative/C2-03/context.json
+2831fbf5b299bf285e1b9d24e961ddc53432e6074bc96b0b904bb56ea23e417f  317  generative/C2-03/manifest.json
+cdfe05c1e070389f5ab9638121b6977a57a226c5e9974e721023e38509444bc0  1900  generative/C2-03/mark.png
+f23ee9b576805fef72755e8d88d03a4d7e72d9f445d5faae40b32068ebe6ec39  212317  generative/C2-03/prepared.json
+5ca45b6736d09b2fc03297a4f2b001aa2e476f467fd3976bb9f03b07855f93f2  353  generative/C2-03/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-03/schema-shell.fcstd
-701b039a80f898cddce315f87c7cc028588c3b56209fa8969c02e81dc83530d8  291  generative/C2-04/bundle-carrier.step
-701b039a80f898cddce315f87c7cc028588c3b56209fa8969c02e81dc83530d8  291  generative/C2-04/bundle-source.step
-f507a811a4183cf19da63baa6c91f37b981cd0a876e8f4fc791c431c48e51ef0  471  generative/C2-04/bundle.json
-19e3c47d97dd5fe1174309fa93d4eb6a4cad1431deffc6b5a9a1b34b1974ffde  1232  generative/C2-04/card.json
-0604a3336ed0f1dde6cde50db54210ec92b9e1dc434f0d07fb4bab3d4d000ad1  531  generative/C2-04/context.json
-e094492a448b41c92ca6b6c8e746c6d399c17a1540b6a128fcc9289ca35394b1  317  generative/C2-04/manifest.json
-251d649e12d24e3cad59ce307ff567116f342172b6d3da2b783f879f02651eba  1963  generative/C2-04/mark.png
-ca7a701a24ae2026e2623fc9ebce4902b2739dd6a437cccc869af244d0461f9a  219868  generative/C2-04/prepared.json
-a908c805cb000111539db625f27ee0acb337f273ae0fa07ac66a56973415d193  286  generative/C2-04/request.txt
+7997c9833c4b95b7cef6f7d5abf58ff7d9a3fde56a3846c7dc3008d3741f1bed  293  generative/C2-04/bundle-carrier.step
+7997c9833c4b95b7cef6f7d5abf58ff7d9a3fde56a3846c7dc3008d3741f1bed  293  generative/C2-04/bundle-source.step
+7d1bd123819a5c368b4567bd7e50b22d5037b16370ba180b71b578185ec3d9d4  471  generative/C2-04/bundle.json
+eae5040c0803427c0066cdb740e403663f4334d8381a09b0ffea42cdaf4d734a  1234  generative/C2-04/card.json
+235f9d7ace236e348f4f01364ccbf6ce091835bc8837fb12b81dca319db7265c  531  generative/C2-04/context.json
+f65d9a9dcb553e389f0d435e27b89404deaa9620aba5c885602015cec7ecfc31  317  generative/C2-04/manifest.json
+83377adc609f854aaf96ca9740019fa35538c3c985b66400b8573a8ace730e04  2126  generative/C2-04/mark.png
+0f043b1049c52d82db82579558103c840d74124200825a7dc0cad1ddd9c36bcf  262353  generative/C2-04/prepared.json
+906c8a598498cab7f14e39424b6c271bfd2153a23ead24f7aa483b56f71a4865  369  generative/C2-04/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-04/schema-shell.fcstd
-69a164fee5839349f1e0f44d7b2413cc6250fd8008eba003189c67da98dda5ef  291  generative/C2-05/bundle-carrier.step
-69a164fee5839349f1e0f44d7b2413cc6250fd8008eba003189c67da98dda5ef  291  generative/C2-05/bundle-source.step
-b49d47e3049a5d7f4eb01804a3ad2f45a986a952666b1fc6194092a2378b3e06  471  generative/C2-05/bundle.json
-77411ef0b4ef6343470dee2be256140ba27f169f769625fae575910822ca66e6  1233  generative/C2-05/card.json
-c2e9d310917ffa3553c2777fd81665beb348db3c8c9e31929b7dddd2997b89a5  531  generative/C2-05/context.json
-2e038db6adea3ec91c7c59280450ca26d6fc8236ae3ffc92b2a8113efeb3e727  317  generative/C2-05/manifest.json
-7d0bdabfe3c3937536f431aa83d4c7339976f05b56031ecb9f2981c03c06b1d8  1781  generative/C2-05/mark.png
-9811797345633a8eed1d4ee432759e8b1acda1ba4bcea8bb345973610cd6d425  183581  generative/C2-05/prepared.json
-fc21d83ed54f2612ef2e036112161d446d58658f91a354ec50e999a5c52c155c  286  generative/C2-05/request.txt
+70cdd47cd54204de59fec06ee21092f082005a402e404a825d1610bbbc1837c2  293  generative/C2-05/bundle-carrier.step
+70cdd47cd54204de59fec06ee21092f082005a402e404a825d1610bbbc1837c2  293  generative/C2-05/bundle-source.step
+2780631740cc5ace14c666ac63b52f633acc5045c64d9052e0ff0156f1ea1f53  471  generative/C2-05/bundle.json
+cc9935ff92bca1a0b0c53c56a08ec0bd6a923784d5558c830eb49720ad5b70ed  1234  generative/C2-05/card.json
+8ff11e96c9e5f07493b4c02d55e6a7ef5c5eed7e1229e487f56ec1e278367a69  531  generative/C2-05/context.json
+87c740b3433d839517bccfa85a8fb0e9a82b1231736092caf06d6790716515e4  317  generative/C2-05/manifest.json
+8f7ff4699e45790f4592cdda94454f3f84362054d3e19772ad7df058d2af6303  1994  generative/C2-05/mark.png
+180f2ae293f194f10623bb9feba930bf797a3909b565dad376efa300fa28e7b9  222050  generative/C2-05/prepared.json
+b9f88eef1fb3c6a949a9da45bdf1c1d3e9082404045871dde33a0480d29cc30c  369  generative/C2-05/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-05/schema-shell.fcstd
-f305c27949ee293b23252158dc0cd3b72c97f6ec3327284f2e6b24ae1fa9a47b  291  generative/C2-06/bundle-carrier.step
-f305c27949ee293b23252158dc0cd3b72c97f6ec3327284f2e6b24ae1fa9a47b  291  generative/C2-06/bundle-source.step
-26c46ee5509b6d1c54c2349932ba9910c84200743e8135d095fa53354afe04b7  471  generative/C2-06/bundle.json
-df44f1a4828766ed2c4daeddb6cf0e97115663c01b3c7407117cff462dd150fd  1234  generative/C2-06/card.json
-12d13a52ff75de557ff6aa08430390927f677fa1e3a3936b341d9d135896a961  531  generative/C2-06/context.json
-5cbeebc070a416a3a010e38377f25479c03d8f9b4f4c2c6b1207b8bb5237b56c  317  generative/C2-06/manifest.json
-0f6c36d3f8349ea7b28534680bd131c37fd5f3732c3eaa2d4bf917e86cd0c627  1757  generative/C2-06/mark.png
-ab82dcd03f69252ab105821a3c8154d78e187db6ea892a35de2b122968523fea  133997  generative/C2-06/prepared.json
-1319a5f7e0d3e85986e7e8c3ce66cb1a8ec624ab7254d479f301a2708e0b672a  286  generative/C2-06/request.txt
+29aaff6dbc1bf1055760bad95dbcf13e08e624aae85fcbc5a79a5980ba9249aa  293  generative/C2-06/bundle-carrier.step
+29aaff6dbc1bf1055760bad95dbcf13e08e624aae85fcbc5a79a5980ba9249aa  293  generative/C2-06/bundle-source.step
+c087970bc71d348c2ced837ed62cd9eb56dbe44adcb813c6d60dcba3886e6677  471  generative/C2-06/bundle.json
+ac4c83e50a7393ea6cd48c7b6daaa35a00a8b28cf9cbb5340fd18cda0be9634a  1235  generative/C2-06/card.json
+eb712bcdf6c21aa9c90efbbaf4c59c894751619eb150a9f1e7e5e9926f419fd9  531  generative/C2-06/context.json
+c307afd78e7034e06ff2aa7bb7b4a84354edc1607339e4cf8f9c408f3ee9fca8  317  generative/C2-06/manifest.json
+3beb14b41786dd1d5651f134a7351780b90e0e12ae39ea3300a0ad4c96615ab4  1939  generative/C2-06/mark.png
+924afc446be850a78275e273d55b2b094f01b1b76c8f9a72c66e598804c897aa  220433  generative/C2-06/prepared.json
+b700effd9c971f80037af4b977bc1bedae6365b9c506550e4844987ec25956a2  369  generative/C2-06/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-06/schema-shell.fcstd
-e774f34c2759e1c708c57f3bdbc920ccab2ab8582301fa7294b92bb2c01f39d7  291  generative/C2-07/bundle-carrier.step
-e774f34c2759e1c708c57f3bdbc920ccab2ab8582301fa7294b92bb2c01f39d7  291  generative/C2-07/bundle-source.step
-70e08b4fde0982d8537eaea134eb296c51c2c1a6f3ad3899394263526f4f00b9  471  generative/C2-07/bundle.json
-2017a62fa19bfc7b4d117b138c9dc7d9be0eacc4f4dfd614c1527836ab94ef82  1232  generative/C2-07/card.json
-b3bd447415d3256d5b59c3b9d7f7769ee5c6c7afe05c42f8d13ad511d4f7bb7d  531  generative/C2-07/context.json
-6244799b1d5a6318cab4cee68776b9e6a580a6c068c1c84a0acda6f15a889a5a  317  generative/C2-07/manifest.json
-9bd40e3fb445b59754fe9b882090adbfe57383f8893fd2306fb4dff52c629f8b  1510  generative/C2-07/mark.png
-49f7121c1017847cfe2566fd3d1898e35c0966708c46cff076f92b0212b4ac8b  188887  generative/C2-07/prepared.json
-06b8290d54a98230f28f2e6af5889162af743064269c89b1c60f8aa8623b5d4d  283  generative/C2-07/request.txt
+c26aeb2008cb19e850e63826caadd0db6117d36cf19991873968234a5f5ed4c7  293  generative/C2-07/bundle-carrier.step
+c26aeb2008cb19e850e63826caadd0db6117d36cf19991873968234a5f5ed4c7  293  generative/C2-07/bundle-source.step
+6fa8138bf9ead045f1abae0e0a8eaf249c68de063127616b00ff420dea667b54  471  generative/C2-07/bundle.json
+2dd622b74b3a8961891c025a5d7ef37dfbef49bd48c7597906ca8093346833a4  1236  generative/C2-07/card.json
+f8165d63b7b98c4f693e9587158a39e58840c67e8b5da40f6795031f9eed76c5  531  generative/C2-07/context.json
+0b1905264c3f3c7a73cd13b20e45c7e1b5acf75abb1b7d765706e0b1125ae6a1  317  generative/C2-07/manifest.json
+6933516f7955cf1a995257ca070c7caff43850c52d9f62194ea1f996b9bf4d7e  2967  generative/C2-07/mark.png
+0b349f4479ed3695d05b2644be9e1f80b1bf47cfb63ddbaeed421421d0a1bdfd  383191  generative/C2-07/prepared.json
+a95149be85afad8adb0279c094d9f2fd4c4b2ef1d2b94afa63f65aef2d7b8832  369  generative/C2-07/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-07/schema-shell.fcstd
-0c321cab8819dc21bb5cb63e5a40e0557cae42682a87841b54729fd324d1644c  291  generative/C2-08/bundle-carrier.step
-0c321cab8819dc21bb5cb63e5a40e0557cae42682a87841b54729fd324d1644c  291  generative/C2-08/bundle-source.step
-1df85d392c77a9da19643b2b303e70bd4803390be5a6faf94dbc38d77fbf36f3  471  generative/C2-08/bundle.json
-96603752d6f723094b69bc8724bd262ef821029122d2f48f8c6fa97b32e6f800  1232  generative/C2-08/card.json
-9fe04aeef958977c148acbc23225e418be7cf73715d7f2824cedb928490a0f7b  531  generative/C2-08/context.json
-22548f3c93410274a6bebdd6b271b0c414553659cadcd523eb05a7f7139b65bd  317  generative/C2-08/manifest.json
-671fbda1035ae638817254c401f22d6b6ce688727ec40e0924f4f99e97f78e84  1937  generative/C2-08/mark.png
-07543c936342c01a885f3d50021ea7224b4bf742371a7b4f8b06c2d45d5792b3  161067  generative/C2-08/prepared.json
-aaea540e9a420ddd91c01c90cca0f4fa95febd7ce05b76e910c51fd795be29a9  292  generative/C2-08/request.txt
+ea1b8b13172f84cbbe6742607b9c3dd1f66d2283d31554b155962ddb9bb0848b  293  generative/C2-08/bundle-carrier.step
+ea1b8b13172f84cbbe6742607b9c3dd1f66d2283d31554b155962ddb9bb0848b  293  generative/C2-08/bundle-source.step
+1f3726baa2427ddf4285555cf00d991d5f631e30db11b3f3aeb41edce7f7476e  471  generative/C2-08/bundle.json
+63f28331309c22cd844c507034a46c45f79f5f6f7b8b95c92dd03b19f3f3cad0  1234  generative/C2-08/card.json
+34ea874892d1c32456b9ef5fdcf5115430b25771f0b6702c3d91a9621a7e997e  531  generative/C2-08/context.json
+10b38e88f3a454319598d296f84a6a9b1cabe251ae8760b617e4cd35a986d2c2  317  generative/C2-08/manifest.json
+b3dbccab3f3ce5817c98e96cc4cb8e855f92dac675fc09285504e798d8a7778c  2260  generative/C2-08/mark.png
+2a770caacf91265280a6dea1309871fd3f1df2029915f066b0eb8ef46928e727  192390  generative/C2-08/prepared.json
+09cdf62216d3cbc35747311226465a2380adc59adcddbd4e7c46e6e6f44cbb7c  374  generative/C2-08/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-08/schema-shell.fcstd
-800e6bdeab02e574727dd697827d67f8be4381eb5497d2cf0b60387eb7b59a5b  291  generative/C2-09/bundle-carrier.step
-800e6bdeab02e574727dd697827d67f8be4381eb5497d2cf0b60387eb7b59a5b  291  generative/C2-09/bundle-source.step
-bbd8c3084ea12b02cd90368b9e17efb1fb5005e63118acf58393fd34f4c53122  471  generative/C2-09/bundle.json
-5d37fab610cd1d6a11571ce95d3901e55495ee830165cffd1cc2835f31de8df0  1232  generative/C2-09/card.json
-7be188b22c22f9fef83bb5c40f83c88f273ffa4857c6cc813fa059ae987427ee  531  generative/C2-09/context.json
-93de3a779dcb0f12da0b877f044e9e96f8a05c43d620a577b5ca884bd161d4c5  317  generative/C2-09/manifest.json
-0d58cd1ea83c4d8d85bbd3274ed860bfb4af52e9391f57d1108a92deb86579ed  2004  generative/C2-09/mark.png
-3150a35875c018e6c1068bc34f9e2b39e564f2fb91c5b70324bb6ff40fe25962  186508  generative/C2-09/prepared.json
-d93c43e7f5b3d50336e43a52a17e18b0211ea1a229e577737f7edf69e3c985ea  292  generative/C2-09/request.txt
+fa7d1b0f205467155210a85f2d31f5143794a96656df9dce5d5fe81f422cbcc2  293  generative/C2-09/bundle-carrier.step
+fa7d1b0f205467155210a85f2d31f5143794a96656df9dce5d5fe81f422cbcc2  293  generative/C2-09/bundle-source.step
+e9fb6682844ed8b02283b5f932f28f52a27f92bbca5b8f5a3e8a3187b1487b08  471  generative/C2-09/bundle.json
+813c9752c7136702a76f79935b46b4aab5b644d75a31ffd2f2297052b3866247  1234  generative/C2-09/card.json
+5a6a361d585caad0d4b0c62ba2afb84b974c129ad3b02c5e9b1471007862f5d3  531  generative/C2-09/context.json
+4d8d63a866692f48bdca62c3e17fddf710f86974504a651fb484b0263b9d04ab  317  generative/C2-09/manifest.json
+7608d47f4939d81bede0af0398440f84b711be6c3f2b71c355735ac0e9b351e8  2299  generative/C2-09/mark.png
+0de7338ab14a53475ee95f07d077e440d520b41e19e1b33f74dd5d4436198680  189574  generative/C2-09/prepared.json
+98e49779b9a2473dbea0390435b337b66c768d5571bbe34435945de985d09a34  374  generative/C2-09/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-09/schema-shell.fcstd
-80d14113f0a3f502357a08b78d99255d296642d5aef12c6540fe57275a649b33  291  generative/C2-10/bundle-carrier.step
-80d14113f0a3f502357a08b78d99255d296642d5aef12c6540fe57275a649b33  291  generative/C2-10/bundle-source.step
-6cd14fcd21f6454f563809fb9aa33fdf02df0841bf9e356b63a4e89ef5fd2fca  471  generative/C2-10/bundle.json
-6ddfacdac2c1300647b3063292688fecad5458400b115d0763f508cc005aa3ef  1232  generative/C2-10/card.json
-b58fac9caeaa9995b3cb4d117717741dcd98cdc4ad4d9e923465178fa69f3dc3  531  generative/C2-10/context.json
-e58a8f4a90fde91ebe165a65af11955f5ea27c2d38ae1927c8d86b2284c7b49e  317  generative/C2-10/manifest.json
-776c85bbb7d9e91f2a264dfaa680854adf912128148950f5f3597a392f809f0d  1942  generative/C2-10/mark.png
-0edb9903eba21f6e1ef2dcc1fe274959a55804173665faa0e9ad53dd9232c43b  154028  generative/C2-10/prepared.json
-06452f691b09a4748bdc20e0fab810d54b4437e55bcb97dc31eb2f7525d74d03  292  generative/C2-10/request.txt
+766451786faa0ec5ab1690edff4703d71f29f5ab9cfa2530a94a7bc5cc7fb1d0  293  generative/C2-10/bundle-carrier.step
+766451786faa0ec5ab1690edff4703d71f29f5ab9cfa2530a94a7bc5cc7fb1d0  293  generative/C2-10/bundle-source.step
+37f48f2e3936f6ac1584adddc6deadf50fe69e696cb680f01ea2e9ce467e90c6  471  generative/C2-10/bundle.json
+62878e2f3174f6e56a31775a7c151b136bcadaa2dbe173b1860f6ccc9206b4be  1235  generative/C2-10/card.json
+7dbfc36fb2d040feb8a38e4e72137e54c25c8921169df14cc3e633b194737996  531  generative/C2-10/context.json
+ff71098a95b42bc25397530a11f84c8b7a99fec80301e6ba7dcd5361adffe1fb  317  generative/C2-10/manifest.json
+98bb17fd3d0a76733580c21087f78573c503d97416aabfeab0b1380deb5abfb1  2655  generative/C2-10/mark.png
+27ba2f6de8be0a05fbfc741db638f35b64da0c2308899380dd76f547e8c65e06  279157  generative/C2-10/prepared.json
+c9afc00332c2743589a2dc356b7c245db1d1417d44dec08e5a84578210cb1700  374  generative/C2-10/request.txt
 02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  generative/C2-10/schema-shell.fcstd
 ccfaa54fbab02daca642f4e18152eadbd80676e1c818dff38bf436fb5df0c952  6870  generative/C3-01/baseline.step
 ccfaa54fbab02daca642f4e18152eadbd80676e1c818dff38bf436fb5df0c952  6870  generative/C3-01/bundle-source.step
@@ -813,6 +823,151 @@ cae2c5cb7ed6f81d0af6015ae5be88852b75f1131db93c7e3f6589ec901b83d2  176  generativ
 8dfbb1c1fd142b209a05e77b9f6cccda090833ad036de7a5168ffe3fab30326b  9085  generative/C5-07/reference.step
 4cf77b4a055de07a93e1d626f40c1a9ee2e85878fa0c871c3007f6d375edfbac  270  generative/C5-07/request.txt
 80d0e5ca53d6086e010ce0368aed02be8c8ef839558918fbee03b6f55af618d3  190  generative/C5-07/schema-shell.fcstd
+7ae945738161b5ebc1143448ac5cee99f2492ff8fcff6f669fafc46930b5540a  480  retired-c2-cycle1/RETIRED.txt
+a2c49a8117ff526a11674b8f46438856ef3e1bfd861ec9ee1bcfccc5ece9804d  287  retired-c2-cycle1/benchmark/B05/bundle-carrier.step
+a2c49a8117ff526a11674b8f46438856ef3e1bfd861ec9ee1bcfccc5ece9804d  287  retired-c2-cycle1/benchmark/B05/bundle-source.step
+4cbe26139e54fcdbafc827dec6f4469287d61a96234c9868c648cfa498a441fa  471  retired-c2-cycle1/benchmark/B05/bundle.json
+f3c0535100b2482096c0d14377d9fb7d9152dc65a2d47bd0349a3e2a22a3f800  1233  retired-c2-cycle1/benchmark/B05/card.json
+6778362c469642a4c5a02c748d2686b9780f78bc56d650fbe5d16a575c7d5642  531  retired-c2-cycle1/benchmark/B05/context.json
+bff5c3c3fa00025725c062739f74e1bd9388756a079c46577d9787a8276f0b53  317  retired-c2-cycle1/benchmark/B05/manifest.json
+7a30298ce8987aa96fe541042203dcd27caf514d3a6c335e8d2d2093166d31b8  1467  retired-c2-cycle1/benchmark/B05/mark.png
+6d89be112883359bec3be07414703d4cba819d4172803bfc0437306a7df43c33  608  retired-c2-cycle1/benchmark/B05/pair.json
+0612b13d5e2490235e9addb2c4cca2fcbe6bf7ccef8c9a26d116f98fbfc8f9fe  141289  retired-c2-cycle1/benchmark/B05/prepared.json
+5d816a675afd3f21c4dbbf8d6178d73916b268f9af70ae2a7f76c42ef6180347  267  retired-c2-cycle1/benchmark/B05/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/benchmark/B05/schema-shell.fcstd
+ba561d0ecd36e8e11c5a271035ab7bba96ba5d7eaa404782ff452733aa69c543  287  retired-c2-cycle1/benchmark/B06/bundle-carrier.step
+ba561d0ecd36e8e11c5a271035ab7bba96ba5d7eaa404782ff452733aa69c543  287  retired-c2-cycle1/benchmark/B06/bundle-source.step
+08fde1e37aaea9cacab423720e3d5d44107c6d741541f7d64a0546157030ac01  471  retired-c2-cycle1/benchmark/B06/bundle.json
+dff58af7ab9820099257ef2d0d8503ef403bce5d0430dff2f22bda30e90da709  1232  retired-c2-cycle1/benchmark/B06/card.json
+390c6c55b699bbbadf4ab09428db55bd43161aff0a81c115994fb552fc6aa9e3  531  retired-c2-cycle1/benchmark/B06/context.json
+75faf3ddad70ac49ba67893c6c9cffcbdb1348e9423230d1b8168344f9d63042  317  retired-c2-cycle1/benchmark/B06/manifest.json
+847f52c65388e7e2e50edb9e28ffc36e8452f92881aace199d359c1d059b8c9f  2277  retired-c2-cycle1/benchmark/B06/mark.png
+026938a509043e483a507a34757568ded53d0ddd58a7d1cf377684159337d3e2  617  retired-c2-cycle1/benchmark/B06/pair.json
+dd31ce69021c54f499f1eba9cfabee00a6c315c4e21ed395927c23ebf7ff75af  276534  retired-c2-cycle1/benchmark/B06/prepared.json
+f6991cb3684ba96e359a4a892f71e49dc324121aa87b1b02b148a432c064de76  286  retired-c2-cycle1/benchmark/B06/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/benchmark/B06/schema-shell.fcstd
+b96bf45d51f4dcfda91f22204725b5754c39f38d4ef891b1f30d06a9e382e1ca  287  retired-c2-cycle1/benchmark/B07/bundle-carrier.step
+b96bf45d51f4dcfda91f22204725b5754c39f38d4ef891b1f30d06a9e382e1ca  287  retired-c2-cycle1/benchmark/B07/bundle-source.step
+7c196dcd4cbfe3254ff93030562ad3509e325b57a111d1a405774679e1d6cf4c  471  retired-c2-cycle1/benchmark/B07/bundle.json
+54e23ac0dcf256ecc2fe8b796be7fdf32699d9a8e796ced7ec25da8715d699c3  1232  retired-c2-cycle1/benchmark/B07/card.json
+f23b09f56deae89b68fec8f433172b28de246223c2fc23a1de12ff504bca1d89  531  retired-c2-cycle1/benchmark/B07/context.json
+19676cf9e6961e79fa62ec2b127d1a147e75af94f9709d4bc358261273288802  317  retired-c2-cycle1/benchmark/B07/manifest.json
+7be46db2f2eec2fc10f6d135183a692c558e871fdac62e8869df9ffc602d3564  1924  retired-c2-cycle1/benchmark/B07/mark.png
+e5efb14f35fe2f074615989fffee164d792b122eb63852c269cc9d605b46ebf6  619  retired-c2-cycle1/benchmark/B07/pair.json
+446441708f7c961481403756820c6c0ec2c39723feaf2573889da9a203585c2c  172692  retired-c2-cycle1/benchmark/B07/prepared.json
+2dd69d593cd719e8ff4d7fb5b1851581cc878c8cedad5fa54b91799d83bf55aa  292  retired-c2-cycle1/benchmark/B07/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/benchmark/B07/schema-shell.fcstd
+f28152ae976a53ae84dbc9487ba08d922a4f12c198d254b73d28496c9c805e10  287  retired-c2-cycle1/benchmark/B08/bundle-carrier.step
+f28152ae976a53ae84dbc9487ba08d922a4f12c198d254b73d28496c9c805e10  287  retired-c2-cycle1/benchmark/B08/bundle-source.step
+11f9674a8ccf19706015a0b2d6f2fd67fe0f2be24f6813df0033b38276796598  471  retired-c2-cycle1/benchmark/B08/bundle.json
+e2b9f96152257f479cd8a91a82aa7eed782a7f49a487874c000b1ae847a8164e  1232  retired-c2-cycle1/benchmark/B08/card.json
+f97f534471bbe0ba0a1df756e6e1e194a6f8351c6bf03d2cbf73899e1d2bede0  531  retired-c2-cycle1/benchmark/B08/context.json
+c13aec8f0734b5862ee473b7ec98bc017b8f3f839ca178a4d51a2f00777d3146  316  retired-c2-cycle1/benchmark/B08/manifest.json
+8cc72628857dcbfb63728b5dee9636a2713d4a1fc3e88c0d625682d9c082784a  919  retired-c2-cycle1/benchmark/B08/mark.png
+60fc16ffac17659854b7b1b540352e499309f57164984cdb7cb9781b8d7ce1d8  608  retired-c2-cycle1/benchmark/B08/pair.json
+0a32545c8999c8546f8838156f6522b0ebfc5e0cf7443388c004e3fe07a4167b  100279  retired-c2-cycle1/benchmark/B08/prepared.json
+0430d224e3d429ffd23e3b96476085367470fb6f093044c6f0fab5e1e65af182  267  retired-c2-cycle1/benchmark/B08/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/benchmark/B08/schema-shell.fcstd
+8ab40385738ebf9523bbf0d05114ccc4ae6dd1e3519f552b53a1b178373173d2  291  retired-c2-cycle1/generative/C2-01/bundle-carrier.step
+8ab40385738ebf9523bbf0d05114ccc4ae6dd1e3519f552b53a1b178373173d2  291  retired-c2-cycle1/generative/C2-01/bundle-source.step
+b53ada550bbb40a01a5ef200f63edb1014f639ecbd1039d8eeb6991cc80f01a4  471  retired-c2-cycle1/generative/C2-01/bundle.json
+a3b658b70744df7620e53d84909d63fd0b435facd67452303b66333daf76325c  1233  retired-c2-cycle1/generative/C2-01/card.json
+d2d3021bc9f8d8310d084285c5465bdbbdb748fe98382095a942061dda80b938  531  retired-c2-cycle1/generative/C2-01/context.json
+e2a3d043fb12ac7fdc223acd68d4e310c1a62615c86f44935fa0cea5263f267c  317  retired-c2-cycle1/generative/C2-01/manifest.json
+27344ee5c07519cee2ca20b044beb725c8bc553fdfbb2224055c643555ba9497  1401  retired-c2-cycle1/generative/C2-01/mark.png
+d4a6c44be03e37bd73b3c43956211b61472b895f4228b99f13631326f7947b4a  119324  retired-c2-cycle1/generative/C2-01/prepared.json
+20f387f01a88c9c83a5989a6d14901eb834fd71f05c27f590876a78c52cbd617  267  retired-c2-cycle1/generative/C2-01/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-01/schema-shell.fcstd
+2aa0d87684205fe9862d5fb9dae5bfafd709a7519b71e425d8b7f4a579b12871  291  retired-c2-cycle1/generative/C2-02/bundle-carrier.step
+2aa0d87684205fe9862d5fb9dae5bfafd709a7519b71e425d8b7f4a579b12871  291  retired-c2-cycle1/generative/C2-02/bundle-source.step
+c71908e3b6e365febd21173ca530ae5641239ccb3daa443161709c1b0379623e  471  retired-c2-cycle1/generative/C2-02/bundle.json
+5a6abf3dedf6de5da39125b5c9fc7fcc22144628026042dad3483e852b1d8acf  1234  retired-c2-cycle1/generative/C2-02/card.json
+2878b02a92fcbaf49075faff6282e63c17d778454f46b3021baf8b69b352a091  531  retired-c2-cycle1/generative/C2-02/context.json
+016c35264bf6b23a288c0fd4bdd0e78c91dc383a638a566789c598ee97dbb775  317  retired-c2-cycle1/generative/C2-02/manifest.json
+3102245d3678698814a4c437669773950ed55b7644519fd67b5f3ef57ee36851  1134  retired-c2-cycle1/generative/C2-02/mark.png
+b0e51e206cb10eb573b84ed71299bc1166e71ef439b6377d2c91a0811896468a  68638  retired-c2-cycle1/generative/C2-02/prepared.json
+5b45ce0a7961fe4ab4462a31824b1753e90777a64b56cf3ea75ab5658c42b8d1  267  retired-c2-cycle1/generative/C2-02/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-02/schema-shell.fcstd
+0b5da090c0707f418deb235ba712f573d278a9112fad2e11b4960637b9dc9307  291  retired-c2-cycle1/generative/C2-03/bundle-carrier.step
+0b5da090c0707f418deb235ba712f573d278a9112fad2e11b4960637b9dc9307  291  retired-c2-cycle1/generative/C2-03/bundle-source.step
+edf6caa11ae5fb8a9fbe88c6c01677c77fec757c672ecb1b4de3438b41884d33  471  retired-c2-cycle1/generative/C2-03/bundle.json
+6f3dc3632e56ee2b2fa4083dc8b80bb613363850cc7a2fc5b15cc4e5c69715db  1232  retired-c2-cycle1/generative/C2-03/card.json
+0487dd30a4a69708783260c2940b9162b0f2ff471e3bf2e1c85e2b1f04916f40  531  retired-c2-cycle1/generative/C2-03/context.json
+3f7d633af5eb8b38f1e0184298b4e7a0db0a2afd4c21a46b9c5df50bb5311d0f  317  retired-c2-cycle1/generative/C2-03/manifest.json
+2c00ce07b42076eeab1c8f06f3a30b0f3f1b3fd580a8d60d298835f40321deac  1240  retired-c2-cycle1/generative/C2-03/mark.png
+7a5e0bc2052faa880cc61c9c299c33ef5fdaccea0b0237493e38d57bf72e88ef  64493  retired-c2-cycle1/generative/C2-03/prepared.json
+010fdf2a09fd4b2ff14bca6e22a519498e647e60a7d1cbf0ff1a4c181912d022  267  retired-c2-cycle1/generative/C2-03/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-03/schema-shell.fcstd
+701b039a80f898cddce315f87c7cc028588c3b56209fa8969c02e81dc83530d8  291  retired-c2-cycle1/generative/C2-04/bundle-carrier.step
+701b039a80f898cddce315f87c7cc028588c3b56209fa8969c02e81dc83530d8  291  retired-c2-cycle1/generative/C2-04/bundle-source.step
+f507a811a4183cf19da63baa6c91f37b981cd0a876e8f4fc791c431c48e51ef0  471  retired-c2-cycle1/generative/C2-04/bundle.json
+19e3c47d97dd5fe1174309fa93d4eb6a4cad1431deffc6b5a9a1b34b1974ffde  1232  retired-c2-cycle1/generative/C2-04/card.json
+0604a3336ed0f1dde6cde50db54210ec92b9e1dc434f0d07fb4bab3d4d000ad1  531  retired-c2-cycle1/generative/C2-04/context.json
+e094492a448b41c92ca6b6c8e746c6d399c17a1540b6a128fcc9289ca35394b1  317  retired-c2-cycle1/generative/C2-04/manifest.json
+251d649e12d24e3cad59ce307ff567116f342172b6d3da2b783f879f02651eba  1963  retired-c2-cycle1/generative/C2-04/mark.png
+ca7a701a24ae2026e2623fc9ebce4902b2739dd6a437cccc869af244d0461f9a  219868  retired-c2-cycle1/generative/C2-04/prepared.json
+a908c805cb000111539db625f27ee0acb337f273ae0fa07ac66a56973415d193  286  retired-c2-cycle1/generative/C2-04/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-04/schema-shell.fcstd
+69a164fee5839349f1e0f44d7b2413cc6250fd8008eba003189c67da98dda5ef  291  retired-c2-cycle1/generative/C2-05/bundle-carrier.step
+69a164fee5839349f1e0f44d7b2413cc6250fd8008eba003189c67da98dda5ef  291  retired-c2-cycle1/generative/C2-05/bundle-source.step
+b49d47e3049a5d7f4eb01804a3ad2f45a986a952666b1fc6194092a2378b3e06  471  retired-c2-cycle1/generative/C2-05/bundle.json
+77411ef0b4ef6343470dee2be256140ba27f169f769625fae575910822ca66e6  1233  retired-c2-cycle1/generative/C2-05/card.json
+c2e9d310917ffa3553c2777fd81665beb348db3c8c9e31929b7dddd2997b89a5  531  retired-c2-cycle1/generative/C2-05/context.json
+2e038db6adea3ec91c7c59280450ca26d6fc8236ae3ffc92b2a8113efeb3e727  317  retired-c2-cycle1/generative/C2-05/manifest.json
+7d0bdabfe3c3937536f431aa83d4c7339976f05b56031ecb9f2981c03c06b1d8  1781  retired-c2-cycle1/generative/C2-05/mark.png
+9811797345633a8eed1d4ee432759e8b1acda1ba4bcea8bb345973610cd6d425  183581  retired-c2-cycle1/generative/C2-05/prepared.json
+fc21d83ed54f2612ef2e036112161d446d58658f91a354ec50e999a5c52c155c  286  retired-c2-cycle1/generative/C2-05/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-05/schema-shell.fcstd
+f305c27949ee293b23252158dc0cd3b72c97f6ec3327284f2e6b24ae1fa9a47b  291  retired-c2-cycle1/generative/C2-06/bundle-carrier.step
+f305c27949ee293b23252158dc0cd3b72c97f6ec3327284f2e6b24ae1fa9a47b  291  retired-c2-cycle1/generative/C2-06/bundle-source.step
+26c46ee5509b6d1c54c2349932ba9910c84200743e8135d095fa53354afe04b7  471  retired-c2-cycle1/generative/C2-06/bundle.json
+df44f1a4828766ed2c4daeddb6cf0e97115663c01b3c7407117cff462dd150fd  1234  retired-c2-cycle1/generative/C2-06/card.json
+12d13a52ff75de557ff6aa08430390927f677fa1e3a3936b341d9d135896a961  531  retired-c2-cycle1/generative/C2-06/context.json
+5cbeebc070a416a3a010e38377f25479c03d8f9b4f4c2c6b1207b8bb5237b56c  317  retired-c2-cycle1/generative/C2-06/manifest.json
+0f6c36d3f8349ea7b28534680bd131c37fd5f3732c3eaa2d4bf917e86cd0c627  1757  retired-c2-cycle1/generative/C2-06/mark.png
+ab82dcd03f69252ab105821a3c8154d78e187db6ea892a35de2b122968523fea  133997  retired-c2-cycle1/generative/C2-06/prepared.json
+1319a5f7e0d3e85986e7e8c3ce66cb1a8ec624ab7254d479f301a2708e0b672a  286  retired-c2-cycle1/generative/C2-06/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-06/schema-shell.fcstd
+e774f34c2759e1c708c57f3bdbc920ccab2ab8582301fa7294b92bb2c01f39d7  291  retired-c2-cycle1/generative/C2-07/bundle-carrier.step
+e774f34c2759e1c708c57f3bdbc920ccab2ab8582301fa7294b92bb2c01f39d7  291  retired-c2-cycle1/generative/C2-07/bundle-source.step
+70e08b4fde0982d8537eaea134eb296c51c2c1a6f3ad3899394263526f4f00b9  471  retired-c2-cycle1/generative/C2-07/bundle.json
+2017a62fa19bfc7b4d117b138c9dc7d9be0eacc4f4dfd614c1527836ab94ef82  1232  retired-c2-cycle1/generative/C2-07/card.json
+b3bd447415d3256d5b59c3b9d7f7769ee5c6c7afe05c42f8d13ad511d4f7bb7d  531  retired-c2-cycle1/generative/C2-07/context.json
+6244799b1d5a6318cab4cee68776b9e6a580a6c068c1c84a0acda6f15a889a5a  317  retired-c2-cycle1/generative/C2-07/manifest.json
+9bd40e3fb445b59754fe9b882090adbfe57383f8893fd2306fb4dff52c629f8b  1510  retired-c2-cycle1/generative/C2-07/mark.png
+49f7121c1017847cfe2566fd3d1898e35c0966708c46cff076f92b0212b4ac8b  188887  retired-c2-cycle1/generative/C2-07/prepared.json
+06b8290d54a98230f28f2e6af5889162af743064269c89b1c60f8aa8623b5d4d  283  retired-c2-cycle1/generative/C2-07/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-07/schema-shell.fcstd
+0c321cab8819dc21bb5cb63e5a40e0557cae42682a87841b54729fd324d1644c  291  retired-c2-cycle1/generative/C2-08/bundle-carrier.step
+0c321cab8819dc21bb5cb63e5a40e0557cae42682a87841b54729fd324d1644c  291  retired-c2-cycle1/generative/C2-08/bundle-source.step
+1df85d392c77a9da19643b2b303e70bd4803390be5a6faf94dbc38d77fbf36f3  471  retired-c2-cycle1/generative/C2-08/bundle.json
+96603752d6f723094b69bc8724bd262ef821029122d2f48f8c6fa97b32e6f800  1232  retired-c2-cycle1/generative/C2-08/card.json
+9fe04aeef958977c148acbc23225e418be7cf73715d7f2824cedb928490a0f7b  531  retired-c2-cycle1/generative/C2-08/context.json
+22548f3c93410274a6bebdd6b271b0c414553659cadcd523eb05a7f7139b65bd  317  retired-c2-cycle1/generative/C2-08/manifest.json
+671fbda1035ae638817254c401f22d6b6ce688727ec40e0924f4f99e97f78e84  1937  retired-c2-cycle1/generative/C2-08/mark.png
+07543c936342c01a885f3d50021ea7224b4bf742371a7b4f8b06c2d45d5792b3  161067  retired-c2-cycle1/generative/C2-08/prepared.json
+aaea540e9a420ddd91c01c90cca0f4fa95febd7ce05b76e910c51fd795be29a9  292  retired-c2-cycle1/generative/C2-08/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-08/schema-shell.fcstd
+800e6bdeab02e574727dd697827d67f8be4381eb5497d2cf0b60387eb7b59a5b  291  retired-c2-cycle1/generative/C2-09/bundle-carrier.step
+800e6bdeab02e574727dd697827d67f8be4381eb5497d2cf0b60387eb7b59a5b  291  retired-c2-cycle1/generative/C2-09/bundle-source.step
+bbd8c3084ea12b02cd90368b9e17efb1fb5005e63118acf58393fd34f4c53122  471  retired-c2-cycle1/generative/C2-09/bundle.json
+5d37fab610cd1d6a11571ce95d3901e55495ee830165cffd1cc2835f31de8df0  1232  retired-c2-cycle1/generative/C2-09/card.json
+7be188b22c22f9fef83bb5c40f83c88f273ffa4857c6cc813fa059ae987427ee  531  retired-c2-cycle1/generative/C2-09/context.json
+93de3a779dcb0f12da0b877f044e9e96f8a05c43d620a577b5ca884bd161d4c5  317  retired-c2-cycle1/generative/C2-09/manifest.json
+0d58cd1ea83c4d8d85bbd3274ed860bfb4af52e9391f57d1108a92deb86579ed  2004  retired-c2-cycle1/generative/C2-09/mark.png
+3150a35875c018e6c1068bc34f9e2b39e564f2fb91c5b70324bb6ff40fe25962  186508  retired-c2-cycle1/generative/C2-09/prepared.json
+d93c43e7f5b3d50336e43a52a17e18b0211ea1a229e577737f7edf69e3c985ea  292  retired-c2-cycle1/generative/C2-09/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-09/schema-shell.fcstd
+80d14113f0a3f502357a08b78d99255d296642d5aef12c6540fe57275a649b33  291  retired-c2-cycle1/generative/C2-10/bundle-carrier.step
+80d14113f0a3f502357a08b78d99255d296642d5aef12c6540fe57275a649b33  291  retired-c2-cycle1/generative/C2-10/bundle-source.step
+6cd14fcd21f6454f563809fb9aa33fdf02df0841bf9e356b63a4e89ef5fd2fca  471  retired-c2-cycle1/generative/C2-10/bundle.json
+6ddfacdac2c1300647b3063292688fecad5458400b115d0763f508cc005aa3ef  1232  retired-c2-cycle1/generative/C2-10/card.json
+b58fac9caeaa9995b3cb4d117717741dcd98cdc4ad4d9e923465178fa69f3dc3  531  retired-c2-cycle1/generative/C2-10/context.json
+e58a8f4a90fde91ebe165a65af11955f5ea27c2d38ae1927c8d86b2284c7b49e  317  retired-c2-cycle1/generative/C2-10/manifest.json
+776c85bbb7d9e91f2a264dfaa680854adf912128148950f5f3597a392f809f0d  1942  retired-c2-cycle1/generative/C2-10/mark.png
+0edb9903eba21f6e1ef2dcc1fe274959a55804173665faa0e9ad53dd9232c43b  154028  retired-c2-cycle1/generative/C2-10/prepared.json
+06452f691b09a4748bdc20e0fab810d54b4437e55bcb97dc31eb2f7525d74d03  292  retired-c2-cycle1/generative/C2-10/request.txt
+02c6606214687924bf61ca8b22af95f508447a971ad007d065089e8a19c47fa8  190  retired-c2-cycle1/generative/C2-10/schema-shell.fcstd
 426c59dbb04d96bd790969a26844082707d091b50e43e08bf42f17f6450ea49b  386  retired-c2-v1/RETIRED.txt
 2f6069414fad735872a7005776e7ac1277f92fcda5c3e1111f7efcc5a237a74a  6868  retired-c2-v1/benchmark/B05/bundle-carrier.step
 2f6069414fad735872a7005776e7ac1277f92fcda5c3e1111f7efcc5a237a74a  6868  retired-c2-v1/benchmark/B05/bundle-source.step
