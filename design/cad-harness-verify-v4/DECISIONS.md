@@ -20,3 +20,8 @@ Pending with the user: #1 pilot tasks, #2 pilot judge and rubric, #3 price sourc
   - The token types are input, cached input, cache write, output and reasoning.
   - A null on either side gives a null reduction.
 - **#4 Holdout:** option B. One agent authors the holdout, hidden from the other two agents and from the implementer.
+
+## USER 2026-10-14 14:07 JST - pilot generator (pilot only)
+- For the pilot only, the generator (Codex role) is `openai-codex/gpt-6-astra` with thinking `max`, instead of `openai-codex/gpt-6.1-sol` (xhigh). The holdout is unchanged: gpt-6.1-sol, xhigh.
+- Caveat: the judge (Astra Max) is the same model as the pilot generator. RESULTS must state this same-model judge/generator caveat. The user's visual verdict remains authoritative.
+- USER 2026-10-14 13:52 / 14:05: the user supplies the pilot requests personally. 5 requests (U1-U5), verbatim in pilot-user-requests.md; N <= 5.
