@@ -25,3 +25,18 @@ Pending with the user: #1 pilot tasks, #2 pilot judge and rubric, #3 price sourc
 - For the pilot only, the generator (Codex role) is `openai-codex/gpt-6-astra` with thinking `max`, instead of `openai-codex/gpt-6.1-sol` (xhigh). The holdout is unchanged: gpt-6.1-sol, xhigh.
 - Caveat: the judge (Astra Max) is the same model as the pilot generator. RESULTS must state this same-model judge/generator caveat. The user's visual verdict remains authoritative.
 - USER 2026-10-14 13:52 / 14:05: the user supplies the pilot requests personally. 5 requests (U1-U5), verbatim in pilot-user-requests.md; N <= 5.
+
+## USER 2026-10-14 14:28 JST - capability expansion (supersedes "no range expansion" for the items listed)
+- Implement in v4:
+  - (1) STEP import as a fixed user attachment, plus measured data passed to the generator;
+  - (2) an image-to-vector contour CLI (binarize/trace/smooth/hash), a contour-extrude family with parametric thickness and size, and min tool R enforcement;
+  - (3) text engraving (font);
+  - (4) direct edit of an imported STEP: face selection, offset/replace/reconnect;
+  - (5) freeform surface rebuild/merge with G1-G3 continuity;
+  - (6) new judges: maximum surface deviation, curvature continuity G1-G3, face count, thickness distribution, unchanged-dimension comparison, solid validity, IoU/Hausdorff against the image, min R.
+- Process: U1 addendum C plan, then 3-party consensus. Staged by difficulty: U5/U1/U2 first, then U4, then U3. Deterministic parts go in the CLI; judgment goes in the skill.
+- Integrity:
+  - Each new family needs its own fresh holdout.
+  - Pilot tasks U1-U5 are user tasks. They are NEVER used for development, tuning or fixtures: no reading of their attachments by implementers, no gold derived from them.
+  - Development uses independently created dev fixtures only.
+  - The existing 163-call holdout (unchanged scope) and its custody are unaffected.
