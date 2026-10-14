@@ -61,3 +61,15 @@ Attachments live in pilot-user/. STEP files over 1 MB are NOT committed to git (
 - Attachments: none (user: no attachment)
 - Expected deliverable: FreeCAD 1.1.4 single-part model (FCStd + STEP)
 - Eligibility: pending 3-party screening (E3-E7)
+
+## User answers 2026-10-14 14:25 JST (verbatim in pilot-user/requests.md, sha256 a3a75986e005d18f9e2c734638b455adb8370b362095fcc4fe149bee3ae20593)
+```
+NF13は合ってる　長手方向はパーツのY軸にあたるかな　外寸がながい軸ね　ガタは0.5mm以下、テープ厚み0.5 　並べる数は指定なし、刻印がよい
+ガラスは1.3mm　端面は厚みをつけた1.3mmの外周帯状の面であたってさえなければOK　ガラスは凸面側は当ててよいが、凹面は最低限の接触にしてほしい
+対応範囲は広げないが最終的にはカバーする。なぜいま対応範囲外なのかを詳しく教えて。
+ロゴデータは添付 (U5_logo.png, raster PNG 38KB)
+```
+- U1 user-given: box = JEJ Astage NF-13CR (inner 245 x 365 x 140 mm per the catalogue, user-confirmed); long axis = part Y (longest outer dimension) vertical; play <= 0.5 mm; tape thickness 0.5 mm; count unspecified; numbers engraved.
+- U2 user-given: glass thickness 1.3 mm; edge face = the 1.3 mm-wide perimeter band, must not be touched; the convex face may contact; the concave face should have minimal contact.
+- U3/U4: the user says the scope is not expanded now but will eventually be covered; they stay excluded (E3) in this pilot.
+- U5 attachment: pilot-user/U5_logo.png, raster RGBA 814x1000, 39139 bytes, sha256 cff917e0b7e317eff88977aafea0379a99522e3ab120b36b7d73ee5626bfdd3b.
