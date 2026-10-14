@@ -77,3 +77,6 @@ User decision: request text stays verbatim; the ORIGINAL conversation context an
   - The pilot passes when at least ceil(0.7×N) tasks pass.
   - Judge: Astra Max (`openai-codex/gpt-6-astra`, thinking max, via omp), then the user's visual double-check. The user's verdict overrides.
 - **Order and budget:** the pilot runs after the holdout and uses the same frozen implementation, with 40 calls at no more than 4 per task.
+
+## Addendum B status (2026-10-14 17:00 JST)
+Addendum B was never signed (sol/gemini/v4grok all BLOCK). It is SUPERSEDED by the user's own pilot requests U1-U5 (USER 13:52/14:05) and by addendum C. History-based candidate selection is moot. The BLOCK points (300-second rule, fatal critical errors at any handover, no invented tolerances, N=0 means not_run) are carried into addendum C as general pilot rules.

@@ -61,3 +61,8 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
 - Q3: U2 has no maximum outer size.
 - C-R1-2 and C-R1-3/C-R2-2 are adopted as final.
 ## C-U5 (defaults; to be filled by sol+gemini consensus)
+
+## C-S (supersession, from the v4grok BLOCK 17:00)
+- C-EXIT "U3: <=0.005 mm absolute, G3" is SUPERSEDED by C-A: U3 is G2 plus <=0.005 mm absolute.
+- C-EXIT "Missing tolerances are asked of the user ... never chosen by agents" is SUPERSEDED for the U5 plate outline, default thickness and default logo size only. Those are agent-chosen defaults (C-A Q2), labelled as such and frozen in C-U5 before the trial. All other missing values (Q4-Q10) remain user questions; agents never choose them.
+- C-U5 must be filled by sol+gemini consensus before the freeze; an empty C-U5 blocks the freeze.
