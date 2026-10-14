@@ -3,11 +3,16 @@
   "status": "draft",
   "trial_status": "not_run",
   "preregistered": false,
+  "freeze_blocked": false,
+  "freeze_block_reason": "Checked DECISIONS.md. No unanswered critical numeric value remains, so nothing here is freeze-blocked on a user question. This draft is still not signed and is not a pilot authorization.",
   "tasks_source": "user_only",
+  "corrections": "Revises the draft sol reviewed (SHA-256 948de5bf70e5c2d23aa4ea97b97094d31f0f06d4d0acbc5e75d0c37fde451579) for B1-B5 in pilot-rubric-sign-sol.md. No new acceptance number is chosen in this file.",
   "sources": [
     "design/cad-harness-verify-v4/DECISIONS.md",
     "design/cad-harness-verify-v4/pilot-user-requests.md",
-    "design/cad-harness-verify-v4/PLAN-V4-ADDENDUM-C.md sections C-A, C-A2, C-U5, C-R3-1, C-D(a), C-D(b)"
+    "design/cad-harness-verify-v4/PLAN-V4-ADDENDUM-C.md sections C-EXIT, C-R1-2, C-Q, C-R2-3, C-A, C-S, C-U5, C-A2, C-D(a), C-D(b), C-R3-1, C-R5v2, C-R6",
+    "design/cad-harness-verify-v4/c2-production-recipe.json",
+    "design/cad-harness-verify-v4/pilot-bundle-commitment.md Pilot v2"
   ],
   "judge": {
     "first": "Astra Max",
@@ -18,17 +23,59 @@
     "same_model_caveat": "RESULTS must state that the pilot judge and the pilot generator are the same model. The user visual verdict remains authoritative.",
     "source": "DECISIONS.md USER 12:58, 14:07, and 14:40"
   },
-  "exit": {
-    "rule": "Passing all 5 of U1-U5 is a mandatory v4 exit criterion.",
-    "source": "DECISIONS.md USER 14:40",
-    "intake_exclusion": "pilot-user-requests.md records that U3 and U4 stay excluded (E3) in this pilot: scope is not expanded now and will eventually be covered. Both facts are recorded. This draft does not drop or add a criterion to reconcile them."
+  "judgment_rule": {
+    "qualitative": "Astra Max judges first, and the user's visual check is final, only for the qualitative items this rubric lists. Those items are the ones the sources already delegate to that judgment.",
+    "numeric_gates": "A visual verdict does not override a required numeric gate or a critical-dimension gate, and it does not waive C-R5v2 preparation preconditions.",
+    "missing_critical_numeric": "A missing critical numeric control would be a QUESTION FOR THE USER entry and would freeze-block this draft. Checked against DECISIONS.md: the listed critical values are already answered, so question_for_user is empty. No further number is chosen here.",
+    "retired_catch_all": "The previous unspecified marker 'Astra+user visual' is not an operative catch-all. An unlisted fit, clearance, continuity, face, or placement item is not converted into a visual pass."
   },
-  "unspecified_marker": "Astra+user visual",
-  "omitted": "Counts and clocks from the previous template are not criteria. They are not values in the cited sources.",
+  "exit": {
+    "rule": "Passing all 5 of U1-U5 is a mandatory v4 exit criterion. v4 exits only when the existing exit gates pass and all 5 of U1-U5 pass.",
+    "source": "DECISIONS.md USER 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT",
+    "operative_roster": {
+      "tasks": ["U1", "U2", "U3", "U4", "U5"],
+      "rule": "U3 and U4 are in the operative roster, subject to implementation, freeze, and the actual preparation and acceptance gates. An unsupported or failing task stays in the denominator. It prevents v4 exit.",
+      "source": "DECISIONS.md USER 14:28 and 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT and C-R2-3"
+    },
+    "superseded_history": {
+      "item": "pilot-user-requests.md records that U3 and U4 stay excluded (E3): scope is not expanded now and will eventually be covered. That intake sentence is history only.",
+      "superseded_by": "DECISIONS.md USER 14:28 (C4/C5 and S1-S3 are in v4 scope) and USER 14:40 (all U1-U5 must pass); PLAN-V4-ADDENDUM-C.md C-EXIT and C-R2-3 (complete roster, same-manifest 5/5).",
+      "operative": false
+    },
+    "common_gates": {
+      "applies_to": ["U1", "U2", "U3", "U4", "U5"],
+      "first_handover": "Each of U1-U5 passes on its first handover, needing no edits or fixes of 5 minutes or less, with no critical dimension error and no fabrication. Astra Max judges first; the user's visual check is final.",
+      "existing_exit_gates": "The existing exit gates are also required. This rubric does not replace them with a per-task dimensional list.",
+      "cycle": "One complete U1-U5 roster per manifest. Exit requires 5/5 within the same frozen manifest, one attempt each, with no retake after seeing results. Successes from different cycles are never combined. Old outcomes are kept.",
+      "deliverable": "FreeCAD 1.1.4 single-part model (FCStd + STEP) for every task. For the declared multi-piece C2 case only, C-R6 allows separate solids in that one document and STEP, with no bridges, backing, or joins. Every other task remains one solid.",
+      "clocks": "The five-minute rule above is the C-EXIT first-handover rule. Counts and clocks from the previous template are not criteria.",
+      "source": "PLAN-V4-ADDENDUM-C.md C-EXIT, C-R2-3, and C-U5; pilot-user-requests.md lines 14, 26, 38, 50, and 62; PLAN-V4-ADDENDUM-C.md C-R6 for the multi-piece C2 document only"
+    },
+    "incomplete": "INCOMPLETE is reserved for budget_exhausted or quota_stop. A worker failure keeps that worker status and error code. It is not INCOMPLETE, it is not PASS, and v4 does not exit."
+  },
+  "omitted": "Counts and clocks from the previous template are not criteria. They are not values in the cited sources. Omitting them does not omit the C-EXIT first-handover rule or the five-minute rule.",
+  "question_for_user": [],
+  "decisions_check": {
+    "source": "DECISIONS.md USER 14:57, 17:28, and 19:47",
+    "unanswered_critical_values": [],
+    "already_answered": [
+      "U1 and U2 play <= 0.5 mm per side",
+      "U1 Y-vertical and U2 standing angle 3 degrees per side",
+      "U2 perimeter-band minimum gap >= 0.5 mm",
+      "U4 +/- 0.1 mm on the 2 mm thickness and on the unchanged outer dimensions",
+      "U5 rough match; C-D(a) lenient thresholds are the fidelity gates",
+      "Engraving size and depth delegated; C-D(b) is 5.0 mm height and 0.6 mm depth",
+      "New-family extra call budget has no upper limit; the quota rule still applies",
+      "U1 tape location may be anywhere and is not pass/fail; 0.5 mm tape thickness is accommodated",
+      "U3 is G2 continuity and <= 0.005 mm absolute deviation"
+    ],
+    "qualitative_not_a_number": "U2 minimal concave-face contact stays Astra Max first and user visual final. DECISIONS.md USER 17:28 sets no numeric gate."
+  },
   "tasks": [
     {
       "id": "U1",
-      "eligibility": "in this pilot",
+      "eligibility": "in the operative roster",
+      "eligibility_source": "DECISIONS.md USER 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT and C-R2-3",
       "pass": [
         {
           "item": "Fits JEJ Astage NF-13CR inner 245 x 365 x 140 mm.",
@@ -47,12 +94,22 @@
           "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
         },
         {
-          "item": "Double-sided tape thickness 0.5 mm must be accommodated in the fit.",
-          "source": "DECISIONS.md USER 19:47; PLAN-V4-ADDENDUM-C.md C-A2 addendum."
+          "item": "Double-sided tape thickness 0.5 mm must be accommodated in the fit. No compression allowance is added.",
+          "source": "DECISIONS.md USER 19:47; PLAN-V4-ADDENDUM-C.md C-A2 addendum and C-Q4."
         },
         {
-          "item": "Numbers are engraved. Count is unspecified.",
-          "source": "pilot-user-requests.md user answers."
+          "item": "Insertion locations are in a regular arrangement.",
+          "judgment": "qualitative",
+          "judge": "Astra Max first; user visual final",
+          "numeric_gate": false,
+          "source": "pilot-user-requests.md U1 request text. No spacing value is in the sources, and none is set here."
+        },
+        {
+          "item": "Each insertion location is numbered, and the engraved number is associated with that location. Count is unspecified. Engraved text with no arrangement and no association does not pass.",
+          "judgment": "qualitative",
+          "judge": "Astra Max first; user visual final",
+          "numeric_gate": false,
+          "source": "pilot-user-requests.md U1 request text and user answers."
         },
         {
           "item": "Where engraving applies, agent defaults are 5.0 mm height and 0.6 mm depth. These are labelled agent defaults, not user dimensions.",
@@ -66,13 +123,20 @@
         }
       ],
       "astra_user_visual": [
-        "The engraved number string is not given.",
-        "Any fit, placement, or appearance item without a value in the cited sources."
+        {
+          "item": "The engraved number string is not given.",
+          "source": "pilot-user-requests.md user answers: count unspecified; the glyph string is not given."
+        },
+        {
+          "item": "Engraving placement and readability. No placement tolerance was set.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-Q8 allows a registered size and depth with user-final readability judgment. Size and depth are the C-D(b) defaults. Placement is this visual item and is not a numeric gate."
+        }
       ]
     },
     {
       "id": "U2",
-      "eligibility": "in this pilot",
+      "eligibility": "in the operative roster",
+      "eligibility_source": "DECISIONS.md USER 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT and C-R2-3",
       "pass": [
         {
           "item": "Glass thickness 1.3 mm.",
@@ -103,37 +167,61 @@
           "source": "DECISIONS.md USER 14:25 relay; pilot-user-requests.md user answers."
         },
         {
+          "item": "Minimal concave-face contact.",
+          "judgment": "qualitative",
+          "judge": "Astra Max first; user visual final",
+          "numeric_gate": false,
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2. No numeric gate is set."
+        },
+        {
           "item": "No maximum outer size.",
           "source": "DECISIONS.md USER 14:57; PLAN-V4-ADDENDUM-C.md C-A Q3."
         }
       ],
       "not_pass_fail": [],
       "astra_user_visual": [
-        "Minimal concave-face contact has no numeric gate.",
-        "Any clearance, envelope, or appearance item without a value in the cited sources."
+        {
+          "item": "Minimal concave-face contact, same qualitative requirement as the pass entry. It is not a waiver of play, angle, glass thickness, or the perimeter-band gap.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        }
       ]
     },
     {
       "id": "U3",
-      "eligibility": "excluded (E3) in this pilot",
-      "eligibility_source": "pilot-user-requests.md user answers: scope is not expanded now and will eventually be covered.",
+      "eligibility": "in the operative roster",
+      "eligibility_source": "DECISIONS.md USER 14:28 and 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT and C-R2-3. The E3 sentence in pilot-user-requests.md is superseded history under exit.superseded_history.",
       "pass": [
         {
-          "item": "G2 continuity, not G3, and <= 0.005 mm absolute deviation. C-A supersedes the earlier G3 line. The 0.005 mm bound is unchanged.",
-          "source": "PLAN-V4-ADDENDUM-C.md C-A; DECISIONS.md USER 14:57. The original request text asked for G3 and 0.005 mm."
+          "item": "Unnecessary freeform design-surface boundaries are removed or merged. A boundary that is obviously required, including a corner, stays. An unchanged already-G2 STEP that leaves unnecessary freeform design-surface boundaries does not pass.",
+          "judgment": "qualitative",
+          "judge": "Astra Max first; user visual final",
+          "numeric_gate": false,
+          "custodian_preregistration": "The custodian records the exact attachment-derived set before freeze, without showing attachments to implementers. This draft asks the user for no face count and no further tolerance.",
+          "source": "pilot-user-requests.md U3 request text. DECISIONS.md USER 14:57 supersedes G3 only."
+        },
+        {
+          "item": "G2 continuity, not G3, and <= 0.005 mm absolute deviation. The 0.005 mm bound is unchanged. Numerical sampling is not a certified continuous-domain bound.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-A and C-S; DECISIONS.md USER 14:57. C-Q1's further residual list is closed by that answer."
         }
       ],
       "not_pass_fail": [],
       "astra_user_visual": [
-        "Which freeform design-surface seams are in scope is not given a further numeric rule here.",
-        "Any continuity residual other than the signed G2 plus 0.005 mm absolute criterion."
+        {
+          "item": "Which freeform boundaries are unnecessary, including the judgment that a corner or similar boundary is obviously required.",
+          "source": "pilot-user-requests.md U3 request text. DECISIONS.md USER 14:57 leaves G2 and <= 0.005 mm as the numeric gate."
+        }
       ]
     },
     {
       "id": "U4",
-      "eligibility": "excluded (E3) in this pilot",
-      "eligibility_source": "pilot-user-requests.md user answers: scope is not expanded now and will eventually be covered.",
+      "eligibility": "in the operative roster",
+      "eligibility_source": "DECISIONS.md USER 14:28 and 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT and C-R2-3. The E3 sentence in pilot-user-requests.md is superseded history under exit.superseded_history.",
       "pass": [
+        {
+          "item": "The freeform underside is an offset of the top surface.",
+          "custodian_preregistration": "The custodian records the exact attachment-derived faces before freeze, without showing attachments to implementers. No further tolerance is asked. The decided numeric bounds are 2 mm and +/- 0.1 mm.",
+          "source": "pilot-user-requests.md U4 request text; DECISIONS.md USER 17:28."
+        },
         {
           "item": "Freeform wall thickness 2 mm.",
           "source": "pilot-user-requests.md U4 request."
@@ -143,19 +231,29 @@
           "source": "pilot-user-requests.md U4 request."
         },
         {
-          "item": "Tolerance ±0.1 mm on the 2 mm thickness and on the unchanged outer dimensions.",
+          "item": "Tolerance +/- 0.1 mm on the 2 mm thickness and on the unchanged outer dimensions.",
           "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2."
+        },
+        {
+          "item": "Adjoining features that meet the underside are reconnected.",
+          "judgment": "qualitative",
+          "judge": "Astra Max first; user visual final",
+          "numeric_gate": false,
+          "source": "pilot-user-requests.md U4 request text. This is a mandatory requirement. It is not a note without a gate. DECISIONS.md USER 17:28 supplies +/- 0.1 mm and no separate reconnection tolerance."
         }
       ],
       "not_pass_fail": [],
       "astra_user_visual": [
-        "Reconnection of features that meet the underside has no numeric gate.",
-        "Any face choice or blend item without a value in the cited sources."
+        {
+          "item": "The qualitative reconnection of the preregistered adjoining features. This visual judgment does not waive the offset relationship, the 2 mm thickness, or the +/- 0.1 mm bounds.",
+          "source": "pilot-user-requests.md U4 request text; DECISIONS.md USER 17:28."
+        }
       ]
     },
     {
       "id": "U5",
-      "eligibility": "in this pilot",
+      "eligibility": "in the operative roster",
+      "eligibility_source": "DECISIONS.md USER 14:40; PLAN-V4-ADDENDUM-C.md C-EXIT, C-R2-3, and C-R5v2",
       "pass": [
         {
           "item": "Deliverable is a cut-out logo part, not a plate with an aperture.",
@@ -170,26 +268,58 @@
           "source": "PLAN-V4-ADDENDUM-C.md C-R3-1 and C-A2; DECISIONS.md USER 17:28."
         },
         {
-          "item": "Logo total height 50 mm, defined as the contour Y extent, with aspect preserved. Parametric agent-chosen default, not a user dimension.",
-          "source": "PLAN-V4-ADDENDUM-C.md C-R3-1 and C-U5."
+          "item": "Logo total height 50 mm, defined as the final canonical contour Y extent, with aspect preserved. Parametric agent-chosen default, not a user dimension.",
+          "source": "PLAN-V4-ADDENDUM-C.md C-R3-1, C-U5, and C-R5v2."
         },
         {
-          "item": "Minimum tool R 0.25 mm on the actual output.",
-          "source": "pilot-user-requests.md U5 request; PLAN-V4-ADDENDUM-C.md C-R3-1 and C-D(a)."
+          "item": "Minimum tool R 0.25 mm on the actual output, including every piece when the output has more than one piece. No fillet or buffer is added to satisfy it.",
+          "source": "pilot-user-requests.md U5 request; PLAN-V4-ADDENDUM-C.md C-D(a), C-R3-1, and C-R5v2."
         },
         {
-          "item": "Mask to contour: IoU >= 0.90 and Hausdorff <= 1.5 mm. Same frozen transform.",
-          "source": "PLAN-V4-ADDENDUM-C.md C-D(a)."
-        },
-        {
-          "item": "Contour to CAD: IoU >= 0.92 and Hausdorff <= 1.0 mm. Same frozen transform.",
-          "source": "PLAN-V4-ADDENDUM-C.md C-D(a)."
+          "item": "Mask to contour: IoU >= 0.90 and Hausdorff <= 1.5 mm. Contour to CAD: IoU >= 0.92 and Hausdorff <= 1.0 mm. Both legs use one committed mask-to-world registration. These C-D(a) thresholds are the fidelity gates for the decided rough match. They do not authorize a topology change, a radius repair, or a refit.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-D(a) and C-R5v2."
         }
       ],
+      "preparation": {
+        "binding": "C-R5v2 preconditions bind any U5 preparation that can be scored. The recipe and software identity are dev-frozen and hash-locked before the custodian runs the recipe once. Foreground is the alpha-derived declared foreground in that frozen recipe, not luminance and not require-opaque. The nominal 50 mm height is the final canonical contour Y extent, aspect preserved. Boundary approximation is only what the frozen recipe specifies. Topology stays preserved: holes preserved; no silent deletion, bridging, smoothing, or radius change; no renormalization after scoring. R and tool access are checked on the actual output.",
+        "custodian": "The custodian alone prepares U5 once per cycle. Implementers do not see the PNG. There is no tuning on U5. A failure cannot pass that cycle and cannot permit v4 exit. A later cycle needs fresh dev fixes, a new lock and manifest, and fresh blind holdouts for the changed families. Outcomes from different cycles are not combined.",
+        "source": "PLAN-V4-ADDENDUM-C.md C-R5v2, C-R1-2, C-R2-2, C-R2-3, C-EXIT, C-U5, and C-D(a)"
+      },
+      "cycle_1_history": {
+        "result": "fail",
+        "pass": false,
+        "incomplete": false,
+        "recipe": "design/cad-harness-verify-v4/c2-production-recipe.json",
+        "recipe_sha256": "ae1db1b48dfab10d9642c58d834068098f649855c00610cbfeb505c20bdbaf00",
+        "recipe_bytes": 836,
+        "recipe_topology_that_ran": "one component, holes preserved, islands rejected",
+        "invocations": 1,
+        "exit_code": 1,
+        "status": "FAIL",
+        "error_type": "ValueError",
+        "error": "contour_multiple_islands_one_solid_refused",
+        "software": "FreeCAD 1.1.4 git 4fd3bf320d9566a27e60069fc8387448aaa3a094; worker Python 3.11.14",
+        "live_calls": 0,
+        "live_cad_runs": 0,
+        "contour": "not produced",
+        "mask": "not produced",
+        "registration": "not produced",
+        "leg_1": "not produced; not a pass against IoU >= 0.90 and Hausdorff <= 1.5 mm",
+        "leg_2": "not run; IoU >= 0.92 and Hausdorff <= 1.0 mm unmeasured",
+        "min_r": "not produced; 0.25 mm not measured",
+        "source": "design/cad-harness-verify-v4/pilot-bundle-commitment.md Pilot v2; PLAN-V4-ADDENDUM-C.md C-R5v2 and C-R6"
+      },
+      "next_cycle_note": {
+        "item": "C-R6 records a later C2 rule for a foreground of several disconnected pieces: keep the pieces, extrude each, and put them in one document and STEP, with nesting and holes preserved and with no bridges, backing, or joins. Both fidelity legs and min-R cover every piece. This is not a pass of cycle 1, and no such recipe is frozen here. Bridges or a backing plate remain the separate non-blocking question in user-questions-morning.md.",
+        "source": "PLAN-V4-ADDENDUM-C.md C-R6. C-R5v2 fidelity, registration, min-R, and no-renormalization rules stay in force."
+      },
       "not_pass_fail": [],
       "astra_user_visual": [
-        "Logo likeness beyond the C-D(a) fidelity numbers. The user said the logo only needs to match roughly and that model correctness matters more.",
-        "Any outline, margin, or placement item without a value in the cited sources."
+        {
+          "item": "Logo likeness beyond the C-D(a) fidelity numbers. The user said the logo only needs to match roughly and that model correctness matters more.",
+          "does_not_waive": "C-D(a) thresholds, R >= 0.25 mm on the actual output, and the C-R5v2 preparation preconditions.",
+          "source": "DECISIONS.md USER 17:28; PLAN-V4-ADDENDUM-C.md C-A2 and C-R5v2."
+        }
       ]
     }
   ]
