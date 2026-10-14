@@ -6,7 +6,7 @@
   "required": ["schema", "event", "event_id", "run_id", "phase", "recorded_at", "monotonic_s", "boot_id"],
   "properties": {
     "schema": {"const": "cad-harness.ledger.v4"},
-    "event": {"enum": ["run_started", "run_finished", "episode_started", "episode_finished", "attempt_started", "attempt_finished", "attempt_alias", "wait_started", "wait_finished", "interruption_observed", "edit_started", "edit_finished"]},
+    "event": {"enum": ["run_started", "run_finished", "episode_started", "episode_finished", "attempt_started", "attempt_finished", "attempt_alias", "wait_started", "wait_finished", "interruption_observed", "edit_started", "edit_finished", "work_started", "work_finished", "replay_response"]},
     "event_id": {"type": "integer", "minimum": 1},
     "run_id": {"type": "string"},
     "phase": {"type": "string"},
@@ -16,6 +16,12 @@
     "episode_id": {"type": "string"},
     "attempt_id": {"type": "string"},
     "operation": {"enum": ["model", "cad"]},
+    "work_id": {"type": "string"},
+    "work_kind": {"enum": ["prepare-step", "contour", "text", "compile", "verify", "identity"]},
+    "physical_model_attempt": {"type": "boolean"},
+    "inputs": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "outputs": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "code_bindings": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
     "charged": {"type": ["boolean", "null"]},
     "provider_rejected": {"type": "boolean"},
     "wall_s": {"type": ["number", "null"], "minimum": 0},
@@ -24,7 +30,10 @@
     "price": {"type": ["object", "null"]},
     "streams": {"type": "object", "properties": {"stdout": {"$ref": "#/$defs/stream"}, "stderr": {"$ref": "#/$defs/stream"}}}
   },
-  "allOf": [{"if": {"properties": {"event": {"enum": ["attempt_started", "attempt_finished"]}}}, "then": {"required": ["attempt_id", "episode_id", "operation"]}}],
+  "allOf": [
+    {"if": {"properties": {"event": {"enum": ["attempt_started", "attempt_finished"]}}}, "then": {"required": ["attempt_id", "episode_id", "operation"]}},
+    {"if": {"properties": {"event": {"enum": ["work_started", "work_finished"]}}}, "then": {"required": ["work_id", "work_kind"]}}
+  ],
   "$defs": {
     "token": {"type": ["integer", "null"], "minimum": 0},
     "usage": {"type": "object", "required": ["values", "missing_reasons", "sources"], "properties": {

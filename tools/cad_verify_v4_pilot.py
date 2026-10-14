@@ -451,3 +451,124 @@ def _verify_context(context, document):
             or window["first_line"] != (context["messages"][0]["line"] if context["messages"] else None)
             or window["last_line"] != (context["messages"][-1]["line"] if context["messages"] else None)):
         _fail("E7", "context_window_schema")
+
+
+def bundle_prepared_request(request_path, input_manifest, prepared_path, run_dir, *, context_path=None):
+    """Direct immutable intake; integrity is not eligibility or a pilot result."""
+    if __package__:
+        from . import cad_verify_v4_inputs as inputs, cad_verify_v4_s1 as s1
+    else:
+        import cad_verify_v4_inputs as inputs, cad_verify_v4_s1 as s1
+    request_path = s1.safe_path(request_path, regular=True)
+    input_manifest = s1.safe_path(input_manifest, regular=True)
+    prepared_path = s1.safe_path(prepared_path, regular=True)
+    manifest = inputs.load_manifest(input_manifest)
+    if manifest["evidence_mode"] != "independent_dev":
+        _fail("E7", "s1_intake_independent_dev_only")
+    inputs.verify_prepared(prepared_path, input_manifest)
+    original = {name: ledger.file_sha(path) for name, path in
+                (("request", request_path), ("input_manifest", input_manifest), ("prepared", prepared_path))}
+    if context_path is not None:
+        context_path = s1.safe_path(context_path, regular=True)
+        original["context"] = ledger.file_sha(context_path)
+    request_raw = request_path.read_bytes()
+    request_raw.decode("utf-8")
+    out = ledger.new_directory(s1.safe_path(run_dir))
+    with (out / "request.txt").open("xb") as file:
+        file.write(request_raw)
+    reserved = {"request.txt", "inputs.json", "prepared.json", "context.txt", "bundle.json"}
+    for asset_id, record in manifest["assets"].items():
+        if record["path"] in reserved:
+            _fail("E7", "direct_attachment_reserved_path")
+        resolved = inputs.resolve_asset(input_manifest, asset_id)
+        source = s1.safe_path(resolved["path"], regular=True)
+        inventory = _inventory(source)
+        destination = out / record["path"]
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if not destination.exists():
+            shutil.copyfile(source, destination)
+        if (ledger.file_sha(destination) != record["sha256"]
+                or destination.stat().st_size != record["bytes"] or _inventory(source) != inventory):
+            _fail("E7", "direct_attachment_changed")
+    # Preserve manifest and prepared packet bytes, including their original hash
+    # provenance. Moving the bundle is safe because asset paths are relative.
+    shutil.copyfile(input_manifest, out / "inputs.json")
+    shutil.copyfile(prepared_path, out / "prepared.json")
+    inputs.verify_prepared(out / "prepared.json", out / "inputs.json")
+    if context_path is not None:
+        context_raw = context_path.read_bytes()
+        context_raw.decode("utf-8")
+        with (out / "context.txt").open("xb") as file:
+            file.write(context_raw)
+    sources = dict(request=request_path, input_manifest=input_manifest, prepared=prepared_path)
+    if context_path is not None:
+        sources["context"] = context_path
+    if any(ledger.file_sha(path) != original[name] for name, path in sources.items()):
+        _fail("E7", "direct_source_changed")
+    files = {path.relative_to(out).as_posix(): dict(sha256=ledger.file_sha(path), bytes=path.stat().st_size)
+             for path in sorted(out.rglob("*")) if path.is_file()}
+    document = dict(schema="cad-harness.prepared-request-bundle.v4c", profile="c-s1",
+                    origin="direct_user", evidence_mode="independent_dev", source_sha256=original,
+                    request="request.txt", input_manifest="inputs.json", prepared="prepared.json",
+                    context="context.txt" if context_path is not None else None, files=files,
+                    integrity_only=True, eligibility=None, pilot="not_run", live_calls=0)
+    ledger.write_json(out / "bundle.json", document)
+    verify_prepared_bundle(out / "bundle.json")
+    return document
+
+
+def verify_prepared_bundle(path):
+    """Check copied bytes only; never reopen a historical JSONL or source path."""
+    if __package__:
+        from . import cad_verify_v4_inputs as inputs, cad_verify_v4_s1 as s1
+    else:
+        import cad_verify_v4_inputs as inputs, cad_verify_v4_s1 as s1
+    path = s1.safe_path(path, regular=True)
+    document = ledger.read_json(path)
+    required = {"schema", "profile", "origin", "evidence_mode", "source_sha256", "request",
+                "input_manifest", "prepared", "context", "files", "integrity_only",
+                "eligibility", "pilot", "live_calls"}
+    if (not isinstance(document, dict) or set(document) != required
+            or document.get("schema") != "cad-harness.prepared-request-bundle.v4c"
+            or document.get("profile") != "c-s1" or document.get("origin") != "direct_user"
+            or document.get("evidence_mode") != "independent_dev"
+            or document.get("integrity_only") is not True or document.get("eligibility") is not None
+            or document.get("pilot") != "not_run" or document.get("live_calls") != 0
+            or document.get("request") != "request.txt" or document.get("input_manifest") != "inputs.json"
+            or document.get("prepared") != "prepared.json" or document.get("context") not in (None, "context.txt")
+            or not isinstance(document.get("files"), dict)):
+        _fail("E7", "direct_bundle_contract")
+    expected = set(document["files"]) | {path.name}
+    actual = set()
+    for item in path.parent.rglob("*"):
+        s1.safe_path(item)
+        if item.is_file():
+            actual.add(item.relative_to(path.parent).as_posix())
+    if actual != expected:
+        _fail("E7", "direct_bundle_file_set")
+    for name, record in document["files"].items():
+        candidate = _inside(path.parent, name)
+        s1.safe_path(candidate, regular=True)
+        if (not isinstance(record, dict) or set(record) != {"sha256", "bytes"}
+                or not _digest(record["sha256"]) or type(record["bytes"]) is not int
+                or candidate.stat().st_size != record["bytes"]
+                or ledger.file_sha(candidate) != record["sha256"]):
+            _fail("E7", "direct_bundle_hash")
+    mandatory = {document["request"], document["input_manifest"], document["prepared"]}
+    if document["context"] is not None:
+        mandatory.add(document["context"])
+    if not mandatory <= set(document["files"]):
+        _fail("E7", "direct_bundle_required_file")
+    source_hashes = document["source_sha256"]
+    keys = {"request", "input_manifest", "prepared"} | ({"context"} if document["context"] else set())
+    if not isinstance(source_hashes, dict) or set(source_hashes) != keys or not all(_digest(v) for v in source_hashes.values()):
+        _fail("E7", "direct_bundle_provenance")
+    for source, member in (("request", "request.txt"), ("input_manifest", "inputs.json"),
+                           ("prepared", "prepared.json"), ("context", document["context"])):
+        if member is not None and document["files"][member]["sha256"] != source_hashes[source]:
+            _fail("E7", "direct_source_changed")
+    manifest = inputs.load_manifest(path.parent / document["input_manifest"])
+    if manifest["evidence_mode"] != "independent_dev":
+        _fail("E7", "direct_bundle_evidence_mode")
+    inputs.verify_prepared(path.parent / document["prepared"], path.parent / document["input_manifest"])
+    return document

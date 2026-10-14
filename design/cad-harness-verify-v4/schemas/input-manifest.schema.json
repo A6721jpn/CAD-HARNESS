@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.inputs.v4c",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "cad-harness.inputs.v4c"
+    },
+    "profile": {
+      "const": "c-s1"
+    },
+    "evidence_mode": {
+      "enum": [
+        "independent_dev",
+        "custodian"
+      ]
+    },
+    "assets": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "step",
+              "image",
+              "font",
+              "contour",
+              "facts",
+              "license"
+            ]
+          },
+          "role": {
+            "enum": [
+              "reference",
+              "checker",
+              "font",
+              "contour",
+              "facts",
+              "license"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "license_asset_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+          },
+          "glyphs": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "role",
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "font"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "license_asset_id",
+                "glyphs"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "step"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "reference",
+                    "checker"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "image"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "checker",
+                    "contour"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "font"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "font"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "contour"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "contour"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "facts"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "facts"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "license"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "enum": [
+                    "license"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "profile",
+    "evidence_mode",
+    "assets"
+  ],
+  "additionalProperties": false
+}

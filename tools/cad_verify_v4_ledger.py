@@ -296,6 +296,12 @@ def summarize(path):
                     price=money, currency=next(iter(currencies)) if len(currencies) == 1 else None)
     episodes = [e for e in events if e["event"] == "episode_finished"]
     run = next((e for e in reversed(events) if e["event"] == "run_finished"), {})
+    work_starts = {e["work_id"]: e for e in events if e["event"] == "work_started"}
+    work_ends = {e["work_id"]: e for e in events if e["event"] == "work_finished"}
+    work_streams = [stream for e in work_ends.values() for stream in (e.get("streams") or {}).values()]
+    work_elapsed = nullable_total(e.get("wall_s") for e in work_ends.values())
+    if work_starts.keys() - work_ends.keys():
+        work_elapsed.update(total=None, missing_reason="unfinished_deterministic_work")
     captured = sum(stream.get("complete") is True for attempt in attempts
                    for stream in (attempt.get("streams") or {}).values())
     return dict(schema="cad-harness.ledger-summary.v4", physical_model_attempts=len(model),
@@ -314,6 +320,14 @@ def summarize(path):
                 wall_missing_reason=run.get("wall_missing_reason", "run_not_finished"),
                 wait_s=nullable_total(e.get("actual_s") for e in events if e["event"] == "wait_finished"),
                 event_counts=dict(Counter(e["event"] for e in events)),
+                deterministic_work=dict(
+                    started=len(work_starts), finished=len(work_ends),
+                    unfinished=len(work_starts.keys()-work_ends.keys()), wall_s=work_elapsed,
+                    by_kind=dict(Counter(e["work_kind"] for e in work_starts.values())),
+                    statuses=dict(Counter(e.get("status", "INCOMPLETE") for e in work_ends.values())),
+                    capture=dict(expected=2*len(work_starts),
+                                 complete=sum(s.get("complete") is True for s in work_streams),
+                                 missing_or_partial=2*len(work_starts)-sum(s.get("complete") is True for s in work_streams))),
                 full_cost_known=bool(model and costs(model)["price"]["total"] is not None))
 
 

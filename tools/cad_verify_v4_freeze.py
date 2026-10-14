@@ -49,12 +49,12 @@ LIMITS = dict(
 
 def _path(path):
     path = Path(path).absolute()
-    if any(part.casefold() == "v4-holdout-private" for part in path.parts):
+    if any(part.casefold().rstrip(" .") in ("v4-holdout-private", "pilot-user") for part in path.parts):
         raise Stop("private_holdout_path_forbidden")
     if any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction()) for p in (path, *path.parents)):
         raise Stop("linked_freeze_path")
     resolved = path.resolve()
-    if any(part.casefold() == "v4-holdout-private" for part in resolved.parts):
+    if any(part.casefold().rstrip(" .") in ("v4-holdout-private", "pilot-user") for part in resolved.parts):
         raise Stop("private_holdout_path_forbidden")
     return resolved
 
@@ -300,6 +300,8 @@ def verify(manifest_path, *, root=ROOT, check_host=True):
     manifest_path = _path(manifest_path)
     root = _path(root)
     manifest = _read_json(manifest_path)
+    if isinstance(manifest, dict) and manifest.get("schema") == "cad-harness.capability-manifest.v4c":
+        return verify_implementation(manifest_path, root=root)
     required = {"schema", "files", "skill_sha256", "policy_sha256", "host", "commitment",
                 "generator", "authorization", "quota_snapshot", "sha256_file", "limits", "freeze_dir"}
     if (not isinstance(manifest, dict) or set(manifest) != required
@@ -392,3 +394,23 @@ def claim(manifest_path, run_dir):
     except FileExistsError as error:
         raise Stop("manifest_already_claimed") from error
     return value
+
+
+def freeze_implementation(run_dir, *, root=ROOT, manifest_path=None, prepared_path=None,
+                          card_path=None, recipe_paths=(), process=None):
+    """Separate S1 offline lock: no reinterpretation of original authorization."""
+    if __package__:
+        from . import cad_verify_v4_s1
+    else:
+        import cad_verify_v4_s1
+    return cad_verify_v4_s1.implementation_lock(
+        run_dir, root=root, manifest_path=manifest_path, prepared_path=prepared_path,
+        card_path=card_path, recipe_paths=recipe_paths, process=process)
+
+
+def verify_implementation(manifest_path, *, root=ROOT):
+    if __package__:
+        from . import cad_verify_v4_s1
+    else:
+        import cad_verify_v4_s1
+    return cad_verify_v4_s1.verify_implementation_lock(manifest_path, root=root)

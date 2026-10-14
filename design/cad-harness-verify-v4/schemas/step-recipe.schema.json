@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.step-recipe.v4c",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "cad-harness.step-recipe.v4c"
+    },
+    "profile": {
+      "const": "c-s1"
+    },
+    "source_axes": {
+      "const": [
+        "X",
+        "Y",
+        "Z"
+      ]
+    },
+    "source_units": {
+      "enum": [
+        "mm",
+        "cm",
+        "m",
+        "inch"
+      ]
+    },
+    "signature_precision_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": [
+    "schema",
+    "profile",
+    "source_axes",
+    "source_units",
+    "signature_precision_mm"
+  ],
+  "additionalProperties": false
+}

@@ -135,6 +135,95 @@ def stream_process(argv, captures, *, cwd, timeout):
         return process.returncode
 
 
+def trusted_worker_argv(job_path, *, root=ROOT):
+    """An isolated trusted program, not source supplied by a generator."""
+    root, job_path = Path(root).absolute(), Path(job_path).absolute()
+    worker = root / "tools/cad_verify_v4_worker.py"
+    if worker.is_symlink() or not worker.is_file() or not job_path.is_file():
+        raise Stop("trusted_worker_binding_missing")
+    native_bin = Path(cad_run.FREECAD_DIR) / "bin"
+    bootstrap = ("import runpy,sys;sys.path[:0]="
+                 + repr([str(root), str(native_bin)])
+                 + ";runpy.run_module('tools.cad_verify_v4_worker',run_name='__main__')")
+    return [str(native_bin / "python.exe"), "-I", "-B", "-c", bootstrap, "--job", str(job_path)]
+
+
+def stream_native_process(argv, captures, *, cwd, timeout):
+    """Reuse owned-handle cleanup and PID-only window inspection for native work."""
+    if "--job" not in argv:
+        raise Stop("trusted_worker_job_required")
+    job_path = Path(argv[argv.index("--job")+1])
+    if list(argv) != trusted_worker_argv(job_path, root=cwd):
+        raise Stop("untrusted_native_invocation")
+    job = ledger.read_json(job_path)
+    out = Path(job["out"])
+    ready_path = out.parent / (out.name + ".ready.json")
+    if ready_path.exists():
+        raise Stop("native_ready_evidence_exists")
+    process = subprocess.Popen(argv, cwd=str(cwd), stdin=subprocess.DEVNULL,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False,
+                               creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+    errors, threads = [], []
+    evidence = dict(owned_pid=process.pid, stdin="DEVNULL", ready=None,
+                    window_scan=None, cleanup_status="not_started")
+    for capture in captures.values():
+        capture.native_evidence = evidence
+    def drain(key):
+        try:
+            with getattr(process, key) as pipe:
+                for raw in iter(lambda: pipe.read(8192), b""):
+                    captures[key].feed(raw)
+        except BaseException as exc:
+            errors.append(exc)
+    for key in ("stdout", "stderr"):
+        thread = threading.Thread(target=drain, args=(key,), daemon=True)
+        thread.start()
+        threads.append(thread)
+    deadline = time.monotonic() + timeout
+    try:
+        while process.poll() is None:
+            if ready_path.exists() and evidence["ready"] is None:
+                ready = ledger.read_json(ready_path)
+                evidence["ready"] = ready
+                if (ready.get("owned_pid") != process.pid or ready.get("gui_up") != 0
+                        or list(ready.get("freecad_version", []))[:3] != ["1", "1", "4"]):
+                    raise Stop("native_runtime_identity_mismatch")
+            scan = cad_run.window_scan(process.pid)
+            evidence["window_scan"] = scan
+            if scan["state"] != "no_windows":
+                raise Stop("native_window_or_scan_failure:" + scan["state"])
+            if errors:
+                raise OSError("native_capture_stream_failed")
+            if time.monotonic() >= deadline:
+                raise subprocess.TimeoutExpired(argv, timeout)
+            try:
+                process.wait(timeout=min(0.05, max(0.001, deadline-time.monotonic())))
+            except subprocess.TimeoutExpired:
+                pass
+        if evidence["ready"] is None and ready_path.exists():
+            evidence["ready"] = ledger.read_json(ready_path)
+        ready = evidence["ready"]
+        if (not isinstance(ready, dict) or ready.get("owned_pid") != process.pid
+                or ready.get("gui_up") != 0
+                or list(ready.get("freecad_version", []))[:3] != ["1", "1", "4"]):
+            raise Stop("native_ready_evidence_missing_or_invalid")
+        evidence["cleanup_status"] = "exited"
+        return process.returncode
+    except BaseException:
+        ready = evidence.get("ready") or {}
+        evidence.update(cad_run.cleanup(process, ready.get("gui_up"), scan=cad_run.window_scan,
+                                       blocked=(evidence.get("window_scan") or {}).get("state") not in (None, "no_windows")))
+        raise
+    finally:
+        for thread in threads:
+            thread.join(timeout=30 if process.poll() is not None else 0.1)
+        if process.poll() is not None:
+            if any(thread.is_alive() for thread in threads):
+                raise OSError("native_capture_drain_incomplete")
+            if errors:
+                raise OSError("native_capture_stream_failed") from errors[0]
+
+
 def omp_result(path):
     """Decode documented print JSON messages, not prose-matched error strings."""
     parser = cad_verify_v3_agent.StreamCapture(parse=True)

@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "cad-harness.contour-recipe.v4c"
+    },
+    "profile": {
+      "const": "c-s1"
+    },
+    "foreground": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "enum": [
+            "luminance",
+            "red",
+            "green",
+            "blue",
+            "alpha"
+          ]
+        },
+        "polarity": {
+          "enum": [
+            "dark",
+            "light"
+          ]
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 255
+        }
+      },
+      "required": [
+        "channel",
+        "polarity",
+        "threshold"
+      ],
+      "additionalProperties": false
+    },
+    "alpha": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "policy": {
+              "enum": [
+                "ignore",
+                "require-opaque"
+              ]
+            }
+          },
+          "required": [
+            "policy"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "policy": {
+              "const": "threshold"
+            },
+            "threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 255
+            }
+          },
+          "required": [
+            "policy",
+            "threshold"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "scale": {
+      "type": "object",
+      "properties": {
+        "mm_per_pixel": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "origin_mm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "mm_per_pixel",
+        "origin_mm"
+      ],
+      "additionalProperties": false
+    },
+    "simplify": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "const": false
+            }
+          },
+          "required": [
+            "allowed"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "const": true
+            },
+            "tolerance_mm": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "allowed",
+            "tolerance_mm"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "rounding": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "const": false
+            }
+          },
+          "required": [
+            "allowed"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "const": true
+            },
+            "radius_mm": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "allowed",
+            "radius_mm"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "max_deviation_mm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "approximation_tolerance_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "max_deviation_mm",
+        "approximation_tolerance_mm"
+      ],
+      "additionalProperties": false
+    },
+    "topology": {
+      "type": "object",
+      "properties": {
+        "components": {
+          "const": 1
+        },
+        "holes": {
+          "const": "preserve"
+        },
+        "islands": {
+          "const": "reject"
+        }
+      },
+      "required": [
+        "components",
+        "holes",
+        "islands"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "profile",
+    "foreground",
+    "alpha",
+    "scale",
+    "simplify",
+    "rounding",
+    "limits",
+    "topology"
+  ],
+  "additionalProperties": false
+}

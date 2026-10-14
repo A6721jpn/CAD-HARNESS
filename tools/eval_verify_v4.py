@@ -8,11 +8,13 @@ if __package__:
     from . import cad_agent, cad_verify_v3_agent, cad_verify_v4_agent as agent
     from . import cad_verify_v4_ledger as ledger, eval_verify_v3 as v3
     from . import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
+    from . import cad_verify_v4_s1 as s1
     from .cad_verify_guard import CLARIFICATION_FIELDS, Stop
 else:
     import cad_agent, cad_verify_v3_agent, cad_verify_v4_agent as agent
     import cad_verify_v4_ledger as ledger, eval_verify_v3 as v3
     import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
+    import cad_verify_v4_s1 as s1
     from cad_verify_guard import CLARIFICATION_FIELDS, Stop
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -181,7 +183,8 @@ def parser():
     command.add_argument("--rate-source")
     command.add_argument("--run-dir", required=True)
     command = commands.add_parser("preflight", help="offline policy/skill equivalence, no executable probing")
-    command.add_argument("--policy", default=str(DESIGN/"policy.json"))
+    command.add_argument("--policy")
+    command.add_argument("--profile", choices=("original", "c-s1"), default="original")
     command = commands.add_parser("request", help="one request through the unchanged driver with recorded responses")
     command.add_argument("--request", required=True)
     command.add_argument("--acceptance", required=True)
@@ -189,13 +192,18 @@ def parser():
     command.add_argument("--replay")
     command.add_argument("--rate-source")
     command.add_argument("--run-dir", required=True)
+    command.add_argument("--profile", choices=("original", "c-s1"), default="original")
+    command.add_argument("--input-manifest")
+    command.add_argument("--prepared")
+    command.add_argument("--selection")
     command = commands.add_parser("run", help="recorded batch or frozen-manifest-authorized live holdout")
-    command.add_argument("--phase", choices=("holdout", "pilot"), required=True)
+    command.add_argument("--phase", choices=("holdout", "pilot", "development"), required=True)
     command.add_argument("--manifest")
     command.add_argument("--replay")
     command.add_argument("--sealed-input")
     command.add_argument("--tasks")
     command.add_argument("--run-dir", required=True)
+    command.add_argument("--profile", choices=("original", "c-s1"), default="original")
     command = commands.add_parser("aggregate", help="re-evaluate recorded rows with existing v3 predicates")
     command.add_argument("--replay-aggregate")
     command.add_argument("--manifest")
@@ -203,7 +211,7 @@ def parser():
     command.add_argument("--pilot", default="not_run")
     command.add_argument("--run-dir", required=True)
     command = commands.add_parser("freeze", help="bind public inputs; live authorization requires its own evidence file")
-    command.add_argument("--policy", default=str(DESIGN/"policy.json"))
+    command.add_argument("--policy")
     command.add_argument("--holdout-commitment")
     command.add_argument("--authorization")
     command.add_argument("--generator-model", default="openai-codex/gpt-6.1-sol")
@@ -211,6 +219,11 @@ def parser():
     command.add_argument("--omp", default="omp")
     command.add_argument("--quota-snapshot")
     command.add_argument("--run-dir")
+    command.add_argument("--profile", choices=("original", "c-s1"), default="original")
+    command.add_argument("--input-manifest")
+    command.add_argument("--prepared")
+    command.add_argument("--card")
+    command.add_argument("--recipe", action="append", default=[])
     command = commands.add_parser("pilot-bundle", help="freeze verbatim original context and declared attachments; never enroll or generate")
     command.add_argument("--source-jsonl", required=True)
     command.add_argument("--locator", required=True, type=int)
@@ -218,6 +231,40 @@ def parser():
     command.add_argument("--attachments", required=True)
     command.add_argument("--conversation-id")
     command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("prepared-bundle", help="direct verbatim dev intake; integrity only, no historical JSONL required")
+    command.add_argument("--request", required=True)
+    command.add_argument("--input-manifest", required=True)
+    command.add_argument("--prepared", required=True)
+    command.add_argument("--context")
+    command.add_argument("--run-dir", required=True)
+    for name in ("prepare-step", "image-to-contour"):
+        command = commands.add_parser(name, help="deterministic preparation of a hash-bound independent dev asset")
+        command.add_argument("--profile", choices=("c-s1",), default="c-s1")
+        command.add_argument("--input-manifest", required=True)
+        command.add_argument("--asset-id", required=True)
+        command.add_argument("--recipe", required=True)
+        command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("text-outline", help="registered font to exact glyph outlines; no fallback")
+    command.add_argument("--profile", choices=("c-s1",), default="c-s1")
+    command.add_argument("--input-manifest", required=True)
+    command.add_argument("--font-id", required=True)
+    command.add_argument("--text", required=True)
+    command.add_argument("--height-mm", required=True, type=float)
+    command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("merge-prepared", help="verify and combine prepared packets for one immutable manifest")
+    command.add_argument("--input-manifest", required=True)
+    command.add_argument("--packet", action="append", required=True)
+    command.add_argument("--output", required=True)
+    for name in ("compile-plan", "judge"):
+        command = commands.add_parser(name, help="trusted S1 native build or independent artifact verification")
+        command.add_argument("--profile", choices=("c-s1",), default="c-s1")
+        command.add_argument("--input-manifest", required=True)
+        command.add_argument("--prepared", required=True)
+        command.add_argument("--plan", required=True)
+        command.add_argument("--card", required=True)
+        command.add_argument("--run-dir", required=True)
+        if name == "judge":
+            command.add_argument("--candidate-dir", required=True)
     return result
 
 
@@ -226,23 +273,64 @@ def main(argv=None):
     attempted_live = False
     try:
         if args.command == "freeze":
+            if args.profile == "c-s1":
+                if args.authorization or args.holdout_commitment or args.quota_snapshot:
+                    raise Stop("s1_implementation_lock_is_not_final_live_authorization")
+                if args.generator_model != freezing.MODEL or args.thinking != freezing.THINKING or args.omp != "omp":
+                    raise Stop("s1_implementation_lock_uses_fixed_phase_models_and_no_omp_launcher")
+                if not args.run_dir:
+                    raise Stop("s1_implementation_lock_requires_run_dir")
+                s1.preflight(policy_path=args.policy)
+                value = freezing.freeze_implementation(
+                    args.run_dir, manifest_path=args.input_manifest, prepared_path=args.prepared,
+                    card_path=args.card, recipe_paths=args.recipe)
+                print(json.dumps(value, ensure_ascii=True, allow_nan=False))
+                return 0
+            if args.input_manifest or args.prepared or args.card or args.recipe:
+                raise Stop("s1_inputs_require_c_profile")
             if not args.holdout_commitment or not args.run_dir:
                 raise Stop("freeze_requires_public_commitment_and_run_dir")
-            preflight(args.policy)
-            value = freezing.freeze(args.policy, args.holdout_commitment, args.run_dir,
+            preflight(args.policy or DESIGN/"policy.json")
+            value = freezing.freeze(args.policy or DESIGN/"policy.json", args.holdout_commitment, args.run_dir,
                                     generator_model=args.generator_model, thinking=args.thinking,
                                     omp=args.omp, quota_snapshot=args.quota_snapshot,
                                     authorization_path=args.authorization)
+        elif args.command in ("prepare-step", "image-to-contour"):
+            value = s1.prepare("contour" if args.command == "image-to-contour" else "prepare-step",
+                               args.input_manifest, args.run_dir, asset_id=args.asset_id,
+                               recipe_path=args.recipe)
+        elif args.command == "text-outline":
+            value = s1.prepare("text", args.input_manifest, args.run_dir, font_id=args.font_id,
+                               text=args.text, height_mm=args.height_mm)
+        elif args.command == "merge-prepared":
+            value = s1.merge_prepared(args.input_manifest, args.packet, args.output)
+        elif args.command in ("compile-plan", "judge"):
+            value = s1.compile_candidate(args.input_manifest, args.prepared, args.plan, args.card,
+                                         args.run_dir, candidate_dir=getattr(args, "candidate_dir", None))
         elif args.command == "pilot-bundle":
             value = pilot.bundle(args.source_jsonl, args.locator, args.request, args.attachments,
                                  args.run_dir, conversation_id=args.conversation_id)
+        elif args.command == "prepared-bundle":
+            value = pilot.bundle_prepared_request(args.request, args.input_manifest, args.prepared,
+                                                  args.run_dir, context_path=args.context)
         elif args.command == "preflight":
-            value = preflight(args.policy)
+            value = s1.preflight(policy_path=args.policy) if args.profile == "c-s1" else preflight(args.policy or DESIGN/"policy.json")
         elif args.command == "ledger":
             value = ledger.backfill(args.source_root, args.run_dir, aggregate=args.aggregate,
                                     rate_source=args.rate_source)
             cost_csv(Path(args.run_dir)/"calls.csv", Path(args.run_dir)/"ledger.jsonl")
         elif args.command == "request":
+            if args.profile == "c-s1":
+                if not args.input_manifest or not args.prepared or args.manifest or args.rate_source:
+                    raise Stop("s1_request_requires_dev_manifest_prepared_and_replay")
+                selection = ledger.read_json(s1.safe_path(args.selection, regular=True)) if args.selection else None
+                value, code = s1.request(args.request, args.acceptance, args.run_dir,
+                                         manifest_path=args.input_manifest, prepared_path=args.prepared,
+                                         replay=args.replay, selection=selection)
+                print(json.dumps(value, ensure_ascii=True, allow_nan=False))
+                return code
+            if args.input_manifest or args.prepared or args.selection:
+                raise Stop("s1_inputs_require_c_profile")
             preflight()
             check_manifest(args.manifest)
             value, code = agent.request(args.request, args.acceptance, args.run_dir,
@@ -251,6 +339,14 @@ def main(argv=None):
             print(json.dumps(value, ensure_ascii=True, allow_nan=False))
             return code
         elif args.command == "run":
+            if args.profile == "c-s1":
+                if args.phase != "development" or args.manifest or args.sealed_input or args.tasks:
+                    raise Stop("s1_is_development_only_not_final_trial_authorization")
+                value = s1.run_development(args.replay, args.run_dir)
+                print(json.dumps(value, ensure_ascii=True, allow_nan=False))
+                return 0 if value["status"] == "PASS" else 1
+            if args.phase == "development":
+                raise Stop("development_phase_requires_c_profile")
             if args.sealed_input:
                 if args.phase != "holdout" or not args.manifest or args.replay or args.tasks:
                     raise Stop("live_holdout_requires_only_frozen_manifest_and_sealed_input")
@@ -279,7 +375,7 @@ def main(argv=None):
         if isinstance(display.get("summary"), dict):
             display["summary"] = {k: display["summary"][k] for k in ("valid_suite", "complete", "thresholds", "bar_met")}
         print(json.dumps(display, ensure_ascii=True, allow_nan=False))
-        return 1 if value.get("status") == "INCOMPLETE" else 0
+        return 1 if value.get("status") in ("INCOMPLETE", "FAIL", "UNVERIFIED") else 0
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(json.dumps(dict(status="failed", reason=str(exc),
                               live_calls=None if attempted_live else 0,

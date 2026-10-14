@@ -24,9 +24,25 @@ RUNTIME_KEYS = frozenset(("target", "stage", "observations", "answer"))
 MARKER = "\n<runtime_data>\n"
 
 
-def bundle(root=ROOT):
+def bundle(root=ROOT, *, profile="original"):
     root = Path(root)
     folder = root / "skills/cad-harness-v4"
+    if profile == "c-s1":
+        policy = ledger.read_json(root / "design/cad-harness-verify-v4/capability-policy.json")
+        if (policy.get("schema") != "cad-harness.capability-policy.v4c"
+                or policy.get("profile") != profile or policy.get("stage") != "implementation"
+                or type(policy.get("live_authorized_calls")) is not int or policy["live_authorized_calls"] != 0
+                or policy.get("provider_calls_allowed") is not False
+                or policy.get("model_calls_allowed") is not False
+                or policy.get("s2_features_allowed") is not False or policy.get("final_v4_ready") is not False
+                or policy.get("families") != ["reference_fixture", "contour_extrude"]):
+            raise ValueError("capability_policy_not_offline")
+        parts = [(folder / name).read_bytes()
+                 for name in ("c-s1.md", "modeling.md", "contracts-c-s1.md")]
+        parts.append(json.dumps(policy, sort_keys=True, ensure_ascii=False, allow_nan=False).encode("utf-8"))
+        return b"\n".join(parts)
+    if profile != "original":
+        raise ValueError("capability_profile")
     policy = ledger.read_json(root / "design/cad-harness-verify-v4/policy.json")
     text = (folder / "SKILL.md").read_text(encoding="utf-8")
     embedded = text.split("<!-- policy:start -->\n", 1)[1].split("\n<!-- policy:end -->", 1)[0]
@@ -178,6 +194,8 @@ class SkillAdapter:
     def context(self, data):
         if set(data)-RUNTIME_KEYS:
             raise ValueError("runtime_data_fields")
+        if data.get("target") == "plan":
+            raise ValueError("plan_target_requires_c_profile")
         return self.skill + (MARKER + json.dumps(data, ensure_ascii=False, allow_nan=False) if data else "")
 
     def exec_argv(self, codex, work, last, prompt, context=None):
@@ -188,6 +206,54 @@ class SkillAdapter:
             data["answer"] = prompt[len(self.request)+1:]
             context = self.context(data)
         return cad_agent.exec_argv(codex, work, last, self.request, context)
+
+
+class PlanSkillAdapter(SkillAdapter):
+    """The C-profile envelope admits authenticated facts, never attachment I/O."""
+    def __init__(self, skill, request, manifest_path, prepared, selection=None):
+        super().__init__(skill, request)
+        if __package__:
+            from . import cad_verify_v4_inputs as inputs
+        else:
+            import cad_verify_v4_inputs as inputs
+        self.prepared = inputs.verify_prepared(prepared, manifest_path)
+        self.inputs = inputs.model_inputs(self.prepared, manifest_path)
+        self.selection = self._selection([] if selection is None else selection)
+        self._inputs_sha256 = ledger.sha(json.dumps(self.inputs, sort_keys=True, allow_nan=False).encode("utf-8"))
+        self._selection_sha256 = ledger.sha(json.dumps(self.selection, sort_keys=True, allow_nan=False).encode("utf-8"))
+
+    def _selection(self, values):
+        if not isinstance(values, list):
+            raise ValueError("selection_must_be_list")
+        selected = []
+        for item in values:
+            if not isinstance(item, dict) or set(item) != {"asset_id", "face_id", "signature"}:
+                raise ValueError("selection_fields")
+            facts = self.prepared["assets"].get(item["asset_id"])
+            matches = [face for face in (facts or {}).get("faces", [])
+                       if face.get("id") == item["face_id"] and face.get("signature") == item["signature"]]
+            if len(matches) != 1 or matches[0].get("ambiguous") is not False:
+                raise ValueError("selection_unresolved_or_ambiguous")
+            if item in selected:
+                raise ValueError("selection_duplicate")
+            selected.append(dict(item))
+        return selected
+
+    def context(self, data):
+        if not isinstance(data, dict) or set(data) - (RUNTIME_KEYS | {"inputs", "selection"}):
+            raise ValueError("runtime_data_fields")
+        if data.get("target") != "plan" or data.get("stage", "initial") not in ("initial", "repair", "parse_repair"):
+            raise ValueError("plan_runtime_stage_or_target")
+        if (ledger.sha(json.dumps(data.get("inputs"), sort_keys=True, allow_nan=False).encode("utf-8")) != self._inputs_sha256
+                or ledger.sha(json.dumps(data.get("selection", []), sort_keys=True, allow_nan=False).encode("utf-8")) != self._selection_sha256):
+            raise ValueError("plan_runtime_provenance")
+        return self.skill + MARKER + json.dumps(data, ensure_ascii=False, allow_nan=False)
+
+    def developer_context(self, unused_skill=None, contract=None, previous=None):
+        data = dict(target="plan", stage="initial", inputs=self.inputs, selection=self.selection)
+        if previous is not None:
+            data.update(stage="repair", observations=previous)
+        return self.context(data)
 
 
 class Transport:

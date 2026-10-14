@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.step-facts.v4c",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "cad-harness.step-facts.v4c"
+    },
+    "profile": {
+      "const": "c-s1"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+    },
+    "source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "units": {
+      "const": "mm"
+    },
+    "bounds_mm": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "topology": {
+      "type": "object",
+      "properties": {
+        "solids": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "faces": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "edges": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "solids",
+        "shells",
+        "faces",
+        "edges"
+      ],
+      "additionalProperties": false
+    },
+    "frame": {
+      "type": "object",
+      "properties": {
+        "source_axes": {
+          "const": [
+            "X",
+            "Y",
+            "Z"
+          ]
+        },
+        "source_units": {
+          "enum": [
+            "mm",
+            "cm",
+            "m",
+            "inch"
+          ]
+        },
+        "import_units": {
+          "const": "mm"
+        },
+        "axis_transform": {
+          "const": "identity"
+        },
+        "thickness_mm": {
+          "type": "null"
+        },
+        "thickness_reason": {
+          "const": "requires_explicit_face_pair_not_bbox"
+        }
+      },
+      "required": [
+        "source_axes",
+        "source_units",
+        "import_units",
+        "axis_transform",
+        "thickness_mm",
+        "thickness_reason"
+      ],
+      "additionalProperties": false
+    },
+    "faces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^Face[1-9][0-9]*$"
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "ambiguous": {
+            "type": "boolean"
+          },
+          "surface_type": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+          },
+          "area_mm2": {
+            "type": "number",
+            "minimum": 0
+          },
+          "center_mm": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "bounds_mm": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 6,
+            "maxItems": 6
+          },
+          "normal": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "normal_kind": {
+            "enum": [
+              "constant",
+              "surface_parameter_midpoint",
+              "unavailable"
+            ]
+          },
+          "normal_reason": {
+            "oneOf": [
+              {
+                "enum": ["local_surface_normal_not_global_face_normal", "native_normal_unavailable"]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "signature",
+          "ambiguous",
+          "surface_type",
+          "area_mm2",
+          "center_mm",
+          "bounds_mm",
+          "normal",
+          "normal_kind",
+          "normal_reason"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "missing_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^Face[1-9][0-9]*:(ambiguous_signature|local_surface_normal_not_global_face_normal|native_normal_unavailable)$"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "complete",
+        "missing_reasons"
+      ],
+      "additionalProperties": false
+    },
+    "recipe_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "manifest_sha256_before": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "manifest_sha256_after": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "asset_sha256_before": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "asset_sha256_after": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "importer": {
+          "const": "FreeCAD.Part.Shape.read"
+        },
+        "freecad_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "manifest_sha256_before",
+        "manifest_sha256_after",
+        "asset_sha256_before",
+        "asset_sha256_after",
+        "importer",
+        "freecad_version"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema",
+    "profile",
+    "asset_id",
+    "source_sha256",
+    "units",
+    "bounds_mm",
+    "topology",
+    "frame",
+    "faces",
+    "coverage",
+    "recipe_sha256",
+    "provenance"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.plan.v4c",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "cad-harness.plan.v4c"
+        },
+        "profile": {
+          "const": "c-s1"
+        },
+        "family": {
+          "const": "reference_fixture"
+        },
+        "build_spec": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "title": "CAD harness declarative build specification v1",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "family"
+          ],
+          "properties": {
+            "schema": {
+              "const": "cad-harness.build-spec.v1"
+            },
+            "family": {
+              "enum": [
+                "rect_prism",
+                "rect_stack",
+                "stepped_shaft"
+              ]
+            },
+            "units": {
+              "enum": [
+                "mm",
+                "cm",
+                "m"
+              ],
+              "default": "mm"
+            },
+            "frame": {
+              "const": "world",
+              "default": "world"
+            },
+            "regions": {
+              "type": "array",
+              "description": "Bottom-up, base first. Each region requires six bounds including z_min/z_max; higher regions start at a prior top and lie inside that region in XY.",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "bounds"
+                ],
+                "properties": {
+                  "bounds": {
+                    "type": "array",
+                    "description": "Exactly [x_min,x_max,y_min,y_max,z_min,z_max]; both z coordinates are required.",
+                    "minItems": 6,
+                    "maxItems": 6,
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "center_xy": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "diameter",
+                  "z"
+                ],
+                "properties": {
+                  "diameter": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "z": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "pockets": {
+              "type": "array",
+              "maxItems": 8,
+              "default": [],
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "bounds",
+                  "top_z",
+                  "depth"
+                ],
+                "properties": {
+                  "bounds": {
+                    "type": "array",
+                    "description": "Exactly [x_min,x_max,y_min,y_max]. Pocket top_z and depth are separate required fields.",
+                    "minItems": 4,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "top_z": {
+                    "type": "number"
+                  },
+                  "depth": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                }
+              }
+            },
+            "holes": {
+              "type": "array",
+              "maxItems": 64,
+              "default": [],
+              "items": {
+                "type": "object",
+                "description": "Through hole: required z equals the pierced region's full [bottom,top]. No pocket/hole or hole/hole overlap, nor blocked openings.",
+                "additionalProperties": false,
+                "required": [
+                  "center_xy",
+                  "diameter",
+                  "z"
+                ],
+                "properties": {
+                  "center_xy": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "diameter": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "z": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "finish": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "size",
+                    "target"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "fillet",
+                        "chamfer"
+                      ]
+                    },
+                    "size": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "target": {
+                      "const": "top_outer"
+                    }
+                  }
+                }
+              ],
+              "default": null
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "family": {
+                    "const": "rect_prism"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "regions"
+                ],
+                "properties": {
+                  "regions": {
+                    "maxItems": 1
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "family": {
+                    "const": "rect_stack"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "regions"
+                ],
+                "properties": {
+                  "regions": {
+                    "minItems": 2
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "family": {
+                    "const": "stepped_shaft"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "steps"
+                ]
+              }
+            }
+          ]
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "translation_mm": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_axis": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_deg": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "asset_id",
+              "translation_mm",
+              "rotation_axis",
+              "rotation_deg"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "engravings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "font_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "height_mm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "depth_mm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "origin_mm": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_axis": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_deg": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "font_id",
+              "text",
+              "height_mm",
+              "depth_mm",
+              "origin_mm",
+              "rotation_axis",
+              "rotation_deg"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema",
+        "profile",
+        "family",
+        "build_spec",
+        "references",
+        "engravings"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "cad-harness.plan.v4c"
+        },
+        "profile": {
+          "const": "c-s1"
+        },
+        "family": {
+          "const": "contour_extrude"
+        },
+        "contour_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+        },
+        "width_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "thickness_mm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "origin_mm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "asset_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "translation_mm": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_axis": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_deg": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "asset_id",
+              "translation_mm",
+              "rotation_axis",
+              "rotation_deg"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "engravings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "font_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "height_mm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "depth_mm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "origin_mm": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_axis": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 3,
+                "maxItems": 3
+              },
+              "rotation_deg": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "font_id",
+              "text",
+              "height_mm",
+              "depth_mm",
+              "origin_mm",
+              "rotation_axis",
+              "rotation_deg"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema",
+        "profile",
+        "family",
+        "contour_id",
+        "width_mm",
+        "thickness_mm",
+        "origin_mm",
+        "references",
+        "engravings"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
