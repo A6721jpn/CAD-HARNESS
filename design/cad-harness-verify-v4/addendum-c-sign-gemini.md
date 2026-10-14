@@ -43,3 +43,28 @@ The user's decision establishing the completion of S1–S3 capabilities and pass
 
 With these four concrete fixes adopted, the phased staging (S1 $\to$ S2 $\to$ S3 $\to$ Holdout $\to$ Pilot) and the mandatory 5/5 exit rule become technically sound and executable on DPC-019.
 Current sign-off verdict on C-EXIT: **BLOCK** pending the fixes above.
+
+---
+
+## Re-Sign: Revision C-R1 + C-Q Review
+
+Verdict: **AGREE** (for S1 kickoff)
+
+- **C-R1-2**: Fully resolves BLOCK Point #2 (budget governance). Explicitly enforces that any post-failure development/pilot cycle requires its own separately authorized budget and quota check, terminating as `INCOMPLETE` (`budget_exhausted` / `quota_stop`) without infinite loops or extensions.
+- **C-R1-3**: Fully resolves BLOCK Point #3 (U5 vector contour). Explicitly places deterministic raster tracing in the pre-freeze custodian step, emitting a frozen, hashed `contour.json` passed as factual `<runtime_data>`, keeping the generator completely tool-less and file-isolated.
+- **C-Q (Questions Q1, Q2, Q3)**: Formally tracks BLOCK Points #1 (U3 OCCT continuity limit) and #4 (U5/U2 default envelope values) as pending user decisions. As established in PLAN-V4-CONSENSUS.md §1, pending user decisions for later live stages (S2/S3/pilot freeze) do not block implementation or offline testing of Stage S1.
+
+C-EXIT with Addendum C-R1 and C-Q is approved for Stage S1 implementation: **AGREE**.
+
+---
+
+## Final Re-Sign: C-EXIT + C-R1 + C-R2 + C-Q
+
+Verdict: **AGREE**
+
+- **C-R2-1**: Preserves the original 163-call holdout completely untouched without borrowing or contamination.
+- **C-R2-2**: Locks the rigorous two-leg image fidelity chain (image $\to$ contour and contour $\to$ CAD) into the custodian commitment, keeping raw raster data checker-only.
+- **C-R2-3**: Explicitly governs code locks, separate live authoring/freeze cycles, and the strict single-manifest 5/5 exit rule without cross-cycle stitching.
+- **C-Q (Q1–Q10)**: Comprehensively catalogs all empirical user tolerances and dimension conventions without stalling S1 offline implementation.
+
+Full three-party consensus on capability expansion Addendum C achieved: **AGREE**.
