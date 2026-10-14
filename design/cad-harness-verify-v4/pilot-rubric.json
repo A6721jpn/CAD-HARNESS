@@ -1,0 +1,21 @@
+{
+  "schema": "cad-harness.pilot-rubric.v4",
+  "status": "not_run",
+  "preregistered": false,
+  "tasks_source": "user_only",
+  "tasks": [],
+  "human_judge": null,
+  "judge_agreement": null,
+  "enrolled_target": 10,
+  "minimum_successes": 7,
+  "success_requires": ["human_adoption", "existing_quality_gates", "no_edit_or_verified_corrections_within_300_elapsed_seconds"],
+  "edit_clock": "first_edit_to_successful_headless_reverification_including_waits",
+  "critical_or_fabrication": "fatal_at_first_proposed_or_later_handover_even_if_corrected",
+  "fatal_quality_does_not_remove_task_or_authorize_replacement": true,
+  "all_enrolled_tasks_in_denominator": true,
+  "critical_dimensions_and_tolerances": null,
+  "allowed_defaults": null,
+  "screening_log": null,
+  "order_commitment": null,
+  "missing_reason": "user_tasks_human_judge_and_trial_agreement_pending"
+}

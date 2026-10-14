@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.ledger.v4",
+  "title": "One append-only VERIFY v4 ledger event; null is not zero",
+  "type": "object",
+  "required": ["schema", "event", "event_id", "run_id", "phase", "recorded_at", "monotonic_s", "boot_id"],
+  "properties": {
+    "schema": {"const": "cad-harness.ledger.v4"},
+    "event": {"enum": ["run_started", "run_finished", "episode_started", "episode_finished", "attempt_started", "attempt_finished", "attempt_alias", "wait_started", "wait_finished", "interruption_observed", "edit_started", "edit_finished"]},
+    "event_id": {"type": "integer", "minimum": 1},
+    "run_id": {"type": "string"},
+    "phase": {"type": "string"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "monotonic_s": {"type": "number", "minimum": 0},
+    "boot_id": {"type": "string", "description": "Process clock identity; not an inferred operating-system boot timestamp"},
+    "episode_id": {"type": "string"},
+    "attempt_id": {"type": "string"},
+    "operation": {"enum": ["model", "cad"]},
+    "charged": {"type": ["boolean", "null"]},
+    "provider_rejected": {"type": "boolean"},
+    "wall_s": {"type": ["number", "null"], "minimum": 0},
+    "active_s": {"type": ["number", "null"], "minimum": 0},
+    "usage": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/usage"}]},
+    "price": {"type": ["object", "null"]},
+    "streams": {"type": "object", "properties": {"stdout": {"$ref": "#/$defs/stream"}, "stderr": {"$ref": "#/$defs/stream"}}}
+  },
+  "allOf": [{"if": {"properties": {"event": {"enum": ["attempt_started", "attempt_finished"]}}}, "then": {"required": ["attempt_id", "episode_id", "operation"]}}],
+  "$defs": {
+    "token": {"type": ["integer", "null"], "minimum": 0},
+    "usage": {"type": "object", "required": ["values", "missing_reasons", "sources"], "properties": {
+      "values": {"type": "object", "required": ["input_tokens", "cached_input_tokens", "cache_write_input_tokens", "output_tokens", "reasoning_output_tokens"], "properties": {
+        "input_tokens": {"$ref": "#/$defs/token"}, "cached_input_tokens": {"$ref": "#/$defs/token"}, "cache_write_input_tokens": {"$ref": "#/$defs/token"}, "output_tokens": {"$ref": "#/$defs/token"}, "reasoning_output_tokens": {"$ref": "#/$defs/token"}
+      }}, "missing_reasons": {"type": "object"}, "sources": {"type": "array"}
+    }},
+    "stream": {"type": "object", "required": ["path", "sha256", "bytes", "complete", "missing_reason"], "properties": {
+      "path": {"type": ["string", "null"]}, "sha256": {"type": ["string", "null"]}, "bytes": {"type": ["integer", "null"], "minimum": 0}, "complete": {"type": "boolean"}, "missing_reason": {"type": ["string", "null"]}
+    }}
+  }
+}
