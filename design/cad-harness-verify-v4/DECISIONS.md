@@ -66,3 +66,6 @@ Still open (not answered): the U1 tape location; the U2 "minimal concave-face co
 
 ## USER 2026-10-14 19:47 JST - U1 tape location
 - The U1 double-sided tape location may be anywhere; it is delegated to the agents. The agents choose a sensible location. It is not a pass/fail criterion, except that the tape must fit within the 0.5 mm thickness allowance.
+
+## USER 2026-10-14 21:09 JST - without-harness benchmark arm
+- The no-harness comparison arm is run by Codex WITHOUT the harness: the same model and the same requests, with no cad_run, no CAD-harness skills and no harness CLI. It replaces the "named qualified human operators" assumption in C-D(e).

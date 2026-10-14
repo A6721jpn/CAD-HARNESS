@@ -102,3 +102,7 @@ For each Cx: CLI vs skill split, schema/contract changes, allowed imports, deter
   - (e) a with/without-harness CAD-time benchmark: 20 pairs, 100 calls, durable dataset `cad-harness.cad-time-benchmark.v1`. It requires named qualified human operators for the without-harness arm (user question).
 - C-A2 recording: gemini AGREE (19:2x), sol AGREE (19:33).
 - C-A2 addendum (USER 19:47): the U1 tape location is delegated to the agents and is not a pass/fail item; only the 0.5 mm tape thickness must be accommodated in the fit. The remaining open item is U2 minimal concave-face contact (Astra plus the user's visual check).
+- C-D(e) amendment (USER 21:09):
+  - The without-harness arm is Codex (the same model as the with-harness arm) running the same requests with no cad_run, no CAD-harness skills or contracts, and no harness CLI. Its operating envelope (tools allowed, FreeCAD 1.1.4 headless access, time ceiling, number of calls, how its output is handed over and judged with the same cards) must be agreed by the 3 parties before the freeze.
+  - Its model calls need their own budget line (the "zero model calls" manual-arm rule is void). Human-operator fields become not-applicable.
+  - Same-model pairing removes the operator-skill confound, but it measures harness-vs-bare-agent time, not human time saved; RESULTS must state this.
