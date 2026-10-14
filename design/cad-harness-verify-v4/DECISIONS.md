@@ -40,3 +40,9 @@ Pending with the user: #1 pilot tasks, #2 pilot judge and rubric, #3 price sourc
   - Pilot tasks U1-U5 are user tasks. They are NEVER used for development, tuning or fixtures: no reading of their attachments by implementers, no gold derived from them.
   - Development uses independently created dev fixtures only.
   - The existing 163-call holdout (unchanged scope) and its custody are unaffected.
+
+## USER 2026-10-14 14:40 JST - mandatory exit criterion
+- The goal is unchanged. Passing ALL 5 user requests U1-U5 is now a mandatory v4 exit criterion.
+- U1-U5 remain pass/fail material only. They are never used for tuning, development or fixtures. Separate fresh holdouts per new family are still required.
+- S1 through S3 are all in v4 scope.
+- The pilot runs after implementation and freeze. It is judged by Astra Max (gpt-6-astra max), then the user's visual check.
