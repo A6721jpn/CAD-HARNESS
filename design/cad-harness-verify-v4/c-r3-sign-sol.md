@@ -1,0 +1,3 @@
+AGREE — C-R3-1 correctly voids the old plate while retaining the stated U5 defaults, tool radius and fidelity gates; C-R3-2 records the agreed separate 160-call benchmark reservation and unchanged quota stops.
+AGREE — C-R3-3 requires a demonstrated neutral same-card artifact checker and one current integrated zero-live lock across original/c-s1/c-s2/c-s3 before family authoring. Bind HEAD plus the actual working-file bytes/overlay; a HEAD hash alone must not pretend that uncommitted implementation is in that commit.
+Authorization remains null and final_v4_ready false. This signature is not trial authorization; no private/pilot inputs, live model calls or commit.
