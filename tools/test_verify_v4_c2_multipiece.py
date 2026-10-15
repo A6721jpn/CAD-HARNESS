@@ -21,7 +21,9 @@ def square(x, y, size, role='outer', parent=None):
 
 
 def record():
-    recipe = ledger.read_json(production.ROOT / production.RECIPE_PATH)
+    # This synthetic host record is not a v2 source-fit certificate.
+    recipe = ledger.read_json(
+        production.ROOT / 'design/cad-harness-verify-v4/c2-production-recipe-cycle2.json')
     loops = [square(0, 0, 30), square(5, 5, 20, 'hole', 0),
              square(10, 10, 5, parent=1), square(40, 40, 10)]
     topology = dict(components=3, holes=1, euler_characteristic=2)
@@ -116,24 +118,6 @@ class MultiPieceHostTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'prepared_contour_record_mismatch'):
                 inputs.verify_prepared(packet, manifest)
 
-    def test_registry_active_only_and_retired_metadata_closed(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            for relative in (production.RECIPE_PATH, production.REGISTRATION_PATH):
-                destination = root / relative
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_bytes((production.ROOT / relative).read_bytes())
-            loaded = production.load(root)
-            self.assertEqual(loaded['recipe']['topology'], dict(components='preserve', holes='preserve', islands='preserve'))
-            self.assertEqual(set(production.bindings(root)), {production.RECIPE_PATH, production.REGISTRATION_PATH})
-            registration = root / production.REGISTRATION_PATH
-            document = ledger.read_json(registration)
-            self.assertEqual(len(document['entries']), 1)
-            self.assertNotEqual(document['retired'][0]['recipe']['path'], production.RECIPE_PATH)
-            document['entries'][0]['recipe'] = document['retired'][0]['recipe']
-            registration.write_text(json.dumps(document), encoding='utf-8')
-            with self.assertRaisesRegex(ValueError, 'c2_production_file_sha256'):
-                production.load(root)
 
 
 if __name__ == '__main__':

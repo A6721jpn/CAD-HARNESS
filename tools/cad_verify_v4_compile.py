@@ -7,6 +7,7 @@ import base64
 import hashlib
 import json
 import math
+from contextlib import contextmanager
 
 
 def _imports():
@@ -146,6 +147,48 @@ class _FrozenProxy:
             raise
 
 
+class _ValidatedContourSource(str):
+    """Immutable, fully authenticated source bytes; never serialized in a feature."""
+    __slots__ = ()
+
+    def __new__(cls, value):
+        if type(value) is not str:
+            raise ValueError('contour_source_requires_string')
+        if __package__:
+            from .cad_verify_v4_contours import validate_contour
+        else:
+            from cad_verify_v4_contours import validate_contour
+        validate_contour(json.loads(value))
+        return super().__new__(cls, value)
+
+
+@contextmanager
+def validated_contour_sources(doc):
+    """Authenticate fixed sources once for this synchronous recompute/edit chain.
+
+    Only installed ContourProxy instances receive an immutable representation.
+    A changed ContourData value still takes the ordinary full-validation path;
+    dimensions, placement and every resulting BREP are rebuilt as before.
+    No handle survives this scope or the feature's data-only serialization.
+    """
+    bindings = []
+    try:
+        for obj in doc.Objects:
+            proxy = obj.Proxy if 'Proxy' in obj.PropertiesList else None
+            if type(proxy) is ContourProxy:
+                source = _ValidatedContourSource(obj.ContourData)
+                previous = getattr(proxy, '_validated_source', None)
+                bindings.append((proxy, previous))
+                proxy._validated_source = source
+        yield
+    finally:
+        for proxy, previous in reversed(bindings):
+            if previous is None:
+                del proxy._validated_source
+            else:
+                proxy._validated_source = previous
+
+
 class ContourProxy(_FrozenProxy):
     def expected_solids(self, obj):
         _, inputs, _ = _imports()
@@ -153,12 +196,15 @@ class ContourProxy(_FrozenProxy):
 
     def construct(self, obj):
         import FreeCAD as App
-        if __package__:
-            from .cad_verify_v4_contours import validate_contour
-        else:
-            from cad_verify_v4_contours import validate_contour
-        record = json.loads(obj.ContourData)
-        validate_contour(record)
+        data = obj.ContourData
+        record = json.loads(data)
+        source = getattr(self, '_validated_source', None)
+        if type(source) is not _ValidatedContourSource or source != data:
+            if __package__:
+                from .cad_verify_v4_contours import validate_contour
+            else:
+                from cad_verify_v4_contours import validate_contour
+            validate_contour(record)
         width = _number(float(obj.Width), 'width', True)
         thickness = _number(float(obj.Thickness), 'thickness', True)
         nominal = _number(record['nominal_width_mm'], 'nominal_width', True)

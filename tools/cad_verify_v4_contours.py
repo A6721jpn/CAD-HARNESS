@@ -17,8 +17,10 @@ from pathlib import Path
 
 try:
     from .cad_verify_v4_ledger import file_sha, new_directory, write_json
+    from . import cad_verify_v4_digital as digital
 except ImportError:
     from cad_verify_v4_ledger import file_sha, new_directory, write_json
+    import cad_verify_v4_digital as digital
 
 SCHEMA = "cad-harness.contour.v4c"
 RECIPE_SCHEMA = "cad-harness.contour-recipe.v4c"
@@ -89,6 +91,10 @@ def _unit(a):
     return _mul(a, 1 / length)
 
 
+def _paired(recipe):
+    return recipe.get("curve_fit", {}).get("method") == "source_bounded_biarc_v2"
+
+
 def validate_recipe(recipe):
     _fields(recipe, ("schema", "profile", "foreground", "alpha", "scale", "simplify", "rounding", "limits", "topology"), ("curve_fit",))
     if recipe["schema"] != RECIPE_SCHEMA or recipe["profile"] != "c-s1":
@@ -115,17 +121,30 @@ def validate_recipe(recipe):
     _point(scale["origin_mm"])
     if "curve_fit" in recipe:
         fit = recipe["curve_fit"]
-        _fields(fit, ("method", "maximum_error_pixels", "tangent_span_pixels", "corner_angle_degrees",
-                      "smoothing_rms_pixels", "sample_spacing_pixels", "biarc_error_pixels", "maximum_fit_passes"))
-        if fit["method"] != "periodic_cubic_biarc_v1":
+        if not isinstance(fit, dict):
+            _fail("missing_or_unknown_fields")
+        if fit.get("method") == "periodic_cubic_biarc_v1":
+            _fields(fit, ("method", "maximum_error_pixels", "tangent_span_pixels", "corner_angle_degrees",
+                          "smoothing_rms_pixels", "sample_spacing_pixels", "biarc_error_pixels", "maximum_fit_passes"))
+            for name in ("maximum_error_pixels", "tangent_span_pixels", "smoothing_rms_pixels",
+                         "sample_spacing_pixels", "biarc_error_pixels"):
+                _number(fit[name], positive=True)
+            if not 0 < _number(fit["corner_angle_degrees"]) < 180:
+                _fail("curve_fit_corner_angle")
+        elif fit.get("method") == "source_bounded_biarc_v2":
+            _fields(fit, ("method", "maximum_error_mm", "minimum_iou", "minimum_radius_mm",
+                          "smoothing_rms_mm", "sample_spacing_mm", "biarc_error_mm", "maximum_fit_passes"))
+            for name in ("maximum_error_mm", "minimum_radius_mm", "smoothing_rms_mm",
+                         "sample_spacing_mm", "biarc_error_mm"):
+                _number(fit[name], positive=True)
+            if not 0 < _number(fit["minimum_iou"]) <= 1:
+                _fail("curve_fit_iou_range")
+            if "canonical_height_mm" not in scale:
+                _fail("source_bounded_fit_requires_canonical_height")
+        else:
             _fail("curve_fit_method")
-        for name in ("maximum_error_pixels", "tangent_span_pixels", "smoothing_rms_pixels",
-                     "sample_spacing_pixels", "biarc_error_pixels"):
-            _number(fit[name], positive=True)
         if type(fit["maximum_fit_passes"]) is not int or not 1 <= fit["maximum_fit_passes"] <= 8:
             _fail("curve_fit_pass_limit")
-        if not 0 < _number(fit["corner_angle_degrees"]) < 180:
-            _fail("curve_fit_corner_angle")
     for name, quantity in (("simplify", "tolerance_mm"), ("rounding", "radius_mm")):
         section = recipe[name]
         _fields(section, ("allowed",), (quantity,))
@@ -143,12 +162,24 @@ def validate_recipe(recipe):
     _fields(recipe["limits"], ("max_deviation_mm", "approximation_tolerance_mm"))
     _number(recipe["limits"]["max_deviation_mm"], nonnegative=True)
     _number(recipe["limits"]["approximation_tolerance_mm"], positive=True)
-    _fields(recipe["topology"], ("components", "holes", "islands"))
+    if recipe.get("curve_fit", {}).get("method") == "source_bounded_biarc_v2" and (
+            recipe["curve_fit"]["maximum_error_mm"] > recipe["limits"]["max_deviation_mm"]):
+        _fail("curve_fit_exceeds_source_deviation_budget")
+    topology = recipe["topology"]
+    _fields(topology, ("components", "holes", "islands"),
+            ("connectivity",) if _paired(recipe) else ())
+    if _paired(recipe):
+        connectivity = topology.get("connectivity")
+        _fields(connectivity, ("foreground", "background", "pinch"))
+        if connectivity != {"foreground": 4, "background": 8, "pinch": "remove_locally"} or any(
+                type(connectivity[key]) is not int for key in ("foreground", "background")):
+            _fail("paired_connectivity_policy")
     strict = {"components": 1, "holes": "preserve", "islands": "reject"}
     multiple = {"components": "preserve", "holes": "preserve", "islands": "preserve"}
-    if recipe["topology"] not in (strict, multiple) or isinstance(recipe["topology"]["components"], bool):
+    policy = {key: topology[key] for key in ("components", "holes", "islands")}
+    if policy not in (strict, multiple) or isinstance(topology["components"], bool):
         _fail("one_solid_policy_incompatible")
-    if recipe["topology"] == multiple and any(recipe[name]["allowed"] for name in ("simplify", "rounding")):
+    if policy == multiple and any(recipe[name]["allowed"] for name in ("simplify", "rounding")):
         _fail("multi_piece_cannot_simplify_or_round")
     return recipe
 
@@ -298,26 +329,34 @@ def _tangent(segment, end):
         return _unit(_sub(p1, p0))
     if segment["kind"] != "arc":
         _fail("minimum_radius_bezier_requires_curvature_solver")
-    g = arc_geometry(segment)
-    v = _sub(p1 if end else p0, g["center"])
-    sign = 1 if g["sweep"] > 0 else -1
-    return _unit([-sign * v[1], sign * v[0]])
+    # Inscribed-angle identity: tangent(A) = arg(AM) + arg(AB) - arg(MB).
+    # Unlike subtracting a remote circumcentre, this stays well-conditioned
+    # for shallow arcs. Complex products avoid angle wrap and trig loss.
+    middle = _point(segment["pm"])
+    first = _unit(_sub(middle, p0))
+    last = _unit(_sub(p1, middle))
+    chord = _unit(_sub(p1, p0))
+    a, b = (last, first) if end else (first, last)
+    product = [a[0] * chord[0] - a[1] * chord[1],
+               a[0] * chord[1] + a[1] * chord[0]]
+    return _unit([product[0] * b[0] + product[1] * b[1],
+                  product[1] * b[0] - product[0] * b[1]])
 
 
 def _tangent_numeric_allowance(segment):
     p0, p1 = segment_endpoints(segment)
-    magnitude = max(abs(c) for p in (p0, p1) for c in p)
-    length = _distance(p0, p1)
-    condition = 1.0
+    points = [p0, p1]
+    lengths = [_distance(p0, p1)]
     if segment["kind"] == "arc":
-        g = arc_geometry(segment)
-        u, v = _sub(segment["pm"], p0), _sub(p1, p0)
-        condition = max(1.0, max(_dot(u, u), _dot(v, v)) / abs(2 * _cross(u, v)))
-        magnitude = max(magnitude, *(abs(c) for c in g["center"]), g["radius"])
-        length = min(length, g["radius"])
-    if not length:
+        middle = _point(segment["pm"])
+        points.append(middle)
+        lengths.extend((_distance(p0, middle), _distance(middle, p1)))
+    if any(not length for length in lengths):
         _fail("zero_length_segment")
-    allowance = 256 * math.ulp(magnitude) * condition / length
+    magnitude = max(abs(c) for point in points for c in point)
+    # Only chord directions enter the inscribed-angle evaluation above.
+    # Its error enclosure must not multiply in a remote circle-centre solve.
+    allowance = 256 * math.ulp(magnitude) * sum(1 / length for length in lengths)
     if not math.isfinite(allowance) or allowance >= 1e-4:
         _fail("radius_below_numeric_resolution")
     return allowance
@@ -754,8 +793,19 @@ def _geometry_from_mask(mask, recipe):
     canonical = "canonical_height_mm" in settings
     allow_multiple = recipe["topology"]["components"] == "preserve"
     if canonical or "curve_fit" in recipe:
-        pixels = _mask_loops(mask, 1., [0., 0.], allow_multiple=allow_multiple)
+        pixels = (digital.trace(mask, allow_multiple=allow_multiple)["loops"] if _paired(recipe)
+                  else _mask_loops(mask, 1., [0., 0.], allow_multiple=allow_multiple))
         fitted = pixels
+        bounded = recipe.get("curve_fit", {}).get("method") == "source_bounded_biarc_v2"
+        if bounded:
+            bounds = _geometry_bounds(pixels)
+            nominal_scale = settings["canonical_height_mm"] / (bounds[3] - bounds[2])
+            # Subtract integer pixel coordinates before scaling: transparent
+            # padding must not perturb symmetric layout proposal ordering.
+            pixel_origin = [bounds[0], bounds[2]]
+            pixels = _affine_loops(pixels, 1., [-value for value in pixel_origin])
+            pixels = _affine_loops(pixels, nominal_scale, [0., 0.])
+            fitted = pixels
         if "curve_fit" in recipe:
             if __package__:
                 from .cad_verify_v4_biarcs import fit_loops
@@ -771,6 +821,9 @@ def _geometry_from_mask(mask, recipe):
             scale, origin = settings["mm_per_pixel"], settings["origin_mm"]
         source = _affine_loops(pixels, scale, origin)
         loops = _affine_loops(fitted, scale, origin)
+        if bounded:
+            scale *= nominal_scale
+            origin = [origin[i] - pixel_origin[i] * scale for i in range(2)]
     else:
         scale, origin = settings["mm_per_pixel"], settings["origin_mm"]
         source = _mask_loops(mask, scale, origin, allow_multiple=allow_multiple)
@@ -778,11 +831,71 @@ def _geometry_from_mask(mask, recipe):
     transform = {"scale_mm_per_pixel": scale, "origin_mm": origin,
                  "image_height_pixels": int(mask.shape[0]), "y_axis": "up",
                  "pixel_convention": "closed unit cells; centers at (col+0.5,row+0.5)"}
+    if _paired(recipe):
+        _certify_source_fit(source, loops, recipe, mask, transform)
     return source, loops, transform
 
 
-def _deviation(source, loops, tolerance):
-    source_rings, _ = _check_geometry(source, tolerance)
+def _certify_source_fit(source, loops, recipe, mask, transform):
+    """Certify the already fixed final frame; never modify candidate geometry.
+
+    A segmentwise epsilon-neighbourhood of the flattened boundary contains
+    the curve/polygon area difference. Summing rectangles and endpoint disks
+    is conservative even when the neighbourhoods overlap.
+    """
+    source_rings, _ = flatten_loops({"loops": source}, recipe["limits"]["approximation_tolerance_mm"])
+    output_rings, error = _check_geometry(loops, recipe["limits"]["approximation_tolerance_mm"])
+    deviation = _boundary_bound(source_rings, output_rings,
+                                recipe["limits"]["approximation_tolerance_mm"]) + error
+    fit = recipe["curve_fit"]
+    if deviation > fit["maximum_error_mm"]:
+        _fail("source_deviation_budget_exceeded")
+    original = digital.mask_region(mask, transform["scale_mm_per_pixel"], transform["origin_mm"])
+    # The configured flatten tolerance is an upper measurement bound, not
+    # permission to reject a feasible fit because its area tube is too coarse.
+    # Refine only the certificate; the already-fixed curves never change.
+    for attempt in range(fit["maximum_fit_passes"]):
+        if attempt:
+            output_rings, error = _check_geometry(
+                loops, recipe["limits"]["approximation_tolerance_mm"] / 2**attempt)
+        output = _polygon(output_rings)
+        allowance = sum(2 * error * _distance(a, b) + math.pi * error ** 2
+                        for ring in output_rings for a, b in zip(ring, ring[1:]))
+        allowance += (128 * math.ulp(max(1., original.area, output.area))
+                      * sum(len(ring) for ring in output_rings + source_rings))
+        lower = max(0., original.intersection(output).area - allowance)
+        upper = original.union(output).area + allowance
+        if upper > 0 and lower / upper >= fit["minimum_iou"]:
+            break
+    else:
+        _fail("source_iou_budget_exceeded")
+    if minimum_radius({"loops": loops}) < fit["minimum_radius_mm"]:
+        _fail("source_fit_minimum_radius_not_certified")
+    _pinch_openings(mask, loops, transform, recipe["limits"]["approximation_tolerance_mm"])
+
+
+def _pinch_openings(mask, loops, transform, tolerance):
+    contacts = digital.contacts(mask)
+    if not contacts:
+        return []
+    from shapely.geometry import Point
+    rings, error = _check_geometry(loops, tolerance)
+    material = _polygon(rings)
+    result = []
+    for contact in contacts:
+        point = [origin + coordinate * transform["scale_mm_per_pixel"]
+                 for origin, coordinate in zip(transform["origin_mm"], contact["vertex_pixels"])]
+        numerical = 128 * math.ulp(max(1., *(abs(value) for value in point)))
+        lower = material.distance(Point(point)) - error - numerical
+        if lower <= 0:
+            _fail("pinch_not_certified_removed_locally")
+        result.append(dict(contact, clearance_mm_lower=lower))
+    return result
+
+
+def _deviation(source, loops, tolerance, *, allow_pinches=False):
+    source_rings, _ = (flatten_loops({"loops": source}, tolerance) if allow_pinches
+                       else _check_geometry(source, tolerance))
     output_rings, error = _check_geometry(loops, tolerance)
     deviation = 0.0 if loops == source else _boundary_bound(source_rings, output_rings, tolerance) + error
     return deviation, error
@@ -831,11 +944,18 @@ def _provenance(recipe):
         "hash_encoding": "sorted-key compact UTF-8 JSON, no NaN",
         "source_checks": "raw image and manifest SHA256 before/after",
     }
+    if _paired(recipe):
+        result["extraction"] = f"exact original cells; foreground-4/background-8 adjacency forest; deterministic left-turn source walks with split corner vertices; every piece retained; cleared original contacts certified after fitting; resource caps {MAX_PIXELS} pixels / {MAX_CELL_EDGES} exposed cell edges / {MAX_BOUNDARY_SEGMENTS} segments"
     if "curve_fit" in recipe:
         import scipy
-        result["curve_approximation"] = f"periodic_cubic_biarc_v1; SciPy {scipy.__version__}: source-local uniform arclength pixel samples; periodic cubic FITPACK RMS fit with bounded RMS halvings until original-source error is certified, except at hard-corner loops; shared-tangent equal-distance biarcs; recursive biarc/polyline enclosure and final two-sided original-cell-boundary enclosure; no radius target"
+        method = recipe["curve_fit"]["method"]
+        if method == "source_bounded_biarc_v2":
+            result["curve_approximation"] = f"{method}; SciPy {scipy.__version__}: source-local nominal-mm samples; retained undersized-loop circles; periodic cubic RMS doublings and branch-order/width-constrained curvature proposals; original narrow material walls prioritize a finer declared-RMS width basis, otherwise branch-order proposals precede width constraints; bounded analytic right-normal line/circle candidates precede all source certification, zero displacement first; sampled constraints are not certificates; measurement-only disk-opening rejection never constructs boundaries; stable tangent biarcs; retained-forest layout search; exact-arc shrink reserve distinct from construction slack; one actual prospective final scale; fine source enclosures independent of permitted deviation; final original-source Hausdorff/IoU, strict topology, every-join radius and cleared-contact certificates; no mask repair or post-scoring change"
+        else:
+            result["curve_approximation"] = f"periodic_cubic_biarc_v1; SciPy {scipy.__version__}: source-local uniform arclength pixel samples; periodic cubic FITPACK RMS fit with bounded RMS halvings until original-source error is certified, except at hard-corner loops; shared-tangent equal-distance biarcs; recursive biarc/polyline enclosure and final two-sided original-cell-boundary enclosure; no radius target"
     if "canonical_height_mm" in recipe["scale"]:
-        result["scale_order"] = "decode/threshold; exact pixel cell-union; declared pixel approximation; exact canonical extrema; uniform final-height scale; one shared source/contour registration; no later normalization"
+        unit = "nominal-mm approximation" if recipe.get("curve_fit", {}).get("method") == "source_bounded_biarc_v2" else "pixel approximation"
+        result["scale_order"] = f"decode/threshold; exact pixel cell-union; declared {unit}; exact canonical extrema; uniform final-height scale; one shared source/contour registration; no later normalization"
     return result
 
 def geometry_bounds(record):
@@ -949,10 +1069,14 @@ def validate_contour(record):
     if record["topology"] != {"source": _topology(source), "output": _topology(record["loops"])} or record["topology"]["source"] != record["topology"]["output"]:
         _fail("topology_changed")
     tolerance = recipe["limits"]["approximation_tolerance_mm"]
-    deviation, error = _deviation(source, record["loops"], tolerance)
+    deviation, error = _deviation(source, record["loops"], tolerance, allow_pinches=_paired(recipe))
     if deviation > recipe["limits"]["max_deviation_mm"]:
         _fail("source_deviation_budget_exceeded")
-    _fields(record["reports"], ("minimum_radius_mm", "source_boundary_hausdorff_upper_mm"))
+    report_fields = ("minimum_radius_mm", "source_boundary_hausdorff_upper_mm")
+    _fields(record["reports"], report_fields + (("pinch_openings",) if _paired(recipe) else ()))
+    if _paired(recipe) and record["reports"]["pinch_openings"] != _pinch_openings(
+            mask, record["loops"], expected_transform, tolerance):
+        _fail("pinch_opening_report_mismatch")
     _fields(record["approximation"], ("flatten_tolerance_mm", "flatten_error_bound_mm", "source_deviation_upper_mm", "deviation_method"))
     expected_provenance = _provenance(recipe)
     _fields(record["provenance"], ("decoder", "luminance", "threshold_comparison", "extraction", "simplification", "rounding", "hash_encoding", "source_checks"),
@@ -995,7 +1119,7 @@ def prepare_contour(manifest_path, asset_id, recipe, out):
     source_mask = _mask_record(mask)
     source, loops, transform = _geometry_from_mask(mask, recipe)
     tolerance = recipe["limits"]["approximation_tolerance_mm"]
-    deviation, error = _deviation(source, loops, tolerance)
+    deviation, error = _deviation(source, loops, tolerance, allow_pinches=_paired(recipe))
     if deviation > recipe["limits"]["max_deviation_mm"]:
         _fail("source_deviation_budget_exceeded")
     if _topology(source) != _topology(loops):
@@ -1014,6 +1138,8 @@ def prepare_contour(manifest_path, asset_id, recipe, out):
                           "source_boundary_hausdorff_upper_mm": deviation},
               "provenance": _provenance(recipe),
               "approximation": {"flatten_tolerance_mm": tolerance, "flatten_error_bound_mm": error, "source_deviation_upper_mm": deviation, "deviation_method": DEVIATION_METHOD}}
+    if _paired(recipe):
+        record["reports"]["pinch_openings"] = _pinch_openings(mask, loops, transform, tolerance)
     record["record_sha256"] = _record_hash(record)
     validate_contour(record)
     if file_sha(asset["path"]) != asset["digest"] or file_sha(manifest_path) != manifest_digest:

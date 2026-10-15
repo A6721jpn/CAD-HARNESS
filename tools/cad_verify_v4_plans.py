@@ -41,6 +41,13 @@ def _check(value, node, root, where, loaded=None):
             for part in pointer[1:].split('/'):
                 target = target[part.replace('~1', '/').replace('~0', '~')]
         return _check(value, target, other, where, loaded)
+    if 'not' in node:
+        try:
+            _check(value, node['not'], root, where, loaded)
+        except ValueError:
+            pass
+        else:
+            raise ValueError(where + ':not')
     if 'oneOf' in node:
         matches = 0
         for choice in node['oneOf']:
@@ -107,8 +114,11 @@ def _check(value, node, root, where, loaded=None):
             try:
                 _check(value, clause['if'], root, where, loaded)
             except ValueError:
-                continue
-            _check(value, clause['then'], root, where, loaded)
+                if 'else' in clause:
+                    _check(value, clause['else'], root, where, loaded)
+            else:
+                if 'then' in clause:
+                    _check(value, clause['then'], root, where, loaded)
         else:
             _check(value, clause, root, where, loaded)
 
@@ -117,6 +127,10 @@ def _validate_contour_topology(record):
     """Host structural admission; native validation certifies spatial nesting."""
     analytic = record.get('provenance', {}).get('kind') == 'independent_analytic_source'
     policy = record.get('recipe', {}).get('topology')
+    # Connectivity is admitted by the recipe schema; this branch verifies
+    # source/output cardinality and the alternating parent forest.
+    if not analytic and isinstance(policy, dict):
+        policy = {key: value for key, value in policy.items() if key != 'connectivity'}
     multi = not analytic and policy == {
         'components': 'preserve', 'holes': 'preserve', 'islands': 'preserve'}
     if not analytic and not multi and policy != {

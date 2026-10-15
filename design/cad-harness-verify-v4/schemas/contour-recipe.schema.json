@@ -106,22 +106,42 @@
       "additionalProperties": false
     },
     "curve_fit": {
-      "type": "object",
-      "properties": {
-        "method": {"const": "periodic_cubic_biarc_v1"},
-        "maximum_error_pixels": {"type": "number", "exclusiveMinimum": 0},
-        "tangent_span_pixels": {"type": "number", "exclusiveMinimum": 0},
-        "smoothing_rms_pixels": {"type": "number", "exclusiveMinimum": 0},
-        "sample_spacing_pixels": {"type": "number", "exclusiveMinimum": 0},
-        "biarc_error_pixels": {"type": "number", "exclusiveMinimum": 0},
-        "maximum_fit_passes": {"type": "integer", "minimum": 1, "maximum": 8},
-        "corner_angle_degrees": {
-          "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 180
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "method": {"const": "periodic_cubic_biarc_v1"},
+            "maximum_error_pixels": {"type": "number", "exclusiveMinimum": 0},
+            "tangent_span_pixels": {"type": "number", "exclusiveMinimum": 0},
+            "smoothing_rms_pixels": {"type": "number", "exclusiveMinimum": 0},
+            "sample_spacing_pixels": {"type": "number", "exclusiveMinimum": 0},
+            "biarc_error_pixels": {"type": "number", "exclusiveMinimum": 0},
+            "maximum_fit_passes": {"type": "integer", "minimum": 1, "maximum": 8},
+            "corner_angle_degrees": {
+              "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 180
+            }
+          },
+          "required": ["method", "maximum_error_pixels", "tangent_span_pixels", "corner_angle_degrees",
+                       "smoothing_rms_pixels", "sample_spacing_pixels", "biarc_error_pixels", "maximum_fit_passes"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "method": {"const": "source_bounded_biarc_v2"},
+            "maximum_error_mm": {"type": "number", "exclusiveMinimum": 0},
+            "minimum_iou": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+            "minimum_radius_mm": {"type": "number", "exclusiveMinimum": 0},
+            "smoothing_rms_mm": {"type": "number", "exclusiveMinimum": 0},
+            "sample_spacing_mm": {"type": "number", "exclusiveMinimum": 0},
+            "biarc_error_mm": {"type": "number", "exclusiveMinimum": 0},
+            "maximum_fit_passes": {"type": "integer", "minimum": 1, "maximum": 8}
+          },
+          "required": ["method", "maximum_error_mm", "minimum_iou", "minimum_radius_mm",
+                       "smoothing_rms_mm", "sample_spacing_mm", "biarc_error_mm", "maximum_fit_passes"],
+          "additionalProperties": false
         }
-      },
-      "required": ["method", "maximum_error_pixels", "tangent_span_pixels", "corner_angle_degrees",
-                   "smoothing_rms_pixels", "sample_spacing_pixels", "biarc_error_pixels", "maximum_fit_passes"],
-      "additionalProperties": false
+      ]
     },
     "simplify": {
       "oneOf": [
@@ -218,6 +238,16 @@
         },
         "islands": {
           "enum": ["reject", "preserve"]
+        },
+        "connectivity": {
+          "type": "object",
+          "properties": {
+            "foreground": {"const": 4},
+            "background": {"const": 8},
+            "pinch": {"const": "remove_locally"}
+          },
+          "required": ["foreground", "background", "pinch"],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -243,5 +273,31 @@
     "limits",
     "topology"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": ["curve_fit"],
+        "properties": {
+          "curve_fit": {
+            "required": ["method"],
+            "properties": {"method": {"const": "source_bounded_biarc_v2"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scale": {"required": ["canonical_height_mm"]},
+          "simplify": {"properties": {"allowed": {"const": false}}},
+          "rounding": {"properties": {"allowed": {"const": false}}},
+          "topology": {"required": ["connectivity"]}
+        }
+      },
+      "else": {
+        "properties": {
+          "topology": {"not": {"required": ["connectivity"]}}
+        }
+      }
+    }
+  ]
 }

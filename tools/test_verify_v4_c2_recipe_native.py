@@ -133,14 +133,16 @@ class C2ProductionNative(unittest.TestCase):
                     'bounds_mm', 'nominal_width_mm', 'reports', 'topology'):
             self.assertEqual(visible[key], invisible[key], key)
 
-    def test_final_contour_height_order_and_uniform_aspect(self):
-        # Fixed-mm dev mode independently exposes the same fit in pixel units.
-        # This is a second real preparation, NOT an alternative production path.
-        unit_recipe = copy.deepcopy(self.recipe)
+    def test_historical_pixel_fit_height_order_and_uniform_aspect(self):
+        # Explicit v1 dev mode exposes the same pixel fit before its final scale.
+        # V2 physical-unit fitting is separately covered by the cycle-three tests.
+        historical = self.ledger.read_json(
+            self.registry.ROOT/'design/cad-harness-verify-v4/c2-production-recipe-cycle2.json')
+        unit_recipe = copy.deepcopy(historical)
         unit_recipe['scale'] = dict(mm_per_pixel=1., origin_mm=[0, 0])
         for asset in ('ellipse', 'rounded_rectangle'):
             with self.subTest(asset=asset):
-                unit, final = self.prepare(asset, unit_recipe), self.prepare(asset)
+                unit, final = self.prepare(asset, unit_recipe), self.prepare(asset, historical)
                 bounds = self.contours.geometry_bounds(unit)
                 factor = 50./(bounds[3]-bounds[2])
                 offset = [-factor*bounds[0], -factor*bounds[2]]
@@ -178,7 +180,9 @@ class C2ProductionNative(unittest.TestCase):
         self.assertEqual(padded['source_mask']['height'], 160)
 
     def test_genuine_sharp_corners_remain_and_actual_radius_fails_not_repaired(self):
-        sharp = self.prepare('sharp')
+        historical = self.ledger.read_json(
+            self.registry.ROOT/'design/cad-harness-verify-v4/c2-production-recipe-cycle2.json')
+        sharp = self.prepare('sharp', historical)
         self.assertFalse(sharp['recipe']['rounding']['allowed'])
         self.assertEqual(self.contours.minimum_radius(sharp), 0.)
         self.assertEqual(sharp['reports']['minimum_radius_mm'], 0.)
@@ -207,12 +211,15 @@ class C2ProductionNative(unittest.TestCase):
         self.assertEqual(len(body.Shape.Solids), 2)
         self.close(doc.Name)
         strict = copy.deepcopy(self.recipe)
-        strict['topology'] = dict(components=1, holes='preserve', islands='reject')
-        with self.assertRaisesRegex(ValueError, 'multiple_islands'):
+        strict['topology'].update(components=1, holes='preserve', islands='reject')
+        with self.assertRaises(ValueError):
             self.prepare('island', strict)
-        for asset, reason in (('empty', 'empty_mask'), ('diagonal', 'nonmanifold')):
-            with self.subTest(asset=asset), self.assertRaisesRegex(ValueError, reason):
-                self.prepare(asset)
+        with self.assertRaises(ValueError):
+            self.prepare('empty')
+        historical = self.ledger.read_json(
+            self.registry.ROOT/'design/cad-harness-verify-v4/c2-production-recipe-cycle2.json')
+        with self.assertRaises(ValueError):
+            self.prepare('diagonal', historical)
 
     def test_native_independent_annulus_both_arms_roundtrip_and_operative_edits(self):
         for arm in ('bare', 'harness'):

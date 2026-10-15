@@ -3,6 +3,9 @@
 Planar certificates use exact line/circle definitions, bounded chord approximation,
 and a 1-Lipschitz distance sampling bound. Tool access certifies only a planar disk
 center model, not CAM, dynamics, six-DOF clearance, or machining feasibility.
+Declared v2 raster topology is independently labeled fg4/bg8 from the original
+decoded mask. Source point contacts are immutable references; canonical/native
+boundaries must be separated, and contact clearance is certified to material.
 """
 import math
 
@@ -41,6 +44,49 @@ def _required(c, *keys):
 
 class Unknown(ValueError):
     """Evidence or an acceptance quantity is unavailable; never an acceptance."""
+
+
+class _NativeLoop(dict):
+    """Private witness for a closed native wire, never reconstructed from JSON.
+
+    Curves remain native: no endpoint snapping or three-point circle refitting.
+    The certified vertex tolerance is carried into every measurement enclosure.
+    """
+    def __init__(self, segments, curves, error_mm):
+        super().__init__(role='outer', segments=segments)
+        self.curves = tuple(curves)
+        self.error_mm = error_mm
+
+    def points(self, index, tolerance):
+        edge, first, last = self.curves[index]
+        if self['segments'][index]['kind'] == 'line':
+            return [tuple(self['segments'][index][k]) for k in ('p0', 'p1')], 0.
+        radius = _number(edge.Curve.Radius, 'native_circle_radius', 0)
+        if radius == 0:
+            raise Unknown('native_circle_radius_zero')
+        angle = 4*math.asin(math.sqrt(min(tolerance/(2*radius), .5)))
+        count = max(1, math.ceil(abs(last-first)/angle))
+        if count > 1000000:
+            raise Unknown('curve_resolution_excessive')
+        points = []
+        for i in range(count+1):
+            point = edge.valueAt(first+(last-first)*i/count)
+            points.append((point.x, point.y))
+        return points, 2*radius*math.sin(abs(last-first)/count/4)**2
+
+    def tangent(self, index, at_end):
+        edge, first, last = self.curves[index]
+        tangent = edge.tangentAt(last if at_end else first)
+        length = math.hypot(tangent.x, tangent.y)
+        if length == 0:
+            raise Unknown('native_projection_tangent_zero')
+        sign = 1 if last > first else -1
+        return sign*tangent.x/length, sign*tangent.y/length
+
+    def radius(self, index):
+        if self['segments'][index]['kind'] == 'line':
+            return math.inf
+        return _number(self.curves[index][0].Curve.Radius, 'native_circle_radius', 0)
 
 
 def _check(c, status, measured=None, target=None, tolerance=None, uncertainty=None, **evidence):
@@ -93,11 +139,13 @@ def _segment_points(segment, tolerance):
 def _loop_points(loop, tolerance):
     points = []
     error = join_error = 0.
-    for segment in loop['segments']:
-        part, bound = _segment_points(segment, tolerance)
+    native = type(loop) is _NativeLoop
+    closure_limit = max(1e-8, loop.error_mm) if native else 1e-8
+    for index, segment in enumerate(loop['segments']):
+        part, bound = loop.points(index, tolerance) if native else _segment_points(segment, tolerance)
         if points:
             gap = math.dist(points[-1], part[0])
-            if gap > 1e-8:
+            if gap > closure_limit:
                 raise ValueError('judge_open_segment_chain')
             join_error = max(join_error, gap)
         points.extend(part if not points else part[1:])
@@ -105,13 +153,13 @@ def _loop_points(loop, tolerance):
     if not points:
         raise ValueError('judge_open_loop')
     gap = math.dist(points[0], points[-1])
-    if gap > 1e-8:
+    if gap > closure_limit:
         raise ValueError('judge_open_loop')
     # A native closed wire can evaluate its shared vertex a few ulps apart.
     # Represent the ALREADY accepted closure exactly, not as a tiny extra edge;
     # retain its displacement in the symmetric approximation error enclosure.
     points[-1] = points[0]
-    return points, error + max(join_error, gap)
+    return points, error + max(join_error, gap, loop.error_mm if native else 0.)
 
 
 def planar_geometry(record, tolerance_mm):
@@ -169,6 +217,7 @@ def hausdorff_bounds(a, b, step_mm, error_a_mm=0., error_b_mm=0.):
     coordinate_scale=max(1.,*(abs(x) for region in (a,b) for x in region.bounds))
     numerical_error=128*math.ulp(coordinate_scale)
     for source, target in ((a,b), (b,a)):
+        target_boundary = target.boundary
         for line in _boundary_lines(source):
             coords = list(line.coords)
             for p, q in zip(coords, coords[1:]):
@@ -177,7 +226,7 @@ def hausdorff_bounds(a, b, step_mm, error_a_mm=0., error_b_mm=0.):
                 covering = max(covering, length/n/2)
                 for i in range(n+1):
                     point = Point(p[0]+(q[0]-p[0])*i/n, p[1]+(q[1]-p[1])*i/n)
-                    maximum = max(maximum, point.distance(target.boundary))
+                    maximum = max(maximum, point.distance(target_boundary))
     error = error_a_mm+error_b_mm+numerical_error
     return dict(lower_mm=max(0., maximum-error), upper_mm=maximum+covering+error,
                 sampled_max_mm=maximum, lipschitz_cover_mm=covering,
@@ -234,6 +283,349 @@ def _nesting_matches(a, b):
     return True
 
 
+def _digital_v2(record):
+    """Only the explicitly declared complementary v2 connectivity is authority."""
+    recipe = record.get('recipe', {})
+    if recipe.get('curve_fit', {}).get('method') != 'source_bounded_biarc_v2':
+        return False
+    connectivity = recipe.get('topology', {}).get('connectivity')
+    if (connectivity != dict(foreground=4, background=8, pinch='remove_locally')
+            or type(connectivity['foreground']) is not int
+            or type(connectivity['background']) is not int):
+        raise ValueError('judge_v2_connectivity_missing_or_invalid')
+    return True
+
+
+def _digital_mask_analysis(mask, registration):
+    """Independent fg4/bg8 labels, exposed-edge forest, and immutable cell sets.
+
+    GEOS interiors are deliberately NOT used to count source holes: a bg8
+    region can consist of several closed cell polygons touching at a vertex.
+    No source boundary walk, fitter report, or repaired polygon is consulted.
+    """
+    from collections import deque
+    import numpy as np
+    from shapely.geometry import box
+    from shapely.ops import unary_union
+
+    def labels(binary, offsets):
+        height, width = binary.shape
+        result = np.zeros(binary.shape, dtype=np.int32)
+        count = 0
+        for row in range(height):
+            for col in range(width):
+                if not binary[row, col] or result[row, col]:
+                    continue
+                count += 1
+                result[row, col] = count
+                queue = deque([(row, col)])
+                while queue:
+                    y, x = queue.popleft()
+                    for dy, dx in offsets:
+                        ny, nx = y + dy, x + dx
+                        if (0 <= ny < height and 0 <= nx < width
+                                and binary[ny, nx] and not result[ny, nx]):
+                            result[ny, nx] = count
+                            queue.append((ny, nx))
+        return result, count
+
+    height, width = mask.shape
+    cross = ((-1, 0), (0, -1), (0, 1), (1, 0))
+    foreground, components = labels(mask, cross)
+    if not components:
+        raise ValueError('judge_empty_mask')
+    padded = np.pad(mask, 1, constant_values=False)
+    background, background_count = labels(
+        ~padded, tuple((dy, dx) for dy in (-1, 0, 1)
+                       for dx in (-1, 0, 1) if dy or dx))
+    # The padded first cell is exterior. Its raster label is one; remap to zero.
+    background -= 1
+    adjacency = {('background', 0): set()}
+    for row in range(height):
+        for col in range(width):
+            label = int(foreground[row, col])
+            if not label:
+                continue
+            material = ('foreground', label)
+            adjacency.setdefault(material, set())
+            for dy, dx in cross:
+                y, x = row + 1 + dy, col + 1 + dx
+                if not padded[y, x]:
+                    void = ('background', int(background[y, x]))
+                    adjacency.setdefault(void, set()).add(material)
+                    adjacency[material].add(void)
+    root = ('background', 0)
+    parents = {root: None}
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        for neighbor in sorted(adjacency[node]):
+            if neighbor == parents[node]:
+                continue
+            if neighbor in parents:
+                raise ValueError('judge_digital_nesting_not_a_forest')
+            parents[neighbor] = node
+            queue.append(neighbor)
+    holes = background_count - 1
+    if len(parents) != components + holes + 1:
+        raise ValueError('judge_digital_nesting_incomplete')
+
+    origin = registration['origin_mm']
+    sx, sy = registration['pixel_size_mm']
+    direction = registration['y_direction']
+
+    def cell_regions(raster, count, first):
+        runs = [[] for _ in range(count)]
+        for row in range(height):
+            col = 0
+            while col < width:
+                label = int(raster[row, col])
+                end = col + 1
+                while end < width and int(raster[row, end]) == label:
+                    end += 1
+                if first <= label < first + count:
+                    x0, x1 = origin[0] + col*sx, origin[0] + end*sx
+                    y0 = origin[1] + row*sy*direction
+                    y1 = origin[1] + (row+1)*sy*direction
+                    runs[label-first].append(box(x0, min(y0, y1), x1, max(y0, y1)))
+                col = end
+        return [unary_union(group) for group in runs]
+
+    contacts = []
+    for row in range(height-1):
+        for col in range(width-1):
+            a, b = bool(mask[row, col]), bool(mask[row, col+1])
+            c, d = bool(mask[row+1, col]), bool(mask[row+1, col+1])
+            if a == d and b == c and a != b:
+                incident = sorted({int(foreground[y, x])
+                                   for y, x in ((row, col), (row, col+1),
+                                                (row+1, col), (row+1, col+1))
+                                   if foreground[y, x]})
+                contacts.append(dict(vertex_pixels=[col+1, height-row-1],
+                                     incident_components=incident))
+    contacts.sort(key=lambda contact: contact['vertex_pixels'])
+    return dict(topology=dict(components=components, holes=holes),
+                components=cell_regions(foreground, components, 1),
+                holes=cell_regions(background[1:-1, 1:-1], holes, 1),
+                component_parents=[parents[('foreground', i)][1]
+                                   for i in range(1, components+1)],
+                hole_parents=[parents[('background', i)][1]
+                              for i in range(1, holes+1)],
+                contacts=contacts, height=height, width=width, registration=registration)
+
+
+def _positive_overlap_matching(weights):
+    """Deterministic maximum-weight perfect matching; zero edges are forbidden.
+
+    A shortest augmenting-path assignment avoids either greedy rejection when
+    a tiny piece also overlaps a large neighbor, or exponential enumeration.
+    Equal costs retain ascending raster/target order as the deterministic tie.
+    """
+    count = len(weights)
+    if any(len(row) != count for row in weights):
+        return None
+    u, v = [0.]*(count+1), [0.]*(count+1)
+    assigned, previous = [0]*(count+1), [0]*(count+1)
+    for source in range(1, count+1):
+        assigned[0] = source
+        minimum, used = [math.inf]*(count+1), [False]*(count+1)
+        column = 0
+        while True:
+            used[column] = True
+            row = assigned[column]
+            delta, next_column = math.inf, 0
+            for target in range(1, count+1):
+                if used[target]:
+                    continue
+                weight = weights[row-1][target-1]
+                if weight > 0:
+                    cost = -weight-u[row]-v[target]
+                    if cost < minimum[target]:
+                        minimum[target], previous[target] = cost, column
+                if minimum[target] < delta:
+                    delta, next_column = minimum[target], target
+            if not math.isfinite(delta):
+                return None
+            for target in range(count+1):
+                if used[target]:
+                    u[assigned[target]] += delta
+                    v[target] -= delta
+                else:
+                    minimum[target] -= delta
+            column = next_column
+            if not assigned[column]:
+                break
+        while column:
+            predecessor = previous[column]
+            assigned[column] = assigned[predecessor]
+            column = predecessor
+    result = [None]*count
+    for target in range(1, count+1):
+        result[assigned[target]-1] = target-1
+    return result
+
+
+def _digital_nesting_matches(source, target, factor=1., origin=(0., 0.)):
+    """Match the alternating forest by positive fixed-frame region overlaps.
+
+    Every fg4 piece and bg8 hole has its own target. Extra overlaps caused by
+    bounded outward growth are allowed, but merging, dropping, or changing
+    nesting cannot supply a complete forest-constrained perfect matching.
+    """
+    from shapely.affinity import scale, translate
+    from shapely.geometry import Polygon
+    if source['topology'] != _topology(target):
+        return False
+
+    def registered(region):
+        return translate(scale(region, xfact=factor, yfact=factor, origin=(0, 0)),
+                         xoff=origin[0], yoff=origin[1])
+
+    pieces = list(target.geoms) if hasattr(target, 'geoms') else [target]
+    holes = [(i, Polygon(ring)) for i, piece in enumerate(pieces)
+             for ring in piece.interiors]
+    target_parents = []
+    for piece in pieces:
+        owners = [(hole.area, k) for k, (_, hole) in enumerate(holes) if hole.contains(piece)]
+        target_parents.append(min(owners)[1] if owners else None)
+    source_regions = ([registered(piece) for piece in source['components']],
+                      [registered(hole) for hole in source['holes']])
+    target_regions = (pieces, [hole for _, hole in holes])
+    source_children = (
+        [[k for k, parent in enumerate(source['hole_parents']) if parent == i+1]
+         for i in range(len(source_regions[0]))],
+        [[k for k, parent in enumerate(source['component_parents']) if parent == i+1]
+         for i in range(len(source_regions[1]))])
+    target_children = (
+        [[k for k, (owner, _) in enumerate(holes) if owner == i] for i in range(len(pieces))],
+        [[k for k, owner in enumerate(target_parents) if owner == i] for i in range(len(holes))])
+    memo = {}
+
+    def pair_score(kind, old, new):
+        key = (kind, old, new)
+        if key not in memo:
+            overlap = source_regions[kind][old].intersection(target_regions[kind][new]).area
+            if not math.isfinite(overlap):
+                raise Unknown('digital_overlap_nonfinite')
+            children = (group_score(1-kind, source_children[kind][old], target_children[kind][new])
+                        if overlap > 0 else None)
+            memo[key] = overlap+children if children is not None else 0.
+        return memo[key]
+
+    def group_score(kind, old, new):
+        if len(old) != len(new):
+            return None
+        weights = [[pair_score(kind, i, j) for j in new] for i in old]
+        mapping = _positive_overlap_matching(weights)
+        return (sum(weights[i][j] for i, j in enumerate(mapping))
+                if mapping is not None else None)
+
+    return group_score(0, [i for i, parent in enumerate(source['component_parents']) if not parent],
+                       [i for i, parent in enumerate(target_parents) if parent is None]) is not None
+
+
+def _candidate_separated(record, tolerance):
+    """Certify simple, role-correct, strictly disjoint candidate boundaries."""
+    from shapely.geometry import Polygon
+    polygons, errors = [], []
+    for loop in record['loops']:
+        points, error = _loop_points(loop, tolerance)
+        polygon = Polygon(points)
+        if not polygon.is_valid or polygon.area <= 0:
+            return False
+        polygons.append(polygon)
+        errors.append(error)
+    coordinate_scale = max(1., *(abs(x) for p in polygons for x in p.bounds))
+    numerical_error = 128*math.ulp(coordinate_scale)
+    for i, polygon in enumerate(polygons):
+        depth = sum(other.contains(polygon) for j, other in enumerate(polygons) if i != j)
+        if record['loops'][i]['role'] != ('hole' if depth % 2 else 'outer'):
+            return False
+        for j in range(i):
+            if polygon.boundary.distance(polygons[j].boundary) <= (
+                    errors[i]+errors[j]+numerical_error):
+                return False
+    return True
+
+
+def _pinch_openings(record, source, material, error, factor=1., origin=(0., 0.)):
+    """Recompute cleared MATERIAL neighborhoods; declared distances are not proof."""
+    from shapely.geometry import Point
+    declared = record.get('reports', {}).get('pinch_openings')
+    listing_matches = isinstance(declared, list)
+    observed = {}
+    if listing_matches:
+        for entry in declared:
+            if not isinstance(entry, dict) or set(entry) != {
+                    'vertex_pixels', 'incident_components', 'clearance_mm_lower'}:
+                listing_matches = False
+                break
+            vertex, incident = entry['vertex_pixels'], entry['incident_components']
+            if (not isinstance(vertex, list) or len(vertex) != 2
+                    or any(type(x) is not int for x in vertex)
+                    or not isinstance(incident, list) or not incident
+                    or any(type(x) is not int or x <= 0 for x in incident)
+                    or incident != sorted(set(incident))
+                    or tuple(vertex) in observed):
+                listing_matches = False
+                break
+            try:
+                if _number(entry['clearance_mm_lower'], 'pinch_clearance') <= 0:
+                    listing_matches = False
+                    break
+            except ValueError:
+                listing_matches = False
+                break
+            observed[tuple(vertex)] = incident
+        listing_matches = listing_matches and observed == {
+            tuple(c['vertex_pixels']): c['incident_components'] for c in source['contacts']}
+    reg = source['registration']
+    coordinate_scale = max(1., *(abs(x) for x in material.bounds), abs(factor),
+                           *(abs(x) for x in origin),
+                           abs(factor)*(abs(reg['origin_mm'][0])+
+                                        source['width']*reg['pixel_size_mm'][0]),
+                           abs(factor)*(abs(reg['origin_mm'][1])+
+                                        source['height']*reg['pixel_size_mm'][1]))
+    numerical_error = 128*math.ulp(coordinate_scale)
+    measured = []
+    for contact in source['contacts']:
+        x, y = contact['vertex_pixels']
+        point = Point(origin[0]+factor*(reg['origin_mm'][0]+x*reg['pixel_size_mm'][0]),
+                      origin[1]+factor*(reg['origin_mm'][1]+
+                      (source['height']-y)*reg['pixel_size_mm'][1]*reg['y_direction']))
+        distance = material.distance(point)
+        lower = max(0., distance-error-numerical_error)
+        measured.append(dict(contact, clearance_mm_lower=lower,
+                             material_distance_mm=distance))
+    return dict(listing_matches=listing_matches,
+                cleared=all(entry['clearance_mm_lower'] > 0 for entry in measured),
+                openings=measured, curve_error_mm=error,
+                numerical_error_mm=numerical_error,
+                definition='positive_distance_to_material_with_boundary_error_enclosure')
+
+
+def _source_mask_criterion(record):
+    transform = record['pixel_to_mm']
+    factor = transform['scale_mm_per_pixel']
+    recipe = record['recipe']
+    alpha = recipe['alpha']
+    alpha_min = (alpha['threshold'] if alpha['policy'] == 'threshold' else
+                 255 if alpha['policy'] == 'require-opaque' else 0)
+    return dict(mask_asset_id=record.get('source_image_asset_id', record.get('asset_id')),
+                registration=dict(
+                    origin_mm=[transform['origin_mm'][0],
+                               transform['origin_mm'][1]+transform['image_height_pixels']*factor],
+                    pixel_size_mm=[factor, factor], y_direction=-1),
+                foreground=dict(recipe['foreground'], alpha_min=alpha_min))
+
+
+def _mask_commitment_matches(record, evidence):
+    return (evidence['source_sha256'] == record.get('source_image_sha256')
+            and ('mask_sha256' not in record or evidence['mask_sha256'] == record['mask_sha256'])
+            and ('decoded_rgba_sha256' not in record
+                 or evidence['decoded_rgba_sha256'] == record['decoded_rgba_sha256']))
+
+
 def _piece_records(record, tolerance):
     """Partition exact native loops independently by immediate geometric owner."""
     from shapely.geometry import Polygon
@@ -273,38 +665,57 @@ def minimum_radius(record, angular_tolerance_rad):
     angular = _number(angular_tolerance_rad, 'angular_tolerance_rad', 0)
     if angular > 0.01:
         raise ValueError('judge_angular_tolerance_excessive')
-    radii, corners = [], 0
+    radii, corners, native_error = [], 0, 0.
     for loop in record['loops']:
+        native = type(loop) is _NativeLoop
+        if native:
+            native_error = max(native_error, loop.error_mm)
         segments = loop['segments']
         if not segments:
             raise ValueError('judge_empty_loop')
         for i, s in enumerate(segments):
             if s['kind'] == 'arc':
-                radii.append(_arc(s)[1])
+                radii.append(loop.radius(i) if native else _arc(s)[1])
             elif s['kind'] != 'line':
                 raise Unknown('uncertified_curvature:' + str(s['kind']))
             previous = segments[i-1]
-            if math.dist(previous['p1'], s['p0']) > 1e-8:
+            if math.dist(previous['p1'], s['p0']) > (max(1e-8, loop.error_mm) if native else 1e-8):
                 raise ValueError('judge_open_loop')
-            u, v = _tangent(previous, True), _tangent(s, False)
-            if math.atan2(abs(u[0]*v[1]-u[1]*v[0]), u[0]*v[0]+u[1]*v[1]) > angular:
+            u, v = ((loop.tangent(i-1, True), loop.tangent(i, False)) if native
+                    else (_tangent(previous, True), _tangent(s, False)))
+            angle = math.atan2(abs(u[0]*v[1]-u[1]*v[0]), u[0]*v[0]+u[1]*v[1])
+            # Vertex tolerance bounds position, not a change to the native
+            # curve parameter or its fixed unit derivative. Only floating-point
+            # direction evaluation uncertainty belongs in the angular interval.
+            angle_error = 256*math.ulp(1.) if native else 0.
+            if angle_error and angle-angle_error <= angular < angle+angle_error:
+                raise Unknown('native_tangent_interval_inconclusive')
+            if angle-angle_error > angular:
                 corners += 1
     return dict(minimum_mm=0. if corners else min(radii) if radii else None,
                 unbounded=not corners and not radii, sharp_corners=corners,
-                circle_radii_mm=radii, source='independent_segment_geometry')
+                circle_radii_mm=radii, native_error_mm=native_error,
+                source='independent_segment_geometry')
 
 
 def _convex_certificate(record):
     """Exact signed turning certificate for a single line/circle loop."""
     if len(record['loops']) != 1 or record['loops'][0]['role'] != 'outer':
         return False
-    segments = record['loops'][0]['segments']
+    loop = record['loops'][0]
+    native = type(loop) is _NativeLoop
+    segments = loop['segments']
     turns = []
     for i, segment in enumerate(segments):
-        u, v = _tangent(segments[i-1], True), _tangent(segment, False)
+        u, v = ((loop.tangent(i-1, True), loop.tangent(i, False)) if native
+                else (_tangent(segments[i-1], True), _tangent(segment, False)))
         turns.append(math.atan2(u[0]*v[1]-u[1]*v[0], u[0]*v[0]+u[1]*v[1]))
         if segment['kind'] == 'arc':
-            turns.append(_arc(segment)[3])
+            if native:
+                edge, first, last = loop.curves[i]
+                turns.append((last-first)*(1 if edge.Curve.Axis.z > 0 else -1))
+            else:
+                turns.append(_arc(segment)[3])
     return (abs(abs(sum(turns))-2*math.pi) < 1e-7 and
             (all(t >= -1e-10 for t in turns) or all(t <= 1e-10 for t in turns)))
 
@@ -372,7 +783,7 @@ def tool_access(record, criterion):
                 model='planar_disk_center_only')
 
 
-def _mask_region(manifest, c):
+def _mask_region(manifest, c, digital=False):
     from PIL import Image
     import numpy as np
     from shapely.geometry import box
@@ -417,10 +828,12 @@ def _mask_region(manifest, c):
         raise ValueError('judge_empty_mask')
     mask_record=dict(width=int(mask.shape[1]),height=int(mask.shape[0]),encoding='row-runs',rows=encoded_rows)
     inputs=_module('cad_verify_v4_inputs')
-    return unary_union(runs), dict(source_sha256=asset['digest'],registration=reg,
-                                   mask_sha256=inputs.canonical_sha(mask_record),
-                                   decoded_rgba_sha256=_module('cad_verify_v4_ledger').sha(rgba.tobytes(order='C')),
-                                   pixel_convention='pixel_cells_corner_origin',foreground=fg)
+    evidence = dict(source_sha256=asset['digest'],registration=reg,
+                    mask_sha256=inputs.canonical_sha(mask_record),
+                    decoded_rgba_sha256=_module('cad_verify_v4_ledger').sha(rgba.tobytes(order='C')),
+                    pixel_convention='pixel_cells_corner_origin',foreground=fg)
+    region = unary_union(runs)
+    return (region, evidence, _digital_mask_analysis(mask, reg)) if digital else (region, evidence)
 
 
 def _bounds(shape):
@@ -432,15 +845,31 @@ def _shape_record(shape, z):
     import FreeCAD as App
     loops=[]
     for wire in shape.slice(App.Vector(0,0,1),_number(z,'projection_z_mm')):
-        segments=[]
+        if not wire.isClosed() or not wire.isValid():
+            raise Unknown('output_projection_wire_not_closed_valid')
+        segments, curves, joins = [], [], []
+        error = 0.
         for edge in wire.OrderedEdges:
             first, last = edge.FirstParameter, edge.LastParameter
             if edge.Orientation == 'Reversed':
                 first, last = last, first
             p0=edge.valueAt(first); p1=edge.valueAt(last)
+            vertices = edge.Vertexes
+            if not vertices:
+                raise Unknown('output_projection_vertex_missing')
+            start_vertex = min(vertices, key=lambda vertex: (vertex.Point-p0).Length)
+            end_vertex = min(vertices, key=lambda vertex: (vertex.Point-p1).Length)
+            for point, vertex in ((p0, start_vertex), (p1, end_vertex)):
+                numerical = 256*math.ulp(max(1., abs(point.x), abs(point.y), abs(point.z)))
+                bound = max(edge.getTolerance(1), vertex.getTolerance(1)) + numerical
+                if (point-vertex.Point).Length > bound:
+                    raise Unknown('output_projection_vertex_curve_inconsistent')
+                error = max(error, bound)
+            joins.append((start_vertex, end_vertex, p0, p1))
             curve=type(edge.Curve).__name__
             if curve in ('Line','LineSegment'):
                 segments.append(dict(kind='line',p0=[p0.x,p0.y],p1=[p1.x,p1.y]))
+                curves.append((edge, first, last))
             elif curve=='Circle':
                 # Full circle is split to avoid coincident three-point arc endpoints.
                 parts=2 if math.dist((p0.x,p0.y),(p1.x,p1.y)) < 1e-8 else 1
@@ -448,18 +877,21 @@ def _shape_record(shape, z):
                     params=[first+(last-first)*(i+t)/parts for t in (0,.5,1)]
                     pts=[edge.valueAt(t) for t in params]
                     segments.append(dict(kind='arc',p0=[pts[0].x,pts[0].y],pm=[pts[1].x,pts[1].y],p1=[pts[2].x,pts[2].y]))
+                    curves.append((edge, params[0], params[-1]))
             else:
                 raise Unknown('output_projection_curve:'+curve)
-        loops.append(dict(role='outer',segments=segments))
+        for previous, current in zip(joins[-1:]+joins[:-1], joins):
+            if not previous[1].isSame(current[0]):
+                raise Unknown('output_projection_shared_vertex_missing')
+            error = max(error, (previous[3]-current[2]).Length)
+        loops.append(_NativeLoop(segments, curves, error))
     if not loops:
         raise Unknown('output_projection_empty')
     # Classify by geometric containment independently, not by wire order/orientation.
     from shapely.geometry import Polygon
     polys=[]
     for loop in loops:
-        points=[]
-        for s in loop['segments']:
-            p,_=_segment_points(s,1e-5);points.extend(p[:-1])
+        points, _ = _loop_points(loop, 1e-5)
         polys.append(Polygon(points))
     for i,loop in enumerate(loops):
         depth=sum(p.contains(polys[i]) for j,p in enumerate(polys) if j!=i)
@@ -865,10 +1297,11 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                     if r['unbounded']:
                         status = 'PASS'
                     else:
-                        lower, upper = max(0., r['minimum_mm']-tol), r['minimum_mm']+tol
+                        radius_error = tol+r['native_error_mm']
+                        lower, upper = max(0., r['minimum_mm']-radius_error), r['minimum_mm']+radius_error
                         status = _interval_status(lower, upper, target, minimum=True)
                         r.update(lower_mm=lower, upper_mm=upper)
-                    checks.append(_check(c,status,r,target,None,tol,
+                    checks.append(_check(c,status,r,target,None,tol+r['native_error_mm'],
                                          source='actual_native_section_line_arc_geometry',projection_z_mm=z))
                 elif metric=='tool_access':
                     output, z = _output_section(plan, shape, c)
@@ -878,6 +1311,9 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                     if c['leg'] not in ('image_to_contour','contour_to_output'):raise ValueError('judge_fidelity_leg')
                     a,ea=planar_geometry(record,c['curve_tolerance_mm'])
                     evidence=dict(leg=c['leg'],contour_id=c['contour_id'])
+                    digital_v2 = _digital_v2(record)
+                    canonical_separated = (_candidate_separated(record, c['curve_tolerance_mm'])
+                                           if digital_v2 else True)
                     if c['leg']=='image_to_contour':
                         expected_image=record.get('source_image_asset_id',record.get('asset_id'))
                         transform=record['pixel_to_mm'];scale=transform['scale_mm_per_pixel']
@@ -886,14 +1322,30 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                         if c.get('mask_asset_id')!=expected_image or c.get('registration')!=registered:
                             checks.append(_check(c,'FAIL',reason='source_image_or_registration_not_bound_to_contour'))
                             continue
-                        b,mask_evidence=_mask_region(manifest_path,c);eb=0.;evidence.update(mask_evidence)
-                        if (mask_evidence['source_sha256']!=record.get('source_image_sha256')
-                                or ('mask_sha256' in record and mask_evidence['mask_sha256']!=record['mask_sha256'])
-                                or ('decoded_rgba_sha256' in record and mask_evidence['decoded_rgba_sha256']!=record['decoded_rgba_sha256'])):
+                        if digital_v2:
+                            if c['foreground'] != _source_mask_criterion(record)['foreground']:
+                                checks.append(_check(c,'FAIL',reason='source_foreground_not_bound_to_recipe'))
+                                continue
+                            b,mask_evidence,digital_source=_mask_region(manifest_path,c,digital=True)
+                        else:
+                            b,mask_evidence=_mask_region(manifest_path,c)
+                        eb=0.;evidence.update(mask_evidence)
+                        if not _mask_commitment_matches(record,mask_evidence):
                             checks.append(_check(c,'FAIL',reason='decoded_image_or_mask_commitment_mismatch'))
                             continue
                     else:
-                        _required(c,'projection_z_mm');b,eb=planar_geometry(_shape_record(shape,c['projection_z_mm']),c['curve_tolerance_mm'])
+                        _required(c,'projection_z_mm')
+                        output_record=_shape_record(shape,c['projection_z_mm'])
+                        b,eb=planar_geometry(output_record,c['curve_tolerance_mm'])
+                        if digital_v2:
+                            _,mask_evidence,digital_source=_mask_region(
+                                manifest_path,_source_mask_criterion(record),digital=True)
+                            if not _mask_commitment_matches(record,mask_evidence):
+                                checks.append(_check(c,'FAIL',reason='decoded_image_or_mask_commitment_mismatch'))
+                                continue
+                            canonical_matches=_digital_nesting_matches(digital_source,a)
+                            canonical_openings=_pinch_openings(record,digital_source,a,ea)
+                            output_separated=_candidate_separated(output_record,c['curve_tolerance_mm'])
                         # Fixed preregistered scale/origin, never candidate bbox fitting.
                         registration = _contour_registration(plan, prepared)
                         if c['contour_id'] != registration['contour_id']:
@@ -903,8 +1355,27 @@ def judge(plan, manifest_path, prepared, body_or_shape, card, **context):
                         origin = _vector(registration['origin_mm'], 3, 'origin_mm')
                         a=translate(scale(a,xfact=factor,yfact=factor,origin=(0,0)),xoff=origin[0],yoff=origin[1]);ea*=factor
                         evidence['registration']=dict(scale=factor,origin_mm=list(origin),projection_z_mm=c['projection_z_mm'])
-                    source_topology,target_topology=_topology(a),_topology(b)
-                    topology_matches=source_topology==target_topology and _nesting_matches(a,b)
+                    if digital_v2:
+                        source_topology=digital_source['topology']
+                        target_topology=_topology(a if c['leg']=='image_to_contour' else b)
+                        if c['leg']=='image_to_contour':
+                            openings=_pinch_openings(record,digital_source,a,ea)
+                            topology_matches=(canonical_separated
+                                and _digital_nesting_matches(digital_source,a)
+                                and openings['listing_matches'] and openings['cleared'])
+                        else:
+                            openings=_pinch_openings(record,digital_source,b,eb,factor,origin[:2])
+                            topology_matches=(canonical_separated and output_separated
+                                and canonical_matches and canonical_openings['listing_matches']
+                                and canonical_openings['cleared']
+                                and _digital_nesting_matches(digital_source,b,factor,origin[:2])
+                                and openings['listing_matches'] and openings['cleared'])
+                            evidence['canonical_pinch_openings']=canonical_openings
+                        evidence.update(connectivity=dict(foreground=4,background=8,pinch='remove_locally'),
+                                        pinch_openings=openings,canonical_separated=canonical_separated)
+                    else:
+                        source_topology,target_topology=_topology(a),_topology(b)
+                        topology_matches=source_topology==target_topology and _nesting_matches(a,b)
                     evidence.update(source_topology=source_topology,target_topology=target_topology,
                                     topology_matches=topology_matches)
                     if metric=='boundary_hausdorff':

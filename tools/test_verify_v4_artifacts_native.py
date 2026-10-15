@@ -180,6 +180,129 @@ class NativeArtifacts(unittest.TestCase):
         self.assertEqual(before,{path:ledger.file_sha(path) for path in before})
         return result
 
+    def contour_document(self):
+        from PIL import Image
+        from tools import cad_verify_v4_compile as compiler
+        image, source = self.root / 'mask.png', self.root / 'outline.json'
+        Image.new('RGBA', (12, 8), (0, 0, 0, 255)).save(image)
+        points = [[0, 0], [12, 0], [12, 8], [0, 8]]
+        loops = [dict(role='outer', segments=[dict(kind='line', p0=a, p1=b)
+                 for a, b in zip(points, points[1:] + points[:1])])]
+        original = dict(schema='cad-harness.contour-source.v4c', profile='c-s1', units='mm',
+                        bounds_mm=[0, 12, 0, 8], nominal_width_mm=12., loops=loops,
+                        source_image_asset_id='mask')
+        ledger.write_json(source, original)
+        contour = dict(original, schema='cad-harness.contour.v4c', asset_id='outline',
+                       source_sha256=ledger.file_sha(source), source_image_sha256=ledger.file_sha(image),
+                       topology=dict(components=1, holes=0),
+                       pixel_to_mm=dict(scale_mm_per_pixel=1., origin_mm=[0, 0], image_height_pixels=8,
+                           y_axis='up', pixel_convention='closed unit cells; centers at (col+0.5,row+0.5)'),
+                       provenance=dict(kind='independent_analytic_source'))
+        doc = self.App.newDocument('IndependentContour')
+        body = doc.addObject('PartDesign::Body', 'ContourBody')
+        feature = body.newObject('PartDesign::FeaturePython', 'SourceExtrusion')
+        for kind, name, value in (
+                ('App::PropertyString', 'ContourData', json.dumps(contour, allow_nan=False)),
+                ('App::PropertyLength', 'Width', 12.), ('App::PropertyLength', 'Thickness', 3.),
+                ('App::PropertyVector', 'Origin', self.App.Vector()),
+                ('App::PropertyString', 'BuildStatus', 'new')):
+            feature.addProperty(kind, name, 'Independent')
+            setattr(feature, name, value)
+        feature.Proxy = compiler.ContourProxy()
+        body.Tip = feature
+        doc.recompute()
+        self.assertAlmostEqual(body.Shape.Volume, 288., places=6)
+        return doc, body, feature
+
+    def test_scoped_contour_source_edits_cannot_reuse_original_admission(self):
+        from tools import cad_verify_v4_compile as compiler
+        doc, body, feature = self.contour_document()
+        original = feature.ContourData
+        changed = json.loads(original)
+        changed['nominal_width_mm'] = 13.
+        invalid = json.dumps(changed, allow_nan=False)
+        with self.assertRaises(RuntimeError):
+            with compiler.validated_contour_sources(doc):
+                feature.ContourData = invalid
+                with self.assertRaises(ValueError):
+                    feature.Proxy.execute(feature)
+                self.assertTrue(feature.Shape.isNull())
+                feature.ContourData = original
+                feature.Proxy.execute(feature)
+                self.assertAlmostEqual(feature.Shape.Volume, 288., places=6)
+                raise RuntimeError('scope_interrupted')
+        feature.ContourData = invalid
+        with self.assertRaises(ValueError):
+            feature.Proxy.execute(feature)
+        self.assertTrue(feature.Shape.isNull())
+
+    def test_scoped_contour_edits_restore_and_saved_document_remains_editable(self):
+        from tools import cad_verify_v4_compile as compiler
+        doc, body, feature = self.contour_document()
+        probes = [dict(kind='scalar', object=feature.Name, property=name, delta=delta)
+                  for name, delta in (('Width', .5), ('Thickness', .01))]
+        native = self.root / 'scoped-contour.FCStd'
+        with compiler.validated_contour_sources(doc):
+            evidence, editable = artifacts.operative(self.App, doc, body, probes)
+            self.assertTrue(editable, evidence)
+            self.assertTrue(all(row['changed_solid_indices'] == [0] for row in evidence['probes']))
+            self.assertAlmostEqual(body.Shape.Volume, 288., places=6)
+            doc.saveAs(str(native))
+        self.App.closeDocument(doc.Name)
+        reopened = self.App.openDocument(str(native))
+        for obj in reopened.Objects:
+            obj.touch()
+        reopened.recompute()
+        restored = reopened.getObject('ContourBody')
+        evidence, editable = artifacts.operative(self.App, reopened, restored, probes)
+        self.assertTrue(editable, evidence)
+        self.assertAlmostEqual(restored.Shape.Volume, 288., places=6)
+
+    def test_shape_difference_rejects_equal_volume_equal_bounds_different_geometry(self):
+        stock = self.Part.makeBox(10, 10, 3)
+        left_hole = self.Part.makeCylinder(1, 3, self.App.Vector(3, 5, 0))
+        right_hole = self.Part.makeCylinder(1, 3, self.App.Vector(7, 5, 0))
+        left, right = stock.cut(left_hole), stock.cut(right_hole)
+        self.assertAlmostEqual(left.Volume, right.Volume, places=9)
+        for name in ('XMin', 'XMax', 'YMin', 'YMax', 'ZMin', 'ZMax'):
+            self.assertEqual(getattr(left.BoundBox, name), getattr(right.BoundBox, name))
+        difference = artifacts._shape_difference(left, right)
+        self.assertAlmostEqual(difference, 6 * math.pi, places=6)
+        self.assertGreater(difference, max(1e-10, left.Volume * 1e-12))
+
+    def test_shape_difference_preserves_restored_and_translated_geometry_measurements(self):
+        original = self.Part.makeBox(12, 8, 3)
+        self.assertEqual(artifacts._shape_difference(original, original), 0.)
+        restored = self.Part.Shape()
+        restored.importBrepFromString(original.exportBrepToString(), False)
+        self.assertEqual(artifacts._shape_difference(original, restored), 0.)
+        shifted = original.copy()
+        shifted.translate(self.App.Vector(1, 0, 0))
+        self.assertAlmostEqual(artifacts._shape_difference(original, shifted), 48., places=6)
+        separated = original.copy()
+        separated.translate(self.App.Vector(20, 0, 0))
+        self.assertAlmostEqual(artifacts._shape_difference(original, separated), 576., places=6)
+
+    def test_shape_difference_keeps_common_material_as_opposing_operand(self):
+        common = self.Part.makeBox(10, 10, 3)
+        contained = self.Part.makeBox(2, 2, 1, self.App.Vector(1, 1, 1))
+        overlapping = self.Part.makeCompound([common, contained])
+        # Cancelling common from BOTH operands would falsely report the volume
+        # of contained. The complete opposing common solid covers it entirely.
+        self.assertEqual(artifacts._shape_difference(overlapping, common), 0.)
+        self.assertEqual(artifacts._shape_difference(common, overlapping), 0.)
+
+    def test_shape_difference_measures_changed_compound_with_copied_common_solid(self):
+        common = self.Part.makeBox(4, 4, 3)
+        original_piece = self.Part.makeBox(2, 2, 3, self.App.Vector(10, 0, 0))
+        edited_piece = self.Part.makeBox(2, 2, 4, self.App.Vector(10, 0, 0))
+        before = self.Part.makeCompound([common, original_piece])
+        after = self.Part.makeCompound([edited_piece, common.copy()])
+        self.assertAlmostEqual(artifacts._shape_difference(before, after), 4., places=6)
+        self.assertAlmostEqual(artifacts._shape_difference(after, before), 4., places=6)
+        restored = self.Part.makeCompound([original_piece.copy(), common.copy()])
+        self.assertEqual(artifacts._shape_difference(before, restored), 0.)
+
     def test_ordinary_native_pad_is_operative_and_restored_without_harness_plan(self):
         result=self.execute()
         self.assertEqual(result['status'],'PASS',result)

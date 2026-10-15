@@ -1,0 +1,46 @@
+{
+  "schema": "cad-harness.contour-recipe.v4c",
+  "profile": "c-s1",
+  "foreground": {
+    "channel": "alpha",
+    "polarity": "light",
+    "threshold": 128
+  },
+  "alpha": {
+    "policy": "ignore"
+  },
+  "scale": {
+    "canonical_height_mm": 50.0,
+    "origin_mm": [0.0, 0.0]
+  },
+  "curve_fit": {
+    "method": "source_bounded_biarc_v2",
+    "maximum_error_mm": 1.5,
+    "minimum_iou": 0.9,
+    "minimum_radius_mm": 0.25,
+    "smoothing_rms_mm": 0.025,
+    "sample_spacing_mm": 0.1,
+    "biarc_error_mm": 0.02,
+    "maximum_fit_passes": 7
+  },
+  "simplify": {
+    "allowed": false
+  },
+  "rounding": {
+    "allowed": false
+  },
+  "limits": {
+    "max_deviation_mm": 1.5,
+    "approximation_tolerance_mm": 0.005
+  },
+  "topology": {
+    "components": "preserve",
+    "holes": "preserve",
+    "islands": "preserve",
+    "connectivity": {
+      "foreground": 4,
+      "background": 8,
+      "pinch": "remove_locally"
+    }
+  }
+}

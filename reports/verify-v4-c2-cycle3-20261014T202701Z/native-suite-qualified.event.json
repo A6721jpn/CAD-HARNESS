@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "C:\\dev\\CAD\\.tools\\freecad\\FreeCAD_1.1.4-Windows-x86_64-py311\\bin\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "tools.test_verify_v4_s1_native",
+    "tools.test_verify_v4_s2_edit_native",
+    "tools.test_verify_v4_s2_judges_native",
+    "tools.test_verify_v4_s3_rebuild_native",
+    "tools.test_verify_v4_s3_judges_native",
+    "tools.test_verify_v4_artifact_judges_native.BareGeometry",
+    "tools.test_verify_v4_artifacts_native.NativeArtifacts",
+    "tools.test_verify_v4_c2_recipe_native",
+    "tools.test_verify_v4_c2_multipiece_native",
+    "tools.test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior",
+    "tools.test_verify_v4_c2_cycle3",
+    "tools.test_verify_v4_c2_topology",
+    "tools.test_verify_v4_c2_topology_judges",
+    "-v"
+  ],
+  "environment": {
+    "CAD_VERIFY_S1_NATIVE": "1",
+    "CAD_VERIFY_S1_FIXTURES": "C:\\dev\\CAD-HARNESS-herdr\\reports\\verify-v4-integrated-dev-20261014T140454Z\\fixtures-v1\\source-s1",
+    "CAD_VERIFY_S2_NATIVE": "1",
+    "CAD_VERIFY_S2_FIXTURES": "C:\\dev\\CAD-HARNESS-herdr\\reports\\verify-v4-integrated-dev-20261014T140454Z\\fixtures-v1\\source-s2",
+    "CAD_VERIFY_S3_NATIVE": "1",
+    "CAD_VERIFY_S3_FIXTURES": "C:\\dev\\CAD-HARNESS-herdr\\reports\\verify-v4-integrated-dev-20261014T140454Z\\fixtures-v1\\source-s3",
+    "CAD_VERIFY_ARTIFACT_NATIVE": "1",
+    "CAD_VERIFY_C2_RECIPE_NATIVE": "1",
+    "CAD_VERIFY_C2_MULTIPIECE_NATIVE": "1",
+    "CAD_VERIFY_C2_CYCLE3_NATIVE": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "CAD_VERIFY_C2_TOPOLOGY_NATIVE": "1"
+  },
+  "removed_environment_keys": [
+    "PI_TOOL_BRIDGE_TOKEN"
+  ],
+  "cwd": "C:\\dev\\CAD-HARNESS-herdr",
+  "stdin": "closed",
+  "started_at": "2026-10-15T05:51:38.894436+00:00",
+  "elapsed_seconds": 1734.359999999986,
+  "exit_code": 0
+}

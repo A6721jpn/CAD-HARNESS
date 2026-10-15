@@ -90,6 +90,7 @@
         },
         "loops": {
           "type": "array",
+          "description": "Final geometry in every branch: simple closed manifold loops with strictly separated boundaries and preserved nesting, independently certified by native admission. Raw v2 source-walk pinches are not permitted here.",
           "items": {
             "type": "object",
             "properties": {
@@ -470,6 +471,33 @@
             "source_boundary_hausdorff_upper_mm": {
               "type": "number",
               "minimum": 0
+            },
+            "pinch_openings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "vertex_pixels": {
+                    "type": "array",
+                    "items": {"type": "integer", "minimum": 0},
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "incident_components": {
+                    "type": "array",
+                    "items": {"type": "integer", "minimum": 1},
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "clearance_mm_lower": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": ["vertex_pixels", "incident_components", "clearance_mm_lower"],
+                "additionalProperties": false
+              },
+              "description": "Recomputed original y-up cell-contact vertices, sorted unique fg4 raster labels, and positive conservative clearance from FINAL MATERIAL; empty when no contacts."
             }
           },
           "required": [
@@ -580,7 +608,47 @@
         "provenance",
         "approximation"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "recipe": {
+                "required": ["curve_fit"],
+                "properties": {
+                  "curve_fit": {
+                    "required": ["method"],
+                    "properties": {"method": {"const": "source_bounded_biarc_v2"}}
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reports": {"required": ["pinch_openings"]},
+              "source_loops": {
+                "description": "Exact original mask-cell boundary walks with an independently labeled fg4/bg8 nesting forest; source walks alone may touch or self-touch. Final loops remain simple, manifold and strictly separated.",
+                "items": {
+                  "properties": {
+                    "segments": {
+                      "items": {"properties": {"kind": {"const": "line"}}}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reports": {"not": {"required": ["pinch_openings"]}},
+              "source_loops": {
+                "description": "Historical source loops require strict simple separated geometry; diagonal contacts are refused."
+              }
+            }
+          }
+        }
+      ]
     },
     {
       "type": "object",

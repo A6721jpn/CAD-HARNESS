@@ -1,0 +1,4 @@
+# Preserve frozen recipe and recorded evidence SHA-256 commitments.
+design/cad-harness-verify-v4/c2-production-recipe-cycle3.json -text
+design/cad-harness-verify-v4/c2-production-registration.json -text
+reports/verify-v4-c2-cycle3-20261014T202701Z/** -text

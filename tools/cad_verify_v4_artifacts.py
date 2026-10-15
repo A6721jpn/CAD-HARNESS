@@ -165,6 +165,62 @@ def _body(doc, name, *, expected_solids=1):
 
 
 def _shape_difference(a, b):
+    """Exact volume difference; bounds/volume equality never proves restoration."""
+    if a.isSame(b) and a.Orientation == b.Orientation:
+        return 0.
+    def solid_tree(shape):
+        if shape.ShapeType == 'Solid':
+            return True
+        return (shape.ShapeType in ('Compound', 'CompSolid') and
+                all(solid_tree(child) for child in shape.childShapes()))
+    if not solid_tree(a) or not solid_tree(b):
+        # Decomposing only Solids must never discard an unrelated shell/face.
+        return float(a.cut(b).Volume + b.cut(a).Volume)
+    left, right = a.BoundBox, b.BoundBox
+    if (left.XMax < right.XMin or right.XMax < left.XMin
+            or left.YMax < right.YMin or right.YMax < left.YMin
+            or left.ZMax < right.ZMin or right.ZMax < left.ZMin):
+        # Strictly separated enclosing boxes prove that intersection is empty.
+        return float(a.Volume + b.Volume)
+    # Geometry-preserving copies normalize redundant native Location chains;
+    # otherwise a snapshot and an unchanged live solid serialize differently.
+    # Equality still includes geometry, topology, orientation and placement.
+    if a.copy().exportBrepToString() == b.copy().exportBrepToString():
+        return 0.
+    left_solids, right_solids = list(a.Solids), list(b.Solids)
+    if len(left_solids) > 1 or len(right_solids) > 1:
+        common_left, common_right = set(), set()
+        for i, solid in enumerate(left_solids):
+            match = next((j for j, other in enumerate(right_solids)
+                          if j not in common_right and solid.isSame(other)
+                          and solid.Orientation == other.Orientation), None)
+            if match is not None:
+                common_left.add(i)
+                common_right.add(match)
+        by_brep = {}
+        for j, solid in enumerate(right_solids):
+            if j not in common_right:
+                by_brep.setdefault(solid.copy().exportBrepToString(), []).append(j)
+        for i, solid in enumerate(left_solids):
+            if i not in common_left:
+                matches = by_brep.get(solid.copy().exportBrepToString())
+                if matches:
+                    common_left.add(i)
+                    common_right.add(matches.pop())
+        if common_left:
+            import Part
+
+            def remaining_difference(solids, common, opposing):
+                remaining = [solid for i, solid in enumerate(solids) if i not in common]
+                if not remaining:
+                    return 0.
+                source = remaining[0] if len(remaining) == 1 else Part.makeCompound(remaining)
+                # A=C∪X, B=C∪Y implies A\B=X\B, NOT X\Y: retained
+                # common material can still cover unmatched, overlapping solids.
+                return source.cut(opposing).Volume
+
+            return float(remaining_difference(left_solids, common_left, b)
+                         + remaining_difference(right_solids, common_right, a))
     return float(a.cut(b).Volume + b.cut(a).Volume)
 
 
@@ -275,9 +331,25 @@ def operative(App, doc, body, supplied, *, expected_solids=1):
                            operative=math.isfinite(difference) and difference > numerical_floor)
                 # Each submitted piece must participate in an actual output edit;
                 # an operative Pad on one body cannot certify unrelated cached pieces.
-                changed_solids = [index for index, solid in enumerate(before.Solids)
-                                  if min(_shape_difference(solid, other) for other in after.Solids)
-                                  > max(1e-10, solid.Volume * 1e-12)]
+                if expected_solids == 1:
+                    # The whole-output difference already measures its only solid.
+                    changed_solids = [0] if row['operative'] else []
+                else:
+                    names = ('XMin', 'XMax', 'YMin', 'YMax', 'ZMin', 'ZMax')
+                    candidates = []
+                    for other in after.Solids:
+                        bounds = other.BoundBox
+                        candidates.append((other, tuple(getattr(bounds, name) for name in names)))
+                    for index, solid in enumerate(before.Solids):
+                        bounds = solid.BoundBox
+                        coordinates = tuple(getattr(bounds, name) for name in names)
+                        ordered = sorted(candidates, key=lambda item:
+                                         sum(abs(x-y) for x, y in zip(coordinates, item[1])))
+                        floor = max(1e-10, solid.Volume * 1e-12)
+                        # Bounds only order likely matches; an actual symmetric
+                        # difference at/below the floor still proves each match.
+                        if all(_shape_difference(solid, other) > floor for other, _ in ordered):
+                            changed_solids.append(index)
         except Exception as exc:
             row.update(error_type=type(exc).__name__, error=str(exc))
         finally:
@@ -335,11 +407,12 @@ def verify_native(App, job, out):
             if proxy is None or type(proxy).__module__ not in extensions:
                 raise ValueError('native_python_feature_not_restored')
         obj.touch()
-    doc.recompute()
-    check_document(doc, body, expected_solids=expected_solids)
-    editability, editable = operative(App, doc, body, bundle['probes'], expected_solids=expected_solids)
-    restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'),
-                                           expected_solids=expected_solids)
+    with compiler.validated_contour_sources(doc):
+        doc.recompute()
+        check_document(doc, body, expected_solids=expected_solids)
+        editability, editable = operative(App, doc, body, bundle['probes'], expected_solids=expected_solids)
+        restored = compiler.shape_measurements(body.Shape, tight_bounds=profile in ('c-s2', 'c-s3'),
+                                               expected_solids=expected_solids)
     step_doc = App.newDocument('NeutralSTEP')
     if expected_solids > 1:
         # STEP readers may expose one object per transferred solid. Read the

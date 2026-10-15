@@ -1,0 +1,42 @@
+{
+  "argv": [
+    "C:\\Users\\backo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "tools.test_verify_v3",
+    "tools.test_verify_v4",
+    "tools.test_verify_v4_freeze",
+    "tools.test_verify_v4_pilot",
+    "tools.test_verify_v4_live",
+    "tools.test_verify_v4_s1",
+    "tools.test_verify_v4_s1_integration",
+    "tools.test_verify_v4_s2",
+    "tools.test_verify_v4_s3",
+    "tools.test_verify_v4_s3_judges_native.S3CardAdmission",
+    "tools.test_verify_v4_artifact_judges_native.ContextAdmission",
+    "tools.test_verify_v4_artifacts_native.ArtifactIntake",
+    "tools.test_verify_v4_integrated",
+    "tools.test_verify_v4_runtime",
+    "tools.test_verify_v4_c2_recipe",
+    "tools.test_verify_v4_c2_multipiece",
+    "tools.test_verify_v4_c2_multipiece_artifacts.BoundCountAdmission",
+    "tools.test_verify_v4_c2_cycle3.CycleThreeRecipeAdmission",
+    "tools.test_verify_v4_c2_cycle3.CycleThreeRadiusBehavior",
+    "tools.test_verify_v4_c2_stress",
+    "tools.test_verify_v4_c2_topology.PairedTopologyRecipeAdmission",
+    "tools.test_verify_v4_c2_topology_judges.C2TopologyDeclarationHostTests",
+    "tools.test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests",
+    "tools.test_verify_v4_c2_cycle3.CycleThreeMaterialReachability",
+    "-v"
+  ],
+  "environment": {},
+  "removed_environment_keys": [
+    "PI_TOOL_BRIDGE_TOKEN"
+  ],
+  "cwd": "C:\\dev\\CAD-HARNESS-herdr",
+  "stdin": "closed",
+  "started_at": "2026-10-15T05:51:38.894436+00:00",
+  "elapsed_seconds": 104.43800000008196,
+  "exit_code": 0
+}

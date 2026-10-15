@@ -93,13 +93,16 @@ class C2MultipieceNative(unittest.TestCase):
             self.contours.validate_contour(bad)
 
     def test_global_scaling_padding_alpha_and_strict_mode(self):
-        unit = copy.deepcopy(self.recipe)
+        historical = self.ledger.read_json(
+            self.registry.ROOT/'design/cad-harness-verify-v4/c2-production-recipe-cycle2.json')
+        final = self.prepare(recipe=historical)
+        unit = copy.deepcopy(historical)
         unit['scale'] = dict(mm_per_pixel=1., origin_mm=[0, 0])
         first = self.prepare(recipe=unit)
         bounds = self.contours.geometry_bounds(first)
         factor = 50/(bounds[3]-bounds[2])
-        self.assertAlmostEqual(self.record['pixel_to_mm']['scale_mm_per_pixel'], factor, places=9)
-        for before, after in zip(first['loops'], self.record['loops']):
+        self.assertAlmostEqual(final['pixel_to_mm']['scale_mm_per_pixel'], factor, places=9)
+        for before, after in zip(first['loops'], final['loops']):
             for a, b in zip(before['segments'], after['segments']):
                 for key in ('p0', 'pm', 'p1'):
                     if key in a:
@@ -122,7 +125,7 @@ class C2MultipieceNative(unittest.TestCase):
                                 for axis in (0, 1):
                                     self.assertAlmostEqual(sa[point][axis], sb[point][axis], places=8)
         strict = copy.deepcopy(self.recipe)
-        strict['topology'] = dict(components=1, holes='preserve', islands='reject')
+        strict['topology'].update(components=1, holes='preserve', islands='reject')
         with self.assertRaises(ValueError):
             self.prepare(recipe=strict)
         fake_count = copy.deepcopy(self.recipe)
@@ -219,10 +222,21 @@ class C2MultipieceNative(unittest.TestCase):
         output = self.compiler.build_plan(doc, plan, self.manifest, packet)
         doc.recompute()
         self.assertEqual(len(output.Shape.Solids), 4)
+        # The source-frozen fitter may now legitimately approximate this tiny
+        # component. Corrupt only the submitted native piece into a sharp box:
+        # aggregate fidelity must not substitute for all-piece actual min-R.
+        solids = list(output.Shape.Solids)
+        smallest = min(solids, key=lambda solid: solid.Volume)
+        bounds = smallest.BoundBox
+        box = self.Part.makeBox(bounds.XLength, bounds.YLength, bounds.ZLength,
+            self.App.Vector(bounds.XMin, bounds.YMin, bounds.ZMin))
+        candidate = doc.addObject('Part::Feature', 'UnsafeTinyPiece')
+        candidate.Shape = self.Part.makeCompound(
+            [box] + [solid for solid in solids if solid is not smallest])
         card = dict(schema='cad-harness.judge-card.v4c', profile='c-s1', source='independent_dev',
             linear_tolerance_mm=1e-5, criteria=[dict(id='actual', metric='min_radius',
                 contour_id='small_sharp', minimum_mm=.25, angular_tolerance_rad=1e-6, projection_z_mm=1.5)])
-        result = self.judges.judge(plan, self.manifest, packet, output, card)
+        result = self.judges.judge(plan, self.manifest, packet, candidate, card)
         self.assertEqual(result['status'], 'FAIL', result)
         self.assertGreater(result['checks'][0]['measured']['sharp_corners'], 0)
 
