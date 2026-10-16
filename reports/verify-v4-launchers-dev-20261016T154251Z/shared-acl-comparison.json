@@ -1,0 +1,17 @@
+{
+  "schema": "cad-harness.shared-security-comparison.v1",
+  "status": "PASS",
+  "before": "shared-acl-audit-1/current-descriptors.jsonl",
+  "after": "shared-acl-audit-4/current-descriptors.jsonl",
+  "sdk_paths": 38835,
+  "shared_roots": 6,
+  "snapshot_errors": 0,
+  "temporary_package_sid_paths": 0,
+  "comparison": "fc.exe /B",
+  "comparison_exit_code": 0,
+  "comparison_output": "FC: 相違点は検出されませんでした",
+  "byte_identical": true,
+  "source_or_shared_recovery_writes": 0,
+  "audit3_note": "Python 3.12 stat.device reports a wider volume identity than the pinned Python 3.11 audit. All 38841 complete raw security descriptors, inodes and low32 device values matched. Audit4 uses the baseline's pinned Python 3.11 ABI and the entire JSONL is byte-identical to audit1.",
+  "historical_limit": "The exact SDK state before obsolete smoke-3 was not retained. Recent byte equality is not a fabricated pre-smoke-3 restoration certificate."
+}

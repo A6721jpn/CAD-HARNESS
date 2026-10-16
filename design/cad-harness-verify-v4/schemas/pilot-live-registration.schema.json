@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pilot operational index (also subject to the common live-registration envelope)",
+  "type": "object",
+  "required": ["schema", "phase", "trial_id", "cycle_id", "source_root", "files", "entries", "order", "budget", "generator", "judge", "rubric", "cycle", "custody"],
+  "properties": {
+    "schema": {"const": "cad-harness.live-registration.v1"},
+    "phase": {"const": "pilot"},
+    "trial_id": {"type": "string", "minLength": 1},
+    "cycle_id": {"type": "string", "minLength": 1},
+    "source_root": {"type": "string", "minLength": 1},
+    "files": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/file"}},
+    "order": {"const": ["U1", "U2", "U3", "U4", "U5"]},
+    "budget": {"const": {"pilot": 40}},
+    "generator": {"$ref": "#/$defs/model"},
+    "judge": {"$ref": "#/$defs/model"},
+    "entries": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "prefixItems": [
+        {"allOf": [{"$ref": "#/$defs/entry"}, {"properties": {"id": {"const": "U1"}}}]},
+        {"allOf": [{"$ref": "#/$defs/entry"}, {"properties": {"id": {"const": "U2"}}}]},
+        {"allOf": [{"$ref": "#/$defs/entry"}, {"properties": {"id": {"const": "U3"}}}]},
+        {"allOf": [{"$ref": "#/$defs/entry"}, {"properties": {"id": {"const": "U4"}}}]},
+        {"allOf": [{"$ref": "#/$defs/entry"}, {"properties": {"id": {"const": "U5"}}}]}
+      ],
+      "items": false
+    },
+    "rubric": {
+      "type": "object", "additionalProperties": false, "required": ["file", "preregistration"],
+      "properties": {"file": {"$ref": "#/$defs/id"}, "preregistration": {"$ref": "#/$defs/id"}}
+    },
+    "cycle": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["kind", "previous_manifest_sha256", "retry_authorization"], "properties": {"kind": {"const": "initial"}, "previous_manifest_sha256": {"type": "null"}, "retry_authorization": {"type": "null"}}},
+        {"type": "object", "additionalProperties": false, "required": ["kind", "previous_manifest_sha256", "retry_authorization"], "properties": {"kind": {"const": "retry"}, "previous_manifest_sha256": {"$ref": "#/$defs/sha"}, "retry_authorization": {"$ref": "#/$defs/id"}}}
+      ]
+    },
+    "custody": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bundle", "contour", "prepared", "commitment", "asset_id"],
+      "properties": {"bundle": {"const": "pilot-v4"}, "contour": {"$ref": "#/$defs/id"}, "prepared": {"$ref": "#/$defs/id"}, "commitment": {"$ref": "#/$defs/id"}, "asset_id": {"const": "logo"}}
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "model": {"const": {"model": "openai-codex/gpt-6-astra", "thinking": "max"}},
+    "file": {"type": "object", "required": ["path", "sha256", "bytes", "role"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}, "bytes": {"type": "integer", "minimum": 0}, "role": {"type": "string", "minLength": 1}}},
+    "entry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "family", "profile", "stratum", "request", "input_manifest", "prepared", "card", "context", "images"],
+      "properties": {
+        "id": {"enum": ["U1", "U2", "U3", "U4", "U5"]},
+        "family": {"$ref": "#/$defs/id"},
+        "profile": {"enum": ["c-s1", "c-s2", "c-s3"]},
+        "stratum": {"$ref": "#/$defs/id"},
+        "request": {"$ref": "#/$defs/id"}, "input_manifest": {"$ref": "#/$defs/id"},
+        "prepared": {"$ref": "#/$defs/id"}, "card": {"$ref": "#/$defs/id"}, "context": {"$ref": "#/$defs/id"},
+        "images": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}, "description": "Approved supplemental evidence; cannot replace actual generated output views."}
+      }
+    }
+  }
+}

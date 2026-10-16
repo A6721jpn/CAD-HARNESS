@@ -649,7 +649,9 @@ def operative_evidence(doc, body):
         if difference <= plan['kernel_tolerance_mm']**3:
             raise ValueError('surface_rebuild_pole_inert')
         evidence = dict(feature=feature.Name, parameter='PoleOffsets', index=index, step_mm=step,
-                        operative=True, symmetric_difference_mm3=difference, restored=False)
+                        operative=True, symmetric_difference_mm3=difference, restored=False,
+                        artifact_probe=dict(kind='vector_list',object=feature.Name,property='PoleOffsets',
+                                            index=index,delta_mm=list(changed[index]-offsets[index])))
     finally:
         feature.PoleOffsets = offsets
         feature.touch()

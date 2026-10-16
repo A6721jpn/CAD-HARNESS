@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Exclusive human-correction timer; recorded before the first edit",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema", "binding", "first_handover_snapshot", "started", "evidence_mode", "live_calls"],
+  "properties": {
+    "schema": {"const": "cad-harness.pilot-correction-start.v1"},
+    "binding": {"$ref": "#/$defs/binding"},
+    "first_handover_snapshot": {"$ref": "#/$defs/snapshot"},
+    "started": {"$ref": "#/$defs/stamp"},
+    "evidence_mode": {"enum": ["live", "unit_mock"]},
+    "live_calls": {"const": 0}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "file": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "bytes"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}, "bytes": {"type": "integer", "minimum": 0}}},
+    "submission": {"type": "object", "additionalProperties": false, "required": ["original_bundle", "archived_bundle", "source_artifacts"], "properties": {"original_bundle": {"$ref": "#/$defs/file"}, "archived_bundle": {"$ref": "#/$defs/file"}, "source_artifacts": {"type": "object", "minProperties": 2, "additionalProperties": {"$ref": "#/$defs/file"}}}},
+    "snapshot": {"type": "object", "additionalProperties": false, "required": ["artifact_bundle", "submission"], "properties": {"artifact_bundle": {"$ref": "#/$defs/file"}, "submission": {"$ref": "#/$defs/submission"}}},
+    "stamp": {
+      "type": "object", "additionalProperties": false,
+      "required": ["utc", "monotonic_before_s", "monotonic_after_s", "boot_id", "host", "implementation"],
+      "properties": {"utc": {"type": "string", "format": "date-time"}, "monotonic_before_s": {"type": "number"}, "monotonic_after_s": {"type": "number"}, "boot_id": {"type": "string", "minLength": 1}, "host": {"type": "string", "minLength": 1}, "implementation": {"type": "string", "minLength": 1}}
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["trial_id", "cycle_id", "record_id", "manifest", "authorization", "summary", "handover_sha256", "entry", "source_files", "integrated_lock"],
+      "properties": {
+        "trial_id": {"type": "string", "minLength": 1}, "cycle_id": {"type": "string", "minLength": 1}, "record_id": {"enum": ["U1", "U2", "U3", "U4", "U5"]},
+        "manifest": {"$ref": "#/$defs/file"}, "authorization": {"$ref": "#/$defs/file"}, "summary": {"$ref": "#/$defs/file"}, "handover_sha256": {"$ref": "#/$defs/sha"},
+        "entry": {"type": "object"}, "source_files": {"type": "object", "minProperties": 1}, "integrated_lock": {"type": "object"}
+      }
+    }
+  }
+}

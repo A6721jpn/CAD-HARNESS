@@ -7,7 +7,7 @@
   "properties": {
     "schema": {"const": "cad-harness.artifact-bundle.v4"},
     "profile": {"enum": ["c-s1", "c-s2", "c-s3"]},
-    "evidence_mode": {"const": "independent_dev"},
+    "evidence_mode": {"enum": ["independent_dev", "unit_mock", "live"]},
     "native": {"$ref": "#/$defs/file"},
     "step": {"$ref": "#/$defs/file"},
     "output_object": {"type": ["string", "null"], "minLength": 1, "maxLength": 128},

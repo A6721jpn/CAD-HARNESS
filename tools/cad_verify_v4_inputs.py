@@ -253,6 +253,8 @@ def model_inputs(packet, manifest_path=None):
     if packet['profile'] in ('c-s2', 'c-s3') and manifest is None:
         raise ValueError('s2_generator_input_requires_manifest_roles')
     for asset_id in sorted(packet['assets']):
+        if manifest is not None and manifest['assets'][asset_id]['role'] == 'checker':
+            continue
         if packet['profile'] in ('c-s2', 'c-s3') and manifest['assets'][asset_id]['role'] != 'reference':
             continue
         record = packet['assets'][asset_id]

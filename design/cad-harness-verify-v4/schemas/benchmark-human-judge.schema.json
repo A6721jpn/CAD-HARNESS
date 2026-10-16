@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "cad-harness.benchmark-human-judge.v1",
+  "description": "Custodian-supplied actual named human identity/qualification evidence, hash-bound before authorization. No construction-operator identity is inferred from this judge identity.",
+  "type": "object", "required": ["schema", "id", "kind", "qualification"],
+  "properties": {"schema": {"const": "cad-harness.benchmark-human-judge.v1"}, "id": {"type": "string", "minLength": 1}, "kind": {"const": "human"}, "qualification": {"type": "string", "minLength": 1}}
+}

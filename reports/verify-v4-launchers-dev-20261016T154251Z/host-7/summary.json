@@ -1,0 +1,742 @@
+{
+  "suite": "host",
+  "python": "C:\\Users\\backo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "version": "3.12.10",
+  "host": "DPC-019",
+  "started_at": "2026-10-16T19:07:11.269078+00:00",
+  "actual_native": false,
+  "live_model_calls": 0,
+  "holdout": "not_run",
+  "pilot": "not_run",
+  "status": "PASS",
+  "tests": 638,
+  "passed": 459,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 179,
+  "failure_observations": 0,
+  "error_observations": 0,
+  "elapsed_s": 187.75,
+  "finished_at": "2026-10-16T19:10:18.870402+00:00",
+  "blocked_provider_launches": [],
+  "failures": [],
+  "error_details": [],
+  "skip_details": [
+    {
+      "test": "test_native_fixture_matches_description_without_gold (test_verify_dv3_native.DV3DescriptionSanity.test_native_fixture_matches_description_without_gold)",
+      "reason": "requires the authorized headless FreeCADcmd"
+    },
+    {
+      "test": "test_reopened_pipe_sections_measure_circular_polylines (test_verify_dv3_native.DV3DescriptionSanity.test_reopened_pipe_sections_measure_circular_polylines)",
+      "reason": "requires the authorized headless FreeCADcmd"
+    },
+    {
+      "test": "test_verify_optimal_bounds_match_gold_and_ordinary_overestimates (test_verify_dv3_native.DV3DescriptionSanity.test_verify_optimal_bounds_match_gold_and_ordinary_overestimates)",
+      "reason": "requires the authorized headless FreeCADcmd"
+    },
+    {
+      "test": "test_native_construction_chain_and_decoys (test_verify_v2_native.NativeV2.test_native_construction_chain_and_decoys)",
+      "reason": "requires the fixed FreeCAD 1.1.4 headless host"
+    },
+    {
+      "test": "test_partial_selection_keeps_only_selected_real_geometry (test_verify_v2_native.NativeV2.test_partial_selection_keeps_only_selected_real_geometry)",
+      "reason": "requires the fixed FreeCAD 1.1.4 headless host"
+    },
+    {
+      "test": "test_saved_v1_v5_pcd_sixty_is_reachable_after_reopen (test_verify_v2_native.NativeV2.test_saved_v1_v5_pcd_sixty_is_reachable_after_reopen)",
+      "reason": "requires the fixed FreeCAD 1.1.4 headless host"
+    },
+    {
+      "test": "test_c1_ordinary_sketch_pad_and_step_same_card (test_verify_v4_artifact_judges_native.BareGeometry.test_c1_ordinary_sketch_pad_and_step_same_card)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned FreeCAD Python; no discovery launch"
+    },
+    {
+      "test": "test_c2_fixed_registration_rejects_translation_scale_and_missing_hole (test_verify_v4_artifact_judges_native.BareGeometry.test_c2_fixed_registration_rejects_translation_scale_and_missing_hole)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned FreeCAD Python; no discovery launch"
+    },
+    {
+      "test": "test_c3_registered_glyph_baseline_depth_and_source_controls (test_verify_v4_artifact_judges_native.BareGeometry.test_c3_registered_glyph_baseline_depth_and_source_controls)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned FreeCAD Python; no discovery launch"
+    },
+    {
+      "test": "test_c4_source_thickness_and_wrong_ordinary_output (test_verify_v4_artifact_judges_native.BareGeometry.test_c4_source_thickness_and_wrong_ordinary_output)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned FreeCAD Python; no discovery launch"
+    },
+    {
+      "test": "test_c5_selected_polynomial_atlas_and_uncertified_plane (test_verify_v4_artifact_judges_native.BareGeometry.test_c5_selected_polynomial_atlas_and_uncertified_plane)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned FreeCAD Python; no discovery launch"
+    },
+    {
+      "test": "test_empty_auxiliary_shape_cannot_certify_a_static_output_editable (test_verify_v4_artifacts_native.NativeArtifacts.test_empty_auxiliary_shape_cannot_certify_a_static_output_editable)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_independent_build_status_word_is_not_a_harness_token_requirement (test_verify_v4_artifacts_native.NativeArtifacts.test_independent_build_status_word_is_not_a_harness_token_requirement)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_independent_step_mismatch_fails_common_native_and_geometry_gates (test_verify_v4_artifacts_native.NativeArtifacts.test_independent_step_mismatch_fails_common_native_and_geometry_gates)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_metadata_only_edit_does_not_prove_native_editability (test_verify_v4_artifacts_native.NativeArtifacts.test_metadata_only_edit_does_not_prove_native_editability)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_native_sketch_dimension_drives_actual_geometry_and_restores (test_verify_v4_artifacts_native.NativeArtifacts.test_native_sketch_dimension_drives_actual_geometry_and_restores)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_ordinary_native_pad_is_operative_and_restored_without_harness_plan (test_verify_v4_artifacts_native.NativeArtifacts.test_ordinary_native_pad_is_operative_and_restored_without_harness_plan)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_scoped_contour_edits_restore_and_saved_document_remains_editable (test_verify_v4_artifacts_native.NativeArtifacts.test_scoped_contour_edits_restore_and_saved_document_remains_editable)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_scoped_contour_source_edits_cannot_reuse_original_admission (test_verify_v4_artifacts_native.NativeArtifacts.test_scoped_contour_source_edits_cannot_reuse_original_admission)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_shape_difference_keeps_common_material_as_opposing_operand (test_verify_v4_artifacts_native.NativeArtifacts.test_shape_difference_keeps_common_material_as_opposing_operand)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_shape_difference_measures_changed_compound_with_copied_common_solid (test_verify_v4_artifacts_native.NativeArtifacts.test_shape_difference_measures_changed_compound_with_copied_common_solid)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_shape_difference_preserves_restored_and_translated_geometry_measurements (test_verify_v4_artifacts_native.NativeArtifacts.test_shape_difference_preserves_restored_and_translated_geometry_measurements)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_shape_difference_rejects_equal_volume_equal_bounds_different_geometry (test_verify_v4_artifacts_native.NativeArtifacts.test_shape_difference_rejects_equal_volume_equal_bounds_different_geometry)",
+      "reason": "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_midgrant_failure_preserves_low_scratch_and_absent_runtime_sacl (test_verify_v4_bare_windows_native.NativeBareIsolation.test_midgrant_failure_preserves_low_scratch_and_absent_runtime_sacl)",
+      "reason": "requires explicit independent DEV Windows LPAC smoke opt-in"
+    },
+    {
+      "test": "test_owned_scratch_preserves_security_after_setup_failure (test_verify_v4_bare_windows_native.NativeBareIsolation.test_owned_scratch_preserves_security_after_setup_failure)",
+      "reason": "requires explicit independent DEV Windows LPAC smoke opt-in"
+    },
+    {
+      "test": "test_real_lpac_denies_escape_and_builds_ordinary_native_artifacts (test_verify_v4_bare_windows_native.NativeBareIsolation.test_real_lpac_denies_escape_and_builds_ordinary_native_artifacts)",
+      "reason": "requires explicit independent DEV Windows LPAC smoke opt-in"
+    },
+    {
+      "test": "test_shell_handover_requires_lpac_not_plain_appcontainer (test_verify_v4_bare_windows_native.NativeBareIsolation.test_shell_handover_requires_lpac_not_plain_appcontainer)",
+      "reason": "requires explicit independent DEV Windows LPAC smoke opt-in"
+    },
+    {
+      "test": "test_actual_tool_is_not_curvature_construction_reserve (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_actual_tool_is_not_curvature_construction_reserve)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_analytic_normal_proposals_make_a_thin_neck_toolable_within_source_bounds (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_analytic_normal_proposals_make_a_thin_neck_toolable_within_source_bounds)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_branch_constraints_distinguish_material_from_narrow_void (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_branch_constraints_distinguish_material_from_narrow_void)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_close_foreground_and_hole_island_void_gaps_are_not_material_walls (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_close_foreground_and_hole_island_void_gaps_are_not_material_walls)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_minimum_radius_alone_cannot_admit_inaccessible_material (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_minimum_radius_alone_cannot_admit_inaccessible_material)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_partial_components_prune_material_walls_before_nested_choices (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_partial_components_prune_material_walls_before_nested_choices)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_thin_neck_and_interloop_wall_keep_fidelity_and_nested_forest (test_verify_v4_c2_cycle3.CycleThreeMaterialReachability.test_thin_neck_and_interloop_wall_keep_fidelity_and_nested_forest)",
+      "reason": "requires numpy/scipy/shapely/Pillow"
+    },
+    {
+      "test": "test_infeasible_original_source_budget_refuses_without_output (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_infeasible_original_source_budget_refuses_without_output)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_multiple_pieces_share_one_physical_registration (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_multiple_pieces_share_one_physical_registration)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_narrow_source_hole_keeps_topology_within_physical_fit_budget (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_narrow_source_hole_keeps_topology_within_physical_fit_budget)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_padding_changes_only_source_registration_not_fitted_geometry (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_padding_changes_only_source_registration_not_fitted_geometry)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_real_original_source_mm_certificate_and_determinism (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_real_original_source_mm_certificate_and_determinism)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_rehash_cannot_authorize_uncertified_geometry_or_mm_budget (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_rehash_cannot_authorize_uncertified_geometry_or_mm_budget)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_source_iou_refines_measurement_without_changing_the_gate (test_verify_v4_c2_cycle3.CycleThreeNativeSourceBehavior.test_source_iou_refines_measurement_without_changing_the_gate)",
+      "reason": "set CAD_VERIFY_C2_CYCLE3_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_both_arms_reopen_step_and_edit_every_source_piece (test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior.test_both_arms_reopen_step_and_edit_every_source_piece)",
+      "reason": "set CAD_VERIFY_C2_MULTIPIECE_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_missing_and_extra_native_or_step_solids_fail (test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior.test_missing_and_extra_native_or_step_solids_fail)",
+      "reason": "set CAD_VERIFY_C2_MULTIPIECE_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_one_operative_piece_cannot_certify_other_cached_pieces (test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior.test_one_operative_piece_cannot_certify_other_cached_pieces)",
+      "reason": "set CAD_VERIFY_C2_MULTIPIECE_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_other_families_cannot_admit_the_same_compound (test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior.test_other_families_cannot_admit_the_same_compound)",
+      "reason": "set CAD_VERIFY_C2_MULTIPIECE_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_single_piece_c2_still_rejects_a_compound (test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior.test_single_piece_c2_still_rejects_a_compound)",
+      "reason": "set CAD_VERIFY_C2_MULTIPIECE_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_worker_compile_then_reopen_uses_source_count (test_verify_v4_c2_multipiece_artifacts.CompoundArtifactBehavior.test_worker_compile_then_reopen_uses_source_count)",
+      "reason": "set CAD_VERIFY_C2_MULTIPIECE_NATIVE=1 under pinned native FreeCAD Python"
+    },
+    {
+      "test": "test_both_real_native_roundtrips_all_piece_edits_and_full_card (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_both_real_native_roundtrips_all_piece_edits_and_full_card)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_dropped_moved_merged_and_hole_corruptions_are_rejected (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_dropped_moved_merged_and_hole_corruptions_are_rejected)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_global_scaling_padding_alpha_and_strict_mode (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_global_scaling_padding_alpha_and_strict_mode)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_other_family_does_not_gain_compound_permission (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_other_family_does_not_gain_compound_permission)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_same_global_counts_cannot_hide_a_moved_nested_piece (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_same_global_counts_cannot_hide_a_moved_nested_piece)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_small_sharp_piece_cannot_hide_in_aggregate_area (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_small_sharp_piece_cannot_hide_in_aggregate_area)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_tool_center_connectivity_is_per_piece_not_one_global_path (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_tool_center_connectivity_is_per_piece_not_one_global_path)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_topology_nested_parents_and_authenticated_count (test_verify_v4_c2_multipiece_native.C2MultipieceNative.test_topology_nested_parents_and_authenticated_count)",
+      "reason": "requires opt-in pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_alpha_127_128_129_cells_and_invisible_rgb_are_semantic (test_verify_v4_c2_recipe_native.C2ProductionNative.test_alpha_127_128_129_cells_and_invisible_rgb_are_semantic)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_deterministic_production_derivation_and_hash_closure (test_verify_v4_c2_recipe_native.C2ProductionNative.test_deterministic_production_derivation_and_hash_closure)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_genuine_sharp_corners_remain_and_actual_radius_fails_not_repaired (test_verify_v4_c2_recipe_native.C2ProductionNative.test_genuine_sharp_corners_remain_and_actual_radius_fails_not_repaired)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_historical_pixel_fit_height_order_and_uniform_aspect (test_verify_v4_c2_recipe_native.C2ProductionNative.test_historical_pixel_fit_height_order_and_uniform_aspect)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_hole_preservation_empty_islands_and_diagonal_contacts (test_verify_v4_c2_recipe_native.C2ProductionNative.test_hole_preservation_empty_islands_and_diagonal_contacts)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_native_independent_annulus_both_arms_roundtrip_and_operative_edits (test_verify_v4_c2_recipe_native.C2ProductionNative.test_native_independent_annulus_both_arms_roundtrip_and_operative_edits)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_one_fixed_registration_rejects_post_scoring_refit_and_translation (test_verify_v4_c2_recipe_native.C2ProductionNative.test_one_fixed_registration_rejects_post_scoring_refit_and_translation)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_padding_changes_image_origin_not_canonical_geometry_or_scale (test_verify_v4_c2_recipe_native.C2ProductionNative.test_padding_changes_image_origin_not_canonical_geometry_or_scale)",
+      "reason": "set CAD_VERIFY_C2_RECIPE_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_adjacent_singletons_grow_separately_and_keep_padding_invariance (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_adjacent_singletons_grow_separately_and_keep_padding_invariance)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_diagonal_squares_are_retained_with_original_contact_cleared (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_diagonal_squares_are_retained_with_original_contact_cleared)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_diagonally_connected_background_is_one_pinched_hole (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_diagonally_connected_background_is_one_pinched_hole)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_nested_islands_keep_full_alternating_adjacency_forest (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_nested_islands_keep_full_alternating_adjacency_forest)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_padding_changes_registration_not_material_or_clearance (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_padding_changes_registration_not_material_or_clearance)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_reclosed_contact_reports_cannot_authorize_unsafe_material (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_reclosed_contact_reports_cannot_authorize_unsafe_material)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_reclosed_same_counts_cannot_replace_nested_forest (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_reclosed_same_counts_cannot_replace_nested_forest)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_sub_radius_singleton_near_body_survives_bounded_outward_fit (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_sub_radius_singleton_near_body_survives_bounded_outward_fit)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_v1_still_refuses_diagonal_source_contacts (test_verify_v4_c2_topology.PairedTopologyNativeGeometry.test_v1_still_refuses_diagonal_source_contacts)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 with numeric dependencies under pinned Python 3.11.14 / FreeCAD 1.1.4"
+    },
+    {
+      "test": "test_bg8_exterior_contact_does_not_create_a_source_hole (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_bg8_exterior_contact_does_not_create_a_source_hole)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_bg8_pinched_hole_is_one_void_despite_two_geos_interiors (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_bg8_pinched_hole_is_one_void_despite_two_geos_interiors)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_bounded_growth_may_overlap_original_neighbor_with_a_perfect_bijection (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_bounded_growth_may_overlap_original_neighbor_with_a_perfect_bijection)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_contact_inside_material_fails_despite_matching_counts_overlap_and_fidelity (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_contact_inside_material_fails_despite_matching_counts_overlap_and_fidelity)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_diagonal_piece_contacts_are_locally_opened_not_merged (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_diagonal_piece_contacts_are_locally_opened_not_merged)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_fixed_frame_nested_island_forest_and_empty_contact_report (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_fixed_frame_nested_island_forest_and_empty_contact_report)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_missing_forged_duplicate_or_malformed_contacts_never_accept (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_missing_forged_duplicate_or_malformed_contacts_never_accept)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_positive_clearance_has_no_added_physical_gap_tolerance (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_positive_clearance_has_no_added_physical_gap_tolerance)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_tiny_original_piece_can_grow_but_cannot_disappear (test_verify_v4_c2_topology_judges.C2TopologyJudgesHostTests.test_tiny_original_piece_can_grow_but_cannot_disappear)",
+      "reason": "requires host numpy / Pillow / Shapely; no native launch"
+    },
+    {
+      "test": "test_bg8_hole_native_and_filled_or_uncleared_controls (test_verify_v4_c2_topology_judges.C2TopologyJudgesNativeTests.test_bg8_hole_native_and_filled_or_uncleared_controls)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_contact_certificate_uses_the_one_declared_output_registration (test_verify_v4_c2_topology_judges.C2TopologyJudgesNativeTests.test_contact_certificate_uses_the_one_declared_output_registration)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_diagonal_opening_native_and_actual_merged_control (test_verify_v4_c2_topology_judges.C2TopologyJudgesNativeTests.test_diagonal_opening_native_and_actual_merged_control)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_native_shared_vertex_tolerance_is_enclosed_not_json_authorized (test_verify_v4_c2_topology_judges.C2TopologyJudgesNativeTests.test_native_shared_vertex_tolerance_is_enclosed_not_json_authorized)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_positional_vertex_tolerance_does_not_bend_a_native_circle (test_verify_v4_c2_topology_judges.C2TopologyJudgesNativeTests.test_positional_vertex_tolerance_does_not_bend_a_native_circle)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_retained_grown_singleton_native_and_step_and_dropped_control (test_verify_v4_c2_topology_judges.C2TopologyJudgesNativeTests.test_retained_grown_singleton_native_and_step_and_dropped_control)",
+      "reason": "set CAD_VERIFY_C2_TOPOLOGY_NATIVE=1 under pinned Python 3.11.14 / FreeCAD 1.1.4; no discovery launch"
+    },
+    {
+      "test": "test_trusted_admission_worker_on_four_independent_real_controls (test_verify_v4_family_live.NativeAdmissionSmoke.test_trusted_admission_worker_on_four_independent_real_controls)",
+      "reason": "set CAD_VERIFY_FAMILY_NATIVE=1 under pinned FreeCAD Python; no discovery launch"
+    },
+    {
+      "test": "test_authorized_custodian_plan_actual_native_and_visual_adjudication (test_verify_v4_launchers_native.NativeLauncherSmoke.test_authorized_custodian_plan_actual_native_and_visual_adjudication)",
+      "reason": "set CAD_VERIFY_LAUNCHERS_NATIVE=1 under pinned native Python"
+    },
+    {
+      "test": "test_contour_and_engraving_metadata_proves_actual_neutral_editability (test_verify_v4_launchers_native.NativeLauncherSmoke.test_contour_and_engraving_metadata_proves_actual_neutral_editability)",
+      "reason": "set CAD_VERIFY_LAUNCHERS_NATIVE=1 under pinned native Python"
+    },
+    {
+      "test": "test_linked_asset_and_parent_denied (test_verify_v4_s1.S1HostAdmission.test_linked_asset_and_parent_denied)",
+      "reason": "OS does not permit test symlinks"
+    },
+    {
+      "test": "test_c1_complete_curved_face_clearance_and_contact_area (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_complete_curved_face_clearance_and_contact_area)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c1_declared_translation_play_interval_with_certified_uncertainty (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_declared_translation_play_interval_with_certified_uncertainty)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c1_duplicate_face_identity_is_unverified_not_auto_selected (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_duplicate_face_identity_is_unverified_not_auto_selected)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c1_maximum_play_requires_collision_stops_and_explicit_convention (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_maximum_play_requires_collision_stops_and_explicit_convention)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c1_original_native_facts_analytic_volume_bounds_and_faces (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_original_native_facts_analytic_volume_bounds_and_faces)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c1_reference_fixture_exports_only_part_and_keeps_native_pocket_operative (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_reference_fixture_exports_only_part_and_keeps_native_pocket_operative)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c1_selected_original_face_gap_contact_placement_not_min_distance (test_verify_v4_s1_native.S1NativeAcceptance.test_c1_selected_original_face_gap_contact_placement_not_min_distance)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_access_remeasures_sub_tool_width_output (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_access_remeasures_sub_tool_width_output)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_actual_hole_topology_and_preprocessing_hard_negatives (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_actual_hole_topology_and_preprocessing_hard_negatives)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_actual_preprocessing_permitted_rounding_vs_unsmoothed_radius (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_actual_preprocessing_permitted_rounding_vs_unsmoothed_radius)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_analytic_compiler_two_leg_fidelity_and_actual_native_roundtrip (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_analytic_compiler_two_leg_fidelity_and_actual_native_roundtrip)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_hausdorff_uses_symmetric_maximum_and_interval_boundary (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_hausdorff_uses_symmetric_maximum_and_interval_boundary)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_integer_luminance_and_checker_mask_commitment (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_integer_luminance_and_checker_mask_commitment)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_native_bounds_volume_dimension_and_missing_acceptance (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_native_bounds_volume_dimension_and_missing_acceptance)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_planar_tool_center_pass_fail_and_uncertainty (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_planar_tool_center_pass_fail_and_uncertainty)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_radius_remeasures_handed_over_shape_and_operative_scale (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_radius_remeasures_handed_over_shape_and_operative_scale)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c2_scale_hole_island_and_fidelity_negatives (test_verify_v4_s1_native.S1NativeAcceptance.test_c2_scale_hole_island_and_fidelity_negatives)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c3_actual_recess_identity_depth_and_negative_claim (test_verify_v4_s1_native.S1NativeAcceptance.test_c3_actual_recess_identity_depth_and_negative_claim)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c3_nonhorizontal_declared_axis_angle_recess (test_verify_v4_s1_native.S1NativeAcceptance.test_c3_nonhorizontal_declared_axis_angle_recess)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c3_operative_width_thickness_text_height_depth_after_fcstd_reopen (test_verify_v4_s1_native.S1NativeAcceptance.test_c3_operative_width_thickness_text_height_depth_after_fcstd_reopen)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c3_rejected_upstream_pad_edit_clears_engraving_chain_and_public_body (test_verify_v4_s1_native.S1NativeAcceptance.test_c3_rejected_upstream_pad_edit_clears_engraving_chain_and_public_body)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c3_unsupported_glyph_cannot_retain_stale_valid_shape (test_verify_v4_s1_native.S1NativeAcceptance.test_c3_unsupported_glyph_cannot_retain_stale_valid_shape)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_c3_upstream_native_pad_length_changes_final_engraved_solid_and_restores (test_verify_v4_s1_native.S1NativeAcceptance.test_c3_upstream_native_pad_length_changes_final_engraved_solid_and_restores)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_consumer_fake_model_to_real_native_compile_and_independent_reimport (test_verify_v4_s1_native.S1NativeAcceptance.test_consumer_fake_model_to_real_native_compile_and_independent_reimport)",
+      "reason": "native capability not exercised: set CAD_VERIFY_S1_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_curved_cylindrical_per_face_offset_reconnects_original_caps (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_curved_cylindrical_per_face_offset_reconnects_original_caps)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_distinct_tilted_replacement_support_and_reconnected_neighbors (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_distinct_tilted_replacement_support_and_reconnected_neighbors)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_face_id_alone_stale_adjacency_reordered_and_ambiguous_rejected (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_face_id_alone_stale_adjacency_reordered_and_ambiguous_rejected)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_failed_recompute_clears_shape_and_recovery_rebuilds_from_original (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_failed_recompute_clears_shape_and_recovery_rebuilds_from_original)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_missing_tolerance_and_arbitrary_code_are_rejected_host_safely (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_missing_tolerance_and_arbitrary_code_are_rejected_host_safely)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_oblique_source_is_not_axis_aligned_box_reconstruction (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_oblique_source_is_not_axis_aligned_box_reconstruction)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_provenance_does_not_fabricate_displaced_face_identity (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_provenance_does_not_fabricate_displaced_face_identity)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_real_native_save_reopen_and_parameter_changes (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_real_native_save_reopen_and_parameter_changes)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_replacement_extension_boundary_and_dependency_bindings (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_replacement_extension_boundary_and_dependency_bindings)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_signed_selected_face_offsets_original_immutable_and_preserved_local_cavity (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_signed_selected_face_offsets_original_immutable_and_preserved_local_cavity)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_smooth_bspline_swept_face_signed_local_offsets_and_reconnection (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_smooth_bspline_swept_face_signed_local_offsets_and_reconnection)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_supervised_direct_edit_native_and_independent_step_verification (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_supervised_direct_edit_native_and_independent_step_verification)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_supervised_smooth_edit_preserves_trimmed_extents_and_analytic_normal_offsets (test_verify_v4_s2_edit_native.S2NativeDirectEdit.test_supervised_smooth_edit_preserves_trimmed_extents_and_analytic_normal_offsets)",
+      "reason": "native S2 not exercised: set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_actual_native_and_step_reopen_roundtrip (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_actual_native_and_step_reopen_roundtrip)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_actual_solid_null_shell_and_multi_solid_controls (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_actual_solid_null_shell_and_multi_solid_controls)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_analytic_tilted_replacement_affine_extrema_certificate (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_analytic_tilted_replacement_affine_extrema_certificate)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_curved_actual_geometry_keeps_continuous_unknown (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_curved_actual_geometry_keeps_continuous_unknown)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_curved_feature_outside_full_ray_domain_does_not_block_local_certificate (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_curved_feature_outside_full_ray_domain_does_not_block_local_certificate)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_empty_preserved_roi_and_insufficient_numeric_budget_unknown (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_empty_preserved_roi_and_insufficient_numeric_budget_unknown)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_full_region_counts_and_explicit_spatial_correspondence (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_full_region_counts_and_explicit_spatial_correspondence)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_hash_tamper_and_reordered_original_facts_not_accepted (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_hash_tamper_and_reordered_original_facts_not_accepted)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_incomplete_continuous_domain_and_partial_output_patch_rejected (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_incomplete_continuous_domain_and_partial_output_patch_rejected)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_interior_cavity_on_sample_multiple_material_hits_fail (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_interior_cavity_on_sample_multiple_material_hits_fail)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_interior_cavity_outside_samples_cannot_receive_global_pass (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_interior_cavity_outside_samples_cannot_receive_global_pass)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_local_feature_movement_equal_bbox_and_volume_fails_roi (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_local_feature_movement_equal_bbox_and_volume_fails_roi)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_missing_ray_coverage_and_source_wrong_face_unknown (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_missing_ray_coverage_and_source_wrong_face_unknown)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_multiple_solids_along_ray_and_wrong_opposing_set_fail (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_multiple_solids_along_ray_and_wrong_opposing_set_fail)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_planar_global_certificate_same_card_native_and_independent_step (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_planar_global_certificate_same_card_native_and_independent_step)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_sampled_scope_never_claims_global_extrema (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_sampled_scope_never_claims_global_extrema)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_source_vertex_landmarks_and_ambiguity (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_source_vertex_landmarks_and_ambiguity)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_trimmed_bspline_support_is_not_source_axis_extent (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_trimmed_bspline_support_is_not_source_axis_extent)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_unchanged_source_axis_not_card_target_or_candidate_report (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_unchanged_source_axis_not_card_target_or_candidate_report)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_wrong_sign_wrong_thickness_and_far_decoy_fail (test_verify_v4_s2_judges_native.S2IndependentNativeJudges.test_wrong_sign_wrong_thickness_and_far_decoy_fail)",
+      "reason": "set CAD_VERIFY_S2_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_actual_bezier_saddle_uses_raw_controls_not_approximate_conversion (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_actual_bezier_saddle_uses_raw_controls_not_approximate_conversion)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_actual_boundary_equality (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_actual_boundary_equality)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_bidirectional_native_closestpoint_not_correspondence_lower (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_bidirectional_native_closestpoint_not_correspondence_lower)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_closed_same_face_count_outside_bottom_outlier_fails (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_closed_same_face_count_outside_bottom_outlier_fails)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_complete_native_pipeline_metrics_without_fitter (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_complete_native_pipeline_metrics_without_fitter)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_curved_bottom_and_polynomial_trim_walls_full_step_identity (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_curved_bottom_and_polynomial_trim_walls_full_step_identity)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_exact_numeric_boundary_is_not_rounded_to_pass (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_exact_numeric_boundary_is_not_rounded_to_pass)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_exact_structural_path_cannot_bypass_native_singular_seam (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_exact_structural_path_cannot_bypass_native_singular_seam)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_full_domain_offgrid_localized_deviation (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_full_domain_offgrid_localized_deviation)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_g1_only_quadratic_decoy (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_g1_only_quadratic_decoy)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_native_full_polynomial_endpoint_extension_is_not_clipped (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_native_full_polynomial_endpoint_extension_is_not_clipped)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_nontrivial_continuous_deviation_pass (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_nontrivial_continuous_deviation_pass)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_polynomial_periodic_domain_is_explicitly_unsupported (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_polynomial_periodic_domain_is_explicitly_unsupported)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_rational_domain_is_explicitly_unsupported (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_rational_domain_is_explicitly_unsupported)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_registered_roi_is_face_order_independent_and_complete (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_registered_roi_is_face_order_independent_and_complete)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_reparameterized_nonplanar_g2 (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_reparameterized_nonplanar_g2)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_resource_bound_and_singular_are_unverified (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_resource_bound_and_singular_are_unverified)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_rotated_principal_curvatures_in_physical_frame (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_rotated_principal_curvatures_in_physical_frame)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_same_face_internal_knots_use_one_sided_jets (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_same_face_internal_knots_use_one_sided_jets)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_trim_holes_and_incomplete_chart_coverage (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_trim_holes_and_incomplete_chart_coverage)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_unequal_physical_transverse_speed_is_geometric_g2 (test_verify_v4_s3_judges_native.PolynomialNativeCertificates.test_unequal_physical_transverse_speed_is_geometric_g2)",
+      "reason": "set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python; no launch at discovery"
+    },
+    {
+      "test": "test_already_g2_geometry_is_merged_without_inventing_a_new_shape (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_already_g2_geometry_is_merged_without_inventing_a_new_shape)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_both_tensor_directions_merge_without_removing_unselected_faces (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_both_tensor_directions_merge_without_removing_unselected_faces)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_forged_matching_atlas_and_plan_do_not_override_actual_geometry (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_forged_matching_atlas_and_plan_do_not_override_actual_geometry)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_geometrically_equivalent_swapped_reversed_input_has_same_result (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_geometrically_equivalent_swapped_reversed_input_has_same_result)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_incompatible_fit_tolerance_cannot_leave_partial_native_model (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_incompatible_fit_tolerance_cannot_leave_partial_native_model)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_interior_pole_edit_changes_actual_solid_and_restores (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_interior_pole_edit_changes_actual_solid_and_restores)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_non_g2_freeform_region_is_reconstructed_and_other_material_unchanged (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_non_g2_freeform_region_is_reconstructed_and_other_material_unchanged)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_oblique_translated_source_preserves_its_original_world_frame (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_oblique_translated_source_preserves_its_original_world_frame)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_rejected_boundary_edit_clears_cached_shape_and_recovers (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_rejected_boundary_edit_clears_cached_shape_and_recovers)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    },
+    {
+      "test": "test_tiny_notch_cannot_be_filled_under_an_area_error_allowance (test_verify_v4_s3_rebuild_native.S3NativeSurfaceRebuild.test_tiny_notch_cannot_be_filled_under_an_area_error_allowance)",
+      "reason": "native S3 not exercised: set CAD_VERIFY_S3_NATIVE=1 under pinned FreeCAD Python"
+    }
+  ]
+}

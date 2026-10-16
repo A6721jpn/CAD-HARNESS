@@ -95,6 +95,21 @@ def _expected_solids(profile, plan, prepared):
     return 1
 
 
+def artifact_probes(editability):
+    """Forward only the neutral probes actually exercised by trusted features."""
+    if (not isinstance(editability, list) or not editability
+            or any(not isinstance(row, dict) or row.get('operative') is not True
+                   or row.get('restored', True) is not True or not isinstance(row.get('artifact_probe'), dict)
+                   for row in editability)):
+        raise ValueError('compile_neutral_probe_evidence_missing')
+    probes = [row['artifact_probe'] for row in editability]
+    ledger, plans = _module('cad_verify_v4_ledger'), _module('cad_verify_v4_plans')
+    schema = ledger.read_json(Path(__file__).resolve().parents[1]
+        / 'design/cad-harness-verify-v4/schemas/artifact-bundle.schema.json')
+    plans._check(probes, schema['properties']['probes'], schema, 'compile_artifact_probes')
+    return probes
+
+
 def _compile(App, job, out):
     import Part
     compiler = _module('cad_verify_v4_compile')
@@ -110,13 +125,15 @@ def _compile(App, job, out):
     # A new directory is the only destination; no existing artifacts are overwritten.
     doc.saveAs(str(out / 'model.FCStd'))
     Part.export([body], str(out / 'model.step'))
+    restoration_modules = _module('cad_verify_v4_artifacts').restoration_modules(out / 'model.FCStd')
     after = _bindings(job)
     if before != after:
         raise ValueError('compile_input_changed')
     return {'status': 'PASS', 'geometry_ok': True, 'editability_ok': True,
             'editability': editability, 'measurements': measurements, 'metrics': measurements,
             'bounds_mm': measurements['bounds_mm'], 'volume_mm3': measurements['volume_mm3'],
-            'bindings': before, 'artifacts': _artifacts(out),
+            'bindings': before, 'artifacts': _artifacts(out), 'output_object': body.Name,
+            'restoration_modules': restoration_modules, 'artifact_probes': artifact_probes(editability),
             'source_paths': {key: str(_safe(job[key])) for key in ('manifest', 'prepared', 'plan', 'card')},
             'family': plan['family'], 'plan_sha256': before['plan_sha256'],
             **({'operation_report': editor.operation_report(body)} if profile in ('c-s2', 'c-s3') else {})}
@@ -264,6 +281,8 @@ OPERATIONS = {
     'verify': {'operation', 'manifest', 'prepared', 'plan', 'card', 'out'},
     'judge': {'operation', 'manifest', 'prepared', 'plan', 'card', 'out'},
     'artifact-verify': {'operation', 'manifest', 'prepared', 'card', 'context', 'bundle', 'runtime_binding', 'out'},
+    'admission-control': {'operation', 'control', 'out'},
+    'render-evidence': {'operation', 'step', 'settings', 'out'},
     'prepare-step': {'operation', 'manifest', 'asset_id', 'recipe', 'out'},
     'contour': {'operation', 'manifest', 'asset_id', 'recipe', 'out'},
     'text': {'operation', 'manifest', 'font_id', 'text', 'height_mm', 'out'},
@@ -279,9 +298,11 @@ def execute(job):
     profile = job.get('profile', 'c-s1')
     if profile not in ('c-s1', 'c-s2', 'c-s3'):
         raise ValueError('worker_profile')
-    if profile in ('c-s2', 'c-s3') and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step', 'artifact-verify'):
+    if profile in ('c-s2', 'c-s3') and operation not in ('identity', 'compile', 'verify', 'judge', 'prepare-step', 'artifact-verify', 'render-evidence'):
         raise ValueError('worker_operation_not_in_profile')
     optional = {'profile'} | ({'candidate_dir'} if operation in ('verify', 'judge') else set())
+    if operation == 'artifact-verify':
+        optional.add('execution_manifest')
     if not OPERATIONS[operation] <= set(job) or set(job) - OPERATIONS[operation] - optional:
         raise ValueError('worker_job_fields')
     # Validate every supplied path before opening a document. Parent allocates output.
@@ -324,6 +345,10 @@ def execute(job):
             result.update(_verify(App, job, out))
         elif operation == 'artifact-verify':
             result.update(_module('cad_verify_v4_artifacts').verify_native(App, job, out))
+        elif operation == 'admission-control':
+            result.update(_module('cad_verify_v4_family_live').native_admission(job['control'], out))
+        elif operation == 'render-evidence':
+            result.update(_module('cad_verify_v4_render').render(job, out))
         elif operation == 'prepare-step':
             inputs = _module('cad_verify_v4_inputs')
             packet = inputs.inspect_step(job['manifest'], job['asset_id'], job['recipe'], out)

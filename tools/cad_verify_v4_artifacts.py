@@ -79,9 +79,8 @@ def _python_value(node):
     return json.loads(value, parse_constant=lambda _: (_ for _ in ()).throw(ValueError('native_nonfinite_state')))
 
 
-def _guard_archive(native, extensions, allowed_files):
-    """Reject undeclared Python restoration and external document/file reads."""
-    s1 = _module('cad_verify_v4_s1')
+def _archive_root(native):
+    """Read only the bounded data-only document header from actual saved bytes."""
     with zipfile.ZipFile(native) as archive:
         names = archive.namelist()
         if len(names) != len(set(names)) or 'Document.xml' not in names:
@@ -96,14 +95,33 @@ def _guard_archive(native, extensions, allowed_files):
         if info.file_size > 64 * 1024 * 1024:
             raise ValueError('native_document_xml_resource_limit')
         root = ET.fromstring(archive.read(info))
+    return root
+
+
+def _serialized_modules(root):
     required = set()
     for node in root.iter('Python'):
         _python_value(node)
         module, cls = node.get('module'), node.get('class')
         if module or cls:
-            if not module or not cls or not cls.isidentifier() or cls.startswith('__') or module not in extensions:
+            if not module or not cls or not cls.isidentifier() or cls.startswith('__'):
                 raise ValueError('native_undeclared_python_dependency')
             required.add(module)
+    return required
+
+
+def restoration_modules(native):
+    """Exact serialized restoration dependencies; ordinary native files yield []."""
+    return sorted(_serialized_modules(_archive_root(native)))
+
+
+def _guard_archive(native, extensions, allowed_files):
+    """Reject undeclared Python restoration and external document/file reads."""
+    s1 = _module('cad_verify_v4_s1')
+    root = _archive_root(native)
+    required = _serialized_modules(root)
+    if required - set(extensions):
+        raise ValueError('native_undeclared_python_dependency')
     if required != set(extensions):
         raise ValueError('native_unused_python_dependency')
     for node in root.iter('Property'):
@@ -371,6 +389,61 @@ def operative(App, doc, body, supplied, *, expected_solids=1):
     return {'status': 'PASS' if editable else 'FAIL' if records else 'UNVERIFIED', 'probes': records}, editable
 
 
+def execution_manifest_record(execution):
+    """Produce a worker-bound authority record only for an actual typed scope."""
+    trials = _module('cad_verify_v4_trials')
+    if isinstance(execution, trials.PlanExecution):
+        session = execution.session
+    elif isinstance(execution, trials.TrialSession):
+        session = execution
+    else:
+        raise ValueError('neutral_checker_authorized_execution_scope_required')
+    if not isinstance(session, trials.TrialSession):
+        raise ValueError('neutral_checker_authorized_session_required')
+    path = _module('cad_verify_v4_s1').safe_path(session.manifest_path, regular=True)
+    return dict(path=str(path), sha256=_module('cad_verify_v4_ledger').file_sha(path),
+                bytes=path.stat().st_size)
+
+
+def authorized_native_inputs(job, paths, input_manifest):
+    """Admit bound data checking, never a model allowance or a CLI bypass."""
+    record = job.get('execution_manifest')
+    if record is None:
+        if input_manifest.get('evidence_mode') != 'independent_dev':
+            raise ValueError('neutral_checker_independent_dev_only')
+        return None
+    if (not isinstance(record, dict) or set(record) != {'path', 'sha256', 'bytes'}
+            or not Path(record['path']).is_absolute()):
+        raise ValueError('neutral_checker_execution_manifest_record')
+    path = _file(record, ROOT)
+    ledger, trials = _module('cad_verify_v4_ledger'), _module('cad_verify_v4_trials')
+    header = ledger.read_json(path)
+    if header.get('evidence_mode') == 'unit_mock':
+        frozen, _ = trials.verify_trial(path, verifier=ledger.read_json, allow_mock=True)
+    else:
+        frozen, _ = trials.verify_trial(path)
+    claim = trials.verify_execution_claim(path, frozen)
+    registration = frozen['registration_data']
+    actual = {key: dict(sha256=ledger.file_sha(paths[key]), bytes=paths[key].stat().st_size)
+              for key in ('manifest', 'prepared', 'card', 'context')}
+    names = dict(manifest='input_manifest', prepared='prepared', card='card', context='context')
+    matching = []
+    for entry in registration.get('entries', []) + registration.get('pairs', []):
+        if entry.get('profile') != job.get('profile', 'c-s1') or not all(field in entry for field in names.values()):
+            continue
+        if all(entry[field] in frozen['source_files']
+               and all(actual[key][part] == frozen['source_files'][entry[field]][part]
+                       for part in ('sha256', 'bytes')) for key, field in names.items()):
+            matching.append(entry['id'])
+    if not matching:
+        raise ValueError('neutral_checker_registered_input_tuple_required')
+    if input_manifest.get('evidence_mode') not in ('independent_dev', 'custodian'):
+        raise ValueError('neutral_checker_input_evidence_mode')
+    _file(record, ROOT)
+    return dict(execution_manifest=record, claim_file=claim['claim_file'], registered_entries=matching,
+                frozen_evidence_mode=frozen['evidence_mode'], model_authorization=False)
+
+
 def verify_native(App, job, out):
     """Score two submitted representations with a frozen checker-only context."""
     import Part
@@ -379,11 +452,12 @@ def verify_native(App, job, out):
         'cad_verify_v4_compile', 'cad_verify_v4_artifact_judges'))
     profile = job.get('profile', 'c-s1')
     paths = {key: s1.safe_path(job[key], regular=True) for key in ('manifest', 'prepared', 'card', 'context', 'bundle')}
+    admission = authorized_native_inputs(job, paths, ledger.read_json(paths['manifest']))
+    manifest = inputs.load_manifest(paths['manifest'])
+    if admission is None and manifest['evidence_mode'] != 'independent_dev':
+        raise ValueError('neutral_checker_independent_dev_only')
     context = metrics.validate_context(ledger.read_json(paths['context']), paths['manifest'],
                                       paths['prepared'], paths['card'], profile=profile)
-    manifest = inputs.load_manifest(paths['manifest'])
-    if manifest['evidence_mode'] != 'independent_dev':
-        raise ValueError('neutral_checker_independent_dev_only')
     prepared, card = ledger.read_json(paths['prepared']), ledger.read_json(paths['card'])
     expected_solids = metrics.expected_solid_count(context, prepared)
     bundle, files, extensions = load_bundle(paths['bundle'], profile=profile)
@@ -446,6 +520,9 @@ def verify_native(App, job, out):
     execution.verify(snapshot, root=ROOT, extension_paths=extensions.values())
     if ledger.file_sha(runtime_path) != runtime_record['sha256']:
         raise ValueError('neutral_execution_runtime_file_changed')
+    if admission is not None:
+        _file(admission['execution_manifest'], ROOT)
+        _file(admission['claim_file'], ROOT)
     statuses = [fcstd_judge['status'], step_judge['status']] + [row['status'] for row in roundtrip]
     status = 'FAIL' if 'FAIL' in statuses else 'PASS' if all(value == 'PASS' for value in statuses) else 'UNVERIFIED'
     return dict(schema='cad-harness.artifact-check-result.v4', profile=profile, family=context['family'],
@@ -455,26 +532,30 @@ def verify_native(App, job, out):
                 source_paths={key: str(value) for key,value in paths.items()}, code_bindings=code_bindings,
                 measurements={'fcstd': restored, 'step': imported}, native_evidence=evidence,
                 editability=editability, roundtrip=roundtrip,
-                judges={'fcstd': fcstd_judge, 'step': step_judge}, runtime_binding=runtime_record, live_calls=0)
+                judges={'fcstd': fcstd_judge, 'step': step_judge}, runtime_binding=runtime_record,
+                execution_admission=admission, live_calls=0)
 
 
 def check(manifest_path, prepared_path, card_path, context_path, bundle_path, run_dir, *,
-          profile='c-s1', timeout=300, process=None):
+          profile='c-s1', timeout=300, process=None, execution=None):
     """Closed-stdin native artifact check with full durable streams and ledger."""
     s1, ledger, metrics = (_module(n) for n in ('cad_verify_v4_s1', 'cad_verify_v4_ledger', 'cad_verify_v4_artifact_judges'))
-    manifest_path, _, _ = s1._manifest_inputs(manifest_path, prepared_path, profile=profile)
+    manifest_path, _, _ = s1._manifest_inputs(manifest_path, prepared_path, profile=profile, execution=execution)
     prepared_path, card_path, context_path, bundle_path = (s1.safe_path(p, regular=True)
         for p in (prepared_path, card_path, context_path, bundle_path))
     metrics.validate_context(ledger.read_json(context_path), manifest_path, prepared_path, card_path, profile=profile)
     load_bundle(bundle_path, profile=profile)
+    authority = {} if execution is None else {'execution_manifest': execution_manifest_record(execution)}
     out = ledger.new_directory(s1.safe_path(run_dir))
-    with ledger.Journal(out / 'ledger.jsonl', out.name, 'neutral-artifact-development') as journal:
+    mode = execution.mode if execution is not None else 'independent_dev'
+    with ledger.Journal(out / 'ledger.jsonl', out.name,
+                        'authorized-neutral-artifact' if execution is not None else 'neutral-artifact-development') as journal:
         tick = time.monotonic()
-        journal.append('run_started', profile=profile, evidence_mode='independent_dev', live_calls=0)
+        journal.append('run_started', profile=profile, evidence_mode=mode, live_calls=0)
         try:
             result = s1.native_work('artifact-verify', out / 'native', journal, timeout=timeout,
                 process=process, profile=profile, manifest=str(manifest_path), prepared=str(prepared_path),
-                card=str(card_path), context=str(context_path), bundle=str(bundle_path))
+                card=str(card_path), context=str(context_path), bundle=str(bundle_path), **authority)
         except BaseException as exc:
             journal.append('run_finished', wall_s=time.monotonic()-tick, active_s=time.monotonic()-tick,
                            stop_reason=str(exc), live_calls=0)
@@ -482,9 +563,13 @@ def check(manifest_path, prepared_path, card_path, context_path, bundle_path, ru
         journal.append('run_finished', wall_s=time.monotonic()-tick, active_s=time.monotonic()-tick,
                        stop_reason=None, live_calls=0)
     summary = dict(schema='cad-harness.artifact-check.v4', profile=profile,
-                   evidence_mode='independent_dev', status=result['status'],
+                   evidence_mode=mode, status=result['status'],
                    result_path=str(out / 'native/result.json'), result=result,
                    live_calls=0, live_cad_runs=0, native_work=1, holdout='not_run', pilot='not_run',
                    authorization=None, final_v4_ready=False)
+    if execution is not None:
+        session = getattr(execution, 'session', execution)
+        summary.update(summary_path=str(out / 'summary.json'), ledger_path=str(out / 'ledger.jsonl'),
+                       execution_manifest_sha256=ledger.file_sha(session.manifest_path))
     ledger.write_json(out / 'summary.json', summary)
     return summary

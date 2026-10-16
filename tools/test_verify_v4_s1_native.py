@@ -393,6 +393,77 @@ class S1NativeAcceptance(unittest.TestCase):
             origin_mm=e['origin_mm'],rotation_axis=e['rotation_axis'],rotation_deg=e['rotation_deg'])]
         return p
 
+    def engraved_fixture_plan(self, *, side=False):
+        entry=copy.deepcopy(self.engraving_plan()['engravings'][0])
+        entry.update(height_mm=2,depth_mm=.5,origin_mm=[4,0,1] if side else [4,5,6],
+            rotation_axis=[1,0,0] if side else [0,0,1],rotation_deg=90 if side else 0)
+        spec=dict(schema='cad-harness.build-spec.v1',family='rect_prism',units='mm',frame='world',
+            regions=[dict(bounds=[0,24,0,18,0,6])],pockets=[],holes=[],finish=None)
+        return dict(schema='cad-harness.plan.v4c',profile='c-s1',family='reference_fixture',
+            build_spec=spec,references=[],engravings=[entry])
+
+    def test_c3_upstream_native_pad_length_changes_final_engraved_solid_and_restores(self):
+        # A side recess leaves the top free to move: this is a valid stock-height
+        # edit, not merely a rejected edit or a changed intermediate Pad Shape.
+        body=self.build(self.engraved_fixture_plan(side=True))
+        saved=self.work/'side-engraved.FCStd';self.doc.saveAs(str(saved))
+        reopened=self.App.openDocument(str(saved));self.addCleanup(self.close_document,reopened.Name)
+        reopened.recompute()
+        output=reopened.getObject(body.Name);pad=reopened.getObject('RegionPad0')
+        feature=reopened.getObject('Engraving0')
+        self.compiler.check_document(reopened,output)
+        before=output.Shape.copy();old=float(pad.Length);removed=pad.Shape.Volume-before.Volume
+        self.assertGreater(removed,0)
+        try:
+            pad.Length=old+.25
+            reopened.recompute()
+            self.compiler.check_document(reopened,output)
+            after=output.Shape
+            self.assertAlmostEqual(after.BoundBox.ZMax,old+.25,places=6)
+            self.assertAlmostEqual(after.Volume-before.Volume,24*18*.25,places=6)
+            self.assertAlmostEqual(before.cut(after).Volume+after.cut(before).Volume,24*18*.25,places=6)
+            self.assertAlmostEqual(pad.Shape.Volume-after.Volume,removed,places=6)
+            self.assertLessEqual(feature.Shape.cut(after).Volume+after.cut(feature.Shape).Volume,1e-10)
+            step=self.work/'side-engraved-edited.step';after.exportStep(str(step))
+            imported=self.Part.Shape();imported.read(str(step))
+            self.assertTrue(imported.isValid());self.assertEqual(len(imported.Solids),1)
+            self.assertAlmostEqual(imported.Volume,after.Volume,places=6)
+            self.assertAlmostEqual(imported.BoundBox.ZMax,old+.25,places=6)
+        finally:
+            pad.Length=old
+            reopened.recompute()
+        self.compiler.check_document(reopened,output)
+        restored=output.Shape
+        self.assertLessEqual(before.cut(restored).Volume+restored.cut(before).Volume,1e-10)
+        self.assertAlmostEqual(pad.Shape.Volume-restored.Volume,removed,places=6)
+
+    def test_c3_rejected_upstream_pad_edit_clears_engraving_chain_and_public_body(self):
+        plan=self.engraved_fixture_plan()
+        second=copy.deepcopy(plan['engravings'][0]);second['origin_mm']=[13,5,6]
+        plan['engravings'].append(second)
+        body=self.build(plan);pad=self.doc.getObject('RegionPad0')
+        before=body.Shape.copy();old=float(pad.Length)
+        try:
+            # The engraving frame is explicit, not attached to the Pad top.
+            # Raising the stock buries both entries and must reject the edit.
+            pad.Length=old+.25
+            self.doc.recompute()
+            first=self.doc.getObject('Engraving0');last=self.doc.getObject('Engraving1')
+            self.assertEqual(first.BuildStatus,'failed:engraving_entry_not_exposed')
+            self.assertTrue(first.Shape.isNull())
+            self.assertTrue(last.BuildStatus.startswith('failed:'))
+            self.assertTrue(last.Shape.isNull())
+            self.assertTrue(body.Shape.isNull(),'public Body output must not retain a stale valid solid')
+            with self.assertRaises(ValueError):
+                self.compiler.check_document(self.doc,body)
+        finally:
+            pad.Length=old
+            self.doc.recompute()
+        self.compiler.check_document(self.doc,body)
+        restored=body.Shape
+        self.assertLessEqual(before.cut(restored).Volume+restored.cut(before).Volume,1e-10)
+
+
     def test_c3_actual_recess_identity_depth_and_negative_claim(self):
         plan=self.engraving_plan();body=self.build(plan)
         # Independent glyph topology: B and 8 have two counters each.

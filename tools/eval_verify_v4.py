@@ -10,6 +10,7 @@ if __package__:
     from . import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
     from . import cad_verify_v4_s1 as s1
     from . import cad_verify_v4_artifacts as artifacts, cad_verify_v4_integrated as integrated
+    from . import cad_verify_v4_trials as trials
     from .cad_verify_guard import CLARIFICATION_FIELDS, Stop
 else:
     import cad_agent, cad_verify_v3_agent, cad_verify_v4_agent as agent
@@ -17,6 +18,7 @@ else:
     import cad_verify_v4_freeze as freezing, cad_verify_v4_live as live, cad_verify_v4_pilot as pilot
     import cad_verify_v4_s1 as s1
     import cad_verify_v4_artifacts as artifacts, cad_verify_v4_integrated as integrated
+    import cad_verify_v4_trials as trials
     from cad_verify_guard import CLARIFICATION_FIELDS, Stop
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -283,13 +285,131 @@ def parser():
     command.add_argument("--run-dir", required=True)
     command = commands.add_parser("verify-integrated-lock", help="recheck HEAD, files, profiles, runtime and neutral proof; never authorize")
     command.add_argument("--manifest", required=True)
+    command = commands.add_parser("freeze-live-trial", help="separately authorize and bind a closed C-family, benchmark, pilot or judge registration")
+    command.add_argument("--registration", required=True)
+    command.add_argument("--authorization", required=True)
+    command.add_argument("--integrated-manifest", required=True)
+    command.add_argument("--omp", default="omp")
+    command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("verify-live-trial", help="verify a separate trial authorization and all frozen input identities; no generation")
+    command.add_argument("--manifest", required=True)
+    command.add_argument("--authorization", required=True)
+    for name in ("live-families", "live-benchmark", "live-pilot", "live-judge"):
+        command = commands.add_parser(name, help="execute only this phase's separately authorized frozen registration")
+        command.add_argument("--manifest", required=True)
+        command.add_argument("--authorization", required=True)
+        command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("pilot-user-verdict", help="append an externally supplied user verdict for the immutable first handover; no model call")
+    command.add_argument("--run-dir", required=True)
+    command.add_argument("--verdict", required=True)
+    command.add_argument("--evidence", required=True)
+    command = commands.add_parser("pilot-user-results", help="evaluate registered same-cycle gates including received user verdicts; no model call")
+    command.add_argument("--run-dir", required=True)
+    for name in ("pilot-begin-correction", "pilot-check-correction"):
+        command = commands.add_parser(name, help="bound elapsed human correction timer or same-card native check; never a model retake")
+        command.add_argument("--manifest", required=True)
+        command.add_argument("--authorization", required=True)
+        command.add_argument("--run-dir", required=True)
+        command.add_argument("--record-id", choices=("U1", "U2", "U3", "U4", "U5"), required=True)
+        if name == "pilot-check-correction":
+            command.add_argument("--artifact-bundle", required=True)
+            command.add_argument("--output-dir", required=True)
+    command = commands.add_parser("benchmark-user-verdict", help="durably append one external human adoption verdict per benchmark condition; no model call")
+    command.add_argument("--run-dir", required=True)
+    command.add_argument("--verdict", required=True)
+    command.add_argument("--evidence", required=True)
+    command = commands.add_parser("benchmark-user-results", help="seal a new dataset revision with external human verdicts; no model or CAD call")
+    command.add_argument("--run-dir", required=True)
+    command.add_argument("--output-dir", required=True)
+    command = commands.add_parser("benchmark-adapter-demo", help="actual same-card neutral native proof on two independent DEV construction methods; no model call")
+    command.add_argument("--profile", choices=("c-s1", "c-s2", "c-s3"), default="c-s1")
+    command.add_argument("--input-manifest", required=True)
+    command.add_argument("--prepared", required=True)
+    command.add_argument("--card", required=True)
+    command.add_argument("--context", required=True)
+    command.add_argument("--with-harness-bundle", required=True)
+    command.add_argument("--ordinary-bundle", required=True)
+    command.add_argument("--run-dir", required=True)
+    command = commands.add_parser("stage-bare-runtime", help="copy and hash-bind the pinned offline SDK without modifying its files or ACLs; no model/CAD call")
+    command.add_argument("--source-root", required=True)
+    command.add_argument("--run-dir", required=True)
     return result
 
 
-def main(argv=None):
+def main(argv=None, *, process=None, native_process=None, wall=None, sleep=None,
+         verifier=None, executable_resolver=None):
     args = parser().parse_args(argv)
     attempted_live = False
     try:
+        if args.command == "stage-bare-runtime":
+            if process is not None or native_process is not None or verifier is not None:
+                raise Stop("bare_runtime_staging_requires_actual_source_bytes")
+            out = ledger.new_directory(s1.safe_path(args.run_dir))
+            isolation = trials._module("cad_verify_v4_bare_windows")
+            try:
+                staged = isolation.stage_runtime(s1.safe_path(args.source_root), out / "runtime")
+            except isolation.BoundaryUnavailable as exc:
+                raise Stop(str(exc)) from exc
+            inventory_path, proof_path = out / "inventory.json", out / "staging-proof.json"
+            ledger.write_json(inventory_path, staged["inventory"])
+            ledger.write_json(proof_path, staged["proof"])
+            value = dict(status="PASS", evidence_mode="independent_dev", root=staged["root"],
+                         inventory=trials._record(inventory_path), staging_proof=trials._record(proof_path),
+                         live_calls=0, authorization=None)
+            print(json.dumps(value, ensure_ascii=True, allow_nan=False))
+            return 0
+        if args.command in ("freeze-live-trial", "verify-live-trial", "live-families", "live-benchmark",
+                            "live-pilot", "live-judge", "pilot-user-verdict", "pilot-user-results",
+                            "pilot-begin-correction", "pilot-check-correction",
+                            "benchmark-user-verdict", "benchmark-user-results", "benchmark-adapter-demo"):
+            if args.command == "freeze-live-trial":
+                value = trials.freeze_trial(args.registration, args.authorization, args.integrated_manifest,
+                                             args.run_dir, omp=args.omp, verifier=verifier,
+                                             executable_resolver=executable_resolver)
+            elif args.command == "verify-live-trial":
+                value, _ = trials.verify_trial(args.manifest, args.authorization, verifier=verifier,
+                                               allow_mock=process is not None)
+            elif args.command == "benchmark-adapter-demo":
+                if process is not None or native_process is not None or verifier is not None:
+                    raise Stop("benchmark_adapter_demo_requires_actual_independent_native_runtime")
+                value = trials._module("cad_verify_v4_benchmark").demonstrate_adapter(
+                    args.input_manifest, args.prepared, args.card, args.context,
+                    args.with_harness_bundle, args.ordinary_bundle, args.run_dir, profile=args.profile)
+            elif args.command in ("pilot-user-verdict", "pilot-user-results"):
+                module = trials._module("cad_verify_v4_pilot_live")
+                if args.command == "pilot-user-verdict":
+                    value = module.record_user_verdict(s1.safe_path(args.run_dir, regular=False),
+                              s1.safe_path(args.verdict), s1.safe_path(args.evidence))
+                else:
+                    value = module.user_results(s1.safe_path(args.run_dir, regular=False))
+            elif args.command in ("pilot-begin-correction", "pilot-check-correction"):
+                module = trials._module("cad_verify_v4_pilot_live")
+                if args.command == "pilot-begin-correction":
+                    value = module.begin_correction(args.manifest, args.authorization, args.run_dir,
+                              args.record_id, process=process, wall=wall, verifier=verifier)
+                else:
+                    value = module.check_correction(args.manifest, args.authorization, args.run_dir,
+                              args.record_id, s1.safe_path(args.artifact_bundle), s1.safe_path(args.output_dir, regular=False),
+                              process=process, native_process=native_process, wall=wall, verifier=verifier)
+            elif args.command in ("benchmark-user-verdict", "benchmark-user-results"):
+                module = trials._module("cad_verify_v4_benchmark")
+                if args.command == "benchmark-user-verdict":
+                    value = module.record_user_verdict(s1.safe_path(args.run_dir, regular=False),
+                              s1.safe_path(args.verdict), s1.safe_path(args.evidence))
+                else:
+                    value = module.user_results(s1.safe_path(args.run_dir, regular=False),
+                              s1.safe_path(args.output_dir, regular=False))
+            else:
+                phase = args.command.removeprefix("live-")
+                attempted_live = process is None
+                value = trials._module(trials.MODULES[phase]).run(args.manifest, args.authorization,
+                           args.run_dir, process=process, native_process=native_process,
+                           wall=wall, sleep=sleep, verifier=verifier)
+            print(json.dumps(value, ensure_ascii=True, allow_nan=False))
+            proof = value.get("proof")
+            status = proof.get("status") if isinstance(proof, dict) else value.get("status")
+            return 1 if str(status).upper() in ("INCOMPLETE", "FAIL", "UNVERIFIED", "ERROR", "FAILED",
+                                                "NOT_RUN", "EXPIRED", "INTERRUPTED") else 0
         if args.command == "freeze":
             if args.profile in ("c-s1", "c-s2", "c-s3"):
                 if args.authorization or args.holdout_commitment or args.quota_snapshot:

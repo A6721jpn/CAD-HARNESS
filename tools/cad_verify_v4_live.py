@@ -325,7 +325,7 @@ class LiveSkillAdapter(agent.SkillAdapter):
 
 class LiveTransport:
     def __init__(self, manifest, journal, out, request, skill, guard, *, root=ROOT,
-                 wall=None, process=stream_process, sleep=time.sleep):
+                 wall=None, process=stream_process, sleep=time.sleep, prompt_files=()):
         self.manifest, self.journal, self.out = manifest, journal, Path(out)
         self.request, self.skill, self.guard, self.root = request, skill, guard, Path(root)
         self.wall, self.process, self.sleep = wall or WallClock(), process, sleep
@@ -338,6 +338,7 @@ class LiveTransport:
         self.last_attempt = None
         self.recoveries = 0
         self.retry_parent = None
+        self.prompt_files = tuple(Path(path) for path in prompt_files)
 
     def wait_provider(self, row, budget=None, guard=None, logical_deadline=None, sleeper=None):
         tick = self.wall()
@@ -382,8 +383,9 @@ class LiveTransport:
                       "--no-tools", "--no-lsp", "--no-pty", "--no-extensions", "--no-skills",
                       "--no-rules", "--no-title", "--no-session", "--no-prewalk",
                       "--config", str(configuration), "--system-prompt", self.skill.decode("utf-8"), "@"+str(payload)]
+            actual.extend("@"+str(path) for path in self.prompt_files)
             cwd = Path(kwargs["cwd"])
-            content_hashes = {str(p): ledger.file_sha(p) for p in (payload, configuration)}
+            content_hashes = {str(p): ledger.file_sha(p) for p in (payload, configuration, *self.prompt_files)}
         else:
             actual = list(argv)
             if "--script" not in actual or "--out-dir" not in actual:
@@ -410,7 +412,8 @@ class LiveTransport:
             capture_dir.mkdir()
             submitted = dict(argv=actual, cwd=str(cwd), stdin="DEVNULL", files=content_hashes,
                              request_sha256=ledger.sha(self.request.encode("utf-8")),
-                             skill_sha256=ledger.sha(self.skill), model=self.manifest["generator"]["model"] if model else None)
+                             skill_sha256=ledger.sha(self.skill), model=self.manifest["generator"]["model"] if model else None,
+                             environment={"OMP_PROFILE": os.environ.get("OMP_PROFILE")})
             ledger.write_json(capture_dir/"submitted.json", submitted)
             base = dict(episode_id=self.episode, attempt_id=attempt_id, operation="model" if model else "cad",
                         route=self.route, stage=data.get("stage", "initial"), retained_segment=self.scored,

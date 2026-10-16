@@ -574,7 +574,9 @@ def operative_evidence(doc, body):
         if difference<=plan['kernel_tolerance_mm']**3:
             raise ValueError('direct_edit_parameter_inert')
         evidence = {'feature':feature.Name,'parameter':parameter,'before':before,'after':before+step,
-                    'operative':True,'symmetric_difference_mm3':difference,'restored':False}
+                    'operative':True,'symmetric_difference_mm3':difference,'restored':False,
+                    'artifact_probe':dict(kind='scalar',object=feature.Name,property=parameter,
+                                          delta=(before+step)-before)}
     finally:
         setattr(feature,parameter,before)
         feature.touch()

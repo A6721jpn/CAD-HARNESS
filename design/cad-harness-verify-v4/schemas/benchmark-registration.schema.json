@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cad-harness.benchmark-registration.v1",
+  "description": "Phase-specific operational index supplements the common live-registration envelope. Python validation enforces original identities, exact strata, balanced order, file provenance and signed caps. It does not guess the private family-roster layout.",
+  "type": "object",
+  "required": ["schema", "phase", "trial_id", "cycle_id", "source_root", "cohort", "files", "pairs", "order", "order_seed", "reservations", "caps", "bare_runtime", "clocks", "custody", "human_judges", "durability", "rubric", "protocol", "source_commitment", "adapter_demonstration", "isolation_demonstration"],
+  "properties": {
+    "schema": {"const": "cad-harness.live-registration.v1"}, "phase": {"const": "benchmark"},
+    "pairs": {"type": "array", "minItems": 20, "maxItems": 20, "items": {"type": "object", "required": ["id", "family", "profile", "stratum", "request", "input_manifest", "prepared", "card", "context", "pair_record", "same_card_both_arms", "independent_fresh", "original_assets", "preparation"], "properties": {"id": {"type": "string", "pattern": "^B(0[1-9]|1[0-9]|20)$"}, "same_card_both_arms": {"const": true}, "independent_fresh": {"const": true}, "original_assets": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["file", "name"], "properties": {"file": {"type": "string"}, "name": {"type": "string"}}}}, "original_images": {"type": "array", "items": {"type": "string"}}, "preparation": {"type": "object", "additionalProperties": false, "required": ["with_harness", "bare"], "properties": {"with_harness": {"$ref": "#/$defs/preparation"}, "bare": {"$ref": "#/$defs/preparation"}}}}}},
+    "order": {"type": "array", "minItems": 40, "maxItems": 40, "items": {"type": "object", "additionalProperties": false, "required": ["pair", "arm"], "properties": {"pair": {"type": "string"}, "arm": {"enum": ["with_harness", "bare"]}}}},
+    "order_seed": {"type": "string", "minLength": 1},
+    "reservations": {"const": {"with_harness:generation": 60, "bare:generation": 60, "benchmark:judge": 40}},
+    "caps": {"const": {"active_s_per_arm": 1200, "calls_per_arm": 3}},
+    "bare_runtime": {"type": "object", "additionalProperties": false, "required": ["root", "inventory", "staging_proof"], "properties": {"root": {"type": "string", "minLength": 1, "description": "Frozen absolute independent private SDK-copy path; installed canonical SDK remains source authority and receives no ACL changes."}, "inventory": {"type": "string"}, "staging_proof": {"type": "string", "description": "Frozen operational bare_runtime_staging_proof file ID; outside runtime root."}}},
+    "clocks": {"type": "object", "required": ["clock_id", "boot_id", "utc_reference", "resolution_s"]},
+    "custody": {"type": "object", "required": ["author", "reviewer", "custodian"]},
+    "human_judges": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "qualification_evidence"], "properties": {"id": {"type": "string", "minLength": 1}, "kind": {"const": "human"}, "qualification_evidence": {"type": "string"}}}},
+    "durability": {"type": "object", "required": ["store_id", "location", "backup_location", "retention", "versioning", "immutable", "custodian", "provisioning_evidence", "retrieval_proof"], "properties": {"immutable": {"const": true}}}
+  },
+  "$defs": {
+    "intervals": {"type": "array", "items": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}},
+    "custody_holds": {"type": "array", "description": "Only the final prospectively classified hold may have a null end; the launcher closes it at actual source release, never at a favorable preparation replay.", "items": {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"type": "number"}, {"type": ["number", "null"]}], "items": false}},
+    "preparation": {"type": "object", "required": ["preparation_intervals", "native_cad_intervals", "custody_hold_intervals", "recorded_once", "evidence", "clock_id", "active_s"], "properties": {"preparation_intervals": {"$ref": "#/$defs/intervals"}, "native_cad_intervals": {"$ref": "#/$defs/intervals"}, "custody_hold_intervals": {"$ref": "#/$defs/custody_holds"}, "recorded_once": {"const": true}, "evidence": {"type": "string"}, "clock_id": {"type": "string"}, "active_s": {"type": "number", "minimum": 0}}}
+  }
+}

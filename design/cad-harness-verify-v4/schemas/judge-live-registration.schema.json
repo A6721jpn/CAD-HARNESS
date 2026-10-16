@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Standalone one-shot judge operational index (also subject to the common live-registration envelope)",
+  "type": "object",
+  "required": ["schema", "phase", "trial_id", "cycle_id", "source_root", "files", "entries", "order", "judge", "budget"],
+  "properties": {
+    "schema": {"const": "cad-harness.live-registration.v1"},
+    "phase": {"const": "judge"},
+    "trial_id": {"type": "string", "minLength": 1},
+    "cycle_id": {"type": "string", "minLength": 1},
+    "source_root": {"type": "string", "minLength": 1},
+    "files": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "object", "required": ["path", "sha256", "bytes", "role"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "bytes": {"type": "integer", "minimum": 0}, "role": {"type": "string", "minLength": 1}}}},
+    "judge": {"const": {"model": "openai-codex/gpt-6-astra", "thinking": "max"}},
+    "budget": {"type": "object", "additionalProperties": false, "required": ["judge"], "properties": {"judge": {"type": "integer", "minimum": 1, "description": "Must exactly equal the unique frozen entry count; no rescore or borrowing."}}},
+    "order": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "entries": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "request", "deterministic", "rubric", "images"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "request": {"type": "string", "minLength": 1},
+          "deterministic": {"type": "string", "minLength": 1},
+          "rubric": {"type": "string", "minLength": 1},
+          "images": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}, "description": "Authenticated actual evidence with file role judge_image; required for every visual rubric."}
+        }
+      }
+    }
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"}}
+}

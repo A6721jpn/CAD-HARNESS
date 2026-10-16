@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "cad-harness.benchmark-user-verdict.v1",
+  "description": "External registered human's final per-condition observation, not a model-generated adoption substitute. Intake is once-only, hash-bound to the original immutable dataset, final artifacts and actual evidence; null critical observations remain unknown.",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema", "trial_id", "dataset_sha256", "condition", "artifact_bundle_sha256", "judge_id", "source", "status", "observed_at", "critical_dimension_error", "fabrication", "first_handover_reviewed", "evidence_sha256"],
+  "properties": {
+    "schema": {"const": "cad-harness.benchmark-user-verdict.v1"}, "trial_id": {"type": "string", "minLength": 1},
+    "dataset_sha256": {"$ref": "#/$defs/sha"}, "condition": {"type": "string", "pattern": "^B(0[1-9]|1[0-9]|20):(with_harness|bare)$"},
+    "artifact_bundle_sha256": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/sha"}]},
+    "judge_id": {"type": "string", "minLength": 1}, "source": {"const": "external_human"},
+    "status": {"enum": ["adopted", "refused", "UNVERIFIED"]}, "observed_at": {"type": "string", "format": "date-time"},
+    "critical_dimension_error": {"type": ["boolean", "null"]}, "fabrication": {"type": ["boolean", "null"]},
+    "first_handover_reviewed": {"type": ["boolean", "null"]}, "evidence_sha256": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -1,0 +1,21 @@
+.......................................................................sss...............sss..............{"id": "geometry-G5-r1", "completed": true, "passed": true, "stop_reason": null}
+{"id": "geometry-G1-r2", "completed": true, "passed": true, "stop_reason": null}
+.........{"id": "q-A5-r5", "completed": true, "passed": true, "stop_reason": null}
+{"id": "q-A6-r5", "completed": true, "passed": true, "stop_reason": null}
+{"id": "completion-C4-r1", "completed": true, "passed": true, "stop_reason": null}
+{"id": "completion-C5-r1", "completed": true, "passed": true, "stop_reason": null}
+{"id": "completion-C4-r2", "completed": true, "passed": true, "stop_reason": null}
+{"id": "completion-C5-r2", "completed": true, "passed": true, "stop_reason": null}
+{"id": "completion-C4-r3", "completed": true, "passed": true, "stop_reason": null}
+{"id": "completion-C5-r3", "completed": true, "passed": true, "stop_reason": null}
+{"id": "fault-F4-r1", "completed": true, "passed": true, "stop_reason": null}
+{"id": "fault-F5-r1", "completed": true, "passed": true, "stop_reason": null}
+{"id": "fault-F6-r1", "completed": true, "passed": true, "stop_reason": null}
+{"id": "fault-F4-r2", "completed": true, "passed": true, "stop_reason": null}
+{"id": "fault-F5-r2", "completed": true, "passed": true, "stop_reason": null}
+{"id": "fault-F6-r2", "completed": true, "passed": true, "stop_reason": null}
+.........................sssss.......ssssssssssss............................ssss............................ssssssssssssss............ssssssssssssss......ssssssss.............sssssssss....sssssssssssssss.......................s...................................................ss.......................................................................................s....................ssssssssssssssssssssssss........sssssssssssssssssssssssssssssssss...............sssssssssssssssssssss..ssssssssss.....................
+----------------------------------------------------------------------
+Ran 638 tests in 184.958s
+
+OK (skipped=179)

@@ -260,7 +260,7 @@ class PlanSkillAdapter(SkillAdapter):
         for item in values:
             if not isinstance(item, dict) or set(item) != {"asset_id", "face_id", "signature"}:
                 raise ValueError("selection_fields")
-            if self.prepared['profile'] in ('c-s2', 'c-s3') and item['asset_id'] not in self.inputs['assets']:
+            if item['asset_id'] not in self.inputs['assets']:
                 raise ValueError('selection_not_generator_asset')
             facts = self.prepared["assets"].get(item["asset_id"])
             matches = [face for face in (facts or {}).get("faces", [])

@@ -2,6 +2,9 @@
 
 OCCT numerical checks use 1e-6 mm probes and 1e-8 relative volume consistency;
 these are construction invariants, never judge-card acceptance tolerances.
+
+Rejected edits clear the complete frozen output chain, including a Body's cached
+Shape: FreeCAD rejects an empty Tip without clearing that public output itself.
 """
 import base64
 import hashlib
@@ -142,8 +145,24 @@ class _FrozenProxy:
             obj.Shape = _solid(shape, self.expected_solids(obj))
             obj.BuildStatus = 'ok'
         except Exception as exc:
-            obj.Shape = Part.Shape()
-            obj.BuildStatus = 'failed:' + str(exc)
+            # Recompute stops at a failed dependency. Descendants (and the Body's
+            # separate Shape cache) must not keep exposing the last valid solid.
+            pending = [obj]
+            cleared = set()
+            while pending:
+                failed = pending.pop()
+                if failed.Name in cleared:
+                    continue
+                cleared.add(failed.Name)
+                failed.Shape = Part.Shape()
+                failed.BuildStatus = ('failed:' + str(exc) if failed == obj else
+                                      'failed:upstream_feature:' + obj.Name)
+                for dependent in failed.InList:
+                    if dependent.TypeId == 'PartDesign::Body' and dependent.Tip == failed:
+                        dependent.Shape = Part.Shape()
+                    elif (type(dependent.Proxy if 'Proxy' in dependent.PropertiesList else None)
+                          is EngravingProxy and dependent.Base == failed):
+                        pending.append(dependent)
             raise
 
 
@@ -404,6 +423,13 @@ def operative_evidence(doc, body):
                 changed = float(old) + 0.01
             else:
                 changed = float(old) * 1.01
+            probe = dict(object=obj.Name, property=name)
+            if name == 'Text':
+                probe.update(kind='text', suffix=changed[len(old):])
+            elif name == 'Origin':
+                probe.update(kind='vector', delta_mm=list(changed - old))
+            else:
+                probe.update(kind='scalar', delta=float(changed) - float(old))
             try:
                 setattr(obj, name, changed)
                 doc.recompute()
@@ -422,7 +448,7 @@ def operative_evidence(doc, body):
                         if name in ('Width', 'Thickness'):
                             operative = operative and len(changed_indices) == len(before.Solids)
                 row = {'feature': obj.Name, 'property': name, 'operative': operative,
-                       'invalidated_on_rejected_edit': invalidated}
+                       'invalidated_on_rejected_edit': invalidated, 'artifact_probe': probe}
                 if len(before.Solids) > 1:
                     row['changed_solid_indices'] = changed_indices
                 evidence.append(row)

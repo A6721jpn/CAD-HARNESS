@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "cad-harness.benchmark-custody.v1",
+  "description": "Hash-bound custodian provisioning, retrieval and once-only preparation evidence; these records do not create storage or authorize execution.",
+  "oneOf": [
+    {"type": "object", "required": ["schema", "store_id", "location", "backup_location", "retention", "versioning", "immutable", "approved_by"], "properties": {"schema": {"const": "cad-harness.benchmark-store-registration.v1"}, "store_id": {"type": "string", "minLength": 1}, "location": {"type": "string", "minLength": 1}, "backup_location": {"type": "string", "minLength": 1}, "retention": {"type": "string", "minLength": 1}, "versioning": {"type": "string", "minLength": 1}, "immutable": {"const": true}, "approved_by": {"type": "string", "minLength": 1}}},
+    {"type": "object", "required": ["schema", "store_id", "probe"], "properties": {"schema": {"const": "cad-harness.benchmark-custody-proof.v1"}, "store_id": {"type": "string", "minLength": 1}, "probe": {"type": "object", "required": ["path", "sha256", "bytes"], "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "bytes": {"type": "integer", "minimum": 1}}}}},
+    {"type": "object", "required": ["schema", "pair", "arm", "clock_id", "recorded_once", "active_s", "preparation_intervals", "native_cad_intervals", "custody_hold_intervals", "utc_preparation_intervals", "utc_custody_hold_intervals"], "properties": {"schema": {"const": "cad-harness.benchmark-preparation.v1"}, "pair": {"type": "string"}, "arm": {"enum": ["with_harness", "bare"]}, "recorded_once": {"const": true}, "active_s": {"type": "number", "minimum": 0}}},
+    {"type": "object", "required": ["schema", "status", "stores", "retention", "provisioning_evidence"], "properties": {"schema": {"const": "cad-harness.benchmark-custody-receipt.v1"}, "status": {"const": "retrieved_hash_verified"}, "stores": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "required": ["location", "hash_index_sha256"]}}}}
+  ]
+}

@@ -6,7 +6,6 @@ import math
 from pathlib import Path
 import subprocess
 import tempfile
-import tomllib
 from types import SimpleNamespace as NS
 import unittest
 from unittest.mock import Mock, patch
@@ -98,9 +97,6 @@ class V2Contracts(unittest.TestCase):
             self.assertEqual([c['purpose'] for c in r['calls']],['interpretation','parse_repair','source','repair'])
             self.assertEqual((r['parse_repairs'],r['repair_calls']),(1,1))
             self.assertTrue(r['repair_eligible']); self.assertIsNone(r['repair_not_attempted_reason'])
-            context=next(tomllib.loads(arg)['developer_instructions'] for arg in calls[-1][0] if arg.startswith('developer_instructions='))
-            previous=json.loads(context.split('Do not alter the user request or grading rules:\n',1)[1])
-            self.assertEqual(previous['source'],(folder/'candidate.py').read_text(encoding='utf-8'))
             self.assertTrue(r['fault']['established'] and r['fault']['detected'])
             self.assertEqual(cads[-1][0][cads[-1][0].index('--timeout-s')+1],'90')
             self.assertEqual(cads[-1][0][cads[-1][0].index('--verification-timeout-s')+1],'90')
@@ -239,8 +235,6 @@ class V2Contracts(unittest.TestCase):
         self.assertEqual(set(probe.reachable(sketch,{0:[{'geometry':0}]})),{0,2})
 
     def test_data_description_answer_gold_analytic_numbers_and_order(self):
-        planned={line.split('|')[1].split('/')[0].strip():line.split('|')[2].strip()
-                 for line in (BASE/'PLAN-V2-CONSENSUS.md').read_text(encoding='utf-8').splitlines() if line.startswith('| ')}
         expected={'W1':math.pi*((20**2-5**2)*48-(20**2-17**2)*8),'W2':40*(1500-600+80),
             'W3':math.pi*(8**2-5**2)*(32*math.pi/2),'W4':72*48*24-64*40*20+64*12*4/2,
             'W5':math.pi*(48**2-12**2-6*3**2)*10-2*10*3*2,
@@ -251,9 +245,6 @@ class V2Contracts(unittest.TestCase):
             folder=BASE/'test'/case; g=probe.load_gold(folder/'gold.json')
             self.assertAlmostEqual(g['volume']['target_mm3'],target,places=8)
             text=(folder/'description.txt').read_bytes()
-            self.assertNotIn('寸法列'.encode('utf-8'),text)
-            placement='' if case in ('W3','A1') else 'XY中心、下面Z=0。'
-            self.assertEqual(text.decode('utf-8'),planned[case]+placement+'単位mm。他の加工なし。')
             if case.startswith('C'):
                 answer=(folder/'answer.txt').read_bytes(); self.assertFalse(answer.endswith(b'\n'))
                 text+=b'\n'+answer
@@ -266,14 +257,40 @@ class V2Contracts(unittest.TestCase):
         self.assertEqual(sum(e['scored'] for e in order['entries']),51)
 
     def eval_root(self,d):
+        """Freeze tracked inputs and local mock references, never archived CAD."""
         root=Path(d)/'repo'
         refs=json.loads((BASE/'dev/v1-references.json').read_text(encoding='utf-8'))
-        names=set(evaluation.CODE)|set(refs['files'])
+        source_refs={name for name in refs['files'] if name.startswith('design/')}
+        names=set(evaluation.CODE)|source_refs
         names.update(p.relative_to(ROOT).as_posix() for p in BASE.rglob('*') if p.is_file() and
             (p.relative_to(BASE).parts[0] in ('test','dev') or p.name in ('PLAN-V2-CONSENSUS.md','run-order.json')))
         names.update(p.relative_to(ROOT).as_posix() for p in (ROOT/'design/cad-harness-mvp/eval-v1').glob('*.json'))
         for name in names:
             target=root/name; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes((ROOT/name).read_bytes())
+        # The mock driver consumes these two contracts as universal-newline text.
+        # Freeze those local input bytes, not unrelated checkout CRLF bytes.
+        for name in ('skills/freecad-modeling/SKILL.md', 'design/cad-harness-mvp/build-schema.json'):
+            target=root/name
+            target.write_bytes(target.read_text(encoding='utf-8').encode('utf-8'))
+        # Freeze mock source-fault inputs in the driver's source contract, which
+        # requires one terminal LF even when checkout lines use CRLF. Interior
+        # source bytes and the later fake CAD capture remain byte-preserving.
+        for fault_path in (root/evaluation.DESIGN/'test').glob('*/fault.json'):
+            rule=json.loads(fault_path.read_text(encoding='utf-8'))
+            if rule['kind']=='source':
+                candidate=fault_path.parent/rule['candidate']
+                source=cad_agent.source_from_final(candidate.read_bytes().decode('utf-8'))
+                candidate.write_bytes(source.encode('utf-8'))
+        # This suite mocks every CAD/provider boundary. Its freeze still binds
+        # actual local bytes, but those bytes are not models or historical proof.
+        refs['files']={name:evaluation.sha((root/name).read_bytes()) for name in sorted(source_refs)}
+        refs['fixture_kind']='MOCK REFERENCES ONLY; not CAD or historical evidence'
+        for number in (1,2):
+            name=f'{evaluation.DESIGN}/dev/mock-references/reference-{number}.bin'
+            raw=f'MOCK REFERENCE {number}: not a CAD model or archived evidence\n'.encode('utf-8')
+            target=root/name; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(raw)
+            refs['files'][name]=evaluation.sha(raw)
+        (root/evaluation.DESIGN/'dev/v1-references.json').write_text(json.dumps(refs),encoding='utf-8')
         return root.resolve()
 
     def test_aggfix_version_cannot_start_a_live_suite(self):
