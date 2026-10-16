@@ -145,3 +145,50 @@ Directory: `C:\dev\v4-holdout-private\pilot-v3\`. Staging used for the CLI was d
 | native.stderr.bin | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 | native.stdout.bin | 935 | `4772d6ad712c64f930992fb5c885c35f6a8f735476f2c716d6b495e3c6167460` |
 | summary.json | 1488 | `af756d0461704760f9c4547c93d597449d394333695c199b4e88cb8a05f871ea` |
+
+## Pilot v4 (cycle 3)
+
+One image-to-contour invocation, after the cycle-3 C2 cohort was recorded in `holdout-families-commitment.md`. The cycle-3 recipe file was not edited. Zero model generation calls. No second attempt.
+
+## Recipe
+
+- Recipe file: `design/cad-harness-verify-v4/c2-production-recipe-cycle3.json`
+- File SHA-256: `af0a2e13ff292404684a43e1227c3f3bfda327c72ffcdb24004c05cbd41a4934`
+- Bytes: 928
+- Foreground: alpha channel, polarity light, threshold 128. Alpha policy `ignore`.
+- Scale: `canonical_height_mm` 50.0, origin `[0.0, 0.0]`. Curve fit `source_bounded_biarc_v2`. Simplify not allowed. Rounding not allowed.
+- Topology: components preserved, holes preserved, islands preserved. Foreground 4-connected, background 8-connected, pinch `remove_locally`.
+- The same PNG bytes as the pilot-v1 input were used. SHA-256 `cff917e0b7e317eff88977aafea0379a99522e3ab120b36b7d73ee5626bfdd3b`, 39139 bytes. `evidence_mode` was `independent_dev`. The file SHA-256 was the same before and after the run. The recipe SHA-256 was the same before and after the run.
+
+## CLI result
+
+- Command: `tools/eval_verify_v4.py image-to-contour --profile c-s1 --asset-id logo --recipe c2-production-recipe-cycle3.json`
+- Invocations: 1. Exit code 0.
+- Status: `PASS`. No error.
+- Software: FreeCAD 1.1.4 (`4fd3bf320d9566a27e60069fc8387448aaa3a094`), worker Python 3.11.14. Pillow 12.0.0, NumPy 1.26.4, Shapely 2.1.2. Document closed. `gui_up` 0.
+- `live_calls` 0. `live_cad_runs` 0. Native preparation work: 1.
+- Piece count: 2. Source topology: 2 components and 0 holes.
+- Contour SHA-256: `51f70f5bb2c6ced520e22daf00201707ca15ba0885b04f12c870ad7f3d46d498`. `native/contour.json`, 701200 bytes.
+- Mask SHA-256: `08ea89d26d1523b60dc61e19844d6a379b50ce09c6d0df68c2a7e30d091a3584`.
+- Registration: one scale, `scale_mm_per_pixel` 0.05000093219054269; image height 1000 pixels; y axis up; closed unit cells with centers at half-integer pixel coordinates. One origin is registered in the private contour and is not copied here.
+- Leg-1 versus C-D(a) mask-to-contour IoU >= 0.90 and Hausdorff <= 1.5 mm. Point IoU 0.9967485812614983. Certified IoU enclosure ratio 0.9940656161169514. Hausdorff upper 0.347902178443684 mm. Both meet those limits. The IoU figures were measured from this run's mask and published contour. They are not a second trace.
+- min-R report: 0.280754330499573 mm, from the contour report. It meets the 0.25 mm minimum. No CAD body was built, so CAD-output min-R was not measured.
+- Contour-to-CAD: not run. C-D(a) limits for that leg remain IoU >= 0.92 and Hausdorff <= 1.0 mm, unmeasured.
+
+No contour coordinates are in this file.
+
+## Private artifacts
+
+Directory: `C:\dev\v4-holdout-private\pilot-v4\`. Staging used for the CLI was deleted after these copies.
+
+| File | Bytes | SHA-256 |
+| --- | ---: | --- |
+| ledger.jsonl | 20781 | `19979b3d045d4382b851c754493522419e95b51aa9d9c1e009d0071e5e888f7a` |
+| native/contour.json | 701200 | `51f70f5bb2c6ced520e22daf00201707ca15ba0885b04f12c870ad7f3d46d498` |
+| native/prepared.json | 846087 | `b544628ba5a594fab744b50459a984555330ed0c26603c9064d011badd800290` |
+| native/result.json | 1693018 | `21cc974541cd19afc5ba27a50661996a7b29745114f979f30e1a95f0e4bc4e01` |
+| native.job.json | 1227 | `74ddf9405abc6980784126c76d819feb8ec33825f7d23492898bd654d8973c49` |
+| native.ready.json | 390 | `607a1e0e996052ba28c2d8d1f5dc604521bc8f3a28e2ae236acd74213327332e` |
+| native.stderr.bin | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| native.stdout.bin | 643125 | `68a1635b2d6c5e755ca18a7751f8b2464fc997eb27df8de6b34c53565949ac09` |
+| summary.json | 1838129 | `62b4b1c550de0a2276a6ae01bd4497892d99c029614a736a9b0f355d2b39773f` |
