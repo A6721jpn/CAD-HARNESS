@@ -76,3 +76,7 @@ Still open (not answered): the U1 tape location; the U2 "minimal concave-face co
 
 ## USER 2026-10-14 22:08 JST - Grok effort
 - Grok always runs at High effort. v4grok stays on native Grok Build, model grok-4.7, effort high, on every restart (launch: grok -m grok-4.7 --cwd C:\dev\CAD-HARNESS-herdr in w8:p2; confirm the footer shows "Grok 4.7 (high)").
+
+## USER 2026-10-16 19:51 JST - U5 separate pieces
+- U5's separate logo pieces stay as separate parts (separate solids in one output). No bridges and no backing plate. This confirms C-R6.
+

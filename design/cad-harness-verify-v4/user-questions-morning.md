@@ -2,7 +2,6 @@
 
 ## Not freeze-blocking
 
-- U5: the logo is made of several separate pieces. It is currently handled as separate pieces, each cut to the logo shape and output together, with nothing joining them. Would you prefer bridges or a backing plate instead? (Not blocking; the default proceeds.)
 
 ## Critical values
 
@@ -12,3 +11,6 @@ Already answered: U1/U2 play <= 0.5 mm per side and 3 degrees per side; U2 minim
 
 ## Notes for the user
 - U5 failed contour preparation twice (cycle 1: transparent PNG with a fixture recipe, then multiple pieces refused; cycle 2: curve fit could not meet its internal 1-pixel budget). No live budget was spent. Being fixed in cycle 3 with a generic stress suite and a fit tolerance tied to the lenient 'rough match' fidelity.
+
+## Resolved
+- 2026-10-16 19:51 JST: U5 bridges/backing question answered by the user: keep separate pieces, no bridges or backing (DECISIONS.md, C-R6).
