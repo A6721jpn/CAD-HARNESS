@@ -50,3 +50,12 @@ Stdin MUST be closed or redirected (for example `-RedirectStandardInput $env:Sys
 
 ## USER 2026-10-14 22:08 JST - Grok effort
 - Grok always runs at High effort. v4grok stays on native Grok Build, model grok-4.7, effort high, on every restart (launch: grok -m grok-4.7 --cwd C:\dev\CAD-HARNESS-herdr in w8:p2; confirm the footer shows "Grok 4.7 (high)").
+
+## 2026-10-16 20:07 JST - per-project omp pin (USER approved 20:04)
+- Global ~/.omp/agent/config.yml is deepseek-locked for another project (JP-LLM-LINT); left untouched.
+- Added C:\dev\CAD-HARNESS-herdr\.omp\config.yml (git-excluded via .git/info/exclude): modelRoleStorage project, providers openai-codex + google-antigravity, all roles and subagent overrides on openai-codex/gpt-6.1-sol:xhigh (astra:max for slow/vision/judge). Verified with omp config list from the worktree: no deepseek role.
+- CAD agents must be launched from C:\dev\CAD-HARNESS-herdr (omp reads .omp/ only in the launch cwd) and with explicit flags:
+  - v4codex (w8:p1): omp --resume 01a13890-bd0b-73f3-a174-88df8cd72d36 --model openai-codex/gpt-6.1-sol --thinking xhigh
+  - v4gemini (w8:p7): omp --model google-antigravity/gemini-3.8-flash
+  - v4grok (w8:p8): grok -m grok-4.7 --effort high --cwd C:\dev\CAD-HARNESS-herdr
+  - Astra judge: omp -p --no-session --model openai-codex/gpt-6-astra --thinking max
