@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepSeek Harness × FreeCAD — 二つ穴の板から100パーツまでのMVP計画</title>
+<style>
+:root{color-scheme:light;--bg:#f5f7fa;--paper:#fff;--ink:#17263b;--muted:#56677c;--line:#d9e1e9;--accent:#006e70;--soft:#eaf5f3;--warn:#fff5df}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Yu Gothic UI","Meiryo",system-ui,sans-serif;line-height:1.85;font-size:16px}main{max-width:1190px;margin:auto;padding:48px 32px 80px}header{padding:30px 0 34px;border-bottom:2px solid var(--ink)}.eyebrow{font-size:13px;letter-spacing:.13em;color:var(--accent);font-weight:700}h1{font-size:clamp(28px,4vw,44px);line-height:1.4;letter-spacing:-.035em;margin:14px 0}h2{font-size:26px;line-height:1.45;margin:0 0 20px}h3{font-size:19px;line-height:1.5;margin:28px 0 10px}p{margin:0 0 16px}a{color:var(--accent);text-underline-offset:3px}strong{font-weight:750}section{margin-top:44px}.meta,.note{color:var(--muted);font-size:14px}.summary,.callout,.warning{padding:24px 28px;border:1px solid var(--line);border-left:5px solid var(--accent);background:white;border-radius:8px;margin:22px 0}.summary{background:var(--soft)}.warning{background:var(--warn);border-left-color:#bc8021}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:white;border:1px solid var(--line);padding:22px;border-radius:8px}.card h3{margin-top:0}.card p:last-child,.callout p:last-child,.summary p:last-child,.warning p:last-child{margin-bottom:0}.tag{display:inline-block;border-radius:4px;background:#e6edf4;font-size:12px;padding:1px 7px;margin-right:7px;vertical-align:middle}.proposal{background:#def1eb}.cite{font-size:12px;white-space:nowrap;margin-left:4px}nav{background:white;border:1px solid var(--line);border-radius:8px;padding:16px 22px;margin-top:24px;display:flex;gap:12px 22px;flex-wrap:wrap;font-size:14px}table{border-collapse:collapse;width:100%;background:white;font-size:14px;margin:14px 0 10px}th,td{border:1px solid var(--line);padding:12px 14px;text-align:left;vertical-align:top}th{background:#edf2f6;font-weight:700}td:first-child{font-weight:650}tr{break-inside:avoid}.table-wrap{overflow-x:auto;margin:12px 0 22px}.table-wrap table{min-width:720px}code{font-family:Consolas,"Cascadia Code",monospace;font-size:.9em;overflow-wrap:anywhere}p code,li code,td code{background:#eaf0f5;padding:1px 4px;border-radius:3px}pre{background:#13243a;color:#eff6ff;padding:22px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.65;tab-size:2}pre code{font-size:inherit;overflow-wrap:normal}.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}.flow{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px}.flow svg{width:100%;height:auto}.flow text{font-family:"Yu Gothic UI","Meiryo",sans-serif}ul,ol{padding-left:1.5em;margin:12px 0 20px}li{padding:3px 0}.sources{padding-left:24px;font-size:13px}.sources li{margin-bottom:13px;overflow-wrap:anywhere}.sources small{display:block;color:var(--muted)}.metric{font-size:30px;font-weight:750;color:var(--accent)}.number{font-variant-numeric:tabular-nums}.checklist{border-left:3px solid var(--line);padding-left:22px}.footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:13px;color:var(--muted)}
+@media(max-width:760px){main{padding:20px 16px 50px}.grid,.split{grid-template-columns:1fr}h2{font-size:22px}.summary,.callout,.warning{padding:18px}pre{padding:15px;font-size:12px}}
+@media print{body{background:#fff;font-size:10pt}main{max-width:none;padding:0}nav{display:none}section{margin-top:24px}h2,h3{break-after:avoid}.summary,.callout,.card,.warning{break-inside:avoid}.table-wrap{overflow:visible}.table-wrap table{min-width:0}table{font-size:8pt}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:8pt;color:#000;background:#f1f4f6}.flow{break-inside:avoid}a{color:#004d50}}
+
+.flow{overflow-x:auto}.flow svg{display:block;min-width:760px}
+.flow svg:focus{outline:2px solid var(--accent)}
+@media print{.flow{overflow:visible}.flow svg{min-width:0}}
+</style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">DEEPSEEK HARNESS × FREECAD · STAGED MVP PLAN</div>
+<h1>二つ穴の板から、<br>100パーツのアセンブリまで</h1>
+<p>LLMは設計上の変更を指定し、FreeCAD側が履歴・拘束・組立関係を構築して検証する。</p>
+<div class="meta">2026年10月17日改訂｜Windows・ローカル単一利用者｜実装計画／CAD実行は未実施</div>
+</header>
+<section class="summary" id="summary">
+<h2>まず、人間の編集を引き継ぐ小さな往復を完成させる</h2>
+<p><strong>最初のMVP：</strong>二つ穴の板を生成 → 人間が長さ100を140 mmに変更 → LLMがその長さを保ち、穴径8・厚さ10 mmの派生を作る。寸法・式・Sketch/Pad/Pocketの履歴が残り、FreeCAD単独でも編集できる。</p>
+<p><strong>その後：</strong>画像入力、複雑な単品、取り付け基準、2〜5部品の組立、20部品の再利用、50部品の機構、100部品の継続編集へ進む。各段階で、寸法変更・保存再読込・人間との往復まで合格させる。</p>
+<p class="note">前提となる<a href="llm-native-cad-architecture-ja.html">LLM向けアーキテクチャ</a>を具体化した計画。先行手法は<a href="cad-harness-architecture-research-ja.html">調査レポート</a>参照。従来の板専用ツール案を、共通ツール＋段階的に増やす設計操作へ統合した。</p>
+</section>
+<nav aria-label="目次"><a href="#roadmap">全体の10段階</a><a href="#scenario">最初の実演</a><a href="#architecture">最小構成</a><a href="#contract">LLMの入出力</a><a href="#tickets">着手タスク</a><a href="#native">板の履歴</a><a href="#assembly">組立への拡張</a><a href="#roundtrip">人間編集と保存</a><a href="#gates">100部品の合格条件</a><a href="#delivery">成果物・見積り</a><a href="#sources">根拠</a></nav>
+
+<section id="roadmap">
+<h2>1. 合格した能力を積み上げる、10段階のMVP</h2>
+<p>各段階は前段までの回帰試験を維持する。未解決の参照・保存・拘束問題を残したまま、部品数だけを増やさない。</p>
+<div class="flow">
+<svg viewBox="0 0 1040 290" role="img" aria-labelledby="road-title road-desc">
+<title id="road-title">単品から100パーツまでの段階的な開発</title>
+<desc id="road-desc">M0からM2で板の生成と人間編集の引き継ぎを完成。M3からM5で画像入力、複雑な単品、取り付け基準を追加。M6で5部品、M7で20部品、M8で50部品、M9で100部品の検証へ進む。</desc>
+<defs><marker id="road-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#62818a"/></marker></defs>
+<g text-anchor="middle" fill="#17263b">
+<rect x="10" y="25" width="300" height="95" rx="10" fill="#006e70"/>
+<text x="160" y="55" fill="white" font-size="17">M0–M2｜最初のMVP</text><text x="160" y="87" fill="white" font-size="21">板を作る → 人が変更 → 派生</text>
+<rect x="365" y="25" width="300" height="95" rx="10" fill="#eaf5f3" stroke="#006e70"/>
+<text x="515" y="55" font-size="17">M3–M5｜単品の能力拡張</text><text x="515" y="87" font-size="20">画像・複合形状・取り付け基準</text>
+<rect x="720" y="25" width="310" height="95" rx="10" fill="#edf2f6" stroke="#cdd9e3"/>
+<text x="875" y="55" font-size="17">M6–M9｜組立と継続編集</text><text x="875" y="87" font-size="23">5 → 20 → 50 → 100部品</text>
+<rect x="10" y="176" width="1020" height="85" rx="10" fill="#fff5df"/>
+<text x="520" y="207" font-size="19">全段階で同じ合格条件を持つ</text>
+<text x="520" y="239" font-size="17">ネイティブ履歴 ＋ 寸法変更の伝播 ＋ 保存再読込 ＋ 人間編集の保持 ＋ 失敗時の原本保全</text>
+</g><g stroke="#62818a" stroke-width="2" fill="none" marker-end="url(#road-arrow)"><path d="M310 73 H359"/><path d="M665 73 H714"/><path d="M875 120 V170"/></g>
+</svg></div>
+<div class="table-wrap"><table>
+<tr><th>段階・完成するもの</th><th>新しく実装する能力</th><th>次へ進む合格条件</th></tr>
+<tr><td>M0｜接続とAPI実証</td><td>DSH・FreeCADの版固定、JSON往復、画像返却、ライブ状態のコピー。将来のリスク確認として、標準Assemblyで2部品・固定ジョイントも試作する。</td><td>GUI内実行・未保存状態の複製・保存再読込を確認。Assemblyの作成／参照／solve／診断を実機で確認し、未解決点を台帳化。</td></tr>
+<tr><td>M1｜決定的な二つ穴の板</td><td>型付き仕様からSketch・Pad・Pocketを生成。値・式・拘束・形状を読み戻す。固定入力でCAD側を先に完成させる。</td><td>L/W/T/D/eを変更でき、穴の同径・対称・貫通を保持。不正入力を拒否し、再読込後も再生成できる。</td></tr>
+<tr><td>M2｜人間→LLMの派生<br><span class="tag proposal">最初のリリース</span></td><td>最新状態の取得、候補文書、寸法patch、別文書への採用、DSHの自然言語ループ、再送・中断復旧。</td><td>L100→人間L140→LLM D8/T10を完走。未保存編集を保持し、古い版からの変更・失敗候補を採用しない。</td></tr>
+<tr><td>M3｜絵から同じ板を作る</td><td>画像の寸法・穴・対称性をPlateSpecへ抽出。数値ごとに画像領域／ユーザー指定／仮定を記録し、未確定項目を質問。</td><td>正解付き10枚の手描き・寸法図で、確認後の仕様が一致。縮尺のない絵から実寸を捏造せず、生成後もM2の往復が通る。</td></tr>
+<tr><td>M4｜複雑な単品</td><td>溝・ポケット、回転体、穴列、ミラー、リブ、面取り・フィレット。操作ごとに対応範囲と編集テストを追加。</td><td>L字ブラケット、段付き軸、フランジ、リブ付きハウジング、取付板の5系統で履歴追加と派生を実演。各系統10件の寸法変更と不正変更を検証。</td></tr>
+<tr><td>M5｜組立に使える部品</td><td>名前付きの取り付け基準＝port、局所座標系、接続条件、共有寸法の一方向依存。対応済みfeatureへの人間編集の取り込み。</td><td>穴数変更・長さ変更・仕上げ追加後もportが同じ設計上の場所を指す。消滅・曖昧な参照を検出し、別面へ黙って付け替えない。</td></tr>
+<tr><td>M6｜2〜5部品の組立</td><td>標準Assembly、配置、基準部品の固定、port間の固定ジョイント。別fixtureで回転／直動の1自由度も導入。</td><td>板＋2ブラケット＋2ピン＝5部品。人間が取付間隔を変え、LLMがブラケットを派生しても接続を保持。剛体0自由度／機構1自由度を区別。</td></tr>
+<tr><td>M7｜10〜20部品・部分組立</td><td>外部ファイル、再利用リンク、部品定義と配置の分離、サブアセンブリ、全体寸法の共有、依存ファイル一式の版管理。</td><td>20部品・2階層の治具で、共通部品の全体更新と1個だけの派生を実演。別フォルダでも参照が解決し、人間の子部品編集も保持。</td></tr>
+<tr><td>M8｜50部品・可動構造</td><td>影響範囲の再計算、変更部分の観測、干渉検査、可動域の姿勢試験、専用CADプロセスと中断復旧。</td><td>50部品のスライド治具で寸法・部品交換・移動を反復。閉ループ機構は別の四節リンクfixtureで確認してから対応表へ追加。</td></tr>
+<tr><td>M9｜100部品の継続編集<br><span class="tag proposal">目標リリース</span></td><td>混成・再利用中心・異種部品中心の負荷試験、長い編集履歴、故障注入、配布・復元・性能計測。</td><td><a href="#gates">最終合格表</a>を全て通す。100部品で生成・人間編集・LLM派生・再読込を繰り返せる対応範囲を明記して出荷。</td></tr>
+</table></div>
+<p><strong>「100部品」は末端の実配置数。</strong>ボルト・ナット・ワッシャーも数え、配列は展開数で数える。サブアセンブリの箱は二重計上しない。「固有の部品定義数」も別に記録し、1種類を100個配置するだけでは最終合格にしない。</p>
+<p class="note">まず機械系の板・ブラケット・軸・ハウジング・簡略化した締結部品、剛体組立と検証済み機構を対象にする。任意の自由曲面・板金展開・複雑な歯面接触まで一度に対応させず、以後は同じ方式で対応操作と試験を追加する。</p>
+<p><strong>M4内の順番：</strong>①ポケット・溝 → ②回転体 → ③穴列・ミラー → ④リブ → ⑤面取り・フィレット。各操作を一つずつreleaseし、画像からの仕様抽出も5系統へ拡張する。仕上げ処理は基本形状と取り付け基準が確定してから追加する。</p>
+</section>
+
+<section id="scenario">
+<h2>2. 最初の実演は、この4操作で固定する</h2>
+<div class="table-wrap"><table>
+<tr><th>操作</th><th>FreeCADで確認する結果（単位：mm）</th><th>保存する証拠</th></tr>
+<tr><td>①「二つ穴の板を作って」</td><td>L=100、W=40、T=8、D=6、e=15。穴ピッチP=70。</td><td>初版FCStd、仕様、履歴、実測、上面・等角図。</td></tr>
+<tr><td>② 人間がLを140へ変更</td><td>P=110に追従。W/T/D/eは維持。セル編集を確定し、未保存のままでも次へ進める。</td><td>ライブ文書のsnapshotと差分。古いL=100を基準にしない。</td></tr>
+<tr><td>③「今の長さと端余白を保ち、穴径8・厚さ10の派生を」</td><td>L=140、W=40、T=10、D=8、e=15、P=110。穴中心x=±55、y=0。</td><td>r2を親とする別の派生FCStd。変更はD/Tのみ。</td></tr>
+<tr><td>④ DSHを停止し、派生を再読込</td><td>人間がLを160へ変更するとP=130になる。Sketch・Pad・Pocketと式が生きている。</td><td>再読込・再生成の結果。ハーネスなしでも編集可能。</td></tr>
+</table></div>
+<p>eは<strong>端面から穴中心まで</strong>。独立変数はL/W/T/D/e、従属値は<code>P=L−2e</code>。M2のLLM編集はD/Tだけに限定し、人間は5寸法を編集できる。M4以降に寸法全体・関係変更・feature追加へ広げる。</p>
+</section>
+
+<section id="architecture">
+<h2>3. 最小構成でも、LLM向けの設計操作を境界にする</h2>
+<div class="flow">
+<svg viewBox="0 0 1040 350" role="img" aria-labelledby="arch-title arch-desc">
+<title id="arch-title">DeepSeek HarnessとFreeCADの責務分担</title>
+<desc id="arch-desc">LLMは対象、変更、保持条件を送り、CADサービスが最新状態を取り込み、候補でネイティブ履歴へ展開して検証する。実測、差分、参照、診断、画像を返し、合格候補を派生として保存する。</desc>
+<defs><marker id="arch-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#62818a"/></marker></defs>
+<g fill="#17263b" text-anchor="middle">
+<rect x="10" y="25" width="260" height="125" rx="10" fill="#006e70"/>
+<text x="140" y="60" font-size="22" fill="white">DSH ＋ LLM</text><text x="140" y="94" font-size="17" fill="white">対象・変更・保持条件を指定</text><text x="140" y="125" font-size="16" fill="white">「Lは保ち、穴径を8へ」</text>
+<rect x="345" y="25" width="330" height="125" rx="10" fill="#eaf5f3" stroke="#006e70"/>
+<text x="510" y="60" font-size="22">CADサービス（Python）</text><text x="510" y="94" font-size="17">最新状態 → 意味ID → 履歴へ展開</text><text x="510" y="125" font-size="16">候補内で変更・検証・版管理</text>
+<rect x="750" y="25" width="280" height="125" rx="10" fill="#edf2f6" stroke="#cdd9e3"/>
+<text x="890" y="60" font-size="22">FreeCAD</text><text x="890" y="94" font-size="17">拘束・形状・Assemblyを計算</text><text x="890" y="125" font-size="16">ネイティブの編集履歴を保持</text>
+<rect x="10" y="215" width="665" height="105" rx="10" fill="#edf2f6"/>
+<text x="342" y="250" font-size="21">LLMへ返す：同じ版の観測パケット</text><text x="342" y="284" font-size="17">現在値・実測・設計関係・差分・エラー・必要な画像</text>
+<rect x="750" y="215" width="280" height="105" rx="10" fill="#fff5df"/>
+<text x="890" y="250" font-size="21">人間がCADで編集</text><text x="890" y="284" font-size="16">値と履歴を読み直して取り込む</text>
+</g><g stroke="#62818a" stroke-width="2" fill="none" marker-end="url(#arch-arrow)"><path d="M270 87 H339"/><path d="M675 87 H744"/><path d="M800 150 V185 H510 V209"/><path d="M140 215 V156"/><path d="M890 215 V156"/></g>
+</svg></div>
+<p><strong>接続：</strong>DSHの既存Web profileにTypeScriptプラグインを追加し、JSONのジョブフォルダを介してFreeCAD内のPythonブリッジへ渡す。要求は一時名で書き、同一ボリューム内のrename後に受け付ける。QTimerで読み、CAD操作はGUIスレッドで直列実行。文書IDを明示し、ActiveDocumentに依存しない。</p>
+<p><strong>役割：</strong>LLMは設計案と変更範囲を決める。CADサービスは意味IDを寸法・拘束・featureへ変換し、結果を実測して採否を判定する。会話履歴をモデルの正本にしない。DSHのloopは公開プラグイン拡張点で接続する。<a class="cite" href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/architecture.md">[1]</a></p>
+<p class="note">最初はJSON manifest＋FCStdで十分。M8では重い候補計算を専用FreeCADプロセスへ移すが、LLMに見せる契約は維持する。GUI・Python/Qt・保存APIの互換性をM0で実測する。</p>
+</section>
+
+<section id="contract">
+<h2>4. LLMが指定する操作と、CADから返す情報</h2>
+<p><span class="tag proposal">提案API</span>共通ツールは初期から固定し、利用可能な設計操作を増やす。以下は新規実装する仕様であり、FreeCAD標準APIの名称ではない。</p>
+<div class="table-wrap"><table>
+<tr><th>共通ツール</th><th>契約</th></tr>
+<tr><td><code>cad.capabilities</code></td><td>対応操作・引数・編集範囲・版・検証能力を返す。</td></tr>
+<tr><td><code>cad.inspect</code></td><td>ライブ文書と依存文書を読み、最新revision・意味ID・人間変更・観測を返す。M6以降は対象部品／port／jointを絞り込める。</td></tr>
+<tr><td><code>cad.evaluate</code></td><td>base_revisionとopsを受け、候補内で実行。原本への直接反映は行わず、検証と差分を返す。</td></tr>
+<tr><td><code>cad.commit</code></td><td>最新基準版・候補hash・必須検証を再確認して採用。初期は<code>mode="branch"</code>で別の派生を作る。</td></tr>
+<tr><td><code>cad.job</code></td><td>request_idによる状態・結果再取得、取消し要求。タイムアウト後の二重作成を防ぐ。</td></tr>
+<tr><td><code>cad.probe</code>（M4から公開）</td><td>指定範囲の寸法変更・配置・姿勢を候補の複製で試験。必須の固定試験はM1からevaluate内で実行する。</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>段階</th><th>設計操作：LLMからの具体的な指定</th><th>CAD側の構築・検査</th></tr>
+<tr><td>M1–M2</td><td><code>create_body</code>：中心矩形100×40、厚さ8。<br><code>add_hole_group</code>：径6を2穴、対称・貫通・端余白15。<br><code>set_parameters</code>：既存のD/Tだけ変更。</td><td>拘束付きSketch、Pad、Pocket、5寸法とPの式。最初はこのテンプレートに限定。</td></tr>
+<tr><td>M4–M5</td><td><code>add_pocket / revolve_profile / pattern_feature / treat_edges</code>、<code>replace_relation</code>、<code>define_port</code>。例：端余白一定をピッチ一定へ切替。</td><td>履歴追加、駆動変数の置換、参照の一意性、編集後の取り付け基準の有効性。</td></tr>
+<tr><td>M6</td><td><code>instantiate</code>：部品版と配置ID。<br><code>ground</code>：基準部品。<br><code>connect_ports</code>：2つのport、fixed/revolute/slider、向き・offset・可動域。</td><td>リンク配置、標準Assembly joint、接続残差、想定自由度、干渉。</td></tr>
+<tr><td>M7–M9</td><td><code>update_definition</code>：共通部品を新版へ。<br><code>fork_definition</code>＋<code>replace_instance</code>：選んだ1個だけ派生。<br><code>create_subassembly</code>：部分組立をまとめる。</td><td>影響する配置一覧、外部参照の付替え、共有条件、BOM、依存ファイル全体の整合性。</td></tr>
+</table></div>
+<div class="split">
+<article class="card"><h3>M2：LLMが送る変更要求</h3>
+<pre><code>{
+  "document_id": "plate-work-01",
+  "base_revision": "r2-human-L140",
+  "request_id": "req-003",
+  "ops": [{
+    "op": "set_parameters",
+    "target": "plate.main",
+    "values": {
+      "hole_diameter": "8 mm",
+      "plate_thickness": "10 mm"
+    }
+  }],
+  "preserve": [
+    "plate_length", "plate_width",
+    "edge_offset", "hole_symmetry",
+    "through_holes"
+  ]
+}</code></pre>
+<p>保持条件はサービス側の契約でも強制する。LLMがpreserveを書き忘れても、L/W/eを変更できない。</p></article>
+<article class="card"><h3>CADが返す観測の仕様</h3>
+<p><strong>識別：</strong>revision、candidate_id、意味ID、native object対応表。</p>
+<p><strong>状態：</strong>L140/W40/T10/D8/e15、Pの式、独立・従属変数、変更前後。</p>
+<p><strong>実測：</strong>外形140×40×10、貫通穴2個、径8、中心±55、solid数。要求値とは別欄に格納。</p>
+<p><strong>検証：</strong>拘束状態、履歴エラー、保持条件、再読込、編集試験ごとのpass/fail/unknownと根拠。</p>
+<p><strong>視覚：</strong>同じrevisionの上面図・等角図。M6以降は全体概要と変更部・接続部の画像。</p>
+<p class="note">上記は期待結果。今回CADを実行して得た数値ではない。</p></article>
+</div>
+<p>エラーは<code>code / target / violated_condition / observed / allowed_actions</code>で返す。例：「右穴が端面に接触」「jointの参照先が消失」「子部品が基準版から変化」。M6以降は配置数、未接続部品、joint残差、干渉ペアも返し、全B-Repや100個分の履歴は毎回渡さない。</p>
+<p>DSHでは型付きJSONを正規の結果にし、<code>output.render</code>でテキストと画像へ変換する。<code>exec.signal</code>を取消し要求へ伝える。同じrequest_id・同じpayloadの再送は一回の実行に結び付け、返答消失後は既存jobを照会する。<a class="cite" href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/cookbook/adding-a-tool.md">[2]</a></p>
+</section>
+
+<section id="tickets">
+<h2>5. 最初のMVPを実装する順番</h2>
+<p>A0〜A7を終えた時点がM2リリース。小さな実装単位と完了証拠を先に固定する。</p>
+<div class="table-wrap"><table>
+<tr><th>タスク／依存</th><th>作るもの</th><th>完了の証拠</th></tr>
+<tr><td>A0｜環境実証</td><td>専用DSH profile、版情報、echo→JSON＋画像の往復、保存API実験。Assemblyの2部品テスト。</td><td><code>compatibility.json</code>に実機結果を記録。状態コピーで原本の保存先と編集状態が保たれる。</td></tr>
+<tr><td>A1｜型・識別子<br>依存：A0</td><td>PlateSpec、Op、Observation、Revision、Job schema。単位、未知キー拒否、意味ID。</td><td>正常値・単位違い・余分な操作・不正形状をfixtureで判別。</td></tr>
+<tr><td>A2｜板の生成<br>依存：A1</td><td>固定仕様→ネイティブ履歴。5寸法と式。生成器と独立したB-Rep計測。</td><td>初期板、L140、L160が期待寸法へ変化。DSHなしで再読込・編集可能。</td></tr>
+<tr><td>A3｜状態の取込み<br>依存：A2</td><td>inspect、構造照合、未保存snapshot、revision fingerprint。</td><td>人間のL140を読み、式変更やfeature削除を検出。ラベル変更は許容。</td></tr>
+<tr><td>A4｜候補と派生<br>依存：A3</td><td>evaluate、検証、branch commit、manifest、二重実行防止、再開処理。</td><td>固定patchでD8/T10を実現。古い版・保存失敗・返答消失から回復。</td></tr>
+<tr><td>A5｜DSH接続<br>依存：A4</td><td>共通5ツール、操作制限、JSON＋画像render、job待機・取消し。</td><td>自然言語からinspect→evaluate→commitを通す。不合格を成功と報告しない。</td></tr>
+<tr><td>A6｜試験を固定<br>依存：A5</td><td>正常10ケース、不正5ケース、障害6ケース。仕様と実測を比較する検証器。</td><td>正常は全項目pass、不正は正しい理由で拒否。unknownは合格にしない。</td></tr>
+<tr><td>A7｜実演と引渡し<br>依存：A6</td><td>自然言語往復を新規セッションで3回、起動・編集・復旧手順、結果一式。</td><td>元板／人間編集版／派生版のFCStd、ログ、画像、チェック結果を追試可能。</td></tr>
+</table></div>
+<p class="note">障害6ケース：編集中・古いrevision・未対応native編集・重複要求・保存途中の停止・完了返答の消失。M0のAssembly実証は小さなリスク確認であり、組立機能の完成判定はM6で行う。</p>
+</section>
+
+<section id="native">
+<h2>6. 板は、FreeCADに自然な履歴として残す</h2>
+<div class="split">
+<article class="card"><h3>文書の中身</h3><pre><code>Document
+├─ Params（Spreadsheet：主要寸法）
+└─ Body（PartDesign::Body）
+   ├─ Origin
+   ├─ BaseSketch（拘束付き矩形）
+   ├─ BasePad（厚さT）
+   ├─ HoleSketch（同径・対称な2円）
+   └─ HolesCut（貫通Pocket）</code></pre><p>完成Shape一個に置き換えない。意味IDと人間向け表示名を分離する。</p></article>
+<article class="card"><h3>拘束と駆動寸法</h3><p>矩形は一致・水平垂直・原点対称とL/W。穴は中心同士の原点対称・同径・径D・左中心y=0・左中心x=−P/2。全要素Fixを使わず、独立した拘束で完全拘束する。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Sketcher_scripting.md">[4]</a></p><p>Spreadsheet aliasを名前付き拘束とPadへ式で接続。PはLとeの従属値。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Expressions.md">[5]</a></p></article>
+</div>
+<p>両SketchはXY基準、Padは+ZへT、Pocketはz=0から+Zへ貫通する構成を試験する。方向・Through allのenumは採用版で確認し、Face番号の変化に依存しない。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/PartDesign_Pocket.md">[6]</a></p>
+<p>5寸法のaliasは<code>plate_length / plate_width / plate_thickness / hole_diameter / edge_offset</code>、従属値は<code>hole_pitch</code>。値は単位付きで保持し、表示名は日本語でも、意味ID・native名との対応は変えない。</p>
+<p><strong>形状の合格：</strong>solid=1、外形L×W×T、実在する円筒面と開口から2つの貫通穴・径・中心を確認。体積は独立式<code>(L×W−2π(D/2)²)×T</code>とも照合する。式の値を読むだけで実測済みにしない。</p>
+<p><strong>初期試験範囲：</strong>L80〜180、W30〜80、T4〜16、D4〜12、e12〜25 mm。その範囲内でも<code>e&gt;D/2、W&gt;D、L−2e&gt;D</code>が必要。比較の初期許容差は長さ10<sup>−4</sup> mm、体積相対10<sup>−6</sup>を候補として実機で較正する。これは加工公差ではない。</p>
+</section>
+
+<section id="assembly">
+<h2>7. アセンブリでは「部品定義・配置・接続」を分ける</h2>
+<div class="flow">
+<svg viewBox="0 0 1040 455" role="img" aria-labelledby="asm-title asm-desc">
+<title id="asm-title">部品定義と配置を分離し、取り付け基準で接続する設計</title>
+<desc id="asm-desc">ブラケットの部品定義を左右の配置が共有し、板の左右のportへjointで接続する。共有定義の更新は両方へ伝わる。右だけの変更は定義を分岐し、右配置だけを置換する。</desc>
+<defs><marker id="asm-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#62818a"/></marker></defs>
+<g fill="#17263b" text-anchor="middle">
+<rect x="15" y="25" width="310" height="120" rx="10" fill="#eaf5f3" stroke="#006e70"/>
+<text x="170" y="60" font-size="22">板の部品定義 r2</text><text x="170" y="94" font-size="17">履歴・主要寸法</text><text x="170" y="123" font-size="16">ports：mount.left / mount.right</text>
+<rect x="585" y="25" width="425" height="120" rx="10" fill="#eaf5f3" stroke="#006e70"/>
+<text x="797" y="60" font-size="22">ブラケットの部品定義 r4</text><text x="797" y="94" font-size="17">一つの履歴を複数配置で共有</text><text x="797" y="123" font-size="16">port：mount.base</text>
+<rect x="15" y="215" width="310" height="100" rx="10" fill="#edf2f6"/>
+<text x="170" y="251" font-size="21">配置 plate-01</text><text x="170" y="283" font-size="16">基準として固定</text>
+<rect x="390" y="215" width="300" height="100" rx="10" fill="#edf2f6"/>
+<text x="540" y="251" font-size="21">配置 bracket-left</text><text x="540" y="283" font-size="16">左portへ固定joint</text>
+<rect x="735" y="215" width="290" height="100" rx="10" fill="#edf2f6"/>
+<text x="880" y="251" font-size="21">配置 bracket-right</text><text x="880" y="283" font-size="16">右portへ固定joint</text>
+<rect x="15" y="365" width="1010" height="70" rx="10" fill="#fff5df"/>
+<text x="520" y="393" font-size="17">両方を厚くする → 共通定義を新版へ更新</text>
+<text x="520" y="420" font-size="17">右だけ厚くする → 定義を分岐し、右の配置だけを置換</text>
+</g><g fill="none" stroke="#62818a" stroke-width="2" marker-end="url(#asm-arrow)"><path d="M170 145 V209"/><path d="M735 145 V180 H540 V209"/><path d="M870 145 V209"/><path d="M325 260 H384"/><path d="M170 315 V340 H880 V321"/></g>
+</svg></div>
+<div class="table-wrap"><table>
+<tr><th>データ</th><th>保持する内容</th><th>防ぐ失敗</th></tr>
+<tr><td>PartDefinition</td><td>asset_id、revision、FCStd、寸法・履歴、公開port。形状cacheは版ごと。</td><td>共有部品を変えたつもりがなくても全コピーが変わる。</td></tr>
+<tr><td>Occurrence</td><td>occurrence_id、親階層、定義版、配置姿勢。配列も末端を識別。</td><td>「右の1個」の変更が別の配置へ作用する。</td></tr>
+<tr><td>Port</td><td>意味ID、部品内の座標系、基準面／軸／穴、寸法式、接続条件、検証根拠。</td><td>面番号の変化で別の面へ取り付く。</td></tr>
+<tr><td>Joint</td><td>両端の配置＋port、種類、offset、可動域、残差、対応するnative joint。</td><td>見た目だけ合っていて、寸法変更で離れる。</td></tr>
+<tr><td>AssemblyRevision</td><td>依存する部品版一覧、外部参照、共有仕様、BOM、検証、親版、hash。</td><td>親だけ保存され、子部品が古い版や未保存状態になる。</td></tr>
+</table></div>
+
+<h3>標準Assemblyへ変換する</h3>
+<p>FreeCAD 1.1.3の公式ソースでは<code>Assembly::AssemblyObject</code>と<code>Assembly::JointGroup</code>の作成を確認できる。部品は<code>App::Link</code>、部分組立は<code>Assembly::AssemblyLink</code>を使う経路がある。これを初期候補とし、Assembly3/4などを混在させない。<a class="cite" href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/CommandCreateAssembly.py">[8]</a><a class="cite" href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/CommandInsertLink.py">[11]</a></p>
+<p>jointは標準Assemblyの実装を使う。意味上のportを、nativeの参照と局所配置へ結び付ける。<strong>人間が寸法を変えた時も、FreeCAD単独で接続が追従すること</strong>をM5〜M6の条件にする。固定座標を保存しただけの配置では合格にしない。標準jointが使うFeaturePythonは許容し、独自ハーネス専用の形状生成オブジェクトへの依存は避ける。<a class="cite" href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/JointObject.py">[9]</a></p>
+<p>solveの成功だけでは、意図した拘束が十分かまでは分からない。固定忘れ・冗長・過拘束などの戻り値を解釈し、接続残差と想定自由度を別に調べる。全体の自由度を取得するAPIは未実証なので、取得できなければunknownとし、固定jointの接続解析・既知機構の解析・摂動試験を組み合わせて検証する。<a class="cite" href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/App/AssemblyObject.pyi">[10]</a></p>
+
+<h3>「100部品でも壊れにくい」ための設計ルール</h3>
+<ol>
+<li><strong>取り付け基準を安定させる：</strong>原点・datum・式で定義したportを優先。生成面を使う場合はfeatureの由来と幾何条件で一意性を検査する。トポロジー対策があっても、参照の意味が変わっていないか確認する。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Topological_naming_problem.md">[13]</a></li>
+<li><strong>寸法の依存は一方向：</strong>共有Spec → 部品寸法 → port → 配置・joint。M7では独立した共有仕様FCStdの寸法をnativeの式で参照する方式を検証し、JSONだけで関係を保持しない。兄弟部品が相互に寸法を決める構成は禁止。SubShapeBinderも版を固定した検証済み参照を一方向に接続する。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/PartDesign_SubShapeBinder.md">[14]</a></li>
+<li><strong>3種類の構造を混同しない：</strong>履歴・寸法依存は循環禁止、組立の親子関係も循環禁止。一方、jointの接続には四節リンクのような閉ループがあり得るため、機構として別の合格試験を置く。</li>
+<li><strong>共有と派生を明示：</strong>App::Linkで共通部品を再利用し、定義更新の影響先を列挙する。「この1個だけ」は定義を分岐して配置を置換。可変の作業ファイルを共有ライブラリの正本にしない。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Std_LinkMake.md">[12]</a></li>
+<li><strong>自由度は設計どおりに残す：</strong>接続された組立の基準部品を固定し、すべてをgroundして帳尻を合わせない。剛体組立は0、ヒンジやスライダは予定した1自由度。追加の浮遊・回転を検出する。</li>
+</ol>
+<p><strong>絵からの組立はM7で導入：</strong>まず分解図・ポンチ絵から部品一覧、共有寸法、接続候補を作り、各部品をM3〜M5の経路で生成する。部品数・裏側・締結方式が不明なら確認事項にする。一枚の絵から100部品分の非可視構造を確定した扱いにはしない。</p>
+</section>
+
+<section id="roundtrip">
+<h2>8. 人間編集の取り込みと、壊れない派生保存</h2>
+<ol>
+<li><strong>編集終了を確認：</strong>セル入力・Sketch編集が未確定なら<code>EDIT_IN_PROGRESS</code>。自動操作を開始せず、確定済みのライブ状態を読む。</li>
+<li><strong>対応範囲を照合：</strong>M2は5寸法・ラベル変更、M5から対応済みfeature、M7から対応済み配置・jointへ拡大。式の解除・未知featureなどは差分を示す。人間の変更を消して再生成しない。</li>
+<li><strong>最新状態を版にする：</strong>未保存変更もsnapshot化。元文書の保存先・dirty状態を保つ保存方法をM0で確認する。意味上のfingerprintで版を判定し、ファイルhashは破損検査に用いる。<a class="cite" href="https://freecad.github.io/SourceDoc/d8/d3e/classApp_1_1Document.html">[7]</a></li>
+<li><strong>候補を隔離：</strong>最新snapshotの履歴を複製し、指定箇所だけ変更。M7以降は変更部品・依存する親組立・参照先の版をmanifestで固定し、候補のリンク先を付け替える。元の可変ファイルへ参照を残さない。</li>
+<li><strong>依存一式で検証：</strong>子部品の未保存編集も含め、読取の前後とcommit前に全基準版を照合。全件が一貫していなければ<code>STALE_BASE</code>で再取得する。初期は自動の三者マージを行わない。</li>
+<li><strong>検証済みの版を公開：</strong>一時領域へFCStd・manifest・画像・検査結果を書き、全体を再読込してから公開記録を確定。応答はその後に返す。別フォルダへ一式を移し、元フォルダに頼らず参照が解決することも試験する。</li>
+</ol>
+<p><strong>複数ファイルを一つの保存操作で原子的に更新できるとは仮定しない。</strong>不変の部品版、段階的な書出し、最後の公開manifest、再開時のhash照合で回復可能にする。編集用作業文書と不変snapshotは分ける。</p>
+<p>jobは<code>queued → running → validated → committed</code>、または<code>failed / cancelled / outcome_unknown</code>。同じIDに違うpayloadを渡したら拒否する。取消し要求と取消し完了を区別し、重いrecomputeの即時停止は保証しない。M8の専用プロセスが停止しても、人間の作業中FreeCADは終了させない。</p>
+</section>
+
+<section id="gates">
+<h2>9. 「破綻なく」を、再現可能な合格条件にする</h2>
+<div class="callout"><p><strong>採用されたモデルは、形状・履歴・接続・保存の検査に合格していること。失敗・未判定の変更は採用せず、原本と復旧可能な状態を残すこと。</strong>これを全段階の不変条件とする。LLMの完遂率と、不正なモデルを採用しない整合性は別々に測る。</p></div>
+<div class="table-wrap"><table>
+<tr><th>検査軸</th><th>M9の合格条件（これから実施する試験）</th></tr>
+<tr><td>形状・履歴</td><td>全生成部品のB-Repが有効、意図したsolid数、recomputeエラーなし。主要寸法・拘束・feature履歴が保存され、定義した範囲で変更できる。</td></tr>
+<tr><td>参照・組立</td><td>全リンク先・port・jointが一意に解決。寸法変更後も接続残差が許容内。剛体・機構ごとの自由度条件を検証でき、不明なものを0と扱わない。</td></tr>
+<tr><td>干渉・可動域</td><td>AABBで候補対を絞り、B-Repの距離・交差体積で確認。面接触と体積干渉を区別。圧入等の例外はペア・理由・版付きで記録。1自由度の可動域は端点を含む25姿勢と既知の危険姿勢で試験。</td></tr>
+<tr><td>人間との継続編集</td><td>各100部品モデルで100回の混合編集（人間40／LLM60）、途中で10回の保存・終了・再読込。共有寸法、1個の派生、部品交換、joint変更を含み、意図しない巻戻し・原本破損0件。</td></tr>
+<tr><td>LLMの完遂率</td><td>事前固定した適合依頼を3モデル各30件、最大2回の候補修正で評価。合計95%以上の完遂を目標とし、失敗理由・要求回数も記録。不正採用0件は別の必須条件。</td></tr>
+<tr><td>障害・復旧</td><td>外部参照欠損、曖昧port、子部品の同時変更、joint過拘束、solver失敗、タイムアウト、重複要求、保存途中停止、返答消失を注入。黙って代替形状を確定せず、前の正常版へ戻れる。</td></tr>
+<tr><td>引渡し</td><td>別フォルダから全ファイルを再読込し、DSHなしで主要寸法・native jointを編集。版・共有関係・未対応操作・検証範囲がREADMEとmanifestから分かる。</td></tr>
+</table></div>
+<p class="note">25姿勢の検査は連続した全運動の無干渉証明ではない。サンプリングで不足する接触機構や狭い隙間は追加の適応検査を要求する。幾何許容差・jointの位置／角度許容差・意図的接触はモデルごとに明示し、単一の万能閾値にしない。</p>
+
+<h3>100部品の試験モデルを3種類用意する</h3>
+<div class="grid">
+<article class="card"><h3>A｜再利用中心</h3><p><strong>100配置／20定義。</strong>フレーム・プレート・締結部品。共通定義の更新が必要な全配置へ伝わるかを試す。</p></article>
+<article class="card"><h3>B｜実用的な混成</h3><p><strong>100配置／60定義。</strong>3階層の治具・スライド機構。寸法共有、外部参照、部品交換、可動域を試す。</p></article>
+<article class="card"><h3>C｜異種部品中心</h3><p><strong>100配置／100定義。</strong>板・軸・ブラケット・ハウジングの混合。形状再計算と履歴・観測の負荷を試す。</p></article>
+</div>
+<p>各モデルのfeature数・面数・joint数・閉ループ数・階層深さ・画像解像度を固定して記録する。部品数だけで性能を保証しない。閉ループの合格はまず小さな既知機構で取得し、100個の可動部品に一般化しない。</p>
+
+<h3>性能は、20部品の時点で測り始める</h3>
+<p>同じPCでcold/warm各10回、形状生成・solve・干渉・保存・画像・LLM待ちを分けて計測し、中央値・p95・最大メモリを残す。<strong>暫定目標</strong>は100部品で概要inspect p95≤2秒、単品寸法変更の評価≤30秒、全体検証≤120秒（LLM応答時間を除く）。M7の実測後に機材とモデル条件を添えて確定する。</p>
+<p>対策の順序は、①部品版ごとの形状cache、②変わった依存範囲だけを再計算、③干渉の候補対の絞り込み、④LLMへ概要＋必要箇所だけ返却。commit前は依存一式の整合性を検査する。時間超過を合格扱いにせず、job継続または候補不採用として返す。</p>
+</section>
+
+<section id="delivery">
+<h2>10. 実装単位、見積り、最初の着手点</h2>
+<pre><code>cad-harness/
+  dsh-plugin/            # 共通ツール、型、待機、画像render
+  schemas/               # Operation / Observation / Revision / Job
+  freecad-bridge/
+    queue.py              # GUIスレッドで受付・直列実行
+    compiler/plate.py     # M1：固定の板仕様→履歴
+    observe.py            # native状態・差分・画像
+    validate.py           # 独立した形状・拘束・編集検査
+    revisions.py          # snapshot・候補・公開・回復
+    compiler/features/   # M4：追加操作ごとに拡張
+    ports.py              # M5：取り付け基準と参照解決
+    assembly.py           # M6：配置・joint・診断
+    dependency_bundle.py # M7：依存文書一式の版管理
+    worker.py             # M8：候補計算用プロセス
+  fixtures/               # 板→5→20→50→100部品
+  tests/                  # API・CAD統合・障害・会話の評価
+  profiles/               # 専用DSH設定
+
+workspace/
+  working/                # 人間が編集するFCStd
+  revisions/              # 不変snapshotとmanifest
+  candidates/             # 検証中の候補一式
+  variants/               # 採用済み派生の作業用コピー
+  jobs/                   # 要求・状態・結果
+  evidence/               # 実測・画像・試験記録</code></pre>
+<p>manifestにschema・compiler版、親revision、部品版一覧、式・共有関係、native対応表、hash、FreeCAD/OCCT/DSH/モデル版、変更理由、検証証拠を残す。画像抽出の仮定も保持し、APIキーは含めない。</p>
+<div class="table-wrap"><table>
+<tr><th>最初のリリースまで</th><th>概算</th><th>判断</th></tr>
+<tr><td>M0／A0</td><td>1〜2人日</td><td>接続とnative Assembly実証。重大なAPI不足があれば、この時点で方式・見積りを修正。</td></tr>
+<tr><td>M1／A1〜A2</td><td>2〜3人日</td><td>板の生成・計測・編集・再読込を固定入力で完成。</td></tr>
+<tr><td>M2／A3〜A7</td><td>4〜7人日</td><td>人間編集の取り込み、派生、DSH、障害試験、3回の実演。</td></tr>
+</table></div>
+<p><strong>最初のMVPは7〜12人日が計画上の目安。</strong>FreeCAD APIに慣れた開発者1名、既存DSHを利用できる前提。従来の板だけの概算に、Assemblyの先行実証と復旧試験を加えた。M3以降はM0・M6・M7の結果で再見積りし、100部品までの納期を板の工数から単純外挿しない。</p>
+<p><strong>今着手する範囲はA0〜A2。</strong>二つ穴の板がFreeCAD単独で編集・保存できることを確認し、その上に人間とLLMの往復を載せる。各リリースでFCStd・仕様・評価ログ・図・操作手順を引き渡す。</p>
+
+<h3>確認済み／これから確認すること</h3>
+<p>このPCではNodeとdshを検出し、packageは<code>@deepseek-ai/dsh 0.2.1-rc.1</code>。起動・モデル接続・拡張APIの互換性は未検証。FreeCADはPATHとProgram Files直下の限定探索で見つからず、未インストールとは断定していない。</p>
+<p>FreeCAD <strong>1.1.3</strong>を固定候補とする。公開リリースと同タグのAssemblyソースは確認済みだが、Python呼出し・datumへのjoint接続・保存復元はM0で実証する。DSHも専用profileで版を固定し、既存global導入を無条件に更新しない。<a class="cite" href="https://github.com/FreeCAD/FreeCAD/releases/tag/1.1.3">[3]</a></p>
+<p>モデルはDSH上で画像入力とtool callingが通るものを一つ固定し評価する。今回の成果物は計画書であり、CAD生成、ソフトウェア導入、100部品の実性能試験は未実施。</p>
+</section>
+
+<section id="sources">
+<h2>根拠と調査範囲</h2>
+<p class="note">2026年10月17日確認。既存計画とLLM向けアーキテクチャを照合し、公式資料・1.1.3のソースでAssemblyの拡張経路を調査した。ツール名、データ構造、段階、試験件数、性能目標、工数は本計画の提案。GitHubのFreeCAD文書ミラーはアーカイブ済みのため、説明の参照に使い、最終的なAPI判断は固定バイナリで行う。</p>
+<ol class="sources">
+<li><a href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/architecture.md">DSH Architecture</a><small>Cordis・profile・ツール登録の拡張点。参照commitを固定。</small></li>
+<li><a href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/cookbook/adding-a-tool.md">DSH Tool authoring</a><small>型付き入力、canonical JSON、output.render、exec.signal。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD/releases/tag/1.1.3">FreeCAD 1.1.3 release</a><small>固定候補の公開リリース。最新であるという主張ではない。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Sketcher_scripting.md">Sketcher scripting</a><small>SketchObject・幾何・拘束の操作。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Expressions.md">Expressions</a><small>単位・名前付き拘束・Spreadsheet参照。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/PartDesign_Pocket.md">PartDesign Pocket</a><small>Through all・方向の意味。実機確認が必要。</small></li>
+<li><a href="https://freecad.github.io/SourceDoc/d8/d3e/classApp_1_1Document.html">Document API</a><small>保存・コピーAPIの参考。Python bindingとGUI状態の実挙動はM0で確認。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/CommandCreateAssembly.py">Assembly作成：1.1.3ソース</a><small>AssemblyObject・JointGroup作成経路。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/JointObject.py">JointObject：1.1.3ソース</a><small>ジョイント種別、Reference、局所配置、標準のPython実装。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/App/AssemblyObject.pyi">AssemblyObject API：1.1.3ソース</a><small>solveと固定・拘束・solverエラーの戻り値。数値自由度の取得を保証する資料ではない。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD/blob/1.1.3/src/Mod/Assembly/CommandInsertLink.py">部品・部分組立の挿入：1.1.3ソース</a><small>App::Link／Assembly::AssemblyLinkと参照設定。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Std_LinkMake.md">Std Link</a><small>同一文書・外部文書の部品再利用。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Topological_naming_problem.md">Topological naming problem</a><small>形状変更に伴う参照の問題。意味上の参照を別途検証する理由。</small></li>
+<li><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/PartDesign_SubShapeBinder.md">SubShapeBinder</a><small>Body外の形状参照、配置、外部文書との関係。</small></li>
+</ol>
+</section>
+<footer class="footer">DeepSeek Harness × FreeCAD：LLM向け設計操作を段階的に増やすMVP実装計画。自己完結型HTML、図3点。試験の数値は提案基準であり、実測成績ではない。</footer>
+
+</main></body></html>

@@ -1,0 +1,33 @@
+{
+  "reviewer": "claude",
+  "round": 1,
+  "command": [
+    "claude.exe",
+    "-p",
+    "--model",
+    "claude-opus-5-5",
+    "--effort",
+    "xhigh",
+    "--permission-mode",
+    "plan",
+    "--tools",
+    "",
+    "--disable-slash-commands",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-chrome",
+    "--output-format",
+    "json",
+    "--session-id",
+    "1e1e0622-135d-44f6-b20d-9c71839dec15"
+  ],
+  "requested_session": "1e1e0622-135d-44f6-b20d-9c71839dec15",
+  "prompt_sha256": "0af8743c6c69e8bdb8603064e987c34879d7e9723a578faf69c5268b699a4d25",
+  "started_at": 1792247253.7663848,
+  "status": "process_completed",
+  "exit_code": 0,
+  "finished_at": 1792247440.895264,
+  "duration_seconds": 187.13,
+  "publication_note": "Local executable/prompt paths and process IDs omitted; model settings and execution results retained."
+}

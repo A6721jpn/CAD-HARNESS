@@ -1,0 +1,33 @@
+{
+  "reviewer": "grok",
+  "round": 1,
+  "command": [
+    "grok.exe",
+    "--model",
+    "grok-4.7",
+    "--reasoning-effort",
+    "high",
+    "--tools",
+    "",
+    "--permission-mode",
+    "plan",
+    "--no-subagents",
+    "--disable-web-search",
+    "--max-turns",
+    "1",
+    "--output-format",
+    "json",
+    "--prompt-file",
+    "resume-round1.txt",
+    "--resume",
+    "36e7cb98-f938-4601-a4a7-0c9eba32fd84"
+  ],
+  "requested_session": "36e7cb98-f938-4601-a4a7-0c9eba32fd84",
+  "prompt_sha256": "c1b4e4f911befd76a540eb479e161d19a5d2c4ffa82730dd1e3a96d2bc405cf0",
+  "started_at": 1792246471.1374454,
+  "status": "process_completed",
+  "exit_code": 0,
+  "finished_at": 1792246715.1487803,
+  "duration_seconds": 244.01,
+  "publication_note": "Local executable/prompt paths and process IDs omitted; model settings and execution results retained."
+}

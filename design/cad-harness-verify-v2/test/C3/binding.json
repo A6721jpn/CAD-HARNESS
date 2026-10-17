@@ -1,8 +1,0 @@
-{
-  "schema": "cad-harness.verify-completion-binding.v2",
-  "case_id": "C3",
-  "description_sha256": "9bcd5536a02a6e30d5677c365724ffadec0ccbbced4c943a503fd9e8f3c62577",
-  "answer_sha256": "49693c374944c6b1e735e113c7c6c3e3ca0babe90f51eaaafd37287701b967bc",
-  "completion_input_sha256": "456cdd55f87cb27dc3f5f31bbe13c5f658a7207c4c2e7f30585aa7e6691429bf",
-  "separator_hex": "0a"
-}

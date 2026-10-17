@@ -1,0 +1,27 @@
+{
+  "reviewer": "gemini",
+  "round": 2,
+  "command": [
+    "agy.exe",
+    "--model",
+    "gemini-4-argon-high",
+    "--effort",
+    "high",
+    "--mode",
+    "plan",
+    "--input-format",
+    "stream-json",
+    "--output-format",
+    "stream-json",
+    "--conversation",
+    "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a"
+  ],
+  "requested_session": "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a",
+  "prompt_sha256": "1f28da59e8b70fd64db017f18dbcc8ed150fb9e2def3b641c0a1ade8438eae3d",
+  "started_at": 1792246808.144994,
+  "status": "process_completed",
+  "exit_code": 0,
+  "finished_at": 1792246897.6542091,
+  "duration_seconds": 89.51,
+  "publication_note": "Local executable/prompt paths and process IDs omitted; model settings and execution results retained."
+}

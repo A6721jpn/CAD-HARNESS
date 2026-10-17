@@ -1,0 +1,391 @@
+{
+  "date": "2026-10-17",
+  "cad_executed": false,
+  "method": "independent review, cross-discussion, lead assessment; not a model benchmark",
+  "runs": [
+    {
+      "reviewer": "grok",
+      "round": 1,
+      "phase": "原計画の独立レビュー",
+      "requested": "Grok 4.7 / high",
+      "actual_model": "grok-4.7-build",
+      "session": "36e7cb98-f938-4601-a4a7-0c9eba32fd84",
+      "command": [
+        "grok.exe",
+        "--model",
+        "grok-4.7",
+        "--reasoning-effort",
+        "high",
+        "--tools",
+        "",
+        "--permission-mode",
+        "plan",
+        "--no-subagents",
+        "--disable-web-search",
+        "--max-turns",
+        "1",
+        "--output-format",
+        "json",
+        "--prompt-file",
+        "resume-round1.txt",
+        "--resume",
+        "36e7cb98-f938-4601-a4a7-0c9eba32fd84"
+      ],
+      "prompt_sha256": "c1b4e4f911befd76a540eb479e161d19a5d2c4ffa82730dd1e3a96d2bc405cf0",
+      "response_sha256": "5c2361b3338ca7e68c901712e57c02cb90068c5e0b54ed38de347c5aab819dbc",
+      "response_file": "grok-round1.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "gemini",
+      "round": 1,
+      "phase": "原計画の独立レビュー",
+      "requested": "Agy Gemini 4 Argon High / high",
+      "actual_model": "gemini-4-argon-high",
+      "session": "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a",
+      "command": [
+        "agy.exe",
+        "--model",
+        "gemini-4-argon-high",
+        "--effort",
+        "high",
+        "--mode",
+        "plan",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--conversation",
+        "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a"
+      ],
+      "prompt_sha256": "c1b4e4f911befd76a540eb479e161d19a5d2c4ffa82730dd1e3a96d2bc405cf0",
+      "response_sha256": "786cf8cdf0ab00fcb5f4498b2e1ca089a707116c2887f33a7ff37b8005089e26",
+      "response_file": "gemini-round1.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "grok",
+      "round": 2,
+      "phase": "相手の指摘・Codex反論への回答",
+      "requested": "Grok 4.7 / high",
+      "actual_model": "grok-4.7-build",
+      "session": "36e7cb98-f938-4601-a4a7-0c9eba32fd84",
+      "command": [
+        "grok.exe",
+        "--model",
+        "grok-4.7",
+        "--reasoning-effort",
+        "high",
+        "--tools",
+        "",
+        "--permission-mode",
+        "plan",
+        "--no-subagents",
+        "--disable-web-search",
+        "--max-turns",
+        "1",
+        "--output-format",
+        "json",
+        "--prompt-file",
+        "grok-round2-request-ja.txt",
+        "--resume",
+        "36e7cb98-f938-4601-a4a7-0c9eba32fd84"
+      ],
+      "prompt_sha256": "54f804544c2f5dc1ad6b3d53ad8f367032655a4fc3c11ffacf58275fe43567c6",
+      "response_sha256": "5251665e8292e2b40c4bc7ec0f8fb11dd8b46da419bca9ef923a174cf8a7c730",
+      "response_file": "grok-round2.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "gemini",
+      "round": 2,
+      "phase": "相手の指摘・Codex反論への回答",
+      "requested": "Agy Gemini 4 Argon High / high",
+      "actual_model": "gemini-4-argon-high",
+      "session": "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a",
+      "command": [
+        "agy.exe",
+        "--model",
+        "gemini-4-argon-high",
+        "--effort",
+        "high",
+        "--mode",
+        "plan",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--conversation",
+        "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a"
+      ],
+      "prompt_sha256": "1f28da59e8b70fd64db017f18dbcc8ed150fb9e2def3b641c0a1ade8438eae3d",
+      "response_sha256": "234b3f4f1681411ccf105bc2788d0184d2dd2912f87f65857678ef4599f4a540",
+      "response_file": "gemini-round2.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "claude",
+      "round": 1,
+      "phase": "改訂案の独立レビュー",
+      "requested": "Claude Opus 5.5 / xhigh",
+      "actual_model": "claude-opus-5-5",
+      "session": "1e1e0622-135d-44f6-b20d-9c71839dec15",
+      "command": [
+        "claude.exe",
+        "-p",
+        "--model",
+        "claude-opus-5-5",
+        "--effort",
+        "xhigh",
+        "--permission-mode",
+        "plan",
+        "--tools",
+        "",
+        "--disable-slash-commands",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-chrome",
+        "--output-format",
+        "json",
+        "--session-id",
+        "1e1e0622-135d-44f6-b20d-9c71839dec15"
+      ],
+      "prompt_sha256": "0af8743c6c69e8bdb8603064e987c34879d7e9723a578faf69c5268b699a4d25",
+      "response_sha256": "b14b6630fee0db909628fe1e0c3379d70f8b2bab5d809680768715d58383c3dc",
+      "response_file": "claude-round1.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "grok",
+      "round": 3,
+      "phase": "Claudeの指摘を含む三者討議",
+      "requested": "Grok 4.7 / high",
+      "actual_model": "grok-4.7-build",
+      "session": "36e7cb98-f938-4601-a4a7-0c9eba32fd84",
+      "command": [
+        "grok.exe",
+        "--model",
+        "grok-4.7",
+        "--reasoning-effort",
+        "high",
+        "--tools",
+        "",
+        "--permission-mode",
+        "plan",
+        "--no-subagents",
+        "--disable-web-search",
+        "--max-turns",
+        "1",
+        "--output-format",
+        "json",
+        "--prompt-file",
+        "grok-round3-request-ja.txt",
+        "--resume",
+        "36e7cb98-f938-4601-a4a7-0c9eba32fd84"
+      ],
+      "prompt_sha256": "cb22ef7e76b8220a50b6b56af8585188cb704a4176d75b9bd2993a2f4431577d",
+      "response_sha256": "ea9b1556863ea99ffa2caecedba03408b1ac7023168f0a055810e0bcd0db1c00",
+      "response_file": "grok-round3.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "gemini",
+      "round": 3,
+      "phase": "Claudeの指摘を含む三者討議",
+      "requested": "Agy Gemini 4 Argon High / high",
+      "actual_model": "gemini-4-argon-high",
+      "session": "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a",
+      "command": [
+        "agy.exe",
+        "--model",
+        "gemini-4-argon-high",
+        "--effort",
+        "high",
+        "--mode",
+        "plan",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--conversation",
+        "64be1b19-b5ce-4fa7-bc30-f8f7b44dc46a"
+      ],
+      "prompt_sha256": "cb22ef7e76b8220a50b6b56af8585188cb704a4176d75b9bd2993a2f4431577d",
+      "response_sha256": "bf275a137527d92b903a59dc8a91959cd67d0966c2037f6602121d80c27d9c47",
+      "response_file": "gemini-round3.response.txt",
+      "exit_code": 0
+    },
+    {
+      "reviewer": "claude",
+      "round": 2,
+      "phase": "両モデルの指摘・Codex反論への回答",
+      "requested": "Claude Opus 5.5 / xhigh",
+      "actual_model": "claude-opus-5-5",
+      "session": "1e1e0622-135d-44f6-b20d-9c71839dec15",
+      "command": [
+        "claude.exe",
+        "-p",
+        "--model",
+        "claude-opus-5-5",
+        "--effort",
+        "xhigh",
+        "--permission-mode",
+        "plan",
+        "--tools",
+        "",
+        "--disable-slash-commands",
+        "--strict-mcp-config",
+        "--mcp-config",
+        "{\"mcpServers\":{}}",
+        "--no-chrome",
+        "--output-format",
+        "json",
+        "--resume",
+        "1e1e0622-135d-44f6-b20d-9c71839dec15"
+      ],
+      "prompt_sha256": "a6d39f67c0f2b73451b39e2be47023e4229414b4a127c7b152a9e4decde5106c",
+      "response_sha256": "996c29e58365aa8e83dfcbcd68d8af14d7d44e45961f04adfa335c9d9fc8bb52",
+      "response_file": "claude-round2.response.txt",
+      "exit_code": 0
+    }
+  ],
+  "decisions": [
+    {
+      "topic": "候補計算と保存復元",
+      "from": "Grok R1-3/6、Gemini R1-1/5、R2両者",
+      "decision": "採用",
+      "reason": "worker分離をM8からM2へ前倒し。原本の保存先・dirty・形状を保持し、複製を無変更で再計算して基準形状を得る。保存後は新規workerで検証する。",
+      "section": "3・5・8"
+    },
+    {
+      "topic": "人間が式を外した場合",
+      "from": "Grok R1-1、Gemini R1-3、R2両者",
+      "decision": "境界を採用／自動修復は不採用",
+      "reason": "M2はParamsの5寸法と駆動式維持に限定。inspectは読取のみ。M5で明示的な修復・feature取り込みの候補差分を出す。両モデルとも黙った修復を支持しない方針へ収束。",
+      "section": "2・4・8"
+    },
+    {
+      "topic": "datum・jointの追従",
+      "from": "Grok R1-2、Gemini R1-2/8、R2両者",
+      "decision": "試験を採用／API断定は不採用",
+      "reason": "公式1.1.3ソースにはdatum認識と配置更新の経路がある。非対応・固定値への焼込みは確認済み事実としない。穴LCS→Link→joint→寸法変更→新規再読込をM0で実証する。",
+      "section": "1・5・7"
+    },
+    {
+      "topic": "最初からどこまでportを作るか",
+      "from": "Gemini R2-欠陥1、Grok R2-相手8",
+      "decision": "一部採用",
+      "reason": "M0で確認した2穴のnative LCSだけM1から生成。汎用のport接続・採用機構はM5。datum経路が未解決なら板MVPは進め、組立への進行を止める。原点・無回転へのフォールバックは参照の妥当性と非自明な座標・回転の故障試験で検出。",
+      "section": "1・6・7・10"
+    },
+    {
+      "topic": "固定テンプレートからの拡張",
+      "from": "Grok R1-4、Gemini R1-4",
+      "decision": "採用",
+      "reason": "M4で支持平面・閉断面・拘束・featureの合成へ進む。2穴→3穴で既存IDを保持し、開発時に使わない組合せも試す。任意拘束の完全拘束は約束しない。",
+      "section": "1・4"
+    },
+    {
+      "topic": "形状検証と循環論法",
+      "from": "Grok R1-5、Gemini R1-6、R2両者",
+      "decision": "故障試験を採用／既存欠陥の断定は不採用",
+      "reason": "元計画は既にB-Repの独立計測を要求。未貫通・式切れ・拘束削除を故障試料に追加。M4で局所断面・追加削除体積を形状に応じて併用する。単一レイや単一体積値を万能な証明としない。",
+      "section": "5・6・9"
+    },
+    {
+      "topic": "共有部品の派生後の変更",
+      "from": "Grok R1-7／R2-欠陥3",
+      "decision": "連鎖試験を採用／接続破綻の公開は不採用",
+      "reason": "fork時に共有仕様の継承／凍結を明示。ライブラリ新版の作成と組立への採用を分ける。凍結した例外があっても、接続条件を破る組立候補を公開しない。",
+      "section": "1・7"
+    },
+    {
+      "topic": "要求IDと取消し",
+      "from": "Grok R1-8、R2両者",
+      "decision": "修正採用",
+      "reason": "IDをLLMに作らせずプラグインが管理。再送・結果不明は既存jobへ戻す。内容hashだけの重複排除は意図的な別枝も消すため不採用。取消しと公開の順序を単一キューで確定する。",
+      "section": "3・4・5・8"
+    },
+    {
+      "topic": "機構の枝飛びと完遂率",
+      "from": "Gemini R1-7、Grok R1-6",
+      "decision": "採用",
+      "reason": "姿勢を連続追跡し、特異点では刻みを細分化。開発用と未見評価、初回と修正後、範囲外拒否を分ける。3つのCAD試験モデルとLLMモデル数を混同しない。",
+      "section": "9"
+    },
+    {
+      "topic": "性能と工数",
+      "from": "Grok R1-6、Gemini R1-8",
+      "decision": "修正採用",
+      "reason": "構成確定後にcold/warmを分けて測定。数値は未実測の暫定値。初期MVPの見積りはworker分離等の前倒しを含め10〜16人日へ修正し、M0後に更新する。",
+      "section": "9・10"
+    },
+    {
+      "topic": "最小MVPから削る範囲",
+      "from": "両モデルのR1/R2削減案",
+      "decision": "一部採用",
+      "reason": "分散DB・自動マージ・任意の式修復は先送り。一方、自然言語往復・画像返却・返答消失／保存停止の検証はユーザーの体験と原本保全のためM2に残す。将来の100部品計画は削らない。",
+      "section": "1・5・8・10"
+    },
+    {
+      "topic": "派生と最新版の照合",
+      "from": "Claude R1-1、Grok R3、三者討議",
+      "decision": "二つの方針を採用／常時snapshotへの固定は不採用",
+      "reason": "今の状態を保持する依頼はrequire_current、特定版からの別枝はsnapshotと明示する。乖離を表示し、自動で方針を変えない。採用済み派生を開いてwork_target/document_idを更新する手順も追加。",
+      "section": "2・4・8"
+    },
+    {
+      "topic": "再evaluateまで含む二重採用",
+      "from": "Claude R1-3／R2-反例2、Gemini R3、Grok R3",
+      "decision": "採用",
+      "reason": "request_idだけでなく候補と派生意図を永続化。intentごとに1件の公開manifestを採用の正本とする。返答喪失→別tool call→再evaluate→commitでも既存結果を返し、意図的な別枝だけ新intentにする。",
+      "section": "4・5・8"
+    },
+    {
+      "topic": "snapshotの入力確定",
+      "from": "Claude R1-2／R2-反例1、Grok R3、Gemini R3",
+      "decision": "入力確定経路を採用／未確認の旧値での続行は不採用",
+      "reason": "Enter前後・再計算前後の3状態をM0で試験。編集状態を検出できなければFreeCAD側の入力確定・基準値確認を経てsnapshotを確定する。未保存140のつもりで100を採用せず、保存版へ黙ってfallbackしない。",
+      "section": "5・8"
+    },
+    {
+      "topic": "状態のwriterとGUI不在",
+      "from": "Claude R1-4、Gemini R3-反例2",
+      "decision": "単独writerを採用／Python調整役を維持",
+      "reason": "独立した調整役だけがjob状態と公開manifestを書く。DSHが終了しても復旧責務を一箇所に保つため、この小さなプロセス分離を残す。workerは必要時だけ起動。GUI不在では候補を保持し、snapshot方針へ自動で格下げしない。",
+      "section": "3・8・10"
+    },
+    {
+      "topic": "100部品のsnapshotとファイル粒度",
+      "from": "Claude R1-5、Gemini R3-反例3",
+      "decision": "一部採用",
+      "reason": "既存の依存一式版管理を具体化し、GUI停止時間も測定。既存不変snapshotの再利用を許すが可変原本は共有しない。M7は再利用・個別派生する1定義1FCStdを原則とし、複数Bodyをまとめる最適化を後回し。",
+      "section": "8・9"
+    },
+    {
+      "topic": "LLMの断面と保持条件",
+      "from": "Claude R1-6、Grok R3",
+      "decision": "採用",
+      "reason": "M2のpreserve引数を削り固定契約へ。M4では名前付き基本断面を合成しnative拘束をcompilerが生成。設計関係を変える時はreplace_relationで明示し、形状・参照の有効性は常に必須とする。",
+      "section": "4"
+    },
+    {
+      "topic": "固定jointの自由度と冗長閉路",
+      "from": "Codex H、Claude R2-反例3、Gemini/Grok R3",
+      "decision": "証明の前提を限定／未検証の冗長許容は不採用",
+      "reason": "6自由度を拘束するfixed jointと有効な3軸参照を実証してから木構造の検証を使う。余剰jointを残差だけで正常とする案は採らず、閉路のsolver挙動・追加fixtureが通るまで非対応。raw API値と検証verdictを分ける。",
+      "section": "7・9"
+    },
+    {
+      "topic": "画像・取消し・LCSの削減案",
+      "from": "Claude R1最小MVP、Claude R2撤回、Grok/Gemini討議",
+      "decision": "条件を明確化して維持",
+      "reason": "画像経路と公開取消しはM2の体験・復旧に必要。画像失敗と幾何不正を混同しない。LCSはM0成功時だけM1へ組込み、一般portはM5。Claudeも画像・取消しの削減案を撤回した。",
+      "section": "4・5・6・8"
+    }
+  ],
+  "original_plan_sha256": "de8250e37bbe6c006c2d05bf1f0c23b986f0155182c218e3ef46f3c65eb30978",
+  "claude_reviewed_draft_sha256": "3c0992d5d069c4d2b7e3558f95487e464c4ee52a111cb789f7f6ab48054a14ae",
+  "publication_note": "Response paths are relative to this evidence directory; local executable/prompt paths omitted."
+}

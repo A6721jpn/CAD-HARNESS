@@ -1,0 +1,34 @@
+### (1) 採用案（Codex A〜H）に残る重大な反例（最大3つ）
+
+1. **【採否案A】人間が派生を開き直す`adopt`手順における作業対象（`document_id`）の追跡断絶とタブ乱立**
+   * **反例**：案Aは「直接applyは作らず、人間が完成派生を開き次の作業文書として選ぶadopt手順を明記」とした。しかし、FreeCADのGUIで元の未保存文書（例：`plate-work-01`）を開いたまま派生（`variant-01.fcstd`）を開くと、ファイルパスも内部`App.Document.Name`も変わる。このとき、次回の`inspect`や`commit(require_current)`がどの開いている文書を「現在の作業対象」と判定するのかが未定義である。またM9（人間40/LLM60回の交互編集）で毎回人間が手動で旧タブを閉じて新ファイルを開き直す運用は破綻し、M7の組立では親アセンブリの`App::Link`参照先とGUI上の子部品タブが乖離する。
+   * **修正**：`adopt`を人間の手作業任せにせず、「指定した採用済み派生をGUIで開き（元文書は退避または閉じ）、対象`document_id`の作業ポインタを新しい派生ファイルへ切り替える」明示的な遷移契約を定義する。
+
+2. **【採否案D・A】常駐4プロセス化によるロック複雑化と、`require_current`照合時のGUIブロックによるcommit不能**
+   * **反例**：案Dで「Python coordinatorを単独writer」として独立常駐させると、M2の最小構成で「DSH(Node)＋coordinator＋GUI FreeCAD＋worker FreeCAD」の4プロセス構成となり、死活監視やWindowsファイルロックの障害点が不必要に増える。さらに、`commit(require_current)`の直前に人間がFreeCAD上でモーダルダイアログ等を開いてQTimer応答が止まると（Qtイベントループの挙動は要実証）、workerで検証完了済みの`candidate_id`があるにもかかわらず、`LIVE_UNAVAILABLE`でcommit自体が失敗する。
+   * **修正**：独立した常駐coordinatorプロセスは新設せず、DSHプラグイン層（またはそこから同期起動される管理モジュール）を単独writerにする。また`commit`時にGUI照会がタイムアウトした場合は候補を破棄せず、`base_policy=snapshot`（乖離警告付きの別枝保存）へ切り替え可能にする。
+
+3. **【採否案E・H】「1ファイル複数Body許容」による差分snapshotの破綻と、固定joint連結木の自由度証明の抜け穴**
+   * **反例**：案Eは「論理部品定義と物理FCStd数は1対1を強制しない」としつつ「未保存文書のみ複製、保存済みはhash再利用」とするが、1つのFCStdに複数部品（Body）を同居させると、1部品の未保存編集で未変更の他部品まで毎回複製・再計算が走り、版キャッシュの粒度が壊れる（同一文書内Linkと外部XLinkの混在挙動も要実証）。また案Hの「固定joint連結木＋残差0で0自由度」は、両端のport（LCS）が3軸の向きまで完全拘束する`Fixed`である場合のみ成立し、円筒軸合わせ等で軸回り回転が不定な参照が含まれると連結木でも回転自由度が残る。
+   * **修正**：再利用・個別派生する`PartDefinition`は「1定義＝1 FCStd」を原則とする。案Hの構造証明は「全jointが6自由度完全拘束（Fixedかつ両端が3軸確定LCS）である場合」に限定する。
+
+---
+
+### (2) 他モデル（Claude R1）に対して賛成・撤回・反対する点
+
+* **賛成・自身の前回案の撤回**
+  * **入力側fingerprintの分離（Claude #2）と`candidate_id`によるcommit冪等化（Claude #3）に全面賛成**：`evaluate`が`candidate_id`を発行し、`commit`を`candidate_id`に対して冪等にする設計は、私がR2で指摘した「再送時の`request_id`変化による二重派生」を最も簡潔に防ぐため、私のR2の排他ロック案を撤回し案C（Claude #3ベース）に賛成する。
+  * **Claude質問1への補足**：未計算セルの`saveCopy`挙動は要実証だが、万一`saveCopy`が原本のdirty状態や`FileName`を汚す場合、M2では「GUIから入力セル値/式のテーブルと基準版hashだけをJSON抽出し、worker側で基準版FCStdへ適用してrecomputeする」方式が最良の代替手段になる。
+* **反対する点**
+  * **M2で「LLMへの画像返却」「取消し状態遷移」「M1のLCS」をすべて削る案に反対**：DSHの`output.render`で画像を返す契約はM2で通すべきであり、取消しも「cancel済み候補の公開防止フラグ」としては必須である。M1のLCSはCodex案G（「M0で経路が成功すればM1へ組込み、失敗なら板MVPを先行し組立未提供と明記」）の条件付き導入に賛成する。
+
+---
+
+### (3) 最小MVP（M0〜M2）の確定条件
+
+1. **プロセス構成と単独writer**：DSHプラグイン管理層をmanifest/jobの単独writerとする。GUIプロセスは「入力側fingerprint（生セル内容・式・拘束値）の読取」と「未保存snapshot出力」のみを担い、候補の強制recompute・検証・保存・再読込・画像出力は単発起動の別プロセスworkerで実行する。
+2. **冪等性と基準版ポリシー**：`evaluate`は`snapshot_id`を基準に`candidate_id`を発行し、`commit`は`candidate_id`をキーに採用結果を永続化する。`base_policy`は`require_current`（既定）と`snapshot`（`base_diverged`通知付き別枝保存）を備え、派生採用後に作業対象を切り替える`adopt`手順を固定する。
+3. **人間編集の受理境界**：M2は「Paramsの5寸法変更かつ、5寸法＋Pの駆動式が生存していること」を受理条件とする。Enter前・Sketch編集中は`EDIT_IN_PROGRESS`（検知不能な項目は`unknown`とし保存版へ黙ってフォールバックしない）、式切れ・拘束削除は非対応理由と基準値を返して拒否する。
+4. **M0の3大実証ゲート**：①Enter前後・recompute前後の`saveCopy`の挙動（原本`FileName`/dirty維持とworker再計算での値一致）、②workerでの画像出力、③非ゼロ位置・非単位回転の穴LCS → `App::Link` → 固定Joint → L変更 → 別プロセス再計算での位置追従（`identity`フォールバック偽合格の排除）。③が成功すればM1に最小LCSを組み込む。
+5. **M2の出荷検証セット**：生成器と独立したB-Rep計測（外形・貫通開口・円筒面・体積）に加え、「未貫通」「対称拘束削除」「式の数値化」「応答喪失後の新request_idによる再commit」「cancel後の公開抑止」の5つの異常系fixture合格を必須条件とする。
+

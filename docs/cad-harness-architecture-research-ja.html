@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>スケッチから編集可能なCADへ — FreeCAD / SOLIDWORKS専用ハーネス設計</title>
+<style>
+:root{color-scheme:light;--bg:#f5f7fa;--paper:#fff;--ink:#17263b;--muted:#56677c;--line:#d9e1e9;--accent:#006e70;--soft:#eaf5f3;--warn:#fff5df}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Yu Gothic UI","Meiryo",system-ui,sans-serif;line-height:1.85;font-size:16px}main{max-width:1190px;margin:auto;padding:48px 32px 80px}header{padding:30px 0 34px;border-bottom:2px solid var(--ink)}.eyebrow{font-size:13px;letter-spacing:.13em;color:var(--accent);font-weight:700}h1{font-size:clamp(28px,4vw,44px);line-height:1.4;letter-spacing:-.035em;margin:14px 0}h2{font-size:26px;line-height:1.45;margin:0 0 20px}h3{font-size:19px;line-height:1.5;margin:28px 0 10px}p{margin:0 0 16px}a{color:var(--accent);text-underline-offset:3px}strong{font-weight:750}section{margin-top:44px}.meta,.note{color:var(--muted);font-size:14px}.summary,.callout,.warning{padding:24px 28px;border:1px solid var(--line);border-left:5px solid var(--accent);background:white;border-radius:8px;margin:22px 0}.summary{background:var(--soft)}.warning{background:var(--warn);border-left-color:#bc8021}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:white;border:1px solid var(--line);padding:22px;border-radius:8px}.card h3{margin-top:0}.card p:last-child,.callout p:last-child,.summary p:last-child,.warning p:last-child{margin-bottom:0}.tag{display:inline-block;border-radius:4px;background:#e6edf4;font-size:12px;padding:1px 7px;margin-right:7px;vertical-align:middle}.proposal{background:#def1eb}.cite{font-size:12px;white-space:nowrap;margin-left:4px}nav{background:white;border:1px solid var(--line);border-radius:8px;padding:16px 22px;margin-top:24px;display:flex;gap:12px 22px;flex-wrap:wrap;font-size:14px}table{border-collapse:collapse;width:100%;background:white;font-size:14px;margin:14px 0 10px}th,td{border:1px solid var(--line);padding:12px 14px;text-align:left;vertical-align:top}th{background:#edf2f6;font-weight:700}td:first-child{font-weight:650}tr{break-inside:avoid}.table-wrap{overflow-x:auto;margin:12px 0 22px}.table-wrap table{min-width:720px}code{font-family:Consolas,"Cascadia Code",monospace;font-size:.9em;overflow-wrap:anywhere}p code,li code,td code{background:#eaf0f5;padding:1px 4px;border-radius:3px}pre{background:#13243a;color:#eff6ff;padding:22px;border-radius:8px;overflow-x:auto;font-size:13px;line-height:1.65;tab-size:2}pre code{font-size:inherit;overflow-wrap:normal}.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}.flow{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px}.flow svg{width:100%;height:auto}.flow text{font-family:"Yu Gothic UI","Meiryo",sans-serif}ul,ol{padding-left:1.5em;margin:12px 0 20px}li{padding:3px 0}.sources{padding-left:24px;font-size:13px}.sources li{margin-bottom:13px;overflow-wrap:anywhere}.sources small{display:block;color:var(--muted)}.metric{font-size:30px;font-weight:750;color:var(--accent)}.number{font-variant-numeric:tabular-nums}.checklist{border-left:3px solid var(--line);padding-left:22px}.footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:13px;color:var(--muted)}
+@media(max-width:760px){main{padding:20px 16px 50px}.grid,.split{grid-template-columns:1fr}h2{font-size:22px}.summary,.callout,.warning{padding:18px}pre{padding:15px;font-size:12px}}
+@media print{body{background:#fff;font-size:10pt}main{max-width:none;padding:0}nav{display:none}section{margin-top:24px}h2,h3{break-after:avoid}.summary,.callout,.card,.warning{break-inside:avoid}.table-wrap{overflow:visible}.table-wrap table{min-width:0}table{font-size:8pt}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:8pt;color:#000;background:#f1f4f6}.flow{break-inside:avoid}a{color:#004d50}}
+
+.flow{overflow-x:auto}.flow svg{display:block;min-width:760px}
+.flow svg:focus{outline:2px solid var(--accent)}
+@media print{.flow{overflow:visible}.flow svg{min-width:0}}
+</style>
+</head>
+<body><main>
+<header>
+<div class="eyebrow">CAD AGENT HARNESS · RESEARCH &amp; ARCHITECTURE</div>
+<h1>スケッチから、<br>寸法を変えて育てられるCADへ</h1>
+<p>FreeCAD / SOLIDWORKS専用LLMハーネス：設計意図・拘束・ネイティブ履歴を保持する構成</p>
+<div class="meta">調査日：2026年10月17日｜第一候補：DeepSeek Harness／代替：Pi｜設計提案・実装前｜要約改訂版</div>
+</header>
+<section class="summary" id="summary">
+<h2>推奨：DeepSeek Harness＋独立したCAD基盤</h2>
+<p class="note"><strong>アーキテクチャ更新：</strong>LLM向けの設計操作と観測を中心にした<a href="llm-native-cad-architecture-ja.html">再設計案・図解</a>を追加。以下は先行手法と設計要件の調査資料です。</p>
+<p><strong>DeepSeek Harness（DSH）を第一候補とし、型付き設計グラフ、各CADのネイティブ変換器、観測器、編集テストをCordisプラグインで接続する。</strong>LLMは変更案を作り、CADは実行結果を画像・履歴・拘束・実測値として返す。検証を通った版を採用する。</p>
+<p>成果物は主要寸法を直接編集できる<code>.FCStd</code>／<code>.SLDPRT</code>。<strong>初期形状が合うだけでなく、寸法変更後も指定した関係を保ち、ハーネスを停止してもCAD単独で使えること</strong>を合格条件にする。</p>
+</section>
+<nav aria-label="目次">
+<a href="#definition">目標</a><a href="#prior">既存手法</a><a href="#architecture">構成図</a><a href="#input">画像入力</a><a href="#ir">設計グラフ</a><a href="#protocol">CAD入出力</a><a href="#backends">両CAD</a><a href="#references">参照</a><a href="#transactions">実行・人間編集</a><a href="#validation">品質評価</a><a href="#harness">DSH接続</a><a href="#roadmap">実装順</a><a href="#sources">出典</a>
+</nav>
+<section id="definition">
+<h2>1. 「完璧な履歴」を、編集できる仕様として定義する</h2>
+<p>一枚の絵から裏側・実寸・肉厚・元の作成順は一意に決まらない。目標は<strong>絵と確認済み仕様に整合し、予定した編集を正しく伝播させる履歴</strong>である。曖昧さは仮定として残し、重要なものだけ質問する。</p>
+<div class="grid">
+<article class="card"><h3>形状</h3><p>寸法、穴数・深さ、貫通、断面、向き、body数を実測する。</p></article>
+<article class="card"><h3>編集性</h3><p>駆動寸法・拘束・式が実在し、変更後も関係を保つ。Fixの乱用は不可。</p></article>
+<article class="card"><h3>持続性</h3><p>意味の分かる履歴を保存・再生成でき、人間の変更を次の編集へ引き継ぐ。</p></article>
+</div>
+<p class="note">完全拘束でも駆動寸法は変更できる。自由度ゼロと、設計意図を持つ編集可能性は別の評価項目。</p>
+</section>
+<section id="prior">
+<h2>2. 既存手法から採るもの、補うもの</h2>
+<p class="note">機能は一次資料で確認。課題欄は「両CADで人間が編集する」という本提案の要件に照らした評価。</p>
+<div class="table-wrap"><table>
+<thead><tr><th style="width:22%">手法</th><th style="width:38%">確認できる強み・採用点</th><th>今回の要件に残る課題</th></tr></thead><tbody>
+<tr><td>DeepCAD / Text2CAD <a class="cite" href="https://www.cs.columbia.edu/cg/deepcad/" title="DeepCAD — ICCV 2021">[1]</a><a class="cite" href="https://arxiv.org/abs/2409.17106" title="Text2CAD — NeurIPS 2024">[2]</a></td><td>操作列を生成。フィーチャー単位の計画・逐次構築に使える。</td><td>sketch/extrude中心の表現では豊富な拘束や設計意図を網羅せず、形状精度から編集品質は導けない。</td></tr>
+<tr><td>Fusion 360 Gallery <a class="cite" href="https://www.research.autodesk.com/publications/fusion-360-gallery/" title="Fusion 360 Gallery — Autodesk">[5]</a></td><td>人間の操作順を含む再構築データ。履歴の例・評価集合の参考。</td><td>再構築言語の範囲は主にsketch/extrude。両CADへの変換器ではない。</td></tr>
+<tr><td>SketchGraphs / Vitruvion <a class="cite" href="https://github.com/PrincetonLIPS/SketchGraphs" title="SketchGraphs">[3]</a><a class="cite" href="https://github.com/PrincetonLIPS/vitruvion" title="Vitruvion — ICLR 2022">[4]</a></td><td>2Dプリミティブと拘束を扱い、画像から拘束付きスケッチへ進む。</td><td>3D履歴・裏形状・フィーチャー間の式は別途必要。投影線と製作用輪郭を区別する。</td></tr>
+<tr><td>CadQuery / CAD-Recode <a class="cite" href="https://cadquery.readthedocs.io/en/latest/intro.html" title="CadQuery Introduction">[6]</a><a class="cite" href="https://cad-recode.github.io/" title="CAD-Recode — ICCV 2025">[7]</a></td><td>編集可能なコードで形状を表す。Recodeは点群→CadQuery。</td><td>手描き画像とは入力が異なる。STEP出力から両CADの駆動寸法・拘束・履歴が自動復元されるわけではない。</td></tr>
+<tr><td>CAD-Assistant <a class="cite" href="https://cadassistant.github.io/" title="CAD-Assistant — ICCV 2025">[8]</a><a class="cite" href="https://github.com/dimitrismallis/CAD-Assistant/tree/5fea47309b2db5245f9e01c7a2445cce9dd2d07e" title="CAD-Assistant 公開実装">[9]</a></td><td>FreeCAD API生成→実行→画像・幾何観測の閉ループ。最も近い先行方式の一つ。</td><td>公開範囲だけでSW対応、編集域の検証、人間編集との同期を完成済みと扱えない。状態・参照管理が必要。</td></tr>
+<tr><td>FreeCAD / SOLIDWORKS MCP <a class="cite" href="https://github.com/neka-nat/freecad-mcp/blob/78bf0230a03324b56c9a0b7f55150fb5be2a0d42/docs/tools.md" title="FreeCAD MCP ツール一覧">[15]</a><a class="cite" href="https://github.com/Christancho-co/solidworks-mcp/tree/df89e9c375ca0df85481879830edf296bd200d6a" title="SOLIDWORKS MCP">[16]</a></td><td>操作、寸法変更、コード実行、画面取得の接続を試作しやすい。</td><td>通信の成立は設計品質や失敗時の整合性を保証しない。座標・表示名への依存も残る。</td></tr>
+<tr><td>HistCAD v4 <a class="cite" href="https://arxiv.org/html/2602.19171v4" title="HistCAD v4 — 2026-10-08">[10]</a></td><td>拘束・履歴を扱い、初期形状と編集後の関係保持を分けて評価。</td><td>既知履歴への拘束予測が対象で、任意画像からの全生成ではない。固定点による辺参照は編集で壊れうる。</td></tr>
+<tr><td>FutureCAD / BRepGround <a class="cite" href="https://arxiv.org/abs/2603.11831" title="FutureCAD / BRepGround">[11]</a><a class="cite" href="https://github.com/JohanStackk/FutureCAD" title="FutureCAD 公開実装">[12]</a></td><td>言語的な選択意図をB-Repの辺・面に対応づける。参照候補の検索に有用。</td><td>編集後も同じ意味の対象を指す保証はない。主な生成先はCadQuery。</td></tr>
+<tr><td>CADForge / CADMorph <a class="cite" href="https://arxiv.org/html/2610.04262v1" title="CADForge v1 — 2026-10-03">[13]</a><a class="cite" href="https://arxiv.org/abs/2512.11480" title="CADMorph">[14]</a></td><td>画像の部品分解・幾何推論、系列の局所的な計画・生成・検証。</td><td>見た目の一致とネイティブ編集性は別。CADForge v1は2026年10月のプレプリント。</td></tr>
+</tbody></table></div>
+<div class="callout"><p><strong>形状再構築だけでは足りない。</strong>HistCAD v4の一設定の編集成功率はAcademic 52.4%、Industrial 29.0%。同論文の課題・母集団に限る数値で、本提案の性能予測には使わない。<a class="cite" href="https://arxiv.org/html/2602.19171v4" title="HistCAD v4 — 2026-10-08">[10]</a></p></div>
+<p class="note">CAD-AssistantはREADMEの公開ツール範囲とAttribution-NonCommercial表記に留意。方式の参考とコードの製品採用を区別する。<a class="cite" href="https://github.com/dimitrismallis/CAD-Assistant/tree/5fea47309b2db5245f9e01c7a2445cce9dd2d07e" title="CAD-Assistant 公開実装">[9]</a></p>
+</section>
+<section id="architecture">
+<h2>3. 全体構成：型付き変更と、実際のCAD観測を往復する</h2>
+<p><span class="tag proposal">提案</span>初期構成は<strong>主エージェント一つ＋決定的なCADツール群</strong>。設計グラフ・変換器・検証器をDSHから分離し、モデル推論とCAD実行も別プロセスにする。</p>
+<div class="flow">
+<svg viewBox="0 0 1040 650" role="img" aria-labelledby="arch-title arch-desc">
+<title id="arch-title">LLMとCADの入出力、および検証の構成</title>
+<desc id="arch-desc">入力画像と自然言語を根拠付き仕様に変換し、エージェントが型付き中間表現を編集する。変換器が両CADのネイティブ履歴を構築し、観測と編集テストをエージェントに返す。人間のCAD編集は同期器を通して取り込む。</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#62818a"/></marker></defs>
+<g fill="none" stroke="#62818a" stroke-width="2" marker-end="url(#arrow)">
+<path d="M220 58 H270"/><path d="M555 58 H610"/><path d="M785 104 V150"/><path d="M520 204 V252"/><path d="M520 316 V350"/><path d="M400 417 V450"/><path d="M665 417 V450"/><path d="M400 516 V554"/><path d="M665 516 V554"/><path d="M250 588 H180 V182 H250"/><path d="M875 369 H815"/><path d="M895 425 V480 H810"/>
+</g>
+<g font-size="18" fill="#17263b" text-anchor="middle">
+<rect x="10" y="15" width="210" height="90" rx="9" fill="#edf2f6" stroke="#cdd9e3"/><text x="115" y="50">ポンチ絵・図面・注記</text><text x="115" y="78" font-size="15">自然言語・追加の寸法</text>
+<rect x="270" y="15" width="285" height="90" rx="9" fill="#edf2f6" stroke="#cdd9e3"/><text x="412" y="50">画像理解・寸法読取・候補生成</text><text x="412" y="78" font-size="15">画像領域と仮定を根拠として記録</text>
+<rect x="610" y="15" width="345" height="90" rx="9" fill="#eaf5f3" stroke="#006e70"/><text x="782" y="50">設計仕様・未確定事項</text><text x="782" y="78" font-size="15">要求、寸法、変え方、維持する関係</text>
+<rect x="250" y="150" width="560" height="65" rx="9" fill="#006e70"/><text x="530" y="177" fill="white">DeepSeek Harness ＋ CAD専用プラグイン</text><text x="530" y="201" fill="white" font-size="14">計画 → 型付きpatch → 観測 → 修正</text>
+<rect x="250" y="252" width="560" height="65" rx="9" fill="#eaf5f3" stroke="#006e70"/><text x="530" y="280">設計意図・拘束・フィーチャーDAG</text><text x="530" y="303" font-size="14">寸法式、意味ID、編集契約、根拠、版番号</text>
+<rect x="250" y="350" width="560" height="67" rx="9" fill="#edf2f6" stroke="#cdd9e3"/><text x="530" y="378">検査・参照解決・ネイティブAPIへの変換</text><text x="530" y="402" font-size="14">候補文書で実行 ／ 1文書に1書込主体 ／ 実行記録</text>
+<rect x="250" y="450" width="280" height="66" rx="9" fill="#edf2f6" stroke="#cdd9e3"/><text x="390" y="477">FreeCAD worker</text><text x="390" y="501" font-size="14">Python・Sketcher・PartDesign</text>
+<rect x="555" y="450" width="255" height="66" rx="9" fill="#edf2f6" stroke="#cdd9e3"/><text x="682" y="477">SOLIDWORKS worker</text><text x="682" y="501" font-size="14">Windows・C# / COM</text>
+<rect x="250" y="554" width="560" height="72" rx="9" fill="#eaf5f3" stroke="#006e70"/><text x="530" y="582">観測＋検証 → 合格した版を保存</text><text x="530" y="607" font-size="14">画像・履歴・実測値・拘束・エラー・編集テスト</text>
+<rect x="865" y="338" width="165" height="90" rx="9" fill="#fff5df" stroke="#d1b47b"/><text x="947" y="369">人間のCAD編集</text><text x="947" y="397" font-size="14">差分取込・競合検出</text>
+<text x="155" y="385" transform="rotate(-90 155 385)" font-size="15" fill="#56677c">観測を返す・必要な部分だけ追加取得</text>
+</g>
+</svg>
+</div>
+<p class="note">図は本提案。画像・履歴・実測を同一revisionから返し、必要な局所情報だけ追加取得する。CADの待ち時間や障害を会話・保存処理へ波及させない。</p>
+</section>
+<section id="input">
+<h2>4. 画像入力：解釈と、その根拠を一緒に渡す</h2>
+<p>平面輪郭・三面図・立体ポンチ絵・写真を区別する。楕円が円の投影である場合や寸法補助線もあるため、ベクトル化は候補生成に使い、直接押出用スケッチへ確定しない。</p>
+<div class="table-wrap"><table>
+<tr><th>入力パケット</th><th>保持する内容・使い方</th></tr>
+<tr><td>原画像＋局所crop</td><td>元解像度・向き・元画像上の領域・view ID・hash。補正前画像も保存し、全景と細部を実際のimage contentとして渡す。</td></tr>
+<tr><td>寸法・記号</td><td>OCR候補、φ/R/深さ、単位、対象、領域、確度。「6か8か」「径か半径か」は未確定のまま比較する。</td></tr>
+<tr><td>形状・意図</td><td>部品、軸、対称性、押出/回転、視点、隠れ領域の候補。主要寸法、独立/従属変数、編集後に保持する関係を記録する。</td></tr>
+<tr><td>根拠・不明点</td><td><code>observed / user_confirmed / inferred / assumed</code>と画像領域・判断理由・競合。仮定を確認済み仕様に見せない。</td></tr>
+</table></div>
+<p>明示指示・確認済み仕様→明瞭な寸法注記→幾何的証拠→慣習を基本順とし、確認済み情報同士の矛盾は確認する。パース画像のピクセル長を実寸とみなさない。質問は貫通/止まり、寸法基準、端余白/ピッチの保持など、結果への影響が大きいものに絞る。</p>
+<p class="note">VLM・OCR・線円検出は候補を作り、CADソルバーと実測が拘束を検証する。単位・縮尺不明のモデルは暫定扱いにする。<a class="cite" href="https://github.com/PrincetonLIPS/vitruvion" title="Vitruvion — ICLR 2022">[4]</a><a class="cite" href="https://cadassistant.github.io/" title="CAD-Assistant — ICCV 2025">[8]</a></p>
+</section>
+<section id="ir">
+<h2>5. 設計グラフ：形状と「変え方」を保存する</h2>
+<div class="table-wrap"><table>
+<tr><th>層</th><th>保存するもの</th></tr>
+<tr><td>意図・仕様</td><td>要求、独立/従属パラメータ、不変条件、有効範囲、根拠、未解決事項。</td></tr>
+<tr><td>製作定義</td><td>基準、スケッチ、プリミティブ、拘束、輪郭、フィーチャー依存DAGと作成順。</td></tr>
+<tr><td>ネイティブ対応</td><td>文書・configuration、意味ID↔feature/寸法/参照の対応、実行状態。</td></tr>
+<tr><td>実行記録</td><td>親revision、patch、API結果、観測、検証、snapshot hash、backend版。CADのフィーチャー履歴とは区別。</td></tr>
+</table></div>
+<p>寸法は値＋単位、式は許可演算子のASTにする。次元不一致・未定義値・範囲違反・循環依存を実行前に拒否し、任意コード式を評価しない。mm/deg↔APIのm/rad等はアダプターで変換する。<a class="cite" href="https://help.solidworks.com/2017/english/api/sldworksapiprogguide/Overview/Units.htm" title="SOLIDWORKS API Units">[28]</a></p>
+<p class="note">非循環なのはフィーチャー依存と明示的な寸法式。幾何拘束は閉路を含めて同時に解く。向き・符号・配置領域も保持し、別解や鏡像への反転を検出する。</p>
+<h3>二つ穴の板：同じ初期形状でも、編集の答えは異なる</h3>
+<p>共通初期値はL=100、W=40、T=8、D=6、端から穴中心までe=15 mm。P=L−2e=70、穴中心はx=±P/2、y=0。<strong>Lを140へ変えたとき、eとPのどちらを保つかが設計意図になる。</strong></p>
+<div class="flow" id="plate-example">
+<svg viewBox="0 0 1040 420" role="img" aria-labelledby="plate-title plate-desc">
+<title id="plate-title">板長を変えたときの端余白一定と穴ピッチ一定の違い</title>
+<desc id="plate-desc">初期状態では端余白15、穴ピッチ70。板長を100から140へ増やすと、端余白一定ならピッチ110、ピッチ一定なら端余白35となる。幅40、厚さ8、穴径6は両方で維持する。</desc>
+<defs><marker id="plate-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#62818a"/></marker></defs>
+<g font-family="sans-serif" fill="#17263b" text-anchor="middle">
+<rect x="12" y="12" width="330" height="394" rx="10" fill="#f0f4f8"/>
+<rect x="370" y="12" width="658" height="185" rx="10" fill="#eaf5f3"/>
+<rect x="370" y="217" width="658" height="189" rx="10" fill="#fff5df"/>
+<text x="177" y="48" font-size="19" font-weight="700">初期状態：L = 100</text>
+<rect x="52" y="130" width="250" height="100" fill="white" stroke="#50667e" stroke-width="2"/>
+<circle cx="89.5" cy="180" r="7.5" fill="#eaf5f3" stroke="#006e70" stroke-width="2"/>
+<circle cx="264.5" cy="180" r="7.5" fill="#eaf5f3" stroke="#006e70" stroke-width="2"/>
+<path d="M89.5 195 V257 M264.5 195 V257 M89.5 250 H264.5" stroke="#62818a" fill="none"/>
+<text x="177" y="280" font-size="18">P = 70</text>
+<text x="177" y="324" font-size="17">e = 15 ／ D = 6</text>
+<text x="177" y="354" font-size="16">W = 40 ／ T = 8</text>
+<text x="177" y="385" font-size="14" fill="#56677c">寸法はすべて mm</text>
+<text x="699" y="45" font-size="19" font-weight="700">端余白 e を保持 → P = 110</text>
+<rect x="482" y="67" width="350" height="100" fill="white" stroke="#006e70" stroke-width="2"/>
+<circle cx="519.5" cy="117" r="7.5" fill="#eaf5f3" stroke="#006e70" stroke-width="2"/>
+<circle cx="794.5" cy="117" r="7.5" fill="#eaf5f3" stroke="#006e70" stroke-width="2"/>
+<path d="M519.5 92 V77 M794.5 92 V77 M519.5 83 H794.5" stroke="#62818a" fill="none"/>
+<text x="657" y="109" font-size="16">P = L − 2e</text>
+<text x="915" y="112" font-size="17">e = 15</text><text x="915" y="138" font-size="14">を維持</text>
+<text x="699" y="250" font-size="19" font-weight="700">穴ピッチ P を保持 → e = 35</text>
+<rect x="482" y="272" width="350" height="100" fill="white" stroke="#a77627" stroke-width="2"/>
+<circle cx="569.5" cy="322" r="7.5" fill="#fff5df" stroke="#a77627" stroke-width="2"/>
+<circle cx="744.5" cy="322" r="7.5" fill="#fff5df" stroke="#a77627" stroke-width="2"/>
+<path d="M569.5 297 V282 M744.5 297 V282 M569.5 288 H744.5" stroke="#a77627" fill="none"/>
+<text x="657" y="315" font-size="16">P = 70</text>
+<text x="917" y="313" font-size="17">e = 35</text><text x="917" y="339" font-size="14">へ変化</text>
+<text x="698" y="394" font-size="14" fill="#56677c">どちらも L = 140、W・T・D は維持</text>
+</g>
+<g fill="none" stroke="#62818a" stroke-width="2" marker-end="url(#plate-arrow)"><path d="M342 164 H356 V117 H472"/><path d="M342 204 H356 V322 H472"/></g>
+</svg>
+</div>
+<p><strong>ネイティブ履歴：</strong>XY基準→中心矩形スケッチ→厚さTの押出→XY上の二つ穴スケッチ→+Z貫通カット。矩形の水平・垂直・一致・中心・寸法、穴の同径・対称・径・位置を独立な拘束に展開する。初期座標はソルバーの初期値とし、寸法と拘束で駆動する。</p>
+<p>輪郭の閉鎖性、穴/外周、座標系、方向、対象bodyを明記し、過拘束を避ける。繰返しにはパターン、回転対称には回転を選び、フィレットは通常後段へ。履歴の短さより主要寸法の分かりやすさを優先する。</p>
+</section>
+<section id="protocol">
+<h2>6. LLM ⇄ CADの入出力契約</h2>
+<p>通常経路は<code>set_parameter / add_constrained_sketch / add_feature / change_extent / replace_reference</code>などの型付きpatch。一つのフィーチャーに必要な幾何と拘束をまとめ、CAD側で検査する。</p>
+<div class="table-wrap"><table>
+<tr><th>公開ツール案</th><th>役割・主な戻り値</th></tr>
+<tr><td><code>capabilities</code></td><td>backend・version、feature/constraint別の作成・読取・編集・変換・検証能力、単位・制限。</td></tr>
+<tr><td><code>observe / inspect</code></td><td>指定revisionの概要・差分・view。必要時に局所グラフ、隣接、断面、測定方法付き実測。</td></tr>
+<tr><td><code>resolve_reference</code></td><td>意味条件から対象候補を検索。候補ID、支持条件、一意性、注釈画像。</td></tr>
+<tr><td><code>evaluate_patch</code></td><td>候補文書で実行・再構築・テスト。candidate/job ID、delta、検証結果。</td></tr>
+<tr><td><code>commit_candidate</code></td><td>基準版を再確認して合格候補を採用。新revision、保存文書、監査記録。</td></tr>
+<tr><td><code>job_status / cancel</code></td><td>長時間処理の状態取得・取消し要求。</td></tr>
+<tr><td><code>reconcile_native / export</code></td><td>人間編集の差分・競合を取込。検証済みnative、派生STEP、検証manifestを出力。</td></tr>
+</table></div>
+<p>書込みには<code>document_id / configuration_id / base_revision / request_id</code>を必須にする。版の比較で先行変更の上書きを防ぎ、request IDで重複実行を防ぐ。自由コードの試作は候補workerに限定し、型付き操作の未対応を隠さない。</p>
+<h3>返すのは、実際のCADから読み戻した状態</h3>
+<div class="table-wrap"><table>
+<tr><th>観測</th><th>LLMへ返す内容</th></tr>
+<tr><td>構造・寸法</td><td>revision、active body/configuration、履歴、主要寸法の実値・式、拘束状態、取得できれば自由度。取得不能は<code>unknown</code>。</td></tr>
+<tr><td>幾何・視覚</td><td>solid数、bbox、体積、寸法・不変条件の残差。正投影・等角投影・必要な断面、ID注釈あり/なしの画像。</td></tr>
+<tr><td>対応・診断</td><td>view ID、camera/projection、単位、pixel→entity対応。before/after、最初の失敗feature、下流影響、APIエラー、保存状態。</td></tr>
+</table></div>
+<pre><code>{
+  "document_id": "plate-01", "configuration_id": "Default",
+  "base_revision": "r17", "revision": "candidate-r18",
+  "status": "validated_candidate",
+  "delta": { "L": [100, 140], "P": [70, 110] },
+  "observed": { "unit": "mm", "bbox": [140, 40, 8],
+    "solid_count": 1, "hole_diameters": [6, 6], "edge_margins_x": [15, 15] },
+  "checks": { "rebuild": "pass", "edit_contract": "pass" },
+  "views": [{ "view_id": "top-r18", "artifact_id": "img-231" }]
+}</code></pre>
+<p class="note">提案スキーマの説明例であり実装済みAPIではない。画像artifactは必要なimage contentとして添付し、数値と版がずれた観測は無効にする。初回は全体、通常は差分、必要時に詳細を返し、B-Rep全量を毎回送らない。トークン上限は実測して決める。</p>
+</section>
+<section id="backends">
+<h2>7. 共通の設計グラフから、両CADのネイティブ履歴を作る</h2>
+<p><strong>STEPは検査・交換用、meshは表示用。</strong>履歴移植は各CADの専用変換器で行い、インポート形状を元の駆動寸法・拘束の代替にしない。<a class="cite" href="https://blogs.solidworks.com/products/solidworks/solidworks-modeling-challenge-measuring-imported-fillets/" title="SOLIDWORKS — Measuring Imported Fillets">[31]</a></p>
+<div class="table-wrap"><table>
+<tr><th style="width:14%">項目</th><th style="width:43%">FreeCAD</th><th>SOLIDWORKS</th></tr>
+<tr><td>実行</td><td>Python addon。GUI操作・文書変更はGUIスレッドへ。適合するバックグラウンド検証はFreeCADCmd。<a class="cite" href="https://github.com/neka-nat/freecad-mcp/blob/78bf0230a03324b56c9a0b7f55150fb5be2a0d42/docs/tools.md" title="FreeCAD MCP ツール一覧">[15]</a><a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Headless_FreeCAD.md" title="FreeCAD Headless">[22]</a></td><td>ライセンス付きWindows環境のC# add-in/COMブリッジ。単一スレッドで直列実行し、必要ならUIへdispatch。<a class="cite" href="https://github.com/Christancho-co/solidworks-mcp/tree/df89e9c375ca0df85481879830edf296bd200d6a" title="SOLIDWORKS MCP">[16]</a></td></tr>
+<tr><td>履歴</td><td><code>PartDesign::Body</code>、<code>Sketcher::SketchObject</code>、Pad/Pocket/Revolution/Pattern。完成B-Repを単一Shapeへ入れるだけでは不可。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Sketcher_scripting.md" title="FreeCAD Sketcher scripting">[17]</a><a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/PartDesign_Workbench.md" title="FreeCAD PartDesign Workbench">[18]</a></td><td>SketchManager/FeatureManagerでSketch、Boss/Cut、Revolve/Pattern。定義変更はGetDefinition/ModifyDefinition等。<a class="cite" href="https://help.solidworks.com/2026/English/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~ModifyDefinition.html" title="SOLIDWORKS IFeature.ModifyDefinition">[24]</a></td></tr>
+<tr><td>寸法</td><td>Spreadsheet aliasまたは公開プロパティを、名前付き拘束・feature値へExpressionsで接続。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Spreadsheet_Workbench.md" title="FreeCAD Spreadsheet Workbench">[19]</a><a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Expressions.md" title="FreeCAD Expressions">[20]</a></td><td>グローバル変数・IEquationMgrと駆動寸法を接続。表示名と意味IDを分離。<a class="cite" href="https://help.solidworks.com/2023/English/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IEquationMgr_members.html" title="SOLIDWORKS IEquationMgr">[27]</a></td></tr>
+<tr><td>検証</td><td>recompute後に状態・形状妥当性・拘束・実値を読取。取得可能な診断を版ごとに登録。</td><td>再構築＋error/warning＋実値を読取。ModifyDefinition成功でもエラーは残りうる。ForceRebuild3はactive configurationのみ。拘束状態から数値DOFを仮定しない。<a class="cite" href="https://help.solidworks.com/2026/English/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~ModifyDefinition.html" title="SOLIDWORKS IFeature.ModifyDefinition">[24]</a><a class="cite" href="https://help.solidworks.com/2023/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeature~GetErrorCode2.html" title="SOLIDWORKS IFeature.GetErrorCode2">[25]</a><a class="cite" href="https://help.solidworks.com/2019/English/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IModelDoc2~ForceRebuild3.html" title="SOLIDWORKS IModelDoc2.ForceRebuild3">[26]</a><a class="cite" href="https://help.solidworks.com/2020/English/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ISketch_members.html" title="SOLIDWORKS ISketch">[29]</a></td></tr>
+<tr><td>参照・表示</td><td>意味ID＋基準＋topological naming。headlessには通常のview providerがないため、同版形状の別レンダラー等を用意。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Topological_naming_problem.md" title="FreeCAD Topological naming problem">[21]</a><a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Headless_FreeCAD.md" title="FreeCAD Headless">[22]</a></td><td>persistent reference＋意味IDを再検証し、文書viewから画像取得。Document Managerを全履歴の再構築エンジンと扱わない。<a class="cite" href="https://help.solidworks.com/2023/english/api/sldworksapiprogguide/overview/Persistent_Reference_IDs.htm" title="SOLIDWORKS Persistent Reference IDs">[23]</a><a class="cite" href="https://help.solidworks.com/2024/english/api/swdocmgrapi/GettingStarted-swdocmgrapi.html?id=8.2" title="SOLIDWORKS Document Manager Getting Started">[30]</a></td></tr>
+</table></div>
+<p>能力は<strong>作成・読取・編集・他CADへの変換・検証</strong>を分けて表示する。未対応は拒否またはnative専用のopaqueブロックで保持し、黙ってmesh化しない。Hole Wizard・板金・複雑なsweep等の完全な共通化は求めない。</p>
+<p class="note">FreeCAD/OCCT、SOLIDWORKS年版・SP、アダプターを固定して機能別に適合試験する。同等性は寸法・形状・質量特性・編集応答を公差内で比較し、面番号やファイルの一致を要求しない。</p>
+</section>
+<section id="references">
+<h2>8. 面・辺は、意味と幾何条件で選ぶ</h2>
+<p>Face3/Edge7や固定座標の最近傍だけでは、寸法変更や辺分割で別対象を拾う。生成面への依存を減らし、<strong>基準面＋オフセット式→作成由来・意味→native参照→幾何条件→学習による候補</strong>を組み合わせる。FreeCADの緩和機構やSWのpersistent referenceも、消滅した対象の意味を保証しない。<a class="cite" href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Topological_naming_problem.md" title="FreeCAD Topological naming problem">[21]</a><a class="cite" href="https://help.solidworks.com/2023/english/api/sldworksapiprogguide/overview/Persistent_Reference_IDs.htm" title="SOLIDWORKS Persistent Reference IDs">[23]</a></p>
+<div class="callout"><p><strong>例：「板上側の外周辺」</strong>＝作成元base_pad、z=T、終端面と外側面に隣接、穴由来を除外、期待数4。分割後の集合を許す条件と、複数候補なら返す方針も持つ。ロール名は提案上の定義で、APIが直接返す名前ではない。</p></div>
+<p>曲線種・方向・局所座標・数・単位付き許容差で候補を再検証する。曖昧なら注釈画像を返し、自動で付け替えない。indexや表示名は対応表に閉じ込め、複製先では文書ID・参照・対応を再取得する。HistCADの固定点参照の弱点を減らし、FutureCADは候補検索へ使うが、任意のトポロジー変更を保証するものではない。<a class="cite" href="https://arxiv.org/html/2602.19171v4" title="HistCAD v4 — 2026-10-08">[10]</a><a class="cite" href="https://arxiv.org/abs/2603.11831" title="FutureCAD / BRepGround">[11]</a></p>
+</section>
+<section id="transactions">
+<h2>9. 候補文書で試し、人間の編集を引き継ぐ</h2>
+<p>文書・IR・対応表・検証を一つのrevisionで管理する。基準状態には<strong>未保存変更、configuration、外部参照、編集中スケッチ</strong>を含め、ファイルhashだけに頼らない。Undoやネイティブtransactionを、両CAD共通の完全なロールバックと仮定しない。</p>
+<div class="flow" id="revision-flow">
+<svg viewBox="0 0 1040 468" role="img" aria-labelledby="revision-title revision-desc">
+<title id="revision-title">候補の採用と人間編集の三者比較</title>
+<desc id="revision-desc">基準状態を確保して複製先で実行・検証し、元文書が変わっていない場合のみ採用する。人間が変更した場合は、最後に一致した基準、現在のCAD、LLMの変更案を比較し、非競合差分を統合、競合は提示する。</desc>
+<defs><marker id="revision-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#62818a"/></marker></defs>
+<g fill="#17263b" text-anchor="middle" font-size="17">
+<text x="18" y="28" text-anchor="start" font-size="19" font-weight="700">候補の採用</text>
+<rect x="18" y="48" width="180" height="84" rx="8" fill="#edf2f6"/>
+<text x="108" y="80">基準状態を確保</text><text x="108" y="108" font-size="14">未保存変更も取得</text>
+<rect x="222" y="48" width="180" height="84" rx="8" fill="#edf2f6"/>
+<text x="312" y="80">入力検査・複製</text><text x="312" y="108" font-size="14">必要な依存文書も複製</text>
+<rect x="426" y="48" width="180" height="84" rx="8" fill="#edf2f6"/>
+<text x="516" y="80">実行・検証</text><text x="516" y="108" font-size="14">再構築・保存再読込</text>
+<rect x="630" y="48" width="180" height="84" rx="8" fill="#eaf5f3" stroke="#006e70"/>
+<text x="720" y="80">元文書の版を照合</text><text x="720" y="108" font-size="14">変更なし＋検証合格</text>
+<rect x="834" y="48" width="188" height="84" rx="8" fill="#006e70"/>
+<text x="928" y="80" fill="white">新revisionを採用</text><text x="928" y="108" font-size="14" fill="white">native＋IR＋対応表</text>
+<text x="720" y="163" font-size="14" fill="#56677c">元文書に変更あり → 下の比較へ</text>
+<path d="M18 187 H1022" stroke="#d9e1e9"/>
+<text x="18" y="220" text-anchor="start" font-size="19" font-weight="700">人間の編集を次のLLM操作へ引き継ぐ</text>
+<rect x="18" y="244" width="294" height="52" rx="8" fill="#edf2f6"/><text x="165" y="277">最後に一致した基準</text>
+<rect x="18" y="314" width="294" height="52" rx="8" fill="#fff5df"/><text x="165" y="347">現在のCAD（人間編集後）</text>
+<rect x="18" y="384" width="294" height="52" rx="8" fill="#edf2f6"/><text x="165" y="417">LLMの変更案</text>
+<rect x="408" y="295" width="224" height="90" rx="8" fill="#eaf5f3" stroke="#006e70"/>
+<text x="520" y="331" font-weight="700">三者比較</text><text x="520" y="359" font-size="14">値・式・参照・依存関係</text>
+<rect x="746" y="264" width="276" height="70" rx="8" fill="#eaf5f3"/>
+<text x="884" y="293">非競合の差分 → 統合</text><text x="884" y="317" font-size="14">新しい基準で再検証</text>
+<rect x="746" y="354" width="276" height="70" rx="8" fill="#fff5df"/>
+<text x="884" y="383">同じ対象の競合 → 提示</text><text x="884" y="407" font-size="14">人間の変更を黙って上書きしない</text>
+</g>
+<g fill="none" stroke="#62818a" stroke-width="2" marker-end="url(#revision-arrow)">
+<path d="M198 90 H218"/><path d="M402 90 H422"/><path d="M606 90 H626"/><path d="M810 90 H830"/>
+<path d="M312 270 H355 V320 H403"/><path d="M312 340 H403"/><path d="M312 410 H355 V360 H403"/>
+<path d="M632 320 H684 V299 H741"/><path d="M632 360 H684 V389 H741"/>
+</g>
+</svg>
+</div>
+<p>1文書1書込主体とし、並列候補は別文書・別プロセスへ。合格候補の採用は保存文書・manifest・対応表を復旧可能な段階状態で切り替える。CADと保存先をまたぐ分散ACIDは仮定しない。</p>
+<p><code>queued → running → validated → committed</code>と<code>failed / cancelled / outcome_unknown</code>を区別する。COM中の取消し要求は完了とは限らない。タイムアウト後はrequest IDと実状態を照合し、無条件に再実行しない。再起動対象は破棄可能なworkerに限り、利用者のCADを停止しない。選択セット、active文書、モーダルダイアログも監視する。<a class="cite" href="https://github.com/Christancho-co/solidworks-mcp/tree/df89e9c375ca0df85481879830edf296bd200d6a" title="SOLIDWORKS MCP">[16]</a></p>
+<h3 id="roundtrip">人間編集の取り込み範囲</h3>
+<p>初期版は公開パラメータの値変更を正式対応とし、式の従属値は上書きしない。名前・対応済みfeature/拘束の追加削除は段階的に取り込み、契約との差異を提示する。未対応featureや外部参照はnative内で保持し、opaque境界として周辺編集・他CADへの移植を制限する。</p>
+<p>変更イベントでdirtyを付け、安定した再構築時に差分抽出し、書込み直前にも再照合する。意味IDは文書内＋sidecarに保存し、紛失時は回復できる範囲だけ復元する。古いIRから全再生成せず、元版を残して派生モデルを作る。</p>
+</section>
+<section id="validation">
+<h2>10. 品質評価：形状・編集・履歴を別々に測る</h2>
+<p><strong>寸法・拘束などの必須条件を先に満たし、その後に見た目や履歴の分かりやすさを比較する。</strong>画像類似度やLLMの自己評価で必須条件の失敗を相殺しない。</p>
+<div class="table-wrap"><table>
+<tr><th>検査</th><th>合格条件</th></tr>
+<tr><td>仕様・幾何</td><td>寸法、穴数・深さ、貫通、肉厚、body数、solid妥当性を生成形状から実測。コンパイラと別の測定経路を持ち、既知モデルで観測器も検証。</td></tr>
+<tr><td>拘束・履歴</td><td>駆動寸法・依存関係が存在し、失敗・欠落・予期しない抑制がない。Fix乱用を検出。意図した未拘束は明示。</td></tr>
+<tr><td>寸法変更</td><td>目標値へ到達し、指定関係と未変更寸法を保って全履歴が再構築。全変数の一括拡大だけで済ませない。</td></tr>
+<tr><td>永続性・往復</td><td>保存・閉じる・再読込・再構築、人間編集→次のLLM編集が成功。ハーネス停止中も主要寸法を変更可能。</td></tr>
+<tr><td>見た目・両CAD</td><td>投影・断面を補助評価し、手描きの歪みを考慮。両backendで同じ仕様と編集契約を公差内で満たす。</td></tr>
+</table></div>
+<p><strong>有効範囲も納品する。</strong>板なら<code>T&gt;0、e&gt;D/2、W&gt;D、P=L−2e&gt;D</code>など。基準値、独立変数ごとの増減、境界付近、相互作用、失敗例の回帰を試す。穴が外周へ開く・pattern数が変わる等は構造変更として別検証する。有限サンプルは連続範囲全体の保証ではなく、形状成立は強度・加工性の保証でもない。</p>
+<p class="note">絶対長さ・相対形状・角度の公差を用途とサイズに応じて固定し、実測・検証条件を保存する。画像やファイルのbit一致は要求しない。</p>
+<h3>最初の比較実験</h3>
+<p>板・フランジ・回転部品・ブラケット等の約30部品に、人間作成の仕様・基準モデル・手描き/寸法図/曖昧図・複数編集要求を用意する。これは初期規模案で、統計的十分性を主張する数ではない。</p>
+<ul>
+<li><strong>比較：</strong>直接API生成／MCP反復／IR＋観測／IR＋観測＋編集テスト。モデル・入力・予算を共通化。</li>
+<li><strong>品質：</strong>初期仕様・編集全条件の合格率、native編集可能寸法率、保存再読込、人間編集保持率、黙った誤参照率。</li>
+<li><strong>運用：</strong>質問数、手直し時間、LLM回数、再構築時間、費用、復旧率。寸法違いや近い部品family・作者が調整側と評価側に漏れないよう分割。</li>
+</ul>
+<p class="note">HistCADの評価観点を参考にし、その成功率と独自集合を直接比較しない。提案の改善効果は比較実験で判断する。<a class="cite" href="https://arxiv.org/html/2602.19171v4" title="HistCAD v4 — 2026-10-08">[10]</a></p>
+</section>
+<section id="harness">
+<h2>11. DeepSeek Harnessを第一候補にする</h2>
+<p>優先順位は利用者の製品方針を反映し、CAD精度の実測順位ではない。<strong>初期実装はDSHへ集中し、Piは代替候補として残す。</strong></p>
+<div class="table-wrap"><table>
+<tr><th>観点</th><th>DeepSeek Harness：第一候補</th><th>Pi coding agent：代替</th></tr>
+<tr><td>接続点</td><td>Cordis plugin、<code>ctx.tools.register(defineTool(...))</code>。model/session/loop/tool、profile/bundleを構成。<a class="cite" href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/architecture.md" title="DeepSeek Harness Architecture">[36]</a><a class="cite" href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/cookbook/adding-a-tool.md" title="DeepSeek Harness Tool authoring">[37]</a></td><td>TypeScript SDKの<code>createAgentSession</code>、<code>pi.registerTool</code>、イベント、context、RPC。<a class="cite" href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/docs/sdk.md" title="Pi SDK">[33]</a><a class="cite" href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/docs/extensions.md" title="Pi Extensions">[34]</a></td></tr>
+<tr><td>利用方針</td><td>CADサービス接続・ツール・context供給・検証ループ・表示の5役割をplugin化。判定そのものはCAD基盤へ。</td><td>小さい専用ホストからSDK/extensionへ接続。独自UI・ジョブ管理・CAD同期を作る。</td></tr>
+<tr><td>留意点</td><td>previewと互換性破壊の可能性が明記されている。commit固定と接続層で変更を吸収。<a class="cite" href="https://github.com/deepseek-ai/deepseek-harness/tree/687f282e8625c6b8d11ff58211a90524be2e4317" title="DeepSeek Harness">[35]</a></td><td>SDKとCLIの既定設定差を明示。旧badlogic/pi-monoからearendil-works/piへ移転済み。<a class="cite" href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/README.md" title="Pi README">[32]</a><a class="cite" href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/docs/sdk.md" title="Pi SDK">[33]</a></td></tr>
+</table></div>
+<p>DSHの名前から使用モデルを固定しない。画像対応を能力チェックし、必要なら視覚解釈と計画を別モデルへ分ける。切替時も原画像・領域・仕様・最新revisionを保持し、画像を文字要約だけに置き換えない。</p>
+<div class="split">
+<article class="card"><h3>CAD基盤の責務</h3><p>intent-schema、patch-planner、reference-resolver、validation、revision-store。状態はSQLite等、成果物はimmutable保存。両CAD workerと観測・描画・context要約を分離する。</p></article>
+<article class="card"><h3>接続・表示の責務</h3><p>DSH pluginを先行し、Pi/MCP接続は必要時に追加。UIは原画像・解釈候補・主要寸法・履歴・仮定・差分・検証・派生版を表示する。</p></article>
+</div>
+<p>境界はversion付きJSON-RPC/ローカルIPC等。接続主体を確認し、任意コード実行を既定でネットワーク公開しない。MCPを採用しても排他・保存はCAD基盤が管理する。会話ログはCADの唯一の保存先にせず、各ターンで最新仕様・能力・未解決事項をストアから再投入し、会話分岐とCAD派生版をIDで結ぶ。</p>
+</section>
+<section id="roadmap">
+<h2>12. 実装順：両CADと人間編集を、小さい部品で通す</h2>
+<div class="table-wrap"><table>
+<tr><th>段階</th><th>実装と、次へ進む条件</th></tr>
+<tr><td>P0：API実証</td><td>LLMなしで二つ穴の板を両CADに構築。寸法・式・拘束・履歴を読取。保存再読込、人間の寸法変更、失敗時の原文書保全を確認。</td></tr>
+<tr><td>P1：CAD基盤</td><td>小さいIR、型検査、両コンパイラ、能力表、revision、candidate、観測器とDSHツール接続。誤単位・参照不一致・競合を拒否できること。</td></tr>
+<tr><td>P2：画像生成</td><td>DSH上で画像領域・寸法読取・意図・仮定・基本feature・観測ループを統合。部品群の仕様と編集契約に合格し、曖昧な入力で確認できること。</td></tr>
+<tr><td>P3：修正・派生</td><td>意味参照、局所修正、フィレット/面取り、パターン、対応済みfeatureの人間編集。既存寸法・履歴を保持し、不要な再作成を避けること。</td></tr>
+<tr><td>P4：拡張・学習</td><td>部品familyを拡張し、成功・失敗修正・人間修正を蓄積。必要なら学習。family分離評価で改善を確認。Pi追加時も同じ適合試験に通す。</td></tr>
+</table></div>
+<p>初期範囲は単品機械部品、平面スケッチ、直線・円・円弧、基本拘束・基準面、押出、貫通/止まりカット、回転、単純パターン。自由曲面・複雑な板金・溶接構造・アセンブリは後段とする。</p>
+<p><strong>最初の到達点は、二つ穴の板を「絵→ネイティブ履歴→人間の寸法変更→LLMの派生編集」まで通す実証。</strong>FreeCADだけで作り込む前に、両CADで入出力・参照・同期の前提を確かめる。</p>
+</section>
+<section id="methodology">
+<h2>調査範囲と、残る限界</h2>
+<p>2026年10月17日時点の原著論文・著者コード・公式API/ハーネス文書37件に基づく。閉ループ、拘束評価、拡張点は確認したが、統合による品質向上は設計仮説。新規性や実測上の優越性は主張しない。</p>
+<p>主な代償は、アダプター・観測器の適合試験、候補複製と編集テストの実行費用、任意の人間編集やトポロジー変更の不完全な取込、高度なnative機能と相互移植のトレードオフ。未試験の編集域と、画像にない仕様は保証できない。</p>
+<div class="warning"><p><strong>CAD起動・モデル生成・API実行・再現実験・ハーネスのインストールは未実施。</strong>図とJSONは説明例。採用版/SP、部品、編集範囲、公差はP0で固定し、コード・重み・データの利用条件は個別確認する。</p><p>一部SW Web Helpは公式検索索引本文でも確認した。該当箇所は出典に明記し、実装時は採用版のhelp/type libraryで照合する。</p></div>
+<p class="note">調査snapshot：DSH <code>687f282e8625c6b8d11ff58211a90524be2e4317</code>、Pi <code>8efd314fa3d3232ce197d8d7a6a5660530b9d83e</code>。HistCADはv4、CADForgeはv1を参照。</p>
+</section>
+<section id="sources">
+<h2>出典と証拠の記録</h2>
+<p class="note">全件の確認日：2026年10月17日。リンク先は一次資料。確認は公開文書の記述に対するもので、CAD実行による独立検証ではない。</p>
+<ol class="sources">
+<li id="source-deepcad"><a href="https://www.cs.columbia.edu/cg/deepcad/">DeepCAD — ICCV 2021</a><small>研究・著者ページ — CADを操作列として生成する研究。</small></li>
+<li id="source-text2cad"><a href="https://arxiv.org/abs/2409.17106">Text2CAD — NeurIPS 2024</a><small>研究・論文 — 自然言語から逐次CAD表現を生成。</small></li>
+<li id="source-sketchgraphs"><a href="https://github.com/PrincetonLIPS/SketchGraphs">SketchGraphs</a><small>研究・原著コード — 幾何プリミティブと拘束をグラフで表現。</small></li>
+<li id="source-vitruvion"><a href="https://github.com/PrincetonLIPS/vitruvion">Vitruvion — ICLR 2022</a><small>研究・原著コード — 画像からプリミティブ、プリミティブから拘束を推定。</small></li>
+<li id="source-gallery"><a href="https://www.research.autodesk.com/publications/fusion-360-gallery/">Fusion 360 Gallery — Autodesk</a><small>研究・企業一次資料 — 8,625の人間作成シーケンス。再構築用表現はsketch/extrude中心。</small></li>
+<li id="source-cadquery"><a href="https://cadquery.readthedocs.io/en/latest/intro.html">CadQuery Introduction</a><small>公式ドキュメント — PythonによるパラメトリックCAD。</small></li>
+<li id="source-recode"><a href="https://cad-recode.github.io/">CAD-Recode — ICCV 2025</a><small>研究・著者ページ — 点群からCadQueryプログラムを生成。</small></li>
+<li id="source-assistant"><a href="https://cadassistant.github.io/">CAD-Assistant — ICCV 2025</a><small>研究・著者ページ — FreeCADのAPI実行と画像・拘束情報を用いた反復。</small></li>
+<li id="source-assistant-code"><a href="https://github.com/dimitrismallis/CAD-Assistant/tree/5fea47309b2db5245f9e01c7a2445cce9dd2d07e">CAD-Assistant 公開実装</a><small>公開実装・README — README上の公開ツール範囲と非商用ライセンス表記を確認。全論文機能の再現は未検証。</small></li>
+<li id="source-histcad"><a href="https://arxiv.org/html/2602.19171v4">HistCAD v4 — 2026-10-08</a><small>研究・プレプリント — 拘束保持を含む寸法編集評価。固定座標による辺参照の失敗条件。v3と評価設定が異なる。</small></li>
+<li id="source-futurecad"><a href="https://arxiv.org/abs/2603.11831">FutureCAD / BRepGround</a><small>研究・論文 — 自然言語の選択意図をB-Repプリミティブへ対応づける。</small></li>
+<li id="source-futurecad-code"><a href="https://github.com/JohanStackk/FutureCAD">FutureCAD 公開実装</a><small>公開実装・README — CadQuery、STEP/STL出力、BRepGround、カーネル依存の参照実装。</small></li>
+<li id="source-cadforge"><a href="https://arxiv.org/html/2610.04262v1">CADForge v1 — 2026-10-03</a><small>研究・プレプリント — 単眼画像から部品分解・幾何推論・CadQuery・レビュー。</small></li>
+<li id="source-cadmorph"><a href="https://arxiv.org/abs/2512.11480">CADMorph</a><small>研究・論文 — 系列の構造を保つ部分編集とplan/generate/verify。</small></li>
+<li id="source-fc-mcp"><a href="https://github.com/neka-nat/freecad-mcp/blob/78bf0230a03324b56c9a0b7f55150fb5be2a0d42/docs/tools.md">FreeCAD MCP ツール一覧</a><small>公開実装・文書 — GUIスレッド実行、非同期、headlessプロセス、画面取得。</small></li>
+<li id="source-sw-mcp"><a href="https://github.com/Christancho-co/solidworks-mcp/tree/df89e9c375ca0df85481879830edf296bd200d6a">SOLIDWORKS MCP</a><small>公開実装・README — COM、寸法・拘束・式・再構築・画面取得。作者は2026 SP0で確認と記載。</small></li>
+<li id="source-fc-sketch"><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Sketcher_scripting.md">FreeCAD Sketcher scripting</a><small>公式ドキュメント — SketchObject、幾何と寸法の拘束、要素参照。</small></li>
+<li id="source-fc-part"><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/PartDesign_Workbench.md">FreeCAD PartDesign Workbench</a><small>公式ドキュメント — ネイティブのフィーチャーによるモデリング。</small></li>
+<li id="source-fc-sheet"><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Spreadsheet_Workbench.md">FreeCAD Spreadsheet Workbench</a><small>公式ドキュメント — alias付きセルからモデルのパラメータを駆動。</small></li>
+<li id="source-fc-expr"><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Expressions.md">FreeCAD Expressions</a><small>公式ドキュメント — 寸法・プロパティ・名前付き拘束を式で参照。</small></li>
+<li id="source-fc-topology"><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Topological_naming_problem.md">FreeCAD Topological naming problem</a><small>公式ドキュメント — 1.0以降の緩和策と基準面・座標系の利用。万能な解決とは記載されていない。</small></li>
+<li id="source-fc-headless"><a href="https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Headless_FreeCAD.md">FreeCAD Headless</a><small>公式ドキュメント — FreeCADCmdとGUI/view providerの制約。</small></li>
+<li id="source-sw-ref"><a href="https://help.solidworks.com/2023/english/api/sldworksapiprogguide/overview/Persistent_Reference_IDs.htm">SOLIDWORKS Persistent Reference IDs</a><small>公式API文書 — 文書内オブジェクトをセッション越しに参照するAPI。</small></li>
+<li id="source-sw-modify"><a href="https://help.solidworks.com/2026/English/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IFeature~ModifyDefinition.html">SOLIDWORKS IFeature.ModifyDefinition</a><small>公式API文書・検索索引 — 成功を返しても再構築エラーが残る場合がある。検索索引の公式本文で確認。</small></li>
+<li id="source-sw-error"><a href="https://help.solidworks.com/2023/english/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IFeature~GetErrorCode2.html">SOLIDWORKS IFeature.GetErrorCode2</a><small>公式API文書 — フィーチャーのエラーと警告を取得。</small></li>
+<li id="source-sw-rebuild"><a href="https://help.solidworks.com/2019/English/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.IModelDoc2~ForceRebuild3.html">SOLIDWORKS IModelDoc2.ForceRebuild3</a><small>公式API文書 — 対象はアクティブconfiguration。</small></li>
+<li id="source-sw-equation"><a href="https://help.solidworks.com/2023/English/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IEquationMgr_members.html">SOLIDWORKS IEquationMgr</a><small>公式API文書・検索索引 — 式・グローバル変数を管理。検索索引で存在を確認。</small></li>
+<li id="source-sw-units"><a href="https://help.solidworks.com/2017/english/api/sldworksapiprogguide/Overview/Units.htm">SOLIDWORKS API Units</a><small>公式API文書 — APIの既定単位はm・rad等。</small></li>
+<li id="source-sw-sketch"><a href="https://help.solidworks.com/2020/English/api/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.ISketch_members.html">SOLIDWORKS ISketch</a><small>公式API文書 — GetConstrainedStatusなどの状態観測。</small></li>
+<li id="source-sw-dm"><a href="https://help.solidworks.com/2024/english/api/swdocmgrapi/GettingStarted-swdocmgrapi.html?id=8.2">SOLIDWORKS Document Manager Getting Started</a><small>公式API文書・検索索引 — ファイルの属性・configuration・参照等の管理。検索索引で確認。</small></li>
+<li id="source-sw-import"><a href="https://blogs.solidworks.com/products/solidworks/solidworks-modeling-challenge-measuring-imported-fillets/">SOLIDWORKS — Measuring Imported Fillets</a><small>公式ブログ — インポートされた形状とパラメトリック履歴の区別。</small></li>
+<li id="source-pi"><a href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/README.md">Pi README</a><small>公式リポジトリ — 旧badlogic/pi-monoから移転。SDK、RPC、拡張を提供。</small></li>
+<li id="source-pi-sdk"><a href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/docs/sdk.md">Pi SDK</a><small>公式ドキュメント — createAgentSession、ツール設定、セッションとモデル管理。</small></li>
+<li id="source-pi-ext"><a href="https://github.com/earendil-works/pi/blob/8efd314fa3d3232ce197d8d7a6a5660530b9d83e/packages/coding-agent/docs/extensions.md">Pi Extensions</a><small>公式ドキュメント — registerTool、イベント、コンテキスト更新。</small></li>
+<li id="source-dsh"><a href="https://github.com/deepseek-ai/deepseek-harness/tree/687f282e8625c6b8d11ff58211a90524be2e4317">DeepSeek Harness</a><small>公式リポジトリ — プラグイン方式。previewで互換性破壊変更の予告。</small></li>
+<li id="source-dsh-arch"><a href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/architecture.md">DeepSeek Harness Architecture</a><small>公式ドキュメント — Cordis、交換可能なloop・tools・model・session、profile。</small></li>
+<li id="source-dsh-tools"><a href="https://github.com/deepseek-ai/deepseek-harness/blob/687f282e8625c6b8d11ff58211a90524be2e4317/docs/cookbook/adding-a-tool.md">DeepSeek Harness Tool authoring</a><small>公式ドキュメント — defineTool、canonical JSON出力、render、取消し。</small></li>
+</ol>
+</section>
+<footer class="footer">FreeCAD / SOLIDWORKS専用LLMハーネス：調査・設計提案。外部ライブラリやネットワーク読込みを必要としないHTMLレポート。出典リンクの閲覧時のみ外部サイトへ移動する。</footer>
+</main></body></html>
+

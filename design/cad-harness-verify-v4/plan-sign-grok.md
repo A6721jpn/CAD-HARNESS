@@ -1,5 +1,0 @@
-AGREE
-
-The draft keeps the brief’s order: cost ledger, skill/CLI, one fresh holdout, then the pilot. v3 stays 88 retained calls and 109 charged calls. The holdout ceiling is the v3 sum: source 14×4 + spec 13×3 + clarification 10×1 + completion 6×4 + MVP 10×3 + previews 4 = 163. Pilot reserve is 10×4 = 40. Total 203. The 60 strata sum to 60, core 51, on the existing ratios. Legacy is 4 episodes at 0 calls. Missing prices stay null. Overload resends stay uncharged, and a run with no rejection is not recovery evidence. The hashed v3 skill and old reports stay in place.
-
-Section 7 states the choices that differ from plan-r1-grok: 60 items rather than 57, no live smoke, generic rules in the sent skill with `policy.json` as their checked copy, adoption required for a pilot success, and the 600 s overload cycle taken out of the active clocks. That clock change is a confirmation before any live freeze. Phases 1–2 take 0 live calls. Repair and clarification data stay typed runtime fields, not gold and not new instruction prose.
