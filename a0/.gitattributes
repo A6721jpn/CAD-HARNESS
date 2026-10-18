@@ -1,0 +1,2 @@
+# Preserve captured FreeCAD output byte-for-byte.
+*.log -text

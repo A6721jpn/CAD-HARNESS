@@ -1,0 +1,92 @@
+{
+  "probe": "datum-link-joint-headless",
+  "mode": "create",
+  "pid": 26160,
+  "python": "3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:00:26) [MSC v.1944 64 bit (AMD64)]",
+  "freecad": [
+    "1",
+    "1",
+    "3",
+    "20260725 (Git shallow)",
+    "Unknown",
+    "2026/07/25 04:52:02",
+    "grafted,grafted",
+    "145529fe741292ff0b3977a01195bf0247425794"
+  ],
+  "gui_up": 0,
+  "artifact_dir": "C:\\cad-harness\\work\\repo\\a0\\probe-artifacts\\datum-link-joint\\attempt-3",
+  "stages": {
+    "a": {
+      "status": "pass",
+      "data": {
+        "parts": [
+          {
+            "document": "ProbePart1",
+            "L_mm": "40.0 mm",
+            "length_mm": 40.0,
+            "volume_mm3": 6299.469035085125,
+            "datum_mm": null
+          },
+          {
+            "document": "ProbePart2",
+            "L_mm": "40.0 mm",
+            "length_mm": 40.0,
+            "volume_mm3": 6299.469035085125,
+            "datum_mm": null
+          }
+        ],
+        "expressions": [
+          [
+            "Height",
+            "Dimensions.param_H"
+          ],
+          [
+            "Length",
+            "Dimensions.param_L"
+          ],
+          [
+            "Width",
+            "Dimensions.param_W"
+          ]
+        ]
+      }
+    },
+    "b": {
+      "status": "fail",
+      "data": {
+        "datums": []
+      },
+      "exception_type": "AttributeError",
+      "exception": "'Part.Feature' object has no attribute 'Support'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 39, in stage\n    action(entry[\"data\"])\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 128, in create_datums\n    datum.Support = [(hole, (edge,))]\n    ^^^^^^^^^^^^^\nAttributeError: 'Part.Feature' object has no attribute 'Support'\n"
+    },
+    "c": {
+      "status": "fail",
+      "data": {},
+      "exception_type": "RuntimeError",
+      "exception": "Owner document not saved",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 39, in stage\n    action(entry[\"data\"])\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 151, in create_links\n    link.setLink(part)\nRuntimeError: Owner document not saved\n"
+    },
+    "d": {
+      "status": "unknown",
+      "data": {},
+      "exception_type": "Unknown",
+      "exception": "Dependency did not pass: b",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 39, in stage\n    action(entry[\"data\"])\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 162, in create_joint\n    require(\"b\", \"c\")\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 52, in require\n    raise Unknown(\"Dependency did not pass: \" + key)\ndatum_link_joint_probe.Unknown: Dependency did not pass: b\n"
+    },
+    "e": {
+      "status": "unknown",
+      "data": {},
+      "exception_type": "Unknown",
+      "exception": "Dependency did not pass: d",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 39, in stage\n    action(entry[\"data\"])\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 193, in change_and_solve\n    require(\"d\")\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 52, in require\n    raise Unknown(\"Dependency did not pass: \" + key)\ndatum_link_joint_probe.Unknown: Dependency did not pass: d\n"
+    },
+    "f": {
+      "status": "unknown",
+      "data": {},
+      "exception_type": "Unknown",
+      "exception": "Dependency did not pass: c",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 39, in stage\n    action(entry[\"data\"])\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 210, in save_and_reopen\n    require(\"c\")\n  File \"C:\\cad-harness/work/repo/a0/probes\\datum_link_joint_probe.py\", line 52, in require\n    raise Unknown(\"Dependency did not pass: \" + key)\ndatum_link_joint_probe.Unknown: Dependency did not pass: c\n"
+    }
+  }
+}

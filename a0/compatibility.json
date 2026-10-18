@@ -101,6 +101,27 @@
       "exit_code": null,
       "status": "unknown",
       "evidence": "tool/signal API、JSON＋画像返却、snapshot/worker連携、2部品datum/joint追従、GUI編集・再読込は未検証。"
+    },
+    {
+      "id": "datum_link_joint_reference_path_headless",
+      "command": "python a0/probes/run_datum_link_joint_probe.py a0/probe-artifacts/datum-link-joint/final",
+      "exit_code": 0,
+      "status": "pass",
+      "stage_status": {
+        "a": "pass",
+        "b": "pass",
+        "c": "pass",
+        "d": "pass",
+        "e": "pass",
+        "f": "pass"
+      },
+      "evidence": [
+        "a0/notes-datum-link-joint.md",
+        "a0/probe-artifacts/datum-link-joint/final/result.json",
+        "a0/probe-artifacts/datum-link-joint/final/reopen-result.json",
+        "a0/probe-artifacts/datum-link-joint/final/stdout.log"
+      ],
+      "scope": "Two holed PartDesign parts, native attached LCS, external App::Link, Fixed joint, L=40->60 mm, fresh-process reopen; GuiUp=0. Does not establish A0 completion or GUI behavior."
     }
   ],
   "notes": [

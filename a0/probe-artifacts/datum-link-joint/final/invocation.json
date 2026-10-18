@@ -1,0 +1,11 @@
+{
+  "command": [
+    "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+    "C:/cad-harness/work/repo/a0/probes/datum_link_joint_probe.py"
+  ],
+  "environment": {
+    "A0_DATUM_PROBE_DIR": "C:/cad-harness/work/repo/a0/probe-artifacts/datum-link-joint/final",
+    "A0_DATUM_PROBE_MODE": "create"
+  },
+  "exit_code": 0
+}

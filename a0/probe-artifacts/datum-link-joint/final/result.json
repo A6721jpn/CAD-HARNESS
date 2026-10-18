@@ -1,0 +1,503 @@
+{
+  "probe": "datum-link-joint-headless",
+  "mode": "create",
+  "pid": 27772,
+  "python": "3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:00:26) [MSC v.1944 64 bit (AMD64)]",
+  "freecad": [
+    "1",
+    "1",
+    "3",
+    "20260725 (Git shallow)",
+    "Unknown",
+    "2026/07/25 04:52:02",
+    "grafted,grafted",
+    "145529fe741292ff0b3977a01195bf0247425794"
+  ],
+  "gui_up": 0,
+  "artifact_dir": "C:\\cad-harness\\work\\repo\\a0\\probe-artifacts\\datum-link-joint\\final",
+  "stages": {
+    "a": {
+      "status": "pass",
+      "data": {
+        "parts": [
+          {
+            "document": "ProbePart1",
+            "L_mm": "40.0 mm",
+            "length_mm": 40.0,
+            "volume_mm3": 6299.469035085125,
+            "datum_mm": null
+          },
+          {
+            "document": "ProbePart2",
+            "L_mm": "40.0 mm",
+            "length_mm": 40.0,
+            "volume_mm3": 6299.469035085125,
+            "datum_mm": null
+          }
+        ],
+        "expressions": [
+          [
+            "Height",
+            "Dimensions.param_H"
+          ],
+          [
+            "Length",
+            "Dimensions.param_L"
+          ],
+          [
+            "Width",
+            "Dimensions.param_W"
+          ]
+        ]
+      }
+    },
+    "b": {
+      "status": "pass",
+      "data": {
+        "datums": [
+          {
+            "type": "PartDesign::CoordinateSystem",
+            "support": "[(<PartDesign::SubtractiveCylinder>, ('Edge14',))]",
+            "map_mode": "Concentric",
+            "expressions": [
+              [
+                ".AttachmentOffset.Base.z",
+                "Dimensions.param_H"
+              ]
+            ],
+            "position_mm": [
+              20.0,
+              10.0,
+              8.0
+            ]
+          },
+          {
+            "type": "PartDesign::CoordinateSystem",
+            "support": "[(<PartDesign::SubtractiveCylinder>, ('Edge14',))]",
+            "map_mode": "Concentric",
+            "expressions": [
+              [
+                ".AttachmentOffset.Base.z",
+                "Dimensions.param_H"
+              ]
+            ],
+            "position_mm": [
+              20.0,
+              10.0,
+              8.0
+            ]
+          }
+        ]
+      }
+    },
+    "c": {
+      "status": "pass",
+      "data": {
+        "links": [
+          {
+            "type": "App::Link",
+            "linked_document": "ProbePart1",
+            "linked_object": "Part",
+            "shape_valid": true,
+            "volume_mm3": 6299.469035085125
+          },
+          {
+            "type": "App::Link",
+            "linked_document": "ProbePart2",
+            "linked_object": "Part",
+            "shape_valid": true,
+            "volume_mm3": 6299.469035085125
+          }
+        ]
+      }
+    },
+    "d": {
+      "status": "pass",
+      "data": {
+        "api": [
+          {
+            "call": "doc.addObject(\"Assembly::AssemblyObject\", \"Assembly\")",
+            "return": "<Assembly object>"
+          },
+          {
+            "call": "assembly.newObject(\"Assembly::JointGroup\", \"Joints\")",
+            "return": "<Joint Group>"
+          },
+          {
+            "call": "JointObject.GroundedJoint(ground, Link1)",
+            "return": "<JointObject.GroundedJoint object at 0x00000157F42A2010>"
+          },
+          {
+            "call": "JointObject.Joint(joint, 0)",
+            "return": "<JointObject.Joint object at 0x00000157F42A2C10>",
+            "joint_type": "Fixed"
+          },
+          {
+            "call": "joint.Proxy.setJointConnectors(joint, [[Link1, [\"Body.HoleLCS.\", \"Body.HoleLCS.\"]], [Link2, [\"Body.HoleLCS.\", \"Body.HoleLCS.\"]]])",
+            "return": "None"
+          },
+          {
+            "call": "assembly.solve()",
+            "return": "0"
+          }
+        ],
+        "references": [
+          "(<App::Link object>, ['Body.HoleLCS.', 'Body.HoleLCS.'])",
+          "(<App::Link object>, ['Body.HoleLCS.', 'Body.HoleLCS.'])"
+        ],
+        "parts": [
+          {
+            "document": "ProbePart1",
+            "L_mm": "40.0 mm",
+            "length_mm": 40.0,
+            "volume_mm3": 6299.469035085125,
+            "datum_mm": [
+              20.0,
+              10.0,
+              8.0
+            ]
+          },
+          {
+            "document": "ProbePart2",
+            "L_mm": "40.0 mm",
+            "length_mm": 40.0,
+            "volume_mm3": 6299.469035085125,
+            "datum_mm": [
+              20.0,
+              10.0,
+              8.0
+            ]
+          }
+        ],
+        "link_datums_mm": [
+          [
+            20.0,
+            10.0,
+            8.0
+          ],
+          [
+            20.0,
+            10.0,
+            8.0
+          ]
+        ],
+        "world_datums_mm": [
+          [
+            20.0,
+            10.0,
+            8.0
+          ],
+          [
+            20.0,
+            10.0,
+            8.0
+          ]
+        ],
+        "link_placements_mm": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      }
+    },
+    "e": {
+      "status": "pass",
+      "data": {
+        "before": {
+          "parts": [
+            {
+              "document": "ProbePart1",
+              "L_mm": "40.0 mm",
+              "length_mm": 40.0,
+              "volume_mm3": 6299.469035085125,
+              "datum_mm": [
+                20.0,
+                10.0,
+                8.0
+              ]
+            },
+            {
+              "document": "ProbePart2",
+              "L_mm": "40.0 mm",
+              "length_mm": 40.0,
+              "volume_mm3": 6299.469035085125,
+              "datum_mm": [
+                20.0,
+                10.0,
+                8.0
+              ]
+            }
+          ],
+          "link_datums_mm": [
+            [
+              20.0,
+              10.0,
+              8.0
+            ],
+            [
+              20.0,
+              10.0,
+              8.0
+            ]
+          ],
+          "world_datums_mm": [
+            [
+              20.0,
+              10.0,
+              8.0
+            ],
+            [
+              20.0,
+              10.0,
+              8.0
+            ]
+          ],
+          "link_placements_mm": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "solve_return": "0",
+        "after": {
+          "parts": [
+            {
+              "document": "ProbePart1",
+              "L_mm": "60.0 mm",
+              "length_mm": 60.0,
+              "volume_mm3": 9499.469035085125,
+              "datum_mm": [
+                30.0,
+                10.0,
+                8.0
+              ]
+            },
+            {
+              "document": "ProbePart2",
+              "L_mm": "40.0 mm",
+              "length_mm": 40.0,
+              "volume_mm3": 6299.469035085125,
+              "datum_mm": [
+                20.0,
+                10.0,
+                8.0
+              ]
+            }
+          ],
+          "link_datums_mm": [
+            [
+              30.0,
+              10.0,
+              8.0
+            ],
+            [
+              30.0,
+              10.0,
+              8.0
+            ]
+          ],
+          "world_datums_mm": [
+            [
+              30.0,
+              10.0,
+              8.0
+            ],
+            [
+              30.0,
+              10.0,
+              8.0
+            ]
+          ],
+          "link_placements_mm": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              10.0,
+              4.932439087451337e-31,
+              0.0
+            ]
+          ]
+        }
+      }
+    },
+    "f": {
+      "status": "pass",
+      "data": {
+        "command": [
+          "C:\\Users\\NGGmo\\AppData\\Local\\Programs\\FreeCAD 1.1\\bin\\FreeCADCmd.exe",
+          "C:\\cad-harness\\work\\repo\\a0\\probes\\datum_link_joint_probe.py"
+        ],
+        "exit_code": 0,
+        "stdout": "FreeCAD 1.1.3, Libs: 1.1.3R20260725 (Git shallow)\n(C) 2001-2026 FreeCAD contributors\nFreeCAD is free and open-source software licensed under the terms of LGPL2+ license.\n\nImporting project files......\n\t\t\t\t\t\t(9 %)\t\n\t\t\t\t\t\t(18 %)\t\n\t\t\t\t\t\t(27 %)\t\n\t\t\t\t\t\t(36 %)\t\n\t\t\t\t\t\t(45 %)\t\n\t\t\t\t\t\t(54 %)\t\n\t\t\t\t\t\t(63 %)\t\n\t\t\t\t\t\t(72 %)\t\n\t\t\t\t\t\t(81 %)\t\n\t\t\t\t\t\t(90 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nPostprocessing......\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nImporting project files......\n\t\t\t\t\t\t(9 %)\t\n\t\t\t\t\t\t(18 %)\t\n\t\t\t\t\t\t(27 %)\t\n\t\t\t\t\t\t(36 %)\t\n\t\t\t\t\t\t(45 %)\t\n\t\t\t\t\t\t(54 %)\t\n\t\t\t\t\t\t(63 %)\t\n\t\t\t\t\t\t(72 %)\t\n\t\t\t\t\t\t(81 %)\t\n\t\t\t\t\t\t(90 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nPostprocessing......\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nImporting project files......\n\t\t\t\t\t\t(25 %)\t\n\t\t\t\t\t\t(50 %)\t\n\t\t\t\t\t\t(75 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nPostprocessing......\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nRecompute......\n\t\t\t\t\t\t(4 %)\t\n\t\t\t\t\t\t(9 %)\t\n\t\t\t\t\t\t(13 %)\t\n\t\t\t\t\t\t(18 %)\t\n\t\t\t\t\t\t(22 %)\t\n\t\t\t\t\t\t(27 %)\t\n\t\t\t\t\t\t(31 %)\t\n\t\t\t\t\t\t(36 %)\t\n\t\t\t\t\t\t(40 %)\t\n\t\t\t\t\t\t(45 %)\t\n\t\t\t\t\t\t(50 %)\t\n\t\t\t\t\t\t(54 %)\t\n\t\t\t\t\t\t(59 %)\t\n\t\t\t\t\t\t(63 %)\t\n\t\t\t\t\t\t(68 %)\t\n\t\t\t\t\t\t(72 %)\t\n\t\t\t\t\t\t(77 %)\t\n\t\t\t\t\t\t(81 %)\t\n\t\t\t\t\t\t(86 %)\t\n\t\t\t\t\t\t(90 %)\t\n\t\t\t\t\t\t(95 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nRecompute......\n\t\t\t\t\t\t(4 %)\t\n\t\t\t\t\t\t(9 %)\t\n\t\t\t\t\t\t(13 %)\t\n\t\t\t\t\t\t(18 %)\t\n\t\t\t\t\t\t(22 %)\t\n\t\t\t\t\t\t(27 %)\t\n\t\t\t\t\t\t(31 %)\t\n\t\t\t\t\t\t(36 %)\t\n\t\t\t\t\t\t(40 %)\t\n\t\t\t\t\t\t(45 %)\t\n\t\t\t\t\t\t(50 %)\t\n\t\t\t\t\t\t(54 %)\t\n\t\t\t\t\t\t(59 %)\t\n\t\t\t\t\t\t(63 %)\t\n\t\t\t\t\t\t(68 %)\t\n\t\t\t\t\t\t(72 %)\t\n\t\t\t\t\t\t(77 %)\t\n\t\t\t\t\t\t(81 %)\t\n\t\t\t\t\t\t(86 %)\t\n\t\t\t\t\t\t(90 %)\t\n\t\t\t\t\t\t(95 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nRecompute......\n\t\t\t\t\t\t(1 %)\t\n\t\t\t\t\t\t(3 %)\t\n\t\t\t\t\t\t(5 %)\t\n\t\t\t\t\t\t(6 %)\t\n\t\t\t\t\t\t(8 %)\t\n\t\t\t\t\t\t(10 %)\t\n\t\t\t\t\t\t(12 %)\t\n\t\t\t\t\t\t(13 %)\t\n\t\t\t\t\t\t(15 %)\t\n\t\t\t\t\t\t(17 %)\t\n\t\t\t\t\t\t(18 %)\t\n\t\t\t\t\t\t(20 %)\t\n\t\t\t\t\t\t(22 %)\t\n\t\t\t\t\t\t(24 %)\t\n\t\t\t\t\t\t(25 %)\t\n\t\t\t\t\t\t(27 %)\t\n\t\t\t\t\t\t(29 %)\t\n\t\t\t\t\t\t(31 %)\t\n\t\t\t\t\t\t(32 %)\t\n\t\t\t\t\t\t(34 %)\t\n\t\t\t\t\t\t(36 %)\t\n\t\t\t\t\t\t(37 %)\t\n\t\t\t\t\t\t(39 %)\t\n\t\t\t\t\t\t(41 %)\t\n\t\t\t\t\t\t(43 %)\t\n\t\t\t\t\t\t(44 %)\t\n\t\t\t\t\t\t(46 %)\t\n\t\t\t\t\t\t(48 %)\t\n\t\t\t\t\t\t(50 %)\t\n\t\t\t\t\t\t(51 %)\t\n\t\t\t\t\t\t(53 %)\t\n\t\t\t\t\t\t(55 %)\t\n\t\t\t\t\t\t(56 %)\t\n\t\t\t\t\t\t(58 %)\t\n\t\t\t\t\t\t(60 %)\t\n\t\t\t\t\t\t(62 %)\t\n\t\t\t\t\t\t(63 %)\t\n\t\t\t\t\t\t(65 %)\t\n\t\t\t\t\t\t(67 %)\t\n\t\t\t\t\t\t(68 %)\t\n\t\t\t\t\t\t(70 %)\t\n\t\t\t\t\t\t(72 %)\t\n\t\t\t\t\t\t(74 %)\t\n\t\t\t\t\t\t(75 %)\t\n\t\t\t\t\t\t(77 %)\t\n\t\t\t\t\t\t(79 %)\t\n\t\t\t\t\t\t(81 %)\t\n\t\t\t\t\t\t(82 %)\t\n\t\t\t\t\t\t(84 %)\t\n\t\t\t\t\t\t(86 %)\t\n\t\t\t\t\t\t(87 %)\t\n\t\t\t\t\t\t(89 %)\t\n\t\t\t\t\t\t(91 %)\t\n\t\t\t\t\t\t(93 %)\t\n\t\t\t\t\t\t(94 %)\t\n\t\t\t\t\t\t(96 %)\t\n\t\t\t\t\t\t(98 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\nMbD: Assembling system. \nMbD: Convergence = 0\nTime = 0\nA0_STAGE {\"f\": {\"status\": \"pass\", \"data\": {\"measurement\": {\"parts\": [{\"document\": \"ProbePart1\", \"L_mm\": \"60.0 mm\", \"length_mm\": 60.0, \"volume_mm3\": 9499.469035085125, \"datum_mm\": [30.0, 10.0, 8.0]}, {\"document\": \"ProbePart2\", \"L_mm\": \"40.0 mm\", \"length_mm\": 40.0, \"volume_mm3\": 6299.469035085125, \"datum_mm\": [20.0, 10.0, 8.0]}], \"link_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"world_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"link_placements_mm\": [[0.0, 0.0, 0.0], [10.0, 0.0, 0.0]]}, \"solve_return\": \"0\", \"after_solve\": {\"parts\": [{\"document\": \"ProbePart1\", \"L_mm\": \"60.0 mm\", \"length_mm\": 60.0, \"volume_mm3\": 9499.469035085125, \"datum_mm\": [30.0, 10.0, 8.0]}, {\"document\": \"ProbePart2\", \"L_mm\": \"40.0 mm\", \"length_mm\": 40.0, \"volume_mm3\": 6299.469035085125, \"datum_mm\": [20.0, 10.0, 8.0]}], \"link_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"world_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"link_placements_mm\": [[0.0, 0.0, 0.0], [10.0, 0.0, 0.0]]}}}}\nA0_DATUM_RESULT {\"probe\": \"datum-link-joint-headless\", \"mode\": \"reopen\", \"pid\": 38396, \"python\": \"3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:00:26) [MSC v.1944 64 bit (AMD64)]\", \"freecad\": [\"1\", \"1\", \"3\", \"20260725 (Git shallow)\", \"Unknown\", \"2026/07/25 04:52:02\", \"grafted,grafted\", \"145529fe741292ff0b3977a01195bf0247425794\"], \"gui_up\": 0, \"artifact_dir\": \"C:\\\\cad-harness\\\\work\\\\repo\\\\a0\\\\probe-artifacts\\\\datum-link-joint\\\\final\", \"stages\": {\"f\": {\"status\": \"pass\", \"data\": {\"measurement\": {\"parts\": [{\"document\": \"ProbePart1\", \"L_mm\": \"60.0 mm\", \"length_mm\": 60.0, \"volume_mm3\": 9499.469035085125, \"datum_mm\": [30.0, 10.0, 8.0]}, {\"document\": \"ProbePart2\", \"L_mm\": \"40.0 mm\", \"length_mm\": 40.0, \"volume_mm3\": 6299.469035085125, \"datum_mm\": [20.0, 10.0, 8.0]}], \"link_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"world_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"link_placements_mm\": [[0.0, 0.0, 0.0], [10.0, 0.0, 0.0]]}, \"solve_return\": \"0\", \"after_solve\": {\"parts\": [{\"document\": \"ProbePart1\", \"L_mm\": \"60.0 mm\", \"length_mm\": 60.0, \"volume_mm3\": 9499.469035085125, \"datum_mm\": [30.0, 10.0, 8.0]}, {\"document\": \"ProbePart2\", \"L_mm\": \"40.0 mm\", \"length_mm\": 40.0, \"volume_mm3\": 6299.469035085125, \"datum_mm\": [20.0, 10.0, 8.0]}], \"link_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"world_datums_mm\": [[30.0, 10.0, 8.0], [30.0, 10.0, 8.0]], \"link_placements_mm\": [[0.0, 0.0, 0.0], [10.0, 0.0, 0.0]]}}}}}\nRecompute......\n\t\t\t\t\t\t(1 %)\t\n\t\t\t\t\t\t(3 %)\t\n\t\t\t\t\t\t(5 %)\t\n\t\t\t\t\t\t(6 %)\t\n\t\t\t\t\t\t(8 %)\t\n\t\t\t\t\t\t(10 %)\t\n\t\t\t\t\t\t(12 %)\t\n\t\t\t\t\t\t(13 %)\t\n\t\t\t\t\t\t(15 %)\t\n\t\t\t\t\t\t(17 %)\t\n\t\t\t\t\t\t(18 %)\t\n\t\t\t\t\t\t(20 %)\t\n\t\t\t\t\t\t(22 %)\t\n\t\t\t\t\t\t(24 %)\t\n\t\t\t\t\t\t(25 %)\t\n\t\t\t\t\t\t(27 %)\t\n\t\t\t\t\t\t(29 %)\t\n\t\t\t\t\t\t(31 %)\t\n\t\t\t\t\t\t(32 %)\t\n\t\t\t\t\t\t(34 %)\t\n\t\t\t\t\t\t(36 %)\t\n\t\t\t\t\t\t(37 %)\t\n\t\t\t\t\t\t(39 %)\t\n\t\t\t\t\t\t(41 %)\t\n\t\t\t\t\t\t(43 %)\t\n\t\t\t\t\t\t(44 %)\t\n\t\t\t\t\t\t(46 %)\t\n\t\t\t\t\t\t(48 %)\t\n\t\t\t\t\t\t(50 %)\t\n\t\t\t\t\t\t(51 %)\t\n\t\t\t\t\t\t(53 %)\t\n\t\t\t\t\t\t(55 %)\t\n\t\t\t\t\t\t(56 %)\t\n\t\t\t\t\t\t(58 %)\t\n\t\t\t\t\t\t(60 %)\t\n\t\t\t\t\t\t(62 %)\t\n\t\t\t\t\t\t(63 %)\t\n\t\t\t\t\t\t(65 %)\t\n\t\t\t\t\t\t(67 %)\t\n\t\t\t\t\t\t(68 %)\t\n\t\t\t\t\t\t(70 %)\t\n\t\t\t\t\t\t(72 %)\t\n\t\t\t\t\t\t(74 %)\t\n\t\t\t\t\t\t(75 %)\t\n\t\t\t\t\t\t(77 %)\t\n\t\t\t\t\t\t(79 %)\t\n\t\t\t\t\t\t(81 %)\t\n\t\t\t\t\t\t(82 %)\t\n\t\t\t\t\t\t(84 %)\t\n\t\t\t\t\t\t(86 %)\t\n\t\t\t\t\t\t(87 %)\t\n\t\t\t\t\t\t(89 %)\t\n\t\t\t\t\t\t(91 %)\t\n\t\t\t\t\t\t(93 %)\t\n\t\t\t\t\t\t(94 %)\t\n\t\t\t\t\t\t(96 %)\t\n\t\t\t\t\t\t(98 %)\t\n\t\t\t\t\t\t(100 %)\t\n\t\t\t\t\t\t\t\t\n",
+        "stderr": "",
+        "child_result": {
+          "probe": "datum-link-joint-headless",
+          "mode": "reopen",
+          "pid": 38396,
+          "python": "3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:00:26) [MSC v.1944 64 bit (AMD64)]",
+          "freecad": [
+            "1",
+            "1",
+            "3",
+            "20260725 (Git shallow)",
+            "Unknown",
+            "2026/07/25 04:52:02",
+            "grafted,grafted",
+            "145529fe741292ff0b3977a01195bf0247425794"
+          ],
+          "gui_up": 0,
+          "artifact_dir": "C:\\cad-harness\\work\\repo\\a0\\probe-artifacts\\datum-link-joint\\final",
+          "stages": {
+            "f": {
+              "status": "pass",
+              "data": {
+                "measurement": {
+                  "parts": [
+                    {
+                      "document": "ProbePart1",
+                      "L_mm": "60.0 mm",
+                      "length_mm": 60.0,
+                      "volume_mm3": 9499.469035085125,
+                      "datum_mm": [
+                        30.0,
+                        10.0,
+                        8.0
+                      ]
+                    },
+                    {
+                      "document": "ProbePart2",
+                      "L_mm": "40.0 mm",
+                      "length_mm": 40.0,
+                      "volume_mm3": 6299.469035085125,
+                      "datum_mm": [
+                        20.0,
+                        10.0,
+                        8.0
+                      ]
+                    }
+                  ],
+                  "link_datums_mm": [
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ],
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ]
+                  ],
+                  "world_datums_mm": [
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ],
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ]
+                  ],
+                  "link_placements_mm": [
+                    [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    [
+                      10.0,
+                      0.0,
+                      0.0
+                    ]
+                  ]
+                },
+                "solve_return": "0",
+                "after_solve": {
+                  "parts": [
+                    {
+                      "document": "ProbePart1",
+                      "L_mm": "60.0 mm",
+                      "length_mm": 60.0,
+                      "volume_mm3": 9499.469035085125,
+                      "datum_mm": [
+                        30.0,
+                        10.0,
+                        8.0
+                      ]
+                    },
+                    {
+                      "document": "ProbePart2",
+                      "L_mm": "40.0 mm",
+                      "length_mm": 40.0,
+                      "volume_mm3": 6299.469035085125,
+                      "datum_mm": [
+                        20.0,
+                        10.0,
+                        8.0
+                      ]
+                    }
+                  ],
+                  "link_datums_mm": [
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ],
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ]
+                  ],
+                  "world_datums_mm": [
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ],
+                    [
+                      30.0,
+                      10.0,
+                      8.0
+                    ]
+                  ],
+                  "link_placements_mm": [
+                    [
+                      0.0,
+                      0.0,
+                      0.0
+                    ],
+                    [
+                      10.0,
+                      0.0,
+                      0.0
+                    ]
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
