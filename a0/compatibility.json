@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-18T07:13:45.8766863Z",
+  "host": "OMEN",
+  "os": "Microsoft Windows NT 10.0.26200.0",
+  "freecad": {
+    "version": "1.1.3",
+    "build": "20260725 (Git shallow)",
+    "exe": "C:\\Users\\NGGmo\\AppData\\Local\\Programs\\FreeCAD 1.1\\bin\\FreeCADCmd.exe",
+    "bundled_python": "3.11.14"
+  },
+  "dsh": {
+    "version": "0.2.1-rc.1",
+    "profiles_present": [
+      "headless",
+      "web"
+    ],
+    "dedicated_profile": "unknown"
+  },
+  "toolchain": {
+    "node": "v24.13.1",
+    "codex_cli": "codex-cli 0.163.0",
+    "git": "git version 2.38.0.windows.1"
+  },
+  "checks": [
+    {
+      "id": "freecad_headless",
+      "command": "& 'C:\\Users\\NGGmo\\AppData\\Local\\Programs\\FreeCAD 1.1\\bin\\FreeCADCmd.exe' 'C:\\cad-harness\\work\\.a0-probe\\probe.py'",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": [
+        "FreeCAD 1.1.3, Libs: 1.1.3R20260725 (Git shallow)",
+        "A0_PROBE_RESULT {\"probe\":\"a0-freecad-boundary\",\"python\":\"3.11.14\",\"executable\":\"C:\\\\Users\\\\NGGmo\\\\AppData\\\\Local\\\\Programs\\\\FreeCAD 1.1\\\\bin\\\\FreeCADCmd.exe\",\"freecad_version\":[\"1\",\"1\",\"3\",\"20260725 (Git shallow)\"],\"freecad_home\":\"C:\\\\Users\\\\NGGmo\\\\AppData\\\\Local\\\\Programs\\\\FreeCAD 1.1\\\\\\\\\",\"bbox_mm\":[100,40,8],\"solids\":1,\"volume_mm3\":32000,\"expected_volume_mm3\":32000,\"shape_valid\":true,\"step_path\":\"C:\\\\cad-harness\\\\work\\\\.a0-probe\\\\plate.step\",\"step_bytes\":6854,\"step_sha256\":\"4b807fa896aa12957006fb8b4dd988e65552a697e83f561c91a9b8a3dd0372fe\",\"fcstd_bytes\":2502,\"fcstd_path\":\"C:\\\\cad-harness\\\\work\\\\.a0-probe\\\\plate.FCStd\",\"ok\":true}"
+      ]
+    },
+    {
+      "id": "host_os",
+      "command": "[System.Environment]::MachineName; [System.Environment]::OSVersion.VersionString",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": [
+        "OMEN",
+        "Microsoft Windows NT 10.0.26200.0"
+      ]
+    },
+    {
+      "id": "node_version",
+      "command": "node --version",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": "v24.13.1"
+    },
+    {
+      "id": "codex_cli_version",
+      "command": "codex --version",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": "codex-cli 0.163.0"
+    },
+    {
+      "id": "git_version",
+      "command": "git --version",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": "git version 2.38.0.windows.1"
+    },
+    {
+      "id": "dsh_package_version",
+      "command": "(Get-Content -LiteralPath 'C:\\Users\\NGGmo\\AppData\\Roaming\\npm\\node_modules\\@deepseek-ai\\dsh\\package.json' -Raw | ConvertFrom-Json).version",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": "0.2.1-rc.1"
+    },
+    {
+      "id": "dsh_profiles_present",
+      "command": "Get-ChildItem -LiteralPath 'C:\\Users\\NGGmo\\.dsh\\profiles' -Name",
+      "exit_code": 0,
+      "status": "pass",
+      "evidence": [
+        "headless",
+        "web"
+      ]
+    },
+    {
+      "id": "dsh_startup",
+      "command": null,
+      "exit_code": null,
+      "status": "unknown",
+      "evidence": "認証未設定のため起動確認は未実施。"
+    },
+    {
+      "id": "dsh_dedicated_profile",
+      "command": null,
+      "exit_code": null,
+      "status": "unknown",
+      "evidence": "専用プロファイルの指定・作成・動作確認は未実施。既存 headless/web は変更していない。"
+    },
+    {
+      "id": "a0_remaining_integration",
+      "command": null,
+      "exit_code": null,
+      "status": "unknown",
+      "evidence": "tool/signal API、JSON＋画像返却、snapshot/worker連携、2部品datum/joint追従、GUI編集・再読込は未検証。"
+    }
+  ],
+  "notes": [
+    "FreeCAD は今回のプローブと起動バナーの実測。DSH 版はインストール済み package.json の読取値であり起動成功を意味しない。",
+    "STEP/FCStd は C:\\cad-harness\\work\\.a0-probe に出力。repo には含めない。",
+    "pass は各 check の範囲に限り、A0 全体の完了を示さない。未実施の command/exit_code は null。",
+    "generated_at は今回取得した UTC 時刻。証拠行の JSON は同じ値を保持して整形した。",
+    "プローブは repo 外の既存ファイルに依存する。既存 headless/web プロファイルは変更していない。"
+  ]
+}
