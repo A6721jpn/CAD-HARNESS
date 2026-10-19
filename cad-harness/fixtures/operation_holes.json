@@ -1,0 +1,16 @@
+{
+  "op": "add_hole_group",
+  "target": "plate.main",
+  "values": {
+    "hole_diameter": "6 mm",
+    "edge_margin": "15 mm",
+    "count": 2,
+    "symmetric": true,
+    "through": true,
+    "sketch_id": "Body.HoleSketch",
+    "mount_ids": [
+      "mount.left",
+      "mount.right"
+    ]
+  }
+}

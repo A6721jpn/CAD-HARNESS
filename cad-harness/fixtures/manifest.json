@@ -1,0 +1,110 @@
+[
+  {
+    "file": "plate_valid.json",
+    "type": "PlateSpec",
+    "accepted": true,
+    "reason": "Valid A1 contract, not evidence of CAD execution"
+  },
+  {
+    "file": "operation_valid.json",
+    "type": "Operation",
+    "accepted": true,
+    "reason": "Valid A1 contract, not evidence of CAD execution"
+  },
+  {
+    "file": "revision_valid.json",
+    "type": "Revision",
+    "accepted": true,
+    "reason": "Valid A1 contract, not evidence of CAD execution"
+  },
+  {
+    "file": "job_valid.json",
+    "type": "Job",
+    "accepted": true,
+    "reason": "Valid A1 contract, not evidence of CAD execution"
+  },
+  {
+    "file": "observation_valid.json",
+    "type": "Observation",
+    "accepted": true,
+    "reason": "Valid A1 contract, not evidence of CAD execution"
+  },
+  {
+    "file": "operation_create.json",
+    "type": "Operation",
+    "accepted": true,
+    "reason": "M1 construction contract"
+  },
+  {
+    "file": "operation_holes.json",
+    "type": "Operation",
+    "accepted": true,
+    "reason": "M1 construction contract"
+  },
+  {
+    "file": "unit_cm.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Only explicit mm lengths accepted"
+  },
+  {
+    "file": "dimension_area.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Only explicit mm lengths accepted"
+  },
+  {
+    "file": "unit_missing.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Only explicit mm lengths accepted"
+  },
+  {
+    "file": "operation_extra_parameter.json",
+    "type": "Operation",
+    "accepted": false,
+    "reason": "M2 may change D/T only"
+  },
+  {
+    "file": "operation_extra.json",
+    "type": "Job",
+    "accepted": false,
+    "reason": "Unsupported M4 operation in M1/M2 job"
+  },
+  {
+    "file": "shape_three_holes.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Fixed two-hole template"
+  },
+  {
+    "file": "shape_blind_holes.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Through holes required"
+  },
+  {
+    "file": "shape_touching_holes.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Outside e envelope and L-2e == D"
+  },
+  {
+    "file": "range_outside.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "D outside initial test envelope"
+  },
+  {
+    "file": "unknown_key.json",
+    "type": "PlateSpec",
+    "accepted": false,
+    "reason": "Unknown nested key"
+  },
+  {
+    "file": "job_skipped_states.json",
+    "type": "Job",
+    "accepted": false,
+    "reason": "Cannot skip running/validated"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "C:\\Users\\NGGmo\\AppData\\Local\\Programs\\FreeCAD 1.1\\bin\\python.exe",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_*.py",
+    "-v"
+  ],
+  "cwd": "C:\\cad-harness\\work\\repo\\cad-harness",
+  "python_version": "3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:00:26) [MSC v.1944 64 bit (AMD64)]",
+  "returncode": 0,
+  "scope": "A1 contracts only; no FreeCAD/CAD execution"
+}

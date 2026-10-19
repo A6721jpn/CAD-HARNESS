@@ -1,0 +1,11 @@
+{
+  "op": "create_body",
+  "target": "plate.main",
+  "values": {
+    "length": "100 mm",
+    "width": "40 mm",
+    "plate_thickness": "8 mm",
+    "profile": "centered_rectangle",
+    "sketch_id": "Body.BaseSketch"
+  }
+}

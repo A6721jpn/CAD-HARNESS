@@ -1,0 +1,27 @@
+{
+  "job_id": "job-01",
+  "request_id": "request-01",
+  "document_id": "plate-work-01",
+  "revision": {
+    "revision_id": "r2-human-L140",
+    "document_id": "plate-work-01",
+    "base_revision": "r1",
+    "candidate_id": "candidate-01",
+    "base_policy": "require_current"
+  },
+  "ops": [
+    {
+      "op": "set_parameters",
+      "target": "plate.main",
+      "values": {
+        "hole_diameter": "8 mm",
+        "plate_thickness": "10 mm"
+      }
+    }
+  ],
+  "state": "committed",
+  "history": [
+    "queued",
+    "committed"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "op": "set_parameters",
+  "target": "plate.main",
+  "values": {
+    "hole_diameter": "8 mm",
+    "plate_thickness": "10 mm"
+  }
+}

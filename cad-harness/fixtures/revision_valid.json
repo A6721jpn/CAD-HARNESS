@@ -1,0 +1,7 @@
+{
+  "revision_id": "r2-human-L140",
+  "document_id": "plate-work-01",
+  "base_revision": "r1",
+  "candidate_id": "candidate-01",
+  "base_policy": "require_current"
+}

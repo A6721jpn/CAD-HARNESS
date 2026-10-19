@@ -1,0 +1,21 @@
+test_boolean_is_not_integer_or_hole_count (test_contracts.ContractsTest.test_boolean_is_not_integer_or_hole_count) ... ok
+test_decimal_units_and_non_json_values (test_contracts.ContractsTest.test_decimal_units_and_non_json_values) ... ok
+test_envelope_boundaries (test_contracts.ContractsTest.test_envelope_boundaries) ... ok
+test_every_job_transition (test_contracts.ContractsTest.test_every_job_transition) ... ok
+test_fixture_manifest (test_contracts.ContractsTest.test_fixture_manifest) ... ok
+test_job_history_must_agree_with_state (test_contracts.ContractsTest.test_job_history_must_agree_with_state) ... ok
+test_observation_reports_failed_shape_without_claiming_pass (test_contracts.ContractsTest.test_observation_reports_failed_shape_without_claiming_pass) ... ok
+test_patch_preserves_human_length (test_contracts.ContractsTest.test_patch_preserves_human_length) ... ok
+test_patch_rejects_invalid_or_extra_operations_atomically (test_contracts.ContractsTest.test_patch_rejects_invalid_or_extra_operations_atomically) ... ok
+test_required_fields (test_contracts.ContractsTest.test_required_fields) ... ok
+test_revision_lineage_and_job_candidate (test_contracts.ContractsTest.test_revision_lineage_and_job_candidate) ... ok
+test_semantic_ids_are_not_native_face_numbers (test_contracts.ContractsTest.test_semantic_ids_are_not_native_face_numbers) ... ok
+test_strict_json_loader (test_contracts.ContractsTest.test_strict_json_loader) ... ok
+test_unknown_keys_at_every_object_boundary (test_contracts.ContractsTest.test_unknown_keys_at_every_object_boundary) ... ok
+test_validation_returns_independent_value (test_contracts.ContractsTest.test_validation_returns_independent_value) ... ok
+test_visual_identity_and_failure_are_separate (test_contracts.ContractsTest.test_visual_identity_and_failure_are_separate) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.060s
+
+OK

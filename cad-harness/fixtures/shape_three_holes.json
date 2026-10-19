@@ -1,0 +1,13 @@
+{
+  "id": "plate.main",
+  "dimensions": {
+    "L": "100 mm",
+    "W": "40 mm",
+    "T": "8 mm",
+    "D": "6 mm",
+    "e": "15 mm"
+  },
+  "hole_count": 3,
+  "symmetric": true,
+  "through": true
+}

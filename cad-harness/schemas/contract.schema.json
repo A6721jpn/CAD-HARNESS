@@ -1,0 +1,936 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cad-harness:a1:contracts:1",
+  "title": "A1 plate contracts (mm only)",
+  "$comment": "Mandatory x-* semantics are specified in README.md. Structural JSON Schema validation alone is insufficient.",
+  "$defs": {
+    "Identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+    },
+    "PlateSpec": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "plate.main"
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "L": {
+              "type": "string",
+              "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+              "x-mm-range": [
+                80,
+                180
+              ]
+            },
+            "W": {
+              "type": "string",
+              "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+              "x-mm-range": [
+                30,
+                80
+              ]
+            },
+            "T": {
+              "type": "string",
+              "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+              "x-mm-range": [
+                4,
+                16
+              ]
+            },
+            "D": {
+              "type": "string",
+              "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+              "x-mm-range": [
+                4,
+                12
+              ]
+            },
+            "e": {
+              "type": "string",
+              "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+              "x-mm-range": [
+                12,
+                25
+              ]
+            }
+          },
+          "required": [
+            "L",
+            "W",
+            "T",
+            "D",
+            "e"
+          ],
+          "additionalProperties": false
+        },
+        "hole_count": {
+          "const": 2
+        },
+        "symmetric": {
+          "const": true
+        },
+        "through": {
+          "const": true
+        }
+      },
+      "required": [
+        "id",
+        "dimensions",
+        "hole_count",
+        "symmetric",
+        "through"
+      ],
+      "additionalProperties": false,
+      "x-geometry": [
+        {
+          "condition": "e > D/2",
+          "terms": {
+            "e": 1,
+            "D": -0.5
+          },
+          "greater_than": 0
+        },
+        {
+          "condition": "W > D",
+          "terms": {
+            "W": 1,
+            "D": -1
+          },
+          "greater_than": 0
+        },
+        {
+          "condition": "L - 2e > D",
+          "terms": {
+            "L": 1,
+            "e": -2,
+            "D": -1
+          },
+          "greater_than": 0
+        }
+      ]
+    },
+    "Operation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "create_body"
+            },
+            "target": {
+              "const": "plate.main"
+            },
+            "values": {
+              "type": "object",
+              "properties": {
+                "length": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    80,
+                    180
+                  ]
+                },
+                "width": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    30,
+                    80
+                  ]
+                },
+                "plate_thickness": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    4,
+                    16
+                  ]
+                },
+                "profile": {
+                  "const": "centered_rectangle"
+                },
+                "sketch_id": {
+                  "const": "Body.BaseSketch"
+                }
+              },
+              "required": [
+                "length",
+                "width",
+                "plate_thickness",
+                "profile",
+                "sketch_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "op",
+            "target",
+            "values"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "add_hole_group"
+            },
+            "target": {
+              "const": "plate.main"
+            },
+            "values": {
+              "type": "object",
+              "properties": {
+                "hole_diameter": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    4,
+                    12
+                  ]
+                },
+                "edge_margin": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    12,
+                    25
+                  ]
+                },
+                "count": {
+                  "const": 2
+                },
+                "symmetric": {
+                  "const": true
+                },
+                "through": {
+                  "const": true
+                },
+                "sketch_id": {
+                  "const": "Body.HoleSketch"
+                },
+                "mount_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "mount.left",
+                      "mount.right"
+                    ]
+                  },
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "hole_diameter",
+                "edge_margin",
+                "count",
+                "symmetric",
+                "through",
+                "sketch_id",
+                "mount_ids"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "op",
+            "target",
+            "values"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "const": "set_parameters"
+            },
+            "target": {
+              "const": "plate.main"
+            },
+            "values": {
+              "type": "object",
+              "properties": {
+                "hole_diameter": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    4,
+                    12
+                  ]
+                },
+                "plate_thickness": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])",
+                  "x-mm-range": [
+                    4,
+                    16
+                  ]
+                }
+              },
+              "required": [],
+              "additionalProperties": false,
+              "minProperties": 1
+            }
+          },
+          "required": [
+            "op",
+            "target",
+            "values"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Revision": {
+      "type": "object",
+      "properties": {
+        "revision_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+        },
+        "document_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+        },
+        "base_revision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidate_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Identifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "base_policy": {
+          "type": "string",
+          "enum": [
+            "require_current",
+            "snapshot"
+          ]
+        }
+      },
+      "required": [
+        "revision_id",
+        "document_id",
+        "base_revision",
+        "candidate_id",
+        "base_policy"
+      ],
+      "additionalProperties": false,
+      "x-revision-links": true
+    },
+    "Observation": {
+      "type": "object",
+      "properties": {
+        "identification": {
+          "type": "object",
+          "properties": {
+            "revision_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+            },
+            "candidate_id": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Identifier"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "semantic_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "plate.main",
+                  "Params.L",
+                  "Params.W",
+                  "Params.T",
+                  "Params.D",
+                  "Params.e",
+                  "Params.P",
+                  "Body.BaseSketch",
+                  "Body.Pad",
+                  "Body.HoleSketch",
+                  "Body.Pocket",
+                  "mount.left",
+                  "mount.right"
+                ]
+              },
+              "minItems": 13,
+              "maxItems": 13,
+              "uniqueItems": true
+            },
+            "native_objects": {
+              "type": "object",
+              "properties": {
+                "plate.main": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Params.L": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Params.W": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Params.T": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Params.D": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Params.e": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Params.P": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Body.BaseSketch": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Body.Pad": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Body.HoleSketch": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "Body.Pocket": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "mount.left": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                },
+                "mount.right": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                }
+              },
+              "required": [
+                "plate.main",
+                "Params.L",
+                "Params.W",
+                "Params.T",
+                "Params.D",
+                "Params.e",
+                "Params.P",
+                "Body.BaseSketch",
+                "Body.Pad",
+                "Body.HoleSketch",
+                "Body.Pocket",
+                "mount.left",
+                "mount.right"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "revision_id",
+            "candidate_id",
+            "semantic_ids",
+            "native_objects"
+          ],
+          "additionalProperties": false
+        },
+        "state": {
+          "type": "object",
+          "properties": {
+            "before": {
+              "$ref": "#/$defs/PlateSpec"
+            },
+            "after": {
+              "$ref": "#/$defs/PlateSpec"
+            },
+            "pitch_expression": {
+              "const": "Params.L - 2 * Params.e"
+            },
+            "independent": {
+              "const": [
+                "Params.L",
+                "Params.W",
+                "Params.T",
+                "Params.D",
+                "Params.e"
+              ]
+            },
+            "dependent": {
+              "const": [
+                "Params.P"
+              ]
+            }
+          },
+          "required": [
+            "before",
+            "after",
+            "pitch_expression",
+            "independent",
+            "dependent"
+          ],
+          "additionalProperties": false
+        },
+        "measurements": {
+          "type": "object",
+          "properties": {
+            "bounds": {
+              "type": "object",
+              "properties": {
+                "L": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])"
+                },
+                "W": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])"
+                },
+                "T": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])"
+                }
+              },
+              "required": [
+                "L",
+                "W",
+                "T"
+              ],
+              "additionalProperties": false
+            },
+            "hole_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "hole_diameter": {
+              "type": "string",
+              "pattern": "^[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])"
+            },
+            "hole_centers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "enum": [
+                      "mount.left",
+                      "mount.right"
+                    ]
+                  },
+                  "x": {
+                    "type": "string",
+                    "pattern": "^-?[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])"
+                  },
+                  "y": {
+                    "type": "string",
+                    "pattern": "^-?[0-9]+(?:\\.[0-9]+)? mm(?![\\s\\S])"
+                  }
+                },
+                "required": [
+                  "id",
+                  "x",
+                  "y"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 2
+            },
+            "through": {
+              "type": "boolean"
+            },
+            "solid_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "bounds",
+            "hole_count",
+            "hole_diameter",
+            "hole_centers",
+            "through",
+            "solid_count"
+          ],
+          "additionalProperties": false
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "constraints": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "status",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "history": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "status",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "preservation": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "status",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "reload": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "status",
+                "evidence"
+              ],
+              "additionalProperties": false
+            },
+            "edit_tests": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "unknown"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "status",
+                "evidence"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "constraints",
+            "history",
+            "preservation",
+            "reload",
+            "edit_tests"
+          ],
+          "additionalProperties": false
+        },
+        "visual": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "ready"
+                },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "revision_id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                      },
+                      "view": {
+                        "type": "string",
+                        "enum": [
+                          "top",
+                          "isometric"
+                        ]
+                      },
+                      "artifact": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "revision_id",
+                      "view",
+                      "artifact"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "required": [
+                "status",
+                "images"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "failed",
+                    "unknown"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "revision_id": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+                      },
+                      "view": {
+                        "type": "string",
+                        "enum": [
+                          "top",
+                          "isometric"
+                        ]
+                      },
+                      "artifact": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "revision_id",
+                      "view",
+                      "artifact"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0,
+                  "maxItems": 0
+                }
+              },
+              "required": [
+                "status",
+                "reason",
+                "images"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "identification",
+        "state",
+        "measurements",
+        "validation",
+        "visual"
+      ],
+      "additionalProperties": false,
+      "x-observation-links": true
+    },
+    "Job": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+        },
+        "document_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,127}(?![\\s\\S])"
+        },
+        "revision": {
+          "$ref": "#/$defs/Revision"
+        },
+        "ops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Operation"
+          },
+          "minItems": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "running",
+            "validated",
+            "committed",
+            "failed",
+            "cancelled",
+            "unknown"
+          ]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "validated",
+              "committed",
+              "failed",
+              "cancelled",
+              "unknown"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "job_id",
+        "request_id",
+        "document_id",
+        "revision",
+        "ops",
+        "state",
+        "history"
+      ],
+      "additionalProperties": false,
+      "x-job-history": true,
+      "x-transitions": {
+        "queued": [
+          "running",
+          "failed",
+          "cancelled",
+          "unknown"
+        ],
+        "running": [
+          "validated",
+          "failed",
+          "cancelled",
+          "unknown"
+        ],
+        "validated": [
+          "committed",
+          "failed",
+          "cancelled",
+          "unknown"
+        ],
+        "committed": [],
+        "failed": [],
+        "cancelled": [],
+        "unknown": []
+      },
+      "x-job-links": true
+    }
+  }
+}

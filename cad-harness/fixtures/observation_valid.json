@@ -1,0 +1,135 @@
+{
+  "identification": {
+    "revision_id": "r3",
+    "candidate_id": "candidate-01",
+    "semantic_ids": [
+      "plate.main",
+      "Params.L",
+      "Params.W",
+      "Params.T",
+      "Params.D",
+      "Params.e",
+      "Params.P",
+      "Body.BaseSketch",
+      "Body.Pad",
+      "Body.HoleSketch",
+      "Body.Pocket",
+      "mount.left",
+      "mount.right"
+    ],
+    "native_objects": {
+      "plate.main": "plate_main",
+      "Params.L": "Params_L",
+      "Params.W": "Params_W",
+      "Params.T": "Params_T",
+      "Params.D": "Params_D",
+      "Params.e": "Params_e",
+      "Params.P": "Params_P",
+      "Body.BaseSketch": "Body_BaseSketch",
+      "Body.Pad": "Body_Pad",
+      "Body.HoleSketch": "Body_HoleSketch",
+      "Body.Pocket": "Body_Pocket",
+      "mount.left": "mount_left",
+      "mount.right": "mount_right"
+    }
+  },
+  "state": {
+    "before": {
+      "id": "plate.main",
+      "dimensions": {
+        "L": "140 mm",
+        "W": "40 mm",
+        "T": "8 mm",
+        "D": "6 mm",
+        "e": "15 mm"
+      },
+      "hole_count": 2,
+      "symmetric": true,
+      "through": true
+    },
+    "after": {
+      "id": "plate.main",
+      "dimensions": {
+        "L": "140 mm",
+        "W": "40 mm",
+        "T": "10 mm",
+        "D": "8 mm",
+        "e": "15 mm"
+      },
+      "hole_count": 2,
+      "symmetric": true,
+      "through": true
+    },
+    "pitch_expression": "Params.L - 2 * Params.e",
+    "independent": [
+      "Params.L",
+      "Params.W",
+      "Params.T",
+      "Params.D",
+      "Params.e"
+    ],
+    "dependent": [
+      "Params.P"
+    ]
+  },
+  "measurements": {
+    "bounds": {
+      "L": "140 mm",
+      "W": "40 mm",
+      "T": "10 mm"
+    },
+    "hole_count": 2,
+    "hole_diameter": "8 mm",
+    "hole_centers": [
+      {
+        "id": "mount.left",
+        "x": "-55 mm",
+        "y": "0 mm"
+      },
+      {
+        "id": "mount.right",
+        "x": "55 mm",
+        "y": "0 mm"
+      }
+    ],
+    "through": true,
+    "solid_count": 1
+  },
+  "validation": {
+    "constraints": {
+      "status": "unknown",
+      "evidence": [
+        "Synthetic contract fixture; CAD not executed (A2+)."
+      ]
+    },
+    "history": {
+      "status": "unknown",
+      "evidence": [
+        "Synthetic contract fixture; CAD not executed (A2+)."
+      ]
+    },
+    "preservation": {
+      "status": "unknown",
+      "evidence": [
+        "Synthetic contract fixture; CAD not executed (A2+)."
+      ]
+    },
+    "reload": {
+      "status": "unknown",
+      "evidence": [
+        "Synthetic contract fixture; CAD not executed (A2+)."
+      ]
+    },
+    "edit_tests": {
+      "status": "unknown",
+      "evidence": [
+        "Synthetic contract fixture; CAD not executed (A2+)."
+      ]
+    }
+  },
+  "visual": {
+    "status": "unknown",
+    "reason": "A1 fixture; no CAD images generated",
+    "images": []
+  }
+}
