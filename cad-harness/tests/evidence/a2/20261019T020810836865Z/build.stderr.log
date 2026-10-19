@@ -1,0 +1,20 @@
+test_observer_detects_bad_geometry (test_a2_native.BuildTests.test_observer_detects_bad_geometry) ... ok
+test_reject_invalid_before_document_creation (test_a2_native.BuildTests.test_reject_invalid_before_document_creation) ... ok
+test_three_lengths_and_live_expressions (test_a2_native.BuildTests.test_three_lengths_and_live_expressions) ... ERROR
+
+======================================================================
+ERROR: test_three_lengths_and_live_expressions (test_a2_native.BuildTests.test_three_lengths_and_live_expressions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\cad-harness\work\repo\cad-harness\tests\test_a2_native.py", line 95, in test_three_lengths_and_live_expressions
+    doc = compile_plate(spec_for())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\cad-harness\work\repo\cad-harness\freecad-bridge\compiler\plate.py", line 87, in compile_plate
+    pocket.Type = "Through all"
+    ^^^^^^^^^^^
+ValueError: 'Through all' is not part of the enumeration in Plate#HolesCut.Type
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.986s
+
+FAILED (errors=1)

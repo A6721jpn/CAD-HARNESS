@@ -1,0 +1,3 @@
+# Preserve captured process bytes and native documents without line conversion.
+*.log binary
+*.FCStd binary

@@ -1,0 +1,390 @@
+{
+  "stage": "reopen-L160",
+  "pid": 29416,
+  "python": "3.11.14 | packaged by conda-forge | (main, Oct 13 2025, 14:00:26) [MSC v.1944 64 bit (AMD64)]",
+  "passed": true,
+  "freecad_version": [
+    "1",
+    "1",
+    "3",
+    "20260725 (Git shallow)",
+    "Unknown",
+    "2026/07/25 04:52:02",
+    "grafted,grafted",
+    "145529fe741292ff0b3977a01195bf0247425794"
+  ],
+  "tests_run": 1,
+  "skipped": [],
+  "failures": [],
+  "errors": [],
+  "measurements": {
+    "reopened": {
+      "valid": true,
+      "solid_count": 1,
+      "size_mm": [
+        160.0,
+        40.0,
+        8.0
+      ],
+      "bounds_mm": [
+        -80.0,
+        -20.0,
+        0.0,
+        80.0,
+        20.0,
+        8.0
+      ],
+      "hole_count": 2,
+      "holes": [
+        {
+          "center_mm": [
+            -65.0,
+            0.0
+          ],
+          "diameter_mm": 6.0,
+          "z_span_mm": [
+            0.0,
+            8.0
+          ],
+          "end_openings": [
+            true,
+            true
+          ],
+          "blocked_probe_volume_mm3": 0.0,
+          "through": true
+        },
+        {
+          "center_mm": [
+            65.0,
+            0.0
+          ],
+          "diameter_mm": 6.0,
+          "z_span_mm": [
+            0.0,
+            8.0
+          ],
+          "end_openings": [
+            true,
+            true
+          ],
+          "blocked_probe_volume_mm3": 0.0,
+          "through": true
+        }
+      ],
+      "through": true,
+      "volume_mm3": 50747.610657883066,
+      "formula_volume_mm3": 50747.61065788307,
+      "volume_formula_matches": true,
+      "history": {
+        "expressions": {
+          "BaseSketch": [
+            [
+              ".Constraints.PlateLength",
+              "Params.plate_length"
+            ],
+            [
+              ".Constraints.PlateWidth",
+              "Params.plate_width"
+            ]
+          ],
+          "BasePad": [
+            [
+              "Length",
+              "Params.plate_thickness"
+            ]
+          ],
+          "HoleSketch": [
+            [
+              ".Constraints.HoleDiameter",
+              "Params.hole_diameter"
+            ],
+            [
+              ".Constraints.LeftCenterX",
+              "-Params.hole_pitch / 2"
+            ]
+          ],
+          "MountLeft": [
+            [
+              ".Placement.Base.x",
+              "-Params.hole_pitch / 2"
+            ],
+            [
+              ".Placement.Base.y",
+              "0 mm"
+            ],
+            [
+              ".Placement.Base.z",
+              "0 mm"
+            ]
+          ],
+          "MountRight": [
+            [
+              ".Placement.Base.x",
+              "Params.hole_pitch / 2"
+            ],
+            [
+              ".Placement.Base.y",
+              "0 mm"
+            ],
+            [
+              ".Placement.Base.z",
+              "0 mm"
+            ]
+          ]
+        },
+        "fully_constrained": [
+          true,
+          true
+        ],
+        "states": {
+          "Params": [
+            "Up-to-date"
+          ],
+          "Body": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "MountLeft": [
+            "Up-to-date"
+          ],
+          "MountRight": [
+            "Up-to-date"
+          ],
+          "BaseSketch": [
+            "Up-to-date"
+          ],
+          "BasePad": [
+            "Up-to-date"
+          ],
+          "HoleSketch": [
+            "Up-to-date"
+          ],
+          "HolesCut": [
+            "Up-to-date"
+          ]
+        },
+        "pocket_type": "ThroughAll",
+        "pocket_reversed": true,
+        "mounts_mm": [
+          [
+            -65.0,
+            0.0,
+            0.0
+          ],
+          [
+            65.0,
+            0.0,
+            0.0
+          ]
+        ]
+      }
+    },
+    "edited_after_reopen": {
+      "valid": true,
+      "solid_count": 1,
+      "size_mm": [
+        150.0,
+        50.0,
+        10.0
+      ],
+      "bounds_mm": [
+        -75.0,
+        -25.0,
+        0.0,
+        75.0,
+        25.0,
+        10.0
+      ],
+      "hole_count": 2,
+      "holes": [
+        {
+          "center_mm": [
+            -55.0,
+            0.0
+          ],
+          "diameter_mm": 8.0,
+          "z_span_mm": [
+            0.0,
+            10.0
+          ],
+          "end_openings": [
+            true,
+            true
+          ],
+          "blocked_probe_volume_mm3": 0.0,
+          "through": true
+        },
+        {
+          "center_mm": [
+            55.0,
+            0.0
+          ],
+          "diameter_mm": 8.0,
+          "z_span_mm": [
+            0.0,
+            10.0
+          ],
+          "end_openings": [
+            true,
+            true
+          ],
+          "blocked_probe_volume_mm3": 0.0,
+          "through": true
+        }
+      ],
+      "through": true,
+      "volume_mm3": 73994.69035085128,
+      "formula_volume_mm3": 73994.69035085128,
+      "volume_formula_matches": true,
+      "history": {
+        "expressions": {
+          "BaseSketch": [
+            [
+              ".Constraints.PlateLength",
+              "Params.plate_length"
+            ],
+            [
+              ".Constraints.PlateWidth",
+              "Params.plate_width"
+            ]
+          ],
+          "BasePad": [
+            [
+              "Length",
+              "Params.plate_thickness"
+            ]
+          ],
+          "HoleSketch": [
+            [
+              ".Constraints.HoleDiameter",
+              "Params.hole_diameter"
+            ],
+            [
+              ".Constraints.LeftCenterX",
+              "-Params.hole_pitch / 2"
+            ]
+          ],
+          "MountLeft": [
+            [
+              ".Placement.Base.x",
+              "-Params.hole_pitch / 2"
+            ],
+            [
+              ".Placement.Base.y",
+              "0 mm"
+            ],
+            [
+              ".Placement.Base.z",
+              "0 mm"
+            ]
+          ],
+          "MountRight": [
+            [
+              ".Placement.Base.x",
+              "Params.hole_pitch / 2"
+            ],
+            [
+              ".Placement.Base.y",
+              "0 mm"
+            ],
+            [
+              ".Placement.Base.z",
+              "0 mm"
+            ]
+          ]
+        },
+        "fully_constrained": [
+          true,
+          true
+        ],
+        "states": {
+          "Params": [
+            "Up-to-date"
+          ],
+          "Body": [
+            "Up-to-date"
+          ],
+          "Origin": [
+            "Up-to-date"
+          ],
+          "X_Axis": [
+            "Up-to-date"
+          ],
+          "Y_Axis": [
+            "Up-to-date"
+          ],
+          "Z_Axis": [
+            "Up-to-date"
+          ],
+          "XY_Plane": [
+            "Up-to-date"
+          ],
+          "XZ_Plane": [
+            "Up-to-date"
+          ],
+          "YZ_Plane": [
+            "Up-to-date"
+          ],
+          "Origin001": [
+            "Up-to-date"
+          ],
+          "MountLeft": [
+            "Up-to-date"
+          ],
+          "MountRight": [
+            "Up-to-date"
+          ],
+          "BaseSketch": [
+            "Up-to-date"
+          ],
+          "BasePad": [
+            "Up-to-date"
+          ],
+          "HoleSketch": [
+            "Up-to-date"
+          ],
+          "HolesCut": [
+            "Up-to-date"
+          ]
+        },
+        "pocket_type": "ThroughAll",
+        "pocket_reversed": true,
+        "mounts_mm": [
+          [
+            -55.0,
+            0.0,
+            0.0
+          ],
+          [
+            55.0,
+            0.0,
+            0.0
+          ]
+        ]
+      }
+    }
+  }
+}

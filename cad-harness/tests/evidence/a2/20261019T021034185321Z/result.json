@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "invocations": [
+    {
+      "stage": "build",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T021034185321Z",
+        "A2_STAGE": "build",
+        "A2_LENGTH": ""
+      },
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "stage": "reopen-L100",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T021034185321Z",
+        "A2_STAGE": "reopen-L100",
+        "A2_LENGTH": "100"
+      },
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "stage": "reopen-L140",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T021034185321Z",
+        "A2_STAGE": "reopen-L140",
+        "A2_LENGTH": "140"
+      },
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "stage": "reopen-L160",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T021034185321Z",
+        "A2_STAGE": "reopen-L160",
+        "A2_LENGTH": "160"
+      },
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "scope": "A1 regression plus A2 native generation, B-Rep measurement and separate-process reload/edit",
+  "geometry_validation_note": "A1 ranges imply e > D/2, W > D and L-2e > D. Invalid geometry examples (including e <= D/2) are rejected by A1 range checks before geometric checks."
+}

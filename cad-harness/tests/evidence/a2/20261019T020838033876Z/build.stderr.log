@@ -1,0 +1,19 @@
+test_observer_detects_bad_geometry (test_a2_native.BuildTests.test_observer_detects_bad_geometry) ... ok
+test_reject_invalid_before_document_creation (test_a2_native.BuildTests.test_reject_invalid_before_document_creation) ... ok
+test_three_lengths_and_live_expressions (test_a2_native.BuildTests.test_three_lengths_and_live_expressions) ... FAIL
+
+======================================================================
+FAIL: test_three_lengths_and_live_expressions (test_a2_native.BuildTests.test_three_lengths_and_live_expressions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\cad-harness\work\repo\cad-harness\tests\test_a2_native.py", line 100, in test_three_lengths_and_live_expressions
+    measured = self.check_document(doc, spec)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\cad-harness\work\repo\cad-harness\tests\test_a2_native.py", line 43, in check_document
+    self.assertEqual(doc.BasePad.Profile, doc.BaseSketch)
+AssertionError: (<Sketcher::SketchObject>, []) != <Sketcher::SketchObject>
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.356s
+
+FAILED (failures=1)

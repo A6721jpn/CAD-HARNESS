@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "invocations": [
+    {
+      "stage": "build",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T020925105844Z",
+        "A2_STAGE": "build",
+        "A2_LENGTH": ""
+      },
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "stage": "reopen-L100",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T020925105844Z",
+        "A2_STAGE": "reopen-L100",
+        "A2_LENGTH": "100"
+      },
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "stage": "reopen-L140",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T020925105844Z",
+        "A2_STAGE": "reopen-L140",
+        "A2_LENGTH": "140"
+      },
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "stage": "reopen-L160",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T020925105844Z",
+        "A2_STAGE": "reopen-L160",
+        "A2_LENGTH": "160"
+      },
+      "returncode": 0,
+      "passed": true
+    }
+  ]
+}

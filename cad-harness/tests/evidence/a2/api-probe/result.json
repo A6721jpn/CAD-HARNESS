@@ -1,0 +1,40 @@
+{
+  "pocket_type_enum": [
+    "Length",
+    "ThroughAll",
+    "UpToFirst",
+    "UpToFace",
+    "?TwoLengths",
+    "UpToShape"
+  ],
+  "origin_features": [
+    [
+      "X_Axis",
+      "App::Line"
+    ],
+    [
+      "Y_Axis",
+      "App::Line"
+    ],
+    [
+      "Z_Axis",
+      "App::Line"
+    ],
+    [
+      "XY_Plane",
+      "App::Plane"
+    ],
+    [
+      "XZ_Plane",
+      "App::Plane"
+    ],
+    [
+      "YZ_Plane",
+      "App::Plane"
+    ],
+    [
+      "Origin001",
+      "App::Point"
+    ]
+  ]
+}

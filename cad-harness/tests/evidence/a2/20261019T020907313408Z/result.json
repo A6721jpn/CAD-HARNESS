@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "invocations": [
+    {
+      "stage": "build",
+      "command": [
+        "C:/Users/NGGmo/AppData/Local/Programs/FreeCAD 1.1/bin/FreeCADCmd.exe",
+        "C:/cad-harness/work/repo/cad-harness/tests/a2_worker.py"
+      ],
+      "cwd": "C:/cad-harness/work/repo/cad-harness",
+      "environment": {
+        "A2_OUTPUT": "C:/cad-harness/work/repo/cad-harness/tests/evidence/a2/20261019T020907313408Z",
+        "A2_STAGE": "build",
+        "A2_LENGTH": ""
+      },
+      "returncode": 0,
+      "passed": false
+    }
+  ]
+}
