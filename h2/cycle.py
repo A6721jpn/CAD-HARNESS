@@ -60,7 +60,8 @@ class Cycle:
             raise BudgetExceeded(f"LLM call budget exhausted ({self.max_calls})")
         index = len(self.data["llm_calls"]) + 1
         settings = harness["executor"]
-        record = {"call_id": index, "role": role, "model": settings.get("model"),
+        record = {"call_id": index, "role": role, "requested_model": settings.get("model"),
+                  "model": None, "model_source": None, "model_reason": "call_not_completed",
                   "reasoning_effort": settings["reasoning_effort"], "tokens": token_usage(None),
                   "wall_ms": None, "log_dir": str((self.report / "llm" / str(index)).relative_to(self.root))}
         self.data["llm_calls"].append(record)
@@ -69,6 +70,9 @@ class Cycle:
             response = self.llm(prompt, effort=settings["reasoning_effort"],
                                 model=settings.get("model"), log_dir=self.root / record["log_dir"])
             record.update({key: response.get(key) for key in ("tokens", "wall_ms", "exit_code", "error")})
+            record.update(model=response.get("model"), model_source=response.get("model_source"),
+                          model_reason=response.get("model_reason") if response.get("model") else
+                          response.get("model_reason", "model_not_reported_by_client"))
             if response.get("error"):
                 raise RuntimeError(response["error"])
             return response["text"]

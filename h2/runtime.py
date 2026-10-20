@@ -23,7 +23,9 @@ def token_usage(usage):
         if key == "cached_input" and value is None:
             value = usage.get("input_tokens_details", {}).get("cached_tokens")
         if key == "reasoning" and value is None:
-            value = usage.get("output_tokens_details", {}).get("reasoning_tokens")
+            value = usage.get("reasoning_output_tokens")
+            if value is None:
+                value = usage.get("output_tokens_details", {}).get("reasoning_tokens")
         result[key] = value if type(value) is int and value >= 0 else None
     if result["total"] is None and result["input"] is not None and result["output"] is not None:
         # Cached input and reasoning are subsets, not additional tokens.
@@ -55,6 +57,30 @@ def parse_events(stdout):
     if not completed or not isinstance(final, str):
         raise ValueError("Codex did not return a completed turn with an agent message")
     return final, token_usage(usage)
+
+
+def reported_model(stdout):
+    """Record only model identity reported in runtime metadata, never a config guess."""
+    models = set()
+    for line in stdout.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(event, dict) or event.get("type") not in (
+                "thread.started", "turn.started", "turn.completed", "response.created", "response.completed"):
+            continue
+        metadata = [event]
+        if isinstance(event.get("response"), dict):
+            metadata.append(event["response"])
+        for item in metadata:
+            value = item.get("model", item.get("model_id"))
+            if isinstance(value, str) and value.strip():
+                models.add(value)
+    if len(models) == 1:
+        return {"model": models.pop(), "model_source": "runtime_events", "model_reason": None}
+    return {"model": None, "model_source": None,
+            "model_reason": "conflicting_runtime_models" if models else "model_not_reported_in_runtime_events"}
 
 
 def extract_code(text):
@@ -104,7 +130,7 @@ class CodexClient:
         if process.returncode:
             error = f"codex exit={process.returncode}: {error or 'failed'}"
         return {"text": final, "tokens": tokens, "wall_ms": wall_ms,
-                "exit_code": process.returncode, "error": error}
+                "exit_code": process.returncode, "error": error, **reported_model(process.stdout)}
 
 
 class CadRunner:

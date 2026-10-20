@@ -10,7 +10,8 @@ import uuid
 
 from h2.cycle import Cycle
 from h2.edits import apply_edits, rank, validate_proposals, verdict
-from h2.runtime import CadRunner, CodexClient, parse_events, token_usage
+from h2.runtime import CadRunner, CodexClient, parse_events, reported_model, token_usage
+from h2.supplement import supplement_cycle
 
 SOURCE = Path(__file__).resolve().parents[1]
 CODE = "```python\ndef build(doc):\n    return doc\n```"
@@ -204,6 +205,89 @@ class CycleTests(unittest.TestCase):
             response = CadRunner(self.root)(self.root / "input.py", self.root / "reports/cad-run/test", "A-box-pocket-fillet")
             self.assertEqual(response["result"]["probe_status"], "pass")
             self.assertIn("freecadcmd", process.call_args.args[0])
+
+    def test_reasoning_output_tokens_are_a_subset_including_zero(self):
+        for reasoning in (0, 7):
+            with self.subTest(reasoning=reasoning):
+                usage = token_usage({"input_tokens": 100, "output_tokens": 30,
+                                     "reasoning_output_tokens": reasoning, "cached_input_tokens": 20})
+                self.assertEqual(usage["reasoning"], reasoning)
+                self.assertEqual(usage["total"], 130)
+        self.assertEqual(token_usage({"output_tokens_details": {"reasoning_tokens": 3}})["reasoning"], 3)
+
+    def test_reported_model_is_runtime_evidence_or_null_with_reason(self):
+        events = '\n'.join(json.dumps(e) for e in [
+            {"type": "thread.started", "model": "reported-model"},
+            {"type": "item.completed", "item": {"type": "agent_message", "text": CODE}},
+            {"type": "turn.completed", "usage": {"input_tokens": 10, "output_tokens": 5,
+                                                     "reasoning_output_tokens": 2}}])
+        self.assertEqual(reported_model(events)["model"], "reported-model")
+        unknown = reported_model('{"type":"thread.started","thread_id":"opaque"}')
+        self.assertIsNone(unknown["model"])
+        self.assertEqual(unknown["model_reason"], "model_not_reported_in_runtime_events")
+        with patch("h2.runtime.subprocess.run") as process:
+            process.return_value.stdout, process.return_value.stderr, process.return_value.returncode = events, "", 0
+            response = CodexClient("stub")("prompt", effort="low", model="requested-model",
+                                            log_dir=self.root / "reports/h2/model-call")
+            self.assertEqual(response["model"], "reported-model")
+            self.assertEqual(response["model_source"], "runtime_events")
+            self.assertEqual(response["tokens"]["reasoning"], 2)
+        _, data, _, _ = self.run_cycle()
+        self.assertIsNone(data["llm_calls"][0]["model"])
+        self.assertEqual(data["llm_calls"][0]["model_reason"], "model_not_reported_by_client")
+
+    def test_accounting_supplement_preserves_originals_and_is_idempotent(self):
+        cycle, data, _, _ = self.run_cycle()
+        for call in data["llm_calls"]:
+            call["tokens"]["reasoning"] = None
+            log_dir = self.root / call["log_dir"]
+            log_dir.mkdir(parents=True)
+            events = [{"type": "thread.started", "model": "measured-model"},
+                      {"type": "item.completed", "item": {"type": "agent_message", "text": CODE}},
+                      {"type": "turn.completed", "usage": {"input_tokens": 10, "output_tokens": 5,
+                                                               "cached_input_tokens": 2, "reasoning_output_tokens": 1}}]
+            (log_dir / "events.jsonl").write_text('\n'.join(json.dumps(e) for e in events), encoding="utf-8")
+        data["tokens"]["reasoning"] = None
+        for run in data["runs"].values():
+            run["tokens"]["reasoning"] = None
+        original = copy.deepcopy(data)
+        report = cycle.report / "cycle.json"
+        report.write_text(json.dumps(data), encoding="utf-8")
+        rows = [self.prior, *data["library_entries"]]
+        self.library.write_text(''.join(json.dumps(row) + '\n' for row in rows), encoding="utf-8")
+        original_library = self.library.read_bytes()
+        supplement = supplement_cycle(self.root, cycle.id)
+        self.assertEqual(supplement["tokens"]["reasoning"], 7)
+        self.assertEqual(supplement["tokens"]["total"], 105)
+        self.assertEqual(supplement["runs"]["run0"]["tokens"]["reasoning"], 2)
+        self.assertEqual(supplement["library_entries"][0]["contrast"]["probe"]["tokens"]["reasoning"], 1)
+        corrected = json.loads(report.read_text(encoding="utf-8"))
+        self.assertEqual({k: v for k, v in corrected.items() if k != "accounting_supplements"}, original)
+        self.assertTrue(self.library.read_bytes().startswith(original_library))
+        self.assertEqual(len(self.library.read_text(encoding="utf-8").splitlines()), 7)
+        report_bytes, library_bytes = report.read_bytes(), self.library.read_bytes()
+        self.assertEqual(supplement_cycle(self.root, cycle.id), supplement)
+        self.assertEqual(report.read_bytes(), report_bytes)
+        self.assertEqual(self.library.read_bytes(), library_bytes)
+
+    def test_second_cycle_proposer_gets_previous_entries_only_base_stays_fixed(self):
+        _, first, _, _ = self.run_cycle()
+        previous = [json.loads(line) for line in self.library.read_text(encoding="utf-8").splitlines()]
+        llm = StubLLM()
+        second = Cycle(self.root, cycle_id="stub-cycle-2", llm=llm, cad=StubCAD())
+        clock = itertools.count(1, .001)
+        with patch("time.perf_counter", side_effect=lambda: next(clock)):
+            data = second.run()
+        self.assertEqual(data["status"], "completed")
+        proposal_prompt = next(prompt for prompt, _, _ in llm.prompts if "Propose exactly" in prompt)
+        supplied = json.loads(proposal_prompt.split('\n', 1)[1])["prior_library"]
+        self.assertEqual(supplied, previous)
+        self.assertEqual(data["prior_library_count"], 4)
+        supplied_ids = {row["entry_id"] for row in supplied}
+        self.assertTrue({e["entry_id"] for e in first["library_entries"]}.issubset(supplied_ids))
+        self.assertTrue(supplied_ids.isdisjoint({e["entry_id"] for e in data["library_entries"]}))
+        self.assertEqual(data["runs"]["run0"]["harness"], json.loads(self.original_base))
+        self.assertEqual(self.base_path.read_bytes(), self.original_base)
 
 
 if __name__ == "__main__":

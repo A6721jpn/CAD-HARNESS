@@ -1866,5 +1866,461 @@
     "total": 342290
   },
   "llm_call_count": 13,
-  "cad_wall_ms": 6477.001
+  "cad_wall_ms": 6477.001,
+  "accounting_supplements": [
+    {
+      "schema": "h2.accounting-supplement.v1",
+      "supplement_id": "0ed9ab10399d19ced2f5149d",
+      "created_at": "2026-10-20T15:23:34.161149+00:00",
+      "method": "reaggregate_original_runtime_events",
+      "original_values_preserved": true,
+      "total_rule": "input + output; cached input and reasoning are subsets",
+      "evidence": [
+        {
+          "call_id": 1,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\1\\events.jsonl",
+          "sha256": "a82f3af3049f6942690491c8a8ee345ed1b624b68c081c2f2bd07343b7275469"
+        },
+        {
+          "call_id": 2,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\2\\events.jsonl",
+          "sha256": "222861ffff1e1f8c5b20eae6bc304b740b80367baced2da59ae6e908cdc3942e"
+        },
+        {
+          "call_id": 3,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\3\\events.jsonl",
+          "sha256": "1a9969637d8bcb938ffaaab4827c05d373c943974632498c0c948e6a095eadd0"
+        },
+        {
+          "call_id": 4,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\4\\events.jsonl",
+          "sha256": "02773a84093b435817a5037322a932339e9f84ff2071acb58ef73388e488f569"
+        },
+        {
+          "call_id": 5,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\5\\events.jsonl",
+          "sha256": "895e03a639856281e5487ef34fa93b3c17b4b748522418f93140e827942d92f7"
+        },
+        {
+          "call_id": 6,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\6\\events.jsonl",
+          "sha256": "2e702ba118efa1946b40b422ac63c3b9dc856fdf85f2e2272d0fa77e7c87a6ef"
+        },
+        {
+          "call_id": 7,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\7\\events.jsonl",
+          "sha256": "93b6ab878337814f6c8499dcccef661dd6ca0678375c745452980e0acd0e0807"
+        },
+        {
+          "call_id": 8,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\8\\events.jsonl",
+          "sha256": "ee19a794e2aaef0d617609ba715b2e1f6d01bd93d8527d1268152068b1ef6ab7"
+        },
+        {
+          "call_id": 9,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\9\\events.jsonl",
+          "sha256": "2cc79e9f6539fd3c78361c3a144d56fff38179d0baf20bfa52a903b89a669c96"
+        },
+        {
+          "call_id": 10,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\10\\events.jsonl",
+          "sha256": "8c1920298bbb9b6eaa322523a9e1de9362b7204b46addb7cbd0bb01fed979fab"
+        },
+        {
+          "call_id": 11,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\11\\events.jsonl",
+          "sha256": "1172d79d910237684710d6a7307a588dec16b12c584273f4e3783ccd9e7829ae"
+        },
+        {
+          "call_id": 12,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\12\\events.jsonl",
+          "sha256": "feb2e01d413982fed4aeeee900f049cf01dcc05087c713a26b1f0f356cbf7c05"
+        },
+        {
+          "call_id": 13,
+          "path": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\13\\events.jsonl",
+          "sha256": "ea869ad12c0aeee08394ff12134d382e9c3ec839b63aacb1bcb231fdef8427ef"
+        }
+      ],
+      "llm_calls": [
+        {
+          "call_id": 1,
+          "tokens": {
+            "input": 24245,
+            "cached_input": 0,
+            "output": 1109,
+            "reasoning": 212,
+            "total": 25354
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 2,
+          "tokens": {
+            "input": 27022,
+            "cached_input": 17280,
+            "output": 1059,
+            "reasoning": 102,
+            "total": 28081
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 3,
+          "tokens": {
+            "input": 25353,
+            "cached_input": 0,
+            "output": 1014,
+            "reasoning": 48,
+            "total": 26367
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 4,
+          "tokens": {
+            "input": 27002,
+            "cached_input": 0,
+            "output": 384,
+            "reasoning": 0,
+            "total": 27386
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 5,
+          "tokens": {
+            "input": 24304,
+            "cached_input": 0,
+            "output": 829,
+            "reasoning": 74,
+            "total": 25133
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 6,
+          "tokens": {
+            "input": 25190,
+            "cached_input": 0,
+            "output": 1181,
+            "reasoning": 216,
+            "total": 26371
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 7,
+          "tokens": {
+            "input": 24298,
+            "cached_input": 0,
+            "output": 827,
+            "reasoning": 72,
+            "total": 25125
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 8,
+          "tokens": {
+            "input": 25355,
+            "cached_input": 0,
+            "output": 1023,
+            "reasoning": 127,
+            "total": 26378
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 9,
+          "tokens": {
+            "input": 24311,
+            "cached_input": 0,
+            "output": 1002,
+            "reasoning": 82,
+            "total": 25313
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 10,
+          "tokens": {
+            "input": 25391,
+            "cached_input": 0,
+            "output": 1204,
+            "reasoning": 133,
+            "total": 26595
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 11,
+          "tokens": {
+            "input": 25559,
+            "cached_input": 0,
+            "output": 1218,
+            "reasoning": 158,
+            "total": 26777
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 12,
+          "tokens": {
+            "input": 24357,
+            "cached_input": 0,
+            "output": 799,
+            "reasoning": 70,
+            "total": 25156
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        },
+        {
+          "call_id": 13,
+          "tokens": {
+            "input": 27117,
+            "cached_input": 0,
+            "output": 1137,
+            "reasoning": 133,
+            "total": 28254
+          },
+          "model": null,
+          "model_source": null,
+          "model_reason": "model_not_reported_in_runtime_events"
+        }
+      ],
+      "runs": {
+        "run0": {
+          "tokens": {
+            "input": 76620,
+            "cached_input": 17280,
+            "output": 3182,
+            "reasoning": 362,
+            "total": 79802
+          }
+        },
+        "probe-1": {
+          "tokens": {
+            "input": 49494,
+            "cached_input": 0,
+            "output": 2010,
+            "reasoning": 290,
+            "total": 51504
+          }
+        },
+        "probe-2": {
+          "tokens": {
+            "input": 49653,
+            "cached_input": 0,
+            "output": 1850,
+            "reasoning": 199,
+            "total": 51503
+          }
+        },
+        "probe-3": {
+          "tokens": {
+            "input": 75261,
+            "cached_input": 0,
+            "output": 3424,
+            "reasoning": 373,
+            "total": 78685
+          }
+        },
+        "composed": {
+          "tokens": {
+            "input": 51474,
+            "cached_input": 0,
+            "output": 1936,
+            "reasoning": 203,
+            "total": 53410
+          }
+        }
+      },
+      "tokens": {
+        "input": 329504,
+        "cached_input": 17280,
+        "output": 12786,
+        "reasoning": 1427,
+        "total": 342290
+      },
+      "library_entries": [
+        {
+          "entry_id": "0ed9ab10399d19ced2f5149d-301749520d9c4a52b17004e72fbdad72",
+          "domain": "cad-freecad",
+          "task_id": "A-box-pocket-fillet",
+          "cycle_id": "20261020T151238Z-e7120eed",
+          "created_at": "2026-10-20T15:23:34.161149+00:00",
+          "edit": [
+            {
+              "op": "add_rule",
+              "value": "For box-pocket-fillet tasks, construct an explicit, connected PartDesign feature history within the returned Body: sketch-based additive feature, sketch-based Pocket, then Fillet referencing the preceding feature. Ensure the Body tip is the final feature. Treat correct geometry and correct feature history as separate requirements."
+            }
+          ],
+          "verdict": "supported",
+          "contrast": {
+            "run0": {
+              "geometry_pass": false,
+              "attempt_count": 3,
+              "tokens": {
+                "input": 76620,
+                "cached_input": 17280,
+                "output": 3182,
+                "reasoning": 362,
+                "total": 79802
+              },
+              "wall_ms": 104552.862
+            },
+            "probe": {
+              "geometry_pass": true,
+              "attempt_count": 2,
+              "tokens": {
+                "input": 49494,
+                "cached_input": 0,
+                "output": 2010,
+                "reasoning": 290,
+                "total": 51504
+              },
+              "wall_ms": 64131.965
+            }
+          },
+          "lesson": "Accounting supplement only; no new experiment or changed verdict. Original lesson and measurements remain in entry 301749520d9c4a52b17004e72fbdad72.",
+          "adopted_in_composed": true,
+          "entry_type": "measurement_supplement",
+          "supplements_entry_id": "301749520d9c4a52b17004e72fbdad72",
+          "supplement_id": "0ed9ab10399d19ced2f5149d"
+        },
+        {
+          "entry_id": "0ed9ab10399d19ced2f5149d-a242b13d77e34c5f85fa400e73c47b70",
+          "domain": "cad-freecad",
+          "task_id": "A-box-pocket-fillet",
+          "cycle_id": "20261020T151238Z-e7120eed",
+          "created_at": "2026-10-20T15:23:34.161149+00:00",
+          "edit": [
+            {
+              "op": "set_feedback_fields",
+              "value": [
+                "status",
+                "failed_phase",
+                "probe_status",
+                "predicate_diff",
+                "message_code",
+                "measurements",
+                "script_completed",
+                "cad_exit_code"
+              ]
+            },
+            {
+              "op": "add_rule",
+              "value": "When predicate_diff contains only feature_chain and the script completed with valid geometry, focus the retry on feature types, Body membership, dependency links, and final tip. Preserve dimensions unless evidence requires changing them; do not assume the aggregate failure identifies a specific broken link."
+            }
+          ],
+          "verdict": "supported",
+          "contrast": {
+            "run0": {
+              "geometry_pass": false,
+              "attempt_count": 3,
+              "tokens": {
+                "input": 76620,
+                "cached_input": 17280,
+                "output": 3182,
+                "reasoning": 362,
+                "total": 79802
+              },
+              "wall_ms": 104552.862
+            },
+            "probe": {
+              "geometry_pass": true,
+              "attempt_count": 2,
+              "tokens": {
+                "input": 49653,
+                "cached_input": 0,
+                "output": 1850,
+                "reasoning": 199,
+                "total": 51503
+              },
+              "wall_ms": 58409.614
+            }
+          },
+          "lesson": "Accounting supplement only; no new experiment or changed verdict. Original lesson and measurements remain in entry a242b13d77e34c5f85fa400e73c47b70.",
+          "adopted_in_composed": true,
+          "entry_type": "measurement_supplement",
+          "supplements_entry_id": "a242b13d77e34c5f85fa400e73c47b70",
+          "supplement_id": "0ed9ab10399d19ced2f5149d"
+        },
+        {
+          "entry_id": "0ed9ab10399d19ced2f5149d-4c25744f13464b6e807e3d75193040c7",
+          "domain": "cad-freecad",
+          "task_id": "A-box-pocket-fillet",
+          "cycle_id": "20261020T151238Z-e7120eed",
+          "created_at": "2026-10-20T15:23:34.161149+00:00",
+          "edit": [
+            {
+              "op": "set_reasoning_effort",
+              "value": "medium"
+            },
+            {
+              "op": "add_snippet",
+              "value": "Before returning the Body, review the intended feature history against the constructed objects: each modeling operation should have the appropriate native PartDesign type, belong to the returned Body, and reference its intended predecessor or profile. After repeated feature_chain failures, identify a concrete structural hypothesis and make a corresponding correction instead of repeating geometry-equivalent changes."
+            }
+          ],
+          "verdict": "unsupported",
+          "contrast": {
+            "run0": {
+              "geometry_pass": false,
+              "attempt_count": 3,
+              "tokens": {
+                "input": 76620,
+                "cached_input": 17280,
+                "output": 3182,
+                "reasoning": 362,
+                "total": 79802
+              },
+              "wall_ms": 104552.862
+            },
+            "probe": {
+              "geometry_pass": false,
+              "attempt_count": 3,
+              "tokens": {
+                "input": 75261,
+                "cached_input": 0,
+                "output": 3424,
+                "reasoning": 373,
+                "total": 78685
+              },
+              "wall_ms": 104913.951
+            }
+          },
+          "lesson": "Accounting supplement only; no new experiment or changed verdict. Original lesson and measurements remain in entry 4c25744f13464b6e807e3d75193040c7.",
+          "adopted_in_composed": false,
+          "entry_type": "measurement_supplement",
+          "supplements_entry_id": "4c25744f13464b6e807e3d75193040c7",
+          "supplement_id": "0ed9ab10399d19ced2f5149d"
+        }
+      ]
+    }
+  ]
 }
