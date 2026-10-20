@@ -25,6 +25,23 @@ MAX_CALLS = 3
 HOST_INIT_PREFIX = 'FREECAD_HOST_INIT='
 PYTHON_BOOTSTRAP = chr(10).join([
     "import sys as _sys, os as _os, runpy as _runpy, json as _json",
+    # LPAC redirects the native temp API below scratch, but does not create it.
+    # FreeCAD's C++ temp_directory_path requires that directory during import.
+    "import ctypes as _ct, pathlib as _paths",
+    "_get_temp = _ct.WinDLL('kernel32', use_last_error=True).GetTempPathW",
+    "_get_temp.argtypes = [_ct.c_uint32, _ct.c_wchar_p]",
+    "_get_temp.restype = _ct.c_uint32",
+    "_temp_buffer = _ct.create_unicode_buffer(32768)",
+    "_temp_length = _get_temp(len(_temp_buffer), _temp_buffer)",
+    "if not 0 < _temp_length < len(_temp_buffer):",
+    "    raise OSError('bare_native_temp_path_unavailable')",
+    "_temp = _paths.Path(_temp_buffer.value)",
+    "if not _temp.is_absolute():",
+    "    raise RuntimeError('bare_native_temp_path_not_absolute')",
+    "_temp = _temp.resolve()",
+    "if not _temp.is_relative_to(_paths.Path(_os.getcwd()).resolve()):",
+    "    raise RuntimeError('bare_native_temp_path_outside_scratch')",
+    "_temp.mkdir(parents=True, exist_ok=True)",
     "__import__('FreeCAD')",
     "_version = list(__import__('FreeCAD').Version()[:3])",
     "_gui = bool(__import__('FreeCAD').GuiUp)",
@@ -57,6 +74,7 @@ PROTOCOL = {
               'python args: [-c,code,...], [-m,module,...], or [relative_script,...]. No modeling names/helpers are injected.',
               'shell is Windows cmd built-ins only; OS child-process creation is disabled.',
               'No network, packages, GUI, external processes or external files are available.',
+              'External drive-volume queries are denied. cmd del requires them; use self-authored Python for scratch-file deletion.',
               'At most three model responses total, including all continuations.',
               'A response may execute actions and immediately hand over their outputs.',
               'Submit ordinary model.FCStd and model.step plus reproducible source/dependencies.',
@@ -242,6 +260,9 @@ class ToolLoop:
                                streams=streams, initialization=initialization,
                                native_metric='initialized_pinned_freecad_python_host_process_wall' if initialization else None,
                                native_metric_missing_reason='freecad_host_initialization_unverified' if kind == 'python' and not initialization else None)
+        if self.session.mode != 'unit_mock' and (
+                result.get('lpac_token_verified') is not True or not isolation.registry_read_token_scope(result)):
+            raise isolation.BoundaryUnavailable('bare_registry_read_only_receipt_required')
         if kind == 'python' and initialization is None:
             raise isolation.BoundaryUnavailable('freecad_host_initialization_unverified')
         result['initialization'] = initialization
@@ -342,8 +363,10 @@ def construct(session, entry, out, *, boundary_factory=None, active_limit=ACTIVE
     transcript = []
     finished, last_protocol_error = False, None
     loop = None
-    boundary_identity = {'mode': 'unit_mock' if boundary_factory is not None else 'windows_lpac',
-                         'enforcement_verified': False, 'cleanup_status': 'not_entered'}
+    boundary = None
+    boundary_identity = {'mode': 'unit_mock' if boundary_factory is not None else isolation.REGISTRY_READ_ISOLATION,
+                         'enforcement_verified': False, 'cleanup_status': 'not_entered',
+                         'capability_count': None, 'capability_sids': None, 'capability_attributes': None}
     try:
         # inputs/ receives no inherited write permission: ACLs are explicit.
         with factory(scratch, runtime, **boundary_options) as boundary:
@@ -434,6 +457,11 @@ def construct(session, entry, out, *, boundary_factory=None, active_limit=ACTIVE
                   'interrupted' if isinstance(exc, KeyboardInterrupt) else 'construction_error')
         if final is not None and final['collection_status'] == 'pending':
             final.update(collection_status='failed', collection_error=reason)
+    if boundary_factory is None and boundary is not None:
+        receipt = getattr(boundary, 'last_receipt', None)
+        if isinstance(receipt, dict):
+            boundary_identity.update({key: receipt.get(key) for key in
+                ('capability_count', 'capability_sids', 'capability_attributes')})
     if loop is not None:
         native_intervals, tool_intervals = loop.native_intervals, loop.tool_intervals
     end, active_end = session.wall(), session.clock()

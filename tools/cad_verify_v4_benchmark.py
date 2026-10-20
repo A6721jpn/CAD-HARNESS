@@ -255,7 +255,8 @@ def validate_bound_inputs(registration, path_for_id):
                         raise ValueError('benchmark_preparation_timezone_required')
     demonstration = json.loads(path_for_id(registration['isolation_demonstration']).read_bytes())
     if (demonstration.get('schema') != 'cad-harness.bare-isolation-smoke.v1' or
-            any(demonstration.get(k) is not True for k in ('lpac', 'zero_capabilities', 'child_denied',
+            'zero_capabilities' in demonstration or
+            any(demonstration.get(k) is not True for k in ('lpac', 'registry_read_only', 'child_denied',
                 'network_denied', 'external_file_denied', 'repository_denied', 'inputs_read_only', 'acl_tamper_denied',
                 'root_acl_tamper_denied', 'runtime_acl_tamper_denied', 'owner_tamper_denied', 'runtime_owner_tamper_denied',
                 'inputs_rename_denied', 'root_owned_by_child_user', 'construction_file_ops', 'freecad_bootstrap_initialized',
@@ -314,15 +315,17 @@ def _validate_isolation_streams(proof):
     metadata-only PASS dictionaries cannot satisfy this admission contract.
     """
     try:
+        if proof.get('registry_read_only') is not True or 'zero_capabilities' in proof:
+            raise ValueError('actual_registry_read_only_demonstration')
         source = base64.b64decode(proof['source_base64'], validate=True)
         if not source or hashlib.sha256(source).hexdigest() != proof['source_sha256']:
             raise ValueError('source_bytes')
         streams = {}
         for name in ('native_process', 'shell_process', 'timeout_process'):
             process = proof[name]
-            if (process['isolation'] != 'windows_lpac_zero_capabilities' or
+            if (not bare.isolation.registry_read_token_scope(process) or
                     process['lpac_token_verified'] is not True or process['job_assigned'] is not True or
-                    process['capability_count'] != 0 or process['job_child_limit'] != 1 or
+                    process['job_child_limit'] != 1 or
                     process['cleanup_status'] != 'exited' or process['stdin'] != 'NUL'):
                 raise ValueError('actual_owned_lpac_process')
             if process.get('lpac_token_evidence') != dict(schema='cad-harness.lpac-accesscheck.v1',
@@ -851,6 +854,7 @@ def run(manifest_path, authorization_path, run_dir, *, process=None, native_proc
                               'success_rate': sum(r['qualified_completion'] for r in rows if r['arm'] == arm) / 20} for arm in ARMS},
                 limitations=['Human verdicts are not synthesized; adoption-dependent completion remains censored until actual verdicts exist.',
                              'Complete-pair statistics are conditional, not population productivity or human hours saved.',
+                             'Bare cmd built-ins requiring host drive-volume metadata (including del) are denied; Python scratch-file deletion is timed as native-host work.',
                              'Provider/cache/context/preparation/workflow differences remain.'], runtime=session.summary())
             events.append('dataset_sealed', dataset_sha256=digest(dataset))
         finally:

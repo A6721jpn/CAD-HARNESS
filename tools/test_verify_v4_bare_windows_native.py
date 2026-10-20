@@ -98,6 +98,7 @@ def current_user_owned_scratch(path):
 
 class NativeTrace:
     """No provider API: only actual native boundary state, deadline and receipts."""
+    mode = 'independent_dev'
     wall = staticmethod(time.monotonic)
 
     def __init__(self, boundary, deadline):
@@ -147,7 +148,52 @@ class NativeBareIsolation(unittest.TestCase):
                     self.assertFalse(boundary.last_receipt['lpac_token_verified'])
                     self.assertEqual(boundary.last_receipt['cleanup_status'], 'exited')
                     boundary.k.UpdateProcThreadAttribute = actual_update
-                    receipt = boundary.run(command, stdout=root/'lpac.stdout', stderr=root/'lpac.stderr', timeout=10)
+                    unexpected_sid = C.c_void_p()
+                    boundary._ok(boundary.a.ConvertStringSidToSidW('S-1-15-3-1', C.byref(unexpected_sid)), 'DEV_unexpected_capability_sid')
+                    try:
+                        for mode in ('missing', 'wrong', 'additional'):
+                            retained = []
+                            def altered_capabilities(attributes, flags, key, value, size, previous, returned):
+                                if key == 0x20009:
+                                    original_caps = C.cast(value, C.POINTER(isolation._SecurityCapabilities)).contents
+                                    entries = [] if mode == 'missing' else [
+                                        isolation._SidAndAttributes(unexpected_sid, isolation.SE_GROUP_ENABLED)]
+                                    if mode == 'additional':
+                                        entries.insert(0, original_caps.caps[0])
+                                    storage = (isolation._SidAndAttributes * len(entries))(*entries)
+                                    caps = isolation._SecurityCapabilities(original_caps.sid, storage if entries else None, len(entries), 0)
+                                    retained.extend((storage, caps))
+                                    value, size = C.byref(caps), C.sizeof(caps)
+                                return actual_update(attributes, flags, key, value, size, previous, returned)
+                            boundary.k.UpdateProcThreadAttribute = altered_capabilities
+                            with self.subTest(capabilities=mode), patch.object(boundary.k, 'ResumeThread') as resume:
+                                with self.assertRaisesRegex(isolation.BoundaryUnavailable, 'child_registry_read_capability_mismatch'):
+                                    boundary.run(command, stdout=root/(mode+'.stdout'), stderr=root/(mode+'.stderr'), timeout=10)
+                                resume.assert_not_called()
+                                rejected = boundary.last_receipt
+                                expected = [] if mode == 'missing' else ['S-1-15-3-1']
+                                if mode == 'additional':
+                                    expected.append(isolation.REGISTRY_READ_CAPABILITY_SID)
+                                self.assertCountEqual(rejected['capability_sids'], expected)
+                                self.assertEqual(rejected['capability_count'], len(expected))
+                                self.assertFalse(rejected['lpac_token_verified'])
+                                self.assertEqual(rejected['cleanup_status'], 'exited')
+                                self.assertFalse((scratch / 'handover.bin').exists())
+                    finally:
+                        boundary.k.UpdateProcThreadAttribute = actual_update
+                        boundary.k.LocalFree(unexpected_sid)
+                    query = boundary.k.GetProcessMitigationPolicy
+                    query.argtypes = [C.c_void_p, C.c_int, C.c_void_p, C.c_size_t]
+                    query.restype = W.BOOL
+                    actual_verify = boundary._verify_token
+                    def verify_shell_mitigations(process, observed):
+                        for policy in (4, 6):  # Win32k and extension-point disable
+                            flags = W.DWORD()
+                            self.assertTrue(query(process, policy, C.byref(flags), C.sizeof(flags)))
+                            self.assertEqual(flags.value & 1, 1)
+                        return actual_verify(process, observed)
+                    with patch.object(boundary, '_verify_token', side_effect=verify_shell_mitigations):
+                        receipt = boundary.run(command, stdout=root/'lpac.stdout', stderr=root/'lpac.stderr', timeout=10)
                     self.assertEqual(receipt['returncode'], 0)
                     self.assertEqual((scratch / 'handover.bin').read_bytes(), payload)
                     self.assertEqual(original.read_bytes(), payload)
@@ -155,8 +201,15 @@ class NativeBareIsolation(unittest.TestCase):
                     self.assertFalse(evidence['world_only_read'])
                     self.assertFalse(evidence['all_application_packages_read'])
                     self.assertTrue(evidence['own_package_read'])
-                    self.assertEqual(receipt['capability_count'], 0)
+                    self.assertTrue(isolation.registry_read_token_scope(receipt))
+                    self.assertEqual(receipt['capability_count'], 1)
+                    self.assertEqual(receipt['capability_sids'], [isolation.REGISTRY_READ_CAPABILITY_SID])
                     self.assertEqual(receipt['cleanup_status'], 'exited')
+                    overwrite = boundary.run(
+                        [command[0], '/d', '/s', '/c', 'echo DEV_NOT_ALLOWED>inputs\\original.bin'],
+                        stdout=root/'overwrite.stdout', stderr=root/'overwrite.stderr', timeout=10)
+                    self.assertNotEqual(overwrite['returncode'], 0)
+                    self.assertEqual(original.read_bytes(), payload)
 
     def test_midgrant_failure_preserves_low_scratch_and_absent_runtime_sacl(self):
         with tempfile.TemporaryDirectory(prefix='bare-private-acl-dev-') as temporary:
@@ -246,6 +299,8 @@ import Part, Sketcher
 assert tuple(A.Version()[:3]) == ('1','1','4') and not A.GuiUp
 assert pathlib.Path('inputs/original.txt').read_text() == 'INDEPENDENT_DEV_ORIGINAL'
 results = {}
+native_temp = pathlib.Path(A.ConfigGet('AppTempPath')).resolve()
+results['native_temp_private_directory'] = native_temp.is_dir() and native_temp.is_relative_to(pathlib.Path.cwd().resolve())
 try:
     pathlib.Path(config['outside']).read_bytes()
     results['external_file_denied'] = False
@@ -265,10 +320,21 @@ import ctypes as C
 from ctypes import wintypes as W
 a = C.WinDLL('advapi32')
 a.SetNamedSecurityInfoW.argtypes = [W.LPWSTR, C.c_int, W.DWORD, C.c_void_p, C.c_void_p, C.c_void_p, C.c_void_p]
-k = C.WinDLL('kernel32')
+k = C.WinDLL('kernel32', use_last_error=True)
 k.GetCurrentProcess.restype = C.c_void_p
 k.CloseHandle.argtypes = [C.c_void_p]
 k.LocalFree.argtypes = [C.c_void_p]
+k.GetProcessMitigationPolicy.argtypes = [C.c_void_p, C.c_int, C.c_void_p, C.c_size_t]
+k.GetProcessMitigationPolicy.restype = W.BOOL
+k.GetVolumeInformationW.argtypes = [W.LPCWSTR, W.LPWSTR, W.DWORD, C.POINTER(W.DWORD), C.POINTER(W.DWORD), C.POINTER(W.DWORD), W.LPWSTR, W.DWORD]
+k.GetVolumeInformationW.restype = W.BOOL
+C.set_last_error(0)
+volume = k.GetVolumeInformationW(pathlib.Path.cwd().anchor, None, 0, None, None, None, None, 0)
+results['external_volume_denied'] = not volume and C.get_last_error() == 5
+for label, policy, expected in (('freecad_win32k_relaxed', 4, 0), ('extension_points_disabled', 6, 1)):
+    flags = W.DWORD()
+    assert k.GetProcessMitigationPolicy(k.GetCurrentProcess(), policy, C.byref(flags), C.sizeof(flags))
+    results[label] = (flags.value & 1) == expected
 a.OpenProcessToken.argtypes = [C.c_void_p, W.DWORD, C.POINTER(C.c_void_p)]
 a.GetTokenInformation.argtypes = [C.c_void_p, C.c_int, C.c_void_p, W.DWORD, C.POINTER(W.DWORD)]
 a.GetNamedSecurityInfoW.argtypes = [W.LPWSTR, C.c_int, W.DWORD, C.c_void_p, C.c_void_p, C.c_void_p, C.c_void_p, C.POINTER(C.c_void_p)]
@@ -298,6 +364,11 @@ try:
     results['inputs_rename_denied'] = False
 except OSError as error:
     results['inputs_rename_denied'] = error.winerror == 5
+try:
+    pathlib.Path('inputs/original.txt').unlink()
+    results['input_delete_denied'] = False
+except PermissionError:
+    results['input_delete_denied'] = pathlib.Path('inputs/original.txt').read_text() == 'INDEPENDENT_DEV_ORIGINAL'
 ordinary = pathlib.Path('ordinary.tmp')
 ordinary.write_text('DEV_OWNED_FILE')
 ordinary = ordinary.rename('ordinary-renamed.tmp')
@@ -357,7 +428,8 @@ print('BARE_DEV_RESULT=' + json.dumps(results, sort_keys=True))
                 self.assertEqual(result['initialization']['bootstrap_sha256'], bare.BOOTSTRAP_SHA256)
                 self.assertEqual(len(loop.native_intervals), 1)
                 self.assertEqual(loop.unverified_native_intervals, [])
-                self.assertEqual(result['isolation'], 'windows_lpac_zero_capabilities')
+                self.assertTrue(isolation.registry_read_token_scope(result))
+                self.assertEqual(result['isolation'], 'windows_lpac_registry_read_only')
                 text = stdout.read_text(encoding='utf-8', errors='strict')
                 records = [line.removeprefix('BARE_DEV_RESULT=') for line in text.splitlines() if line.startswith('BARE_DEV_RESULT=')]
                 self.assertEqual(len(records), 1, text)
@@ -368,13 +440,21 @@ print('BARE_DEV_RESULT=' + json.dumps(results, sort_keys=True))
                 with self.assertRaises(socket.timeout):
                     listener.accept()
                 self.assertEqual(result['cleanup_status'], 'exited')
+                loop.execute({'kind': 'write', 'path': 'shell-input.tmp',
+                              'content_base64': base64.b64encode(b'DEV_SHELL_OK\r\n').decode('ascii')})
                 shell_stdout, shell_stderr = root / 'shell.stdout', root / 'shell.stderr'
-                shell_command = 'echo DEV_SHELL_OK>shell-ordinary.tmp && type shell-ordinary.tmp && ren shell-ordinary.tmp shell-renamed.tmp && del shell-renamed.tmp'
+                shell_command = 'copy /b shell-input.tmp shell-ordinary.tmp >nul && type shell-ordinary.tmp && ren shell-ordinary.tmp shell-renamed.tmp'
                 shell = boundary.run([str(Path(os.environ['SystemRoot']) / 'System32/cmd.exe'), '/d', '/s', '/c', shell_command],
                                      stdout=shell_stdout, stderr=shell_stderr, timeout=30)
                 self.assertEqual(shell['returncode'], 0, shell_stderr.read_text(encoding='utf-8', errors='replace'))
+                self.assertTrue(isolation.registry_read_token_scope(shell))
                 self.assertIn('DEV_SHELL_OK', shell_stdout.read_text(encoding='utf-8'))
                 self.assertFalse((scratch / 'shell-ordinary.tmp').exists())
+                self.assertEqual((scratch / 'shell-renamed.tmp').read_bytes(), b'DEV_SHELL_OK\r\n')
+                deleted = loop.execute({'kind': 'python', 'args': ['-c',
+                    "from pathlib import Path; p = Path('shell-renamed.tmp'); "
+                    "assert p.read_bytes() == b'DEV_SHELL_OK\\r\\n'; p.unlink(); assert not p.exists()"]})
+                self.assertEqual(deleted['returncode'], 0, deleted['stderr_base64'])
                 self.assertFalse((scratch / 'shell-renamed.tmp').exists())
                 timeout_out = root / 'timeout'
                 timeout_out.mkdir()
@@ -383,6 +463,7 @@ print('BARE_DEV_RESULT=' + json.dumps(results, sort_keys=True))
                 with self.assertRaises(TimeoutError):
                     timeout_loop.execute({'kind': 'python', 'args': ['-c', 'import time;time.sleep(30)']})
                 self.assertEqual(boundary.last_receipt['cleanup_status'], 'exited')
+                self.assertTrue(isolation.registry_read_token_scope(boundary.last_receipt))
                 self.assertEqual(boundary.handles, [])
                 timeout_receipt = dict(boundary.last_receipt)
                 for key in ('stdout', 'stderr'):
@@ -396,7 +477,7 @@ print('BARE_DEV_RESULT=' + json.dumps(results, sort_keys=True))
             isolation.validate_staged_runtime(runtime, staged['inventory'], staged['proof'])
             self.assertEqual(list(root.glob('*.security-recovery.json')), [])
             receipt.update(schema='cad-harness.bare-isolation-smoke.v1', lpac=True,
-                           zero_capabilities=True, cleanup_restored=True, boot_id=isolation.boot_id(),
+                           registry_read_only=True, cleanup_restored=True, boot_id=isolation.boot_id(),
                            freecad_bootstrap_initialized=True, bootstrap_sha256=bare.BOOTSTRAP_SHA256,
                            python_sha256=isolation.file_hash(isolation.PINNED_PYTHON),
                            relocated_python=str(runtime / 'bin/python.exe'), runtime_inventory=staged['inventory'],

@@ -17,6 +17,7 @@ from tools import cad_verify_v4_family_live as family
 from tools import cad_verify_v4_inputs as inputs, cad_verify_v4_judges as judges
 from tools import cad_verify_v4_artifact_judges as artifact_judges
 from tools import cad_verify_v4_ledger as ledger
+from tools import cad_verify_v4_c2_recipe as c2_recipe
 from tools import cad_verify_v4_artifacts as artifacts, cad_verify_v4_worker as worker
 from tools.cad_verify_guard import Stop
 from tools.test_support import start_tempdirs, stop_tempdirs
@@ -56,6 +57,7 @@ class DevRegistration:
         roster = self.file('roster', b'opaque independent DEV bytes; intentionally not JSON\n', 'family_roster')
         rubric = self.file('rubric', {'schema': 'unit_mock_rubric', 'frozen': True}, 'judge_rubric')
         entries = []
+        active_recipe = c2_recipe.load()
         for name, spec in family.FAMILIES.items():
             number = 0
             for stratum, (count, _) in spec['strata'].items():
@@ -68,7 +70,8 @@ class DevRegistration:
                                  else {'schema': 'unit_mock_' + field, 'evidence_mode': 'independent_dev'})
                         if field == 'prepared' and name == 'C2':
                             value['assets'] = {'dev_contour': dict(schema='cad-harness.contour.v4c',
-                                recipe_sha256=family.ACTIVE_C2_RECIPE_SHA256)}
+                                recipe=active_recipe['recipe'],
+                                recipe_sha256=active_recipe['canonical_sha256'])}
                         entry[field] = self.file(entry['id'] + '_' + field, value, field)
                         self.files[entry[field]]['published_relative_path'] = ('generative/' + entry['id'] + '/'
                                                                             + family.ENTRY_FILENAMES[field])
@@ -299,11 +302,26 @@ class FamilyTests(unittest.TestCase):
             family.validate_published_record(record, {record['published_relative_path']: {'sha256': 'a' * 64, 'bytes': 1}})
 
     def test_active_c2_production_recipe_is_required_without_inspecting_geometry(self):
-        family.validate_active_c2_prepared({'assets': {'logo': dict(schema='cad-harness.contour.v4c',
-            recipe_sha256=family.ACTIVE_C2_RECIPE_SHA256)}})
-        for assets in ({}, {'logo': dict(schema='cad-harness.contour.v4c', recipe_sha256='0' * 64)}):
-            with self.subTest(assets=assets), self.assertRaisesRegex(ValueError, 'active_c2_recipe_required'):
-                family.validate_active_c2_prepared({'assets': assets})
+        active = c2_recipe.load()
+        contour = dict(schema='cad-harness.contour.v4c', recipe=active['recipe'],
+                       recipe_sha256=active['canonical_sha256'])
+        prepared = {'assets': {'logo': contour}}
+        family.validate_active_c2_prepared(prepared)
+        for mutation in ('missing', 'raw_file_digest', 'forged_hash', 'inactive_recipe', 'mixed_recipes'):
+            bad = copy.deepcopy(prepared)
+            if mutation == 'missing':
+                bad['assets'] = {}
+            elif mutation == 'raw_file_digest':
+                bad['assets']['logo']['recipe_sha256'] = active['sha256']
+            else:
+                changed = bad['assets']['logo']
+                changed['recipe']['scale']['canonical_height_mm'] += 1
+                if mutation in ('inactive_recipe', 'mixed_recipes'):
+                    changed['recipe_sha256'] = inputs.canonical_sha(changed['recipe'])
+                if mutation == 'mixed_recipes':
+                    bad['assets']['active'] = copy.deepcopy(contour)
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, 'active_c2_recipe_required'):
+                family.validate_active_c2_prepared(bad)
         bad = copy.deepcopy(self.fixture.value)
         bad['entries'][0]['card'] = bad['entries'][1]['card']
         with self.assertRaisesRegex(ValueError, 'family_entry_identity'):

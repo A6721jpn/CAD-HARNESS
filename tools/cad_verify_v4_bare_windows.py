@@ -1,12 +1,14 @@
 """Offline LPAC construction boundary for the bare benchmark (Windows 10+).
 
-No fallback exists: every child has a zero-capability AppContainer token, opts
-out of ALL APPLICATION PACKAGES access, cannot create children or use Win32k,
-and belongs to a kill-on-close, one-process job. ACL grants use a unique SID and
+No fallback exists: every child has only registryRead in its AppContainer token,
+opts out of ALL APPLICATION PACKAGES access, and cannot create children. Only the
+pinned headless FreeCAD host may use Win32k; shell children retain its restriction.
+Every child belongs to a kill-on-close, one-process job. ACL grants use a unique SID and
 are restored, including their inheritance protection, before its profile is deleted.
 """
 import ctypes as C
 from ctypes import wintypes as W
+from contextlib import ExitStack, contextmanager
 import base64
 from datetime import datetime, timezone
 import hashlib
@@ -19,10 +21,38 @@ import uuid
 import stat
 
 PINNED_PYTHON = Path('C:/dev/CAD/.tools/freecad/FreeCAD_1.1.4-Windows-x86_64-py311/bin/python.exe')
+REGISTRY_READ_CAPABILITY_SID = 'S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681'
+REGISTRY_READ_ISOLATION = 'windows_lpac_registry_read_only'
+SE_GROUP_ENABLED = 0x4
+
+
+class _SidAndAttributes(C.Structure):
+    _fields_ = [('sid', C.c_void_p), ('attributes', W.DWORD)]
+
+
+class _SecurityCapabilities(C.Structure):
+    _fields_ = [('sid', C.c_void_p), ('caps', C.POINTER(_SidAndAttributes)),
+                ('count', W.DWORD), ('reserved', W.DWORD)]
+
+
+class _TokenCapabilities(C.Structure):
+    _fields_ = [('count', W.DWORD), ('groups', _SidAndAttributes * 1)]
 
 
 class BoundaryUnavailable(RuntimeError):
     pass
+
+
+def registry_read_token_scope(receipt):
+    """Admit retained observed capability identity, not requested attributes."""
+    if not isinstance(receipt, dict):
+        return False
+    attributes = receipt.get('capability_attributes')
+    return (receipt.get('isolation') == REGISTRY_READ_ISOLATION and
+            type(receipt.get('capability_count')) is int and receipt['capability_count'] == 1 and
+            receipt.get('capability_sids') == [REGISTRY_READ_CAPABILITY_SID] and
+            isinstance(attributes, list) and len(attributes) == 1 and
+            type(attributes[0]) is int and attributes[0] in (4, 5, 6, 7))
 
 
 def boot_id():
@@ -300,6 +330,7 @@ class WindowsBoundary:
         self.k = C.WinDLL('kernel32', use_last_error=True)
         self.a = C.WinDLL('advapi32', use_last_error=True)
         self.u = C.WinDLL('userenv', use_last_error=True)
+        self.b = C.WinDLL('kernelbase', use_last_error=True)
         P = C.c_void_p
         self.k.LocalFree.argtypes, self.k.LocalFree.restype = [P], P
         self.k.CloseHandle.argtypes, self.k.CloseHandle.restype = [P], W.BOOL
@@ -332,6 +363,11 @@ class WindowsBoundary:
         self.a.OpenProcessToken.argtypes = [P, W.DWORD, C.POINTER(P)]
         self.a.GetTokenInformation.argtypes = [P, C.c_int, P, W.DWORD, C.POINTER(W.DWORD)]
         self.a.ConvertStringSidToSidW.argtypes = [W.LPCWSTR, C.POINTER(P)]
+        self.a.ConvertSidToStringSidW.argtypes = [P, C.POINTER(W.LPWSTR)]
+        self.b.DeriveCapabilitySidsFromName.argtypes = [
+            W.LPCWSTR, C.POINTER(C.POINTER(P)), C.POINTER(W.DWORD),
+            C.POINTER(C.POINTER(P)), C.POINTER(W.DWORD)]
+        self.b.DeriveCapabilitySidsFromName.restype = W.BOOL
         self.a.FreeSid.argtypes = [P]
         self.u.CreateAppContainerProfile.argtypes = [W.LPCWSTR, W.LPCWSTR, W.LPCWSTR, P, W.DWORD, C.POINTER(P)]
         self.u.DeleteAppContainerProfile.argtypes = [W.LPCWSTR]
@@ -341,6 +377,39 @@ class WindowsBoundary:
         if not value:
             raise BoundaryUnavailable(operation + ':' + str(C.get_last_error()))
         return value
+
+    def _sid_text(self, sid):
+        text = W.LPWSTR()
+        try:
+            self._ok(self.a.ConvertSidToStringSidW(sid, C.byref(text)), 'capability_sid_render')
+            return text.value
+        finally:
+            if text:
+                self.k.LocalFree(text)
+
+    @contextmanager
+    def _registry_read_capabilities(self):
+        groups, capabilities = C.POINTER(C.c_void_p)(), C.POINTER(C.c_void_p)()
+        group_count, capability_count = W.DWORD(), W.DWORD()
+        try:
+            self._ok(self.b.DeriveCapabilitySidsFromName('registryRead', C.byref(groups),
+                C.byref(group_count), C.byref(capabilities), C.byref(capability_count)), 'derive_registry_read')
+            if (capability_count.value != 1 or not capabilities or
+                    self._sid_text(capabilities[0]) != REGISTRY_READ_CAPABILITY_SID):
+                raise BoundaryUnavailable('derived_registry_read_capability_mismatch')
+            # Both the attributes array and the API-owned SID arrays must stay
+            # alive until the process attribute list is no longer in use.
+            attributes = (_SidAndAttributes * 1)(_SidAndAttributes(capabilities[0], SE_GROUP_ENABLED))
+            yield _SecurityCapabilities(self.sid, attributes, 1, 0)
+        finally:
+            # DeriveCapabilitySidsFromName uses LocalAlloc for each SID and
+            # each array, unlike CreateAppContainerProfile's FreeSid result.
+            for array, count in ((groups, group_count.value), (capabilities, capability_count.value)):
+                if array:
+                    for index in range(count):
+                        if array[index]:
+                            self.k.LocalFree(array[index])
+                    self.k.LocalFree(array)
 
     def _acl_principals(self):
         token, size = C.c_void_p(), W.DWORD()
@@ -524,7 +593,10 @@ class WindowsBoundary:
             entries.append(Access(0xd0156, 3, flags, Trustee(None, 0, 0, 0, self.sid)))
         access = (Access * len(entries))(*entries)
         try:
-            status = self.a.SetEntriesInAclW(len(entries), access, old, C.byref(new))
+            # Only task-private read-only nodes get a fresh, protected DACL:
+            # merging preserves inherited scratch write grants even with
+            # SET_ACCESS. Held original descriptors restore every prior ACE.
+            status = self.a.SetEntriesInAclW(len(entries), access, None if read_only else old, C.byref(new))
             if status:
                 raise BoundaryUnavailable('acl_merge:' + str(status))
             self.changed = True
@@ -634,11 +706,8 @@ class WindowsBoundary:
                 self.k.LocalFree(package_text)
             self.k.CloseHandle(duplicate)
 
-    def _verify_token(self, process):
+    def _verify_token(self, process, observed):
         token = C.c_void_p()
-        self.a.OpenProcessToken.argtypes = [C.c_void_p, W.DWORD, C.POINTER(C.c_void_p)]
-        self.a.GetTokenInformation.argtypes = [C.c_void_p, C.c_int, C.c_void_p, W.DWORD, C.POINTER(W.DWORD)]
-        self.a.EqualSid.argtypes = [C.c_void_p, C.c_void_p]
         self._ok(self.a.OpenProcessToken(process, 0xa, C.byref(token)), 'open_child_token')
         try:
             value, size = W.DWORD(), W.DWORD()
@@ -648,11 +717,29 @@ class WindowsBoundary:
             for info in (30, 31):
                 size = W.DWORD()
                 self.a.GetTokenInformation(token, info, None, 0, C.byref(size))
+                if size.value < (C.sizeof(W.DWORD) if info == 30 else C.sizeof(C.c_void_p)):
+                    raise BoundaryUnavailable('child_token_scope_size')
                 buffer = C.create_string_buffer(size.value)
                 self._ok(self.a.GetTokenInformation(token, info, buffer, size.value, C.byref(size)), 'child_token_scope')
-                if info == 30 and C.cast(buffer, C.POINTER(W.DWORD)).contents.value != 0:
-                    raise BoundaryUnavailable('child_capabilities_not_empty')
-                if info == 31 and not self.a.EqualSid(C.cast(buffer, C.POINTER(C.c_void_p)).contents, self.sid):
+                if info == 30:
+                    count = C.cast(buffer, C.POINTER(W.DWORD)).contents.value
+                    observed['capability_count'] = count
+                    offset = _TokenCapabilities.groups.offset
+                    if count and offset + count * C.sizeof(_SidAndAttributes) > C.sizeof(buffer):
+                        raise BoundaryUnavailable('child_token_capabilities_size')
+                    entries = C.cast(C.addressof(buffer) + offset, C.POINTER(_SidAndAttributes))
+                    observed['capability_sids'], observed['capability_attributes'] = [], []
+                    for index in range(count):
+                        observed['capability_sids'].append(self._sid_text(entries[index].sid))
+                        observed['capability_attributes'].append(entries[index].attributes)
+                    if (count != 1 or observed['capability_sids'] != [REGISTRY_READ_CAPABILITY_SID]):
+                        raise BoundaryUnavailable('child_registry_read_capability_mismatch')
+                    # ENABLED is required. Only MANDATORY/ENABLED_BY_DEFAULT
+                    # may accompany it; DENY_ONLY and every other flag fail.
+                    if any(not attributes & SE_GROUP_ENABLED or attributes & ~0x7
+                           for attributes in observed['capability_attributes']):
+                        raise BoundaryUnavailable('child_registry_read_capability_attributes')
+                elif not self.a.EqualSid(C.cast(buffer, C.POINTER(C.c_void_p)).contents, self.sid):
                     raise BoundaryUnavailable('child_appcontainer_sid_mismatch')
             return self._lpac_access(token)
         finally:
@@ -662,7 +749,9 @@ class WindowsBoundary:
         self.last_receipt = None
         if not self.entered or timeout <= 0:
             raise BoundaryUnavailable('boundary_not_entered_or_expired')
-        if not argv or Path(argv[0]).resolve() not in (self.python.resolve(), Path(os.environ['SystemRoot'], 'System32/cmd.exe').resolve()):
+        python = self.python.resolve()
+        executable = Path(argv[0]).resolve() if argv else None
+        if executable not in (python, Path(os.environ['SystemRoot'], 'System32/cmd.exe').resolve()):
             raise BoundaryUnavailable('boundary_executable_not_allowed')
         class SA(C.Structure):
             _fields_ = [('length', W.DWORD), ('descriptor', C.c_void_p), ('inherit', W.BOOL)]
@@ -676,8 +765,7 @@ class WindowsBoundary:
             _fields_ = [('startup', SI), ('attributes', C.c_void_p)]
         class PI(C.Structure):
             _fields_ = [('process', C.c_void_p), ('thread', C.c_void_p), ('pid', W.DWORD), ('tid', W.DWORD)]
-        class Caps(C.Structure):
-            _fields_ = [('sid', C.c_void_p), ('caps', C.c_void_p), ('count', W.DWORD), ('reserved', W.DWORD)]
+        capability_storage = ExitStack()
         class Basic(C.Structure):
             _fields_ = [('process_time', C.c_int64), ('job_time', C.c_int64), ('flags', W.DWORD),
                         ('minws', C.c_size_t), ('maxws', C.c_size_t), ('active', W.DWORD),
@@ -699,6 +787,7 @@ class WindowsBoundary:
         start = self.wall()
         receipt, cleanup_error, verified, assigned = None, None, False, False
         token_evidence = None
+        observed = dict(capability_count=None, capability_sids=None, capability_attributes=None)
         try:
             sa = SA(C.sizeof(SA), None, True)
             for name, access in (('NUL', 0x80000000), (str(stdout), 0x40000000), (str(stderr), 0x40000000)):
@@ -710,8 +799,11 @@ class WindowsBoundary:
             self.k.InitializeProcThreadAttributeList(None, 5, 0, C.byref(size))
             attrs = C.create_string_buffer(size.value)
             self._ok(self.k.InitializeProcThreadAttributeList(attrs, 5, 0, C.byref(size)), 'attribute_list')
-            caps, child, lpac = Caps(self.sid, None, 0, 0), W.DWORD(1), W.DWORD(1)
-            mitigation = C.c_uint64((1 << 28) | (1 << 32))
+            caps = capability_storage.enter_context(self._registry_read_capabilities())
+            child, lpac = W.DWORD(1), W.DWORD(1)
+            # FreeCAD's DLL initialization needs Win32k, not a GUI or extra caps.
+            # Shell children retain Win32k disable; extension points stay disabled.
+            mitigation = C.c_uint64((1 << 32) | (0 if executable == python else (1 << 28)))
             inherited = (C.c_void_p * len(handles))(*handles)
             for key, value in ((0x20009, caps), (0x2000e, child), (0x2000f, lpac),
                                (0x20007, mitigation), (0x20002, inherited)):
@@ -732,7 +824,7 @@ class WindowsBoundary:
             created = True
             self._ok(self.k.AssignProcessToJobObject(job, process.process), 'job_assign')
             assigned = True
-            token_evidence = self._verify_token(process.process)
+            token_evidence = self._verify_token(process.process, observed)
             verified = True
             if self.wall() - start >= timeout:
                 raise TimeoutError('bare_tool_timeout')
@@ -749,9 +841,9 @@ class WindowsBoundary:
             code = W.DWORD()
             self._ok(self.k.GetExitCodeProcess(process.process, C.byref(code)), 'process_exit')
             receipt = {'returncode': code.value, 'pid': process.pid, 'start': start, 'end': self.wall(),
-                       'isolation': 'windows_lpac_zero_capabilities', 'job_child_limit': 1, 'stdin': 'NUL',
+                       'isolation': REGISTRY_READ_ISOLATION, 'job_child_limit': 1, 'stdin': 'NUL',
                        'lpac_token_verified': True, 'lpac_token_evidence': token_evidence,
-                       'capability_count': 0, 'cleanup_status': 'pending',
+                       **observed, 'cleanup_status': 'pending',
                        'stdout': str(stdout), 'stderr': str(stderr)}
             return receipt
         finally:
@@ -766,16 +858,17 @@ class WindowsBoundary:
                 self.k.CloseHandle(process.process)
             if attrs is not None:
                 self.k.DeleteProcThreadAttributeList(attrs)
+            capability_storage.close()
             for handle in handles:
                 self.k.CloseHandle(handle)
             self.k.CloseHandle(job)
             self.handles.remove(job)
             if receipt is None:
                 receipt = {'pid': process.pid if created else None, 'start': start,
-                           'isolation': 'windows_lpac_zero_capabilities',
+                           'isolation': REGISTRY_READ_ISOLATION,
                            'job_child_limit': 1, 'job_assigned': assigned, 'stdin': 'NUL',
                            'lpac_token_verified': verified, 'lpac_token_evidence': token_evidence,
-                           'capability_count': 0 if verified else None,
+                           **observed,
                            'stdout': str(stdout), 'stderr': str(stderr)}
             receipt.update(end=self.wall(), job_assigned=assigned,
                            cleanup_status='failed' if cleanup_error else 'exited' if created else 'not_created')

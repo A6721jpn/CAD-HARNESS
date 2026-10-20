@@ -5,8 +5,9 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from tools import cad_verify_v4_freeze as frozen, cad_verify_v4_ledger as ledger
 from tools.cad_verify_guard import Stop
@@ -65,10 +66,13 @@ class FreezeV4(unittest.TestCase):
         self.addCleanup(cad_version.stop)
         self.host = patch.object(frozen.socket, "gethostname", return_value="MOCK-OFFLINE")
         self.which = patch.object(frozen.shutil, "which", return_value=str(self.exe))
-        self.runner = patch.object(frozen.subprocess, "run", side_effect=self.version)
+        # Isolate the version stub from platform's use of the real subprocess module.
+        self.runner = patch.object(frozen, "subprocess", SimpleNamespace(
+            run=Mock(side_effect=self.version), DEVNULL=subprocess.DEVNULL,
+            SubprocessError=subprocess.SubprocessError))
         self.host_mock = self.host.start()
         self.which_mock = self.which.start()
-        self.run_mock = self.runner.start()
+        self.run_mock = self.runner.start().run
         self.addCleanup(self.host.stop)
         self.addCleanup(self.which.stop)
         self.addCleanup(self.runner.stop)

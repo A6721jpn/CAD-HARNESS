@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "cad-harness.bare-isolation-smoke.v1",
-  "description": "Independent DEV Windows smoke receipt, published only after real LPAC native construction, owner/DACL attacks, timeout cleanup and exact owner/group/DACL/integrity/control restoration. Its temporary runtime is independently staged from the installed pin; admission binds full source equivalence, real relocation, staging times, boot, bootstrap and current smoke/supervisor/isolation hashes. No installed source ACL changes are allowed.",
-  "type": "object", "required": ["schema", "evidence_mode", "live_calls", "lpac", "zero_capabilities", "child_denied", "network_denied", "external_file_denied", "repository_denied", "inputs_read_only", "acl_tamper_denied", "root_acl_tamper_denied", "runtime_acl_tamper_denied", "owner_tamper_denied", "runtime_owner_tamper_denied", "inputs_rename_denied", "root_owned_by_child_user", "construction_file_ops", "freecad_bootstrap_initialized", "shell_file_io", "owned_timeout_cleanup", "native_freecad", "cleanup_restored", "source_security_unchanged", "private_runtime_verified", "setup_failure_restored", "owner_setup_and_temp_cleanup_restored", "boot_id", "python_sha256", "isolation_sha256", "supervisor_sha256", "native_smoke_sha256", "source_sha256", "source_base64", "native_process", "native_command", "shell_process", "timeout_process", "stdout_sha256", "stderr_sha256", "bootstrap_sha256", "relocated_python", "runtime_inventory", "runtime_staging_proof", "runtime_inventory_sha256", "runtime_staging_proof_sha256"],
+  "description": "Independent DEV Windows smoke receipt, published only after real registryRead-only LPAC native construction, owner/DACL attacks, timeout cleanup and exact owner/group/DACL/integrity/control restoration. Its temporary runtime is independently staged from the installed pin; admission binds full source equivalence, real relocation, staging times, boot, bootstrap and current smoke/supervisor/isolation hashes. No installed source ACL changes are allowed.",
+  "type": "object", "not": {"required": ["zero_capabilities"]}, "required": ["schema", "evidence_mode", "live_calls", "lpac", "registry_read_only", "child_denied", "network_denied", "external_file_denied", "repository_denied", "inputs_read_only", "acl_tamper_denied", "root_acl_tamper_denied", "runtime_acl_tamper_denied", "owner_tamper_denied", "runtime_owner_tamper_denied", "inputs_rename_denied", "root_owned_by_child_user", "construction_file_ops", "freecad_bootstrap_initialized", "shell_file_io", "owned_timeout_cleanup", "native_freecad", "cleanup_restored", "source_security_unchanged", "private_runtime_verified", "setup_failure_restored", "owner_setup_and_temp_cleanup_restored", "boot_id", "python_sha256", "isolation_sha256", "supervisor_sha256", "native_smoke_sha256", "source_sha256", "source_base64", "native_process", "native_command", "shell_process", "timeout_process", "stdout_sha256", "stderr_sha256", "bootstrap_sha256", "relocated_python", "runtime_inventory", "runtime_staging_proof", "runtime_inventory_sha256", "runtime_staging_proof_sha256"],
   "properties": {
     "schema": {"const": "cad-harness.bare-isolation-smoke.v1"}, "evidence_mode": {"const": "independent_dev"}, "live_calls": {"const": 0},
-    "lpac": {"const": true}, "zero_capabilities": {"const": true}, "child_denied": {"const": true}, "network_denied": {"const": true},
+    "lpac": {"const": true}, "registry_read_only": {"const": true}, "child_denied": {"const": true}, "network_denied": {"const": true},
     "external_file_denied": {"const": true}, "inputs_read_only": {"const": true}, "native_freecad": {"const": true}, "cleanup_restored": {"const": true},
     "repository_denied": {"const": true},
     "acl_tamper_denied": {"const": true}, "shell_file_io": {"const": true}, "owned_timeout_cleanup": {"const": true},
@@ -23,10 +23,13 @@
   },
   "$defs": {
     "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "process": {"type": "object", "required": ["isolation", "lpac_token_verified", "lpac_token_evidence", "job_assigned", "capability_count", "job_child_limit", "cleanup_status", "stdin", "stdout_base64", "stderr_base64"], "properties": {
-      "isolation": {"const": "windows_lpac_zero_capabilities"}, "lpac_token_verified": {"const": true}, "job_assigned": {"const": true},
+    "process": {"type": "object", "required": ["isolation", "lpac_token_verified", "lpac_token_evidence", "job_assigned", "capability_count", "capability_sids", "capability_attributes", "job_child_limit", "cleanup_status", "stdin", "stdout_base64", "stderr_base64"], "properties": {
+      "isolation": {"const": "windows_lpac_registry_read_only"}, "lpac_token_verified": {"const": true}, "job_assigned": {"const": true},
       "lpac_token_evidence": {"$ref": "#/$defs/lpac_token"},
-      "capability_count": {"const": 0}, "job_child_limit": {"const": 1}, "cleanup_status": {"const": "exited"}, "stdin": {"const": "NUL"},
+      "capability_count": {"type": "integer", "const": 1},
+      "capability_sids": {"const": ["S-1-15-3-1024-1065365936-1281604716-3511738428-1654721687-432734479-3232135806-4053264122-3456934681"]},
+      "capability_attributes": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"type": "integer", "enum": [4, 5, 6, 7]}},
+      "job_child_limit": {"const": 1}, "cleanup_status": {"const": "exited"}, "stdin": {"const": "NUL"},
       "stdout_base64": {"type": "string", "contentEncoding": "base64"}, "stderr_base64": {"type": "string", "contentEncoding": "base64"}
     }},
     "lpac_token": {"type": "object", "additionalProperties": false, "required": ["schema", "world_only_read", "all_application_packages_read", "own_package_read"], "properties": {

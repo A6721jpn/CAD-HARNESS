@@ -14,10 +14,12 @@ import re
 if __package__:
     from . import cad_verify_v4_ledger as ledger, cad_verify_v4_plans as plans
     from . import cad_verify_v4_s1 as s1, cad_verify_v4_trials as trials
+    from . import cad_verify_v4_c2_recipe as c2_recipe, cad_verify_v4_inputs as inputs
     from .cad_verify_guard import Stop
 else:
     import cad_verify_v4_ledger as ledger, cad_verify_v4_plans as plans
     import cad_verify_v4_s1 as s1, cad_verify_v4_trials as trials
+    import cad_verify_v4_c2_recipe as c2_recipe, cad_verify_v4_inputs as inputs
     from cad_verify_guard import Stop
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,7 +49,6 @@ CONTROL_SPECS = {
     'AC-unavailable-glyph': ('validate_context', {'manifest', 'prepared', 'card', 'context'}, set(), 'glyph_coverage'),
 }
 MODEL_ROLES = {'request', 'input_manifest', 'prepared', 'source_asset', 'recipe', 'font', 'license'}
-ACTIVE_C2_RECIPE_SHA256 = 'af0a2e13ff292404684a43e1227c3f3bfda327c72ffcdb24004c05cbd41a4934'
 ENTRY_FILENAMES = {'request': 'request.txt', 'input_manifest': 'manifest.json',
                    'prepared': 'prepared.json', 'card': 'card.json', 'context': 'context.json'}
 OPERATIONAL_ROLES = {
@@ -151,10 +152,13 @@ def validate_published_files(registration, path_for_id):
 
 
 def validate_active_c2_prepared(prepared):
-    """The active cohort is cycle 3; analytic/retired recipes cannot substitute."""
+    """Bind canonical prepared identities to the byte-pinned active recipe."""
+    active = c2_recipe.load(ROOT)
     contours = [row for row in prepared.get('assets', {}).values()
                 if row.get('schema') == 'cad-harness.contour.v4c']
-    if not contours or any(row.get('recipe_sha256') != ACTIVE_C2_RECIPE_SHA256 for row in contours):
+    if not contours or any(row.get('recipe_sha256') != active['canonical_sha256'] or
+                           inputs.canonical_sha(row.get('recipe')) != active['canonical_sha256']
+                           for row in contours):
         raise ValueError('published_active_c2_recipe_required')
 
 

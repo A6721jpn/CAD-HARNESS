@@ -154,7 +154,7 @@ class BenchmarkRegistration(unittest.TestCase):
 
     def test_metadata_only_isolation_flags_do_not_satisfy_retained_execution_evidence(self):
         proof = dict(schema='cad-harness.bare-isolation-smoke.v1', evidence_mode='unit_mock',
-                     lpac=True, zero_capabilities=True, native_freecad=True, cleanup_restored=True)
+                     lpac=True, registry_read_only=True, native_freecad=True, cleanup_restored=True)
         with self.assertRaisesRegex(ValueError, 'actual_retained_isolation_source_streams'):
             benchmark._validate_isolation_streams(proof)
 
@@ -162,20 +162,36 @@ class BenchmarkRegistration(unittest.TestCase):
         source, stdout, stderr = b'DEV_UNIT_SOURCE', b'DEV_UNIT_STDOUT', b'DEV_NOT_A_BOOTSTRAP'
         encode = lambda value: base64.b64encode(value).decode('ascii')
         sha = lambda value: hashlib.sha256(value).hexdigest()
-        process = dict(isolation='windows_lpac_zero_capabilities', lpac_token_verified=True, job_assigned=True,
-            capability_count=0, job_child_limit=1, cleanup_status='exited', stdin='NUL', returncode=0,
+        process = dict(isolation='windows_lpac_registry_read_only', lpac_token_verified=True, job_assigned=True,
+            capability_count=1, capability_sids=[benchmark.bare.isolation.REGISTRY_READ_CAPABILITY_SID],
+            capability_attributes=[4], job_child_limit=1, cleanup_status='exited', stdin='NUL', returncode=0,
             lpac_token_evidence=dict(schema='cad-harness.lpac-accesscheck.v1',
                 world_only_read=False, all_application_packages_read=False, own_package_read=True),
             stdout_base64=encode(stdout), stderr_base64=encode(stderr),
             stdout_record=dict(sha256=sha(stdout), bytes=len(stdout)), stderr_record=dict(sha256=sha(stderr), bytes=len(stderr)),
             initialization=dict(schema='freecad.host-init.v1', version=['1', '1', '4'], gui_up=False,
                                 bootstrap_sha256=benchmark.bare.BOOTSTRAP_SHA256))
-        proof = dict(evidence_mode='unit_mock', source_base64=encode(source), source_sha256=sha(source),
+        proof = dict(evidence_mode='unit_mock', registry_read_only=True, source_base64=encode(source), source_sha256=sha(source),
             relocated_python='DEV-private-python', stdout_sha256=sha(stdout), stderr_sha256=sha(stderr),
             native_process=process, shell_process=dict(process), timeout_process=dict(process),
             native_command=['DEV-private-python', '-I', '-B', '-u', '-c', benchmark.bare.PYTHON_BOOTSTRAP, '1' * 32, 'build.py'])
         with self.assertRaisesRegex(ValueError, 'actual_bootstrap_stream'):
             benchmark._validate_isolation_streams(proof)
+        for changed in (
+                dict(isolation='windows_lpac_zero_capabilities', capability_count=0, capability_sids=[]),
+                dict(capability_count=True), dict(capability_count=0, capability_sids=[]),
+                dict(capability_sids=None), dict(capability_sids=['S-1-15-3-1']),
+                dict(capability_count=2, capability_sids=[benchmark.bare.isolation.REGISTRY_READ_CAPABILITY_SID, 'S-1-15-3-1']),
+                dict(capability_attributes=None), dict(capability_attributes=[0]),
+                dict(capability_attributes=[0x14]), dict(capability_attributes=[0xc])):
+            with self.subTest(changed=changed):
+                rejected = dict(proof, native_process=dict(process, **changed))
+                with self.assertRaisesRegex(ValueError, 'actual_owned_lpac_process'):
+                    benchmark._validate_isolation_streams(rejected)
+        for legacy in (dict(proof, zero_capabilities=True),
+                       {key: value for key, value in dict(proof, zero_capabilities=True).items() if key != 'registry_read_only'}):
+            with self.assertRaisesRegex(ValueError, 'actual_registry_read_only_demonstration'):
+                benchmark._validate_isolation_streams(legacy)
 
     def test_mocked_native_receipt_cannot_satisfy_actual_adapter_prerequisite(self):
         value = registration()

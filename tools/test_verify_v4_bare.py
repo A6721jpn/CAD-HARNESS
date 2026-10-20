@@ -1,5 +1,7 @@
 """Independent DEV-only bare protocol/accounting tests; never launch a process."""
 import base64
+import ctypes as C
+from ctypes import wintypes as W
 import json
 import os
 from pathlib import Path
@@ -227,6 +229,9 @@ class BareToolBehavior(unittest.TestCase):
         self.assertIn('sha256', receipt['result']['stdout_record'])
         self.assertEqual(receipt['result']['initialization']['bootstrap_sha256'], bare.BOOTSTRAP_SHA256)
         self.assertEqual(session.calls, [])
+        session.mode = 'independent_dev'
+        with self.assertRaisesRegex(bare.isolation.BoundaryUnavailable, 'registry_read_only_receipt_required'):
+            loop.execute({'kind': 'python', 'args': ['build.py']})
 
     def test_failed_tool_preserves_native_interval_and_captured_error_stream(self):
         session = Session(self.root, [])
@@ -460,6 +465,70 @@ class StagedRuntimeAdmission(unittest.TestCase):
         os.link(self.source / 'bin/python.exe', python)
         with self.assertRaisesRegex(bare.isolation.BoundaryUnavailable, 'private_hardlink'):
             bare.isolation.validate_staged_runtime(self.target, staged['inventory'], staged['proof'])
+
+
+class RegistryReadTokenUnit(unittest.TestCase):
+    def test_suspended_token_retains_actual_attributes_and_rejects_disabled_or_extra_rights(self):
+        isolation = bare.isolation
+        for attributes in (4, 7, 0, 0x10, 0x14, 0xc):
+            with self.subTest(attributes=attributes):
+                boundary = object.__new__(isolation.WindowsBoundary)
+                boundary.sid = C.c_void_p(123)
+                caps = isolation._TokenCapabilities()
+                caps.count, caps.groups[0].sid, caps.groups[0].attributes = 1, 456, attributes
+                package = C.c_void_p(123)
+                appcontainer = W.DWORD(1)
+                def token_information(token, info, destination, size, required):
+                    source = {29: appcontainer, 30: caps, 31: package}[info]
+                    C.cast(required, C.POINTER(W.DWORD))[0] = C.sizeof(source)
+                    if destination is None:
+                        return 0
+                    C.memmove(destination, C.byref(source), C.sizeof(source))
+                    return 1
+                boundary.a = SimpleNamespace(OpenProcessToken=Mock(return_value=1),
+                    GetTokenInformation=Mock(side_effect=token_information), EqualSid=Mock(return_value=1))
+                boundary.k = SimpleNamespace(CloseHandle=Mock())
+                boundary._sid_text = Mock(return_value=isolation.REGISTRY_READ_CAPABILITY_SID)
+                boundary._lpac_access = Mock(return_value={'actual_accesscheck': True})
+                observed = {}
+                if attributes in (4, 7):
+                    self.assertEqual(boundary._verify_token(789, observed), {'actual_accesscheck': True})
+                    boundary._lpac_access.assert_called_once()
+                else:
+                    with self.assertRaisesRegex(isolation.BoundaryUnavailable, 'child_registry_read_capability_attributes'):
+                        boundary._verify_token(789, observed)
+                    boundary._lpac_access.assert_not_called()
+                self.assertEqual(observed, dict(capability_count=1,
+                    capability_sids=[isolation.REGISTRY_READ_CAPABILITY_SID], capability_attributes=[attributes]))
+                boundary.k.CloseHandle.assert_called_once()
+
+    def test_derived_sid_arrays_survive_attribute_use_and_are_freed_individually(self):
+        isolation = bare.isolation
+        boundary = object.__new__(isolation.WindowsBoundary)
+        boundary.sid = C.c_void_p(123)
+        groups, capabilities = (C.c_void_p * 1)(234), (C.c_void_p * 1)(456)
+        def derive(name, out_groups, group_count, out_capabilities, capability_count):
+            self.assertEqual(name, 'registryRead')
+            C.cast(out_groups, C.POINTER(C.POINTER(C.c_void_p)))[0] = C.cast(groups, C.POINTER(C.c_void_p))
+            C.cast(out_capabilities, C.POINTER(C.POINTER(C.c_void_p)))[0] = C.cast(capabilities, C.POINTER(C.c_void_p))
+            C.cast(group_count, C.POINTER(W.DWORD))[0] = 1
+            C.cast(capability_count, C.POINTER(W.DWORD))[0] = 1
+            return 1
+        boundary.b = SimpleNamespace(DeriveCapabilitySidsFromName=Mock(side_effect=derive))
+        boundary.k = SimpleNamespace(LocalFree=Mock())
+        boundary._sid_text = Mock(return_value=isolation.REGISTRY_READ_CAPABILITY_SID)
+        with boundary._registry_read_capabilities() as caps:
+            self.assertEqual((caps.sid, caps.count, caps.reserved), (123, 1, 0))
+            self.assertEqual((caps.caps[0].sid, caps.caps[0].attributes), (456, 4))
+            boundary.k.LocalFree.assert_not_called()
+        freed = [C.cast(call.args[0], C.c_void_p).value for call in boundary.k.LocalFree.call_args_list]
+        self.assertEqual(freed, [234, C.addressof(groups), 456, C.addressof(capabilities)])
+        boundary.k.LocalFree.reset_mock()
+        boundary._sid_text.return_value = 'S-1-15-3-1'
+        with self.assertRaisesRegex(isolation.BoundaryUnavailable, 'derived_registry_read_capability_mismatch'):
+            with boundary._registry_read_capabilities():
+                self.fail('a differently derived capability cannot reach attribute creation')
+        self.assertEqual(boundary.k.LocalFree.call_count, 4)
 
 
 class SecurityRollbackUnit(unittest.TestCase):
