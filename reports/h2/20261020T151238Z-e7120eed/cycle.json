@@ -1,0 +1,1870 @@
+{
+  "schema": "h2.cycle.v1",
+  "cycle_id": "20261020T151238Z-e7120eed",
+  "task_id": "A-box-pocket-fillet",
+  "mode": "LIBRARY_ONLY",
+  "k": 1,
+  "created_at": "2026-10-20T15:12:38.957162+00:00",
+  "max_llm_calls": 20,
+  "status": "completed",
+  "runs": {
+    "run0": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": null,
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 1,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 375.0,
+              "recompute": 0.0,
+              "probe": 47.0000000204891,
+              "save": 0.0
+            },
+            "cad_run_id": "4f0e3b21ccc44509a3914423705c11da",
+            "attempt_id": "b09ad9ceb5174b27a90454ff5916c471",
+            "recipe": "freecadcmd",
+            "script_sha256": "6bf4bb3288e2eb343c0e4cdee9c794156a984fddec2e7738ba8ec64ba01298d7",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 55604,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 796.656,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\run0\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\run0\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 2,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 219.0000000409782,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 0.0
+            },
+            "cad_run_id": "0e003ee099b043649ccceacb67465c44",
+            "attempt_id": "0dd165075b334cf1af96cc265e62c23f",
+            "recipe": "freecadcmd",
+            "script_sha256": "ee05a96d9a240e84fd342ea3420ae7d97124574c2169efd34a002ee35bbf931b",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 57140,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 627.262,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\run0\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\run0\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 3,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 15.00000013038516
+            },
+            "cad_run_id": "2b597c8662c34029b89e9a9a41463dfd",
+            "attempt_id": "ca94ec08346840b8a93a406df3248933",
+            "recipe": "freecadcmd",
+            "script_sha256": "63ff4d1cf81cd306615f5f6024f72ae566f2be5e91e0d6ca3688a29c7268b743",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 61552,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 535.487,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\run0\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\run0\\a3"
+        }
+      ],
+      "geometry_pass": false,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 76620,
+        "cached_input": 17280,
+        "output": 3182,
+        "reasoning": null,
+        "total": 79802
+      },
+      "wall_ms": 104552.862,
+      "final_code_summary": {
+        "sha256": "7871b8348295a69e00e07ad5c5016cbb97461e3b947a93ba181c828a5b84dc46",
+        "line_count": 117,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'{} must contain one valid solid.'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "configure_extrusion",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "range",
+          "rectangle",
+          "shape.isNull",
+          "shape.isValid",
+          "sketch.addConstraint",
+          "sketch.addGeometry",
+          "validate"
+        ]
+      }
+    },
+    "probe-1": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": null,
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "For box-pocket-fillet tasks, construct an explicit, connected PartDesign feature history within the returned Body: sketch-based additive feature, sketch-based Pocket, then Fillet referencing the preceding feature. Ensure the Body tip is the final feature. Treat correct geometry and correct feature history as separate requirements."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 5,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 15.00000013038516
+            },
+            "cad_run_id": "d8329983b962404396a22eed0d0099d9",
+            "attempt_id": "7d133e4fe3a047469f297075808cb458",
+            "recipe": "freecadcmd",
+            "script_sha256": "42d8e9b3a7152520d553ce63ad77bedda8e300f67d0113742403514bdd826d1b",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 8372,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 519.916,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-1\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-1\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 6,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 0.0
+            },
+            "cad_run_id": "4999975125594e9aab5af6541934ab91",
+            "attempt_id": "5565ce31cb854259b25dd4737c40205e",
+            "recipe": "freecadcmd",
+            "script_sha256": "edb0a258e1a2fc4eb821fc8215f514d016e6a91e07be7e620b76d29a9f0cc2ad",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 58804,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 520.763,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-1\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-1\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 49494,
+        "cached_input": 0,
+        "output": 2010,
+        "reasoning": null,
+        "total": 51504
+      },
+      "wall_ms": 64131.965,
+      "final_code_summary": {
+        "sha256": "a0e6cd329dfec05ecb0f103e042a44a5ed302af83bec9afe3375c0682b704487",
+        "line_count": 115,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "pocket.Shape.isNull",
+          "pocket.Shape.isValid",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-2": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": null,
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "When predicate_diff contains only feature_chain and the script completed with valid geometry, focus the retry on feature types, Body membership, dependency links, and final tip. Preserve dimensions unless evidence requires changing them; do not assume the aggregate failure identifies a specific broken link."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code",
+          "measurements",
+          "script_completed",
+          "cad_exit_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 7,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "7b9e2a97428e4d53b0dcc17aea2dabec",
+            "attempt_id": "71dce50d92a24a14968176f764560574",
+            "recipe": "freecadcmd",
+            "script_sha256": "985bb7e8875095380ef0c945d1689e6d223f125af5a985678e814c08f958a33a",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 27416,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 530.429,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-2\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-2\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 8,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": 0.0,
+              "probe": 14.999999897554517,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "21632b6d04cf438494112eb2258f34f9",
+            "attempt_id": "d9cf14a21ca34bd283a53112cde595cc",
+            "recipe": "freecadcmd",
+            "script_sha256": "872ee44cb992e4968d72ddff363657cc23f950d533b5078c45e8ca6714feb890",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 62448,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 528.12,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-2\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-2\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 49653,
+        "cached_input": 0,
+        "output": 1850,
+        "reasoning": null,
+        "total": 51503
+      },
+      "wall_ms": 58409.614,
+      "final_code_summary": {
+        "sha256": "551dca26a9f2e251c9ec978e950a7f9054c141df6c894f32cc01d785dd727b05",
+        "line_count": 108,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "add_rectangle",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "inverse.multVec",
+          "len",
+          "outer_top_edges.append",
+          "range",
+          "sketch.Placement.inverse",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-3": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": null,
+          "reasoning_effort": "medium"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [
+          "Before returning the Body, review the intended feature history against the constructed objects: each modeling operation should have the appropriate native PartDesign type, belong to the returned Body, and reference its intended predecessor or profile. After repeated feature_chain failures, identify a concrete structural hypothesis and make a corresponding correction instead of repeating geometry-equivalent changes."
+        ],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 9,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 172.0000000204891,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "71b7575727624475be1d6e6607b76da2",
+            "attempt_id": "099841c7ae38420da7d2940ae8bee13d",
+            "recipe": "freecadcmd",
+            "script_sha256": "d2cdb761e1ec94de0e439ecac0ee75957f4b21c5cf7698fc13b54e76fc3d67ac",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 32740,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 469.82,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-3\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-3\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 10,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 186.9999999180436,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "a36c86cd3421477d9fcea77c4144d524",
+            "attempt_id": "bd9f96c086104e4a8a7773b5e4ba9523",
+            "recipe": "freecadcmd",
+            "script_sha256": "effc90863afaa7f63faf0fb264e34e4bb96e7629441f267253ed4a54a725890f",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 15340,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 472.841,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-3\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-3\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 11,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "11a8cba7d92f443292e64da1a386e8f2",
+            "attempt_id": "2291b07957e948e793a1a7d6ee8926ec",
+            "recipe": "freecadcmd",
+            "script_sha256": "a078bef64297582f941366c9837cef3de33e905d045ead492d320dd347bc3f41",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 59812,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 473.221,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-3\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\probe-3\\a3"
+        }
+      ],
+      "geometry_pass": false,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 75261,
+        "cached_input": 0,
+        "output": 3424,
+        "reasoning": null,
+        "total": 78685
+      },
+      "wall_ms": 104913.951,
+      "final_code_summary": {
+        "sha256": "f870a949c6f22a3334e30d5ba58587fbd791f0293051364f50b0ab7a3b50bbc7",
+        "line_count": 123,
+        "api_calls": [
+          "'Edge{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "check_solid",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "pocket_sketch.setExpression",
+          "range",
+          "rectangle",
+          "set",
+          "shape.isNull",
+          "shape.isValid",
+          "single_sided",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "composed": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": null,
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "When predicate_diff contains only feature_chain and the script completed with valid geometry, focus the retry on feature types, Body membership, dependency links, and final tip. Preserve dimensions unless evidence requires changing them; do not assume the aggregate failure identifies a specific broken link.",
+          "For box-pocket-fillet tasks, construct an explicit, connected PartDesign feature history within the returned Body: sketch-based additive feature, sketch-based Pocket, then Fillet referencing the preceding feature. Ensure the Body tip is the final feature. Treat correct geometry and correct feature history as separate requirements."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code",
+          "measurements",
+          "script_completed",
+          "cad_exit_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 12,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 186.9999999180436,
+              "recompute": 0.0,
+              "probe": 16.00000006146729,
+              "save": 0.0
+            },
+            "cad_run_id": "498bd60b8c3e45269bc91cfc34e2a309",
+            "attempt_id": "1ac6cd05af4e4cd5b302d95f15ae9a4e",
+            "recipe": "freecadcmd",
+            "script_sha256": "8f2a3e2a240d42a9011a4da0272429fe303e4ed2a80dbe0001151a18076ce8e2",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 23648,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 476.076,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\composed\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\composed\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 13,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 16.00000006146729,
+              "save": 0.0
+            },
+            "cad_run_id": "603a56d3ff0b464c9411c6d2c2908334",
+            "attempt_id": "ff42080a9082471294db575a8f8f99b8",
+            "recipe": "freecadcmd",
+            "script_sha256": "6835c91c336ace94b0fca815ca3d862c1f4f5ac7f96308f873faad206ec123ef",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 52236,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 526.41,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\composed\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T151238Z-e7120eed\\composed\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 51474,
+        "cached_input": 0,
+        "output": 1936,
+        "reasoning": null,
+        "total": 53410
+      },
+      "wall_ms": 60899.33,
+      "final_code_summary": {
+        "sha256": "0a9b4fe5db14fe5f5ac796dd56686ed657f3fb1282db4532dee3384e4d4255d3",
+        "line_count": 114,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "feature.Shape.isNull",
+          "feature.Shape.isValid",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "pocket_sketch.Placement.inverse",
+          "pocket_sketch.Placement.inverse().multiply",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    }
+  },
+  "llm_calls": [
+    {
+      "call_id": 1,
+      "role": "run0/a1",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 24245,
+        "cached_input": 0,
+        "output": 1109,
+        "reasoning": null,
+        "total": 25354
+      },
+      "wall_ms": 40320.589,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\1",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 2,
+      "role": "run0/a2",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 27022,
+        "cached_input": 17280,
+        "output": 1059,
+        "reasoning": null,
+        "total": 28081
+      },
+      "wall_ms": 32309.665,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\2",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 3,
+      "role": "run0/a3",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 25353,
+        "cached_input": 0,
+        "output": 1014,
+        "reasoning": null,
+        "total": 26367
+      },
+      "wall_ms": 29950.727,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\3",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 4,
+      "role": "propose",
+      "model": null,
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 27002,
+        "cached_input": 0,
+        "output": 384,
+        "reasoning": null,
+        "total": 27386
+      },
+      "wall_ms": 18571.322,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\4",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 5,
+      "role": "probe-1/a1",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 24304,
+        "cached_input": 0,
+        "output": 829,
+        "reasoning": null,
+        "total": 25133
+      },
+      "wall_ms": 25027.465,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\5",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 6,
+      "role": "probe-1/a2",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 25190,
+        "cached_input": 0,
+        "output": 1181,
+        "reasoning": null,
+        "total": 26371
+      },
+      "wall_ms": 38055.981,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\6",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 7,
+      "role": "probe-2/a1",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 24298,
+        "cached_input": 0,
+        "output": 827,
+        "reasoning": null,
+        "total": 25125
+      },
+      "wall_ms": 26096.452,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\7",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 8,
+      "role": "probe-2/a2",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 25355,
+        "cached_input": 0,
+        "output": 1023,
+        "reasoning": null,
+        "total": 26378
+      },
+      "wall_ms": 31246.362,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\8",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 9,
+      "role": "probe-3/a1",
+      "model": null,
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 24311,
+        "cached_input": 0,
+        "output": 1002,
+        "reasoning": null,
+        "total": 25313
+      },
+      "wall_ms": 30966.728,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\9",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 10,
+      "role": "probe-3/a2",
+      "model": null,
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 25391,
+        "cached_input": 0,
+        "output": 1204,
+        "reasoning": null,
+        "total": 26595
+      },
+      "wall_ms": 36216.333,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\10",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 11,
+      "role": "probe-3/a3",
+      "model": null,
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 25559,
+        "cached_input": 0,
+        "output": 1218,
+        "reasoning": null,
+        "total": 26777
+      },
+      "wall_ms": 36302.531,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\11",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 12,
+      "role": "composed/a1",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 24357,
+        "cached_input": 0,
+        "output": 799,
+        "reasoning": null,
+        "total": 25156
+      },
+      "wall_ms": 26089.815,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\12",
+      "exit_code": 0,
+      "error": null
+    },
+    {
+      "call_id": 13,
+      "role": "composed/a2",
+      "model": null,
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 27117,
+        "cached_input": 0,
+        "output": 1137,
+        "reasoning": null,
+        "total": 28254
+      },
+      "wall_ms": 33798.744,
+      "log_dir": "reports\\h2\\20261020T151238Z-e7120eed\\llm\\13",
+      "exit_code": 0,
+      "error": null
+    }
+  ],
+  "stages": {
+    "run0": {
+      "status": "completed",
+      "wall_ms": 104555.441
+    },
+    "propose": {
+      "status": "completed",
+      "wall_ms": 18573.631
+    },
+    "probe": {
+      "status": "completed",
+      "wall_ms": 227460.524
+    },
+    "compose": {
+      "status": "completed",
+      "wall_ms": 60901.316
+    },
+    "library": {
+      "status": "completed",
+      "wall_ms": 1.256
+    }
+  },
+  "proposals": [
+    {
+      "edit": [
+        {
+          "op": "add_rule",
+          "value": "For box-pocket-fillet tasks, construct an explicit, connected PartDesign feature history within the returned Body: sketch-based additive feature, sketch-based Pocket, then Fillet referencing the preceding feature. Ensure the Body tip is the final feature. Treat correct geometry and correct feature history as separate requirements."
+        }
+      ],
+      "rationale": "Helps when geometry appears correct but feature_chain fails. All three attempts produced identical valid solids and reference-matching volume, while the reported failure concerned feature history; the exact failing relationship remains unknown.",
+      "variant": "probe-1",
+      "verdict": "supported"
+    },
+    {
+      "edit": [
+        {
+          "op": "set_feedback_fields",
+          "value": [
+            "status",
+            "failed_phase",
+            "probe_status",
+            "predicate_diff",
+            "message_code",
+            "measurements",
+            "script_completed",
+            "cad_exit_code"
+          ]
+        },
+        {
+          "op": "add_rule",
+          "value": "When predicate_diff contains only feature_chain and the script completed with valid geometry, focus the retry on feature types, Body membership, dependency links, and final tip. Preserve dimensions unless evidence requires changing them; do not assume the aggregate failure identifies a specific broken link."
+        }
+      ],
+      "rationale": "Helps retries distinguish a structural failure from execution or dimensional failures. Additional feedback exposes the successful script completion and geometry measurements already present in these results.",
+      "variant": "probe-2",
+      "verdict": "supported"
+    },
+    {
+      "edit": [
+        {
+          "op": "set_reasoning_effort",
+          "value": "medium"
+        },
+        {
+          "op": "add_snippet",
+          "value": "Before returning the Body, review the intended feature history against the constructed objects: each modeling operation should have the appropriate native PartDesign type, belong to the returned Body, and reference its intended predecessor or profile. After repeated feature_chain failures, identify a concrete structural hypothesis and make a corresponding correction instead of repeating geometry-equivalent changes."
+        }
+      ],
+      "rationale": "Helps when repeated attempts retain the same aggregate failure. More reasoning and a focused structural review may improve diagnosis within the existing three-attempt budget, without claiming knowledge of the hidden predicate.",
+      "variant": "probe-3",
+      "verdict": "unsupported"
+    }
+  ],
+  "library_entries": [
+    {
+      "entry_id": "301749520d9c4a52b17004e72fbdad72",
+      "domain": "cad-freecad",
+      "task_id": "A-box-pocket-fillet",
+      "cycle_id": "20261020T151238Z-e7120eed",
+      "created_at": "2026-10-20T15:19:30.448639+00:00",
+      "edit": [
+        {
+          "op": "add_rule",
+          "value": "For box-pocket-fillet tasks, construct an explicit, connected PartDesign feature history within the returned Body: sketch-based additive feature, sketch-based Pocket, then Fillet referencing the preceding feature. Ensure the Body tip is the final feature. Treat correct geometry and correct feature history as separate requirements."
+        }
+      ],
+      "verdict": "supported",
+      "contrast": {
+        "run0": {
+          "geometry_pass": false,
+          "attempt_count": 3,
+          "tokens": {
+            "input": 76620,
+            "cached_input": 17280,
+            "output": 3182,
+            "reasoning": null,
+            "total": 79802
+          },
+          "wall_ms": 104552.862
+        },
+        "probe": {
+          "geometry_pass": true,
+          "attempt_count": 2,
+          "tokens": {
+            "input": 49494,
+            "cached_input": 0,
+            "output": 2010,
+            "reasoning": null,
+            "total": 51504
+          },
+          "wall_ms": 64131.965
+        }
+      },
+      "lesson": "Helps when geometry appears correct but feature_chain fails. All three attempts produced identical valid solids and reference-matching volume, while the reported failure concerned feature history; the exact failing relationship remains unknown. Measured verdict: supported; run0={\"geometry_pass\": false, \"attempt_count\": 3, \"tokens\": {\"input\": 76620, \"cached_input\": 17280, \"output\": 3182, \"reasoning\": null, \"total\": 79802}, \"wall_ms\": 104552.862}; probe={\"geometry_pass\": true, \"attempt_count\": 2, \"tokens\": {\"input\": 49494, \"cached_input\": 0, \"output\": 2010, \"reasoning\": null, \"total\": 51504}, \"wall_ms\": 64131.965}.",
+      "adopted_in_composed": true
+    },
+    {
+      "entry_id": "a242b13d77e34c5f85fa400e73c47b70",
+      "domain": "cad-freecad",
+      "task_id": "A-box-pocket-fillet",
+      "cycle_id": "20261020T151238Z-e7120eed",
+      "created_at": "2026-10-20T15:19:30.449644+00:00",
+      "edit": [
+        {
+          "op": "set_feedback_fields",
+          "value": [
+            "status",
+            "failed_phase",
+            "probe_status",
+            "predicate_diff",
+            "message_code",
+            "measurements",
+            "script_completed",
+            "cad_exit_code"
+          ]
+        },
+        {
+          "op": "add_rule",
+          "value": "When predicate_diff contains only feature_chain and the script completed with valid geometry, focus the retry on feature types, Body membership, dependency links, and final tip. Preserve dimensions unless evidence requires changing them; do not assume the aggregate failure identifies a specific broken link."
+        }
+      ],
+      "verdict": "supported",
+      "contrast": {
+        "run0": {
+          "geometry_pass": false,
+          "attempt_count": 3,
+          "tokens": {
+            "input": 76620,
+            "cached_input": 17280,
+            "output": 3182,
+            "reasoning": null,
+            "total": 79802
+          },
+          "wall_ms": 104552.862
+        },
+        "probe": {
+          "geometry_pass": true,
+          "attempt_count": 2,
+          "tokens": {
+            "input": 49653,
+            "cached_input": 0,
+            "output": 1850,
+            "reasoning": null,
+            "total": 51503
+          },
+          "wall_ms": 58409.614
+        }
+      },
+      "lesson": "Helps retries distinguish a structural failure from execution or dimensional failures. Additional feedback exposes the successful script completion and geometry measurements already present in these results. Measured verdict: supported; run0={\"geometry_pass\": false, \"attempt_count\": 3, \"tokens\": {\"input\": 76620, \"cached_input\": 17280, \"output\": 3182, \"reasoning\": null, \"total\": 79802}, \"wall_ms\": 104552.862}; probe={\"geometry_pass\": true, \"attempt_count\": 2, \"tokens\": {\"input\": 49653, \"cached_input\": 0, \"output\": 1850, \"reasoning\": null, \"total\": 51503}, \"wall_ms\": 58409.614}.",
+      "adopted_in_composed": true
+    },
+    {
+      "entry_id": "4c25744f13464b6e807e3d75193040c7",
+      "domain": "cad-freecad",
+      "task_id": "A-box-pocket-fillet",
+      "cycle_id": "20261020T151238Z-e7120eed",
+      "created_at": "2026-10-20T15:19:30.449644+00:00",
+      "edit": [
+        {
+          "op": "set_reasoning_effort",
+          "value": "medium"
+        },
+        {
+          "op": "add_snippet",
+          "value": "Before returning the Body, review the intended feature history against the constructed objects: each modeling operation should have the appropriate native PartDesign type, belong to the returned Body, and reference its intended predecessor or profile. After repeated feature_chain failures, identify a concrete structural hypothesis and make a corresponding correction instead of repeating geometry-equivalent changes."
+        }
+      ],
+      "verdict": "unsupported",
+      "contrast": {
+        "run0": {
+          "geometry_pass": false,
+          "attempt_count": 3,
+          "tokens": {
+            "input": 76620,
+            "cached_input": 17280,
+            "output": 3182,
+            "reasoning": null,
+            "total": 79802
+          },
+          "wall_ms": 104552.862
+        },
+        "probe": {
+          "geometry_pass": false,
+          "attempt_count": 3,
+          "tokens": {
+            "input": 75261,
+            "cached_input": 0,
+            "output": 3424,
+            "reasoning": null,
+            "total": 78685
+          },
+          "wall_ms": 104913.951
+        }
+      },
+      "lesson": "Helps when repeated attempts retain the same aggregate failure. More reasoning and a focused structural review may improve diagnosis within the existing three-attempt budget, without claiming knowledge of the hidden predicate. Measured verdict: unsupported; run0={\"geometry_pass\": false, \"attempt_count\": 3, \"tokens\": {\"input\": 76620, \"cached_input\": 17280, \"output\": 3182, \"reasoning\": null, \"total\": 79802}, \"wall_ms\": 104552.862}; probe={\"geometry_pass\": false, \"attempt_count\": 3, \"tokens\": {\"input\": 75261, \"cached_input\": 0, \"output\": 3424, \"reasoning\": null, \"total\": 78685}, \"wall_ms\": 104913.951}.",
+      "adopted_in_composed": false
+    }
+  ],
+  "prior_library_count": 0,
+  "composition": {
+    "supported": [
+      "probe-2",
+      "probe-1"
+    ],
+    "adopted": [
+      "probe-2",
+      "probe-1"
+    ],
+    "fallback": false,
+    "selected_run": "composed",
+    "harness": {
+      "id": "base-v0",
+      "executor": {
+        "model": null,
+        "reasoning_effort": "low"
+      },
+      "rules": [
+        "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+        "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+        "Do not create, save, close or export documents. Do not run processes or access files.",
+        "When predicate_diff contains only feature_chain and the script completed with valid geometry, focus the retry on feature types, Body membership, dependency links, and final tip. Preserve dimensions unless evidence requires changing them; do not assume the aggregate failure identifies a specific broken link.",
+        "For box-pocket-fillet tasks, construct an explicit, connected PartDesign feature history within the returned Body: sketch-based additive feature, sketch-based Pocket, then Fillet referencing the preceding feature. Ensure the Body tip is the final feature. Treat correct geometry and correct feature history as separate requirements."
+      ],
+      "snippets": [],
+      "max_attempts": 3,
+      "feedback_fields": [
+        "status",
+        "failed_phase",
+        "probe_status",
+        "predicate_diff",
+        "message_code",
+        "measurements",
+        "script_completed",
+        "cad_exit_code"
+      ]
+    },
+    "conflicts": []
+  },
+  "geometry_pass": true,
+  "completed_at": "2026-10-20T15:19:30.449644+00:00",
+  "wall_ms": 411492.728,
+  "tokens": {
+    "input": 329504,
+    "cached_input": 17280,
+    "output": 12786,
+    "reasoning": null,
+    "total": 342290
+  },
+  "llm_call_count": 13,
+  "cad_wall_ms": 6477.001
+}

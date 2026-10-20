@@ -1,0 +1,95 @@
+{
+  "result": {
+    "schema": "cad-harness.cad_run.v0",
+    "task_id": "A-box-pocket-fillet",
+    "geometry_ok": null,
+    "timings_ms": {
+      "build": 188.0000000819564,
+      "recompute": 0.0,
+      "probe": 30.999999959021807,
+      "save": 15.00000013038516
+    },
+    "cad_run_id": "2b597c8662c34029b89e9a9a41463dfd",
+    "attempt_id": "ca94ec08346840b8a93a406df3248933",
+    "recipe": "freecadcmd",
+    "script_sha256": "63ff4d1cf81cd306615f5f6024f72ae566f2be5e91e0d6ca3688a29c7268b743",
+    "source_sha256": null,
+    "status": "failed",
+    "failed_phase": "probe",
+    "code_owner": "script",
+    "next_actor": "sol",
+    "cad_exit_code": 0,
+    "script_completed": true,
+    "probe_pass": false,
+    "probe_status": "predicate_fail",
+    "cleanup_status": "exited",
+    "removed_warning_lines": 0,
+    "measurements": {
+      "bound_box_mm": {
+        "x_min": -20.000000000000007,
+        "x_max": 20.000000000000163,
+        "y_min": -15.0,
+        "y_max": 15.000000000000174,
+        "z_min": 0.0,
+        "z_max": 20.0,
+        "x_length": 40.00000000000017,
+        "y_length": 30.000000000000174,
+        "z_length": 20.0
+      },
+      "volume_mm3": 22239.9556819442,
+      "area_mm2": 5364.637121611783,
+      "face_count": 15,
+      "solid_count": 1,
+      "is_valid": true
+    },
+    "predicate_diff": [
+      "feature_chain"
+    ],
+    "timeout_s": 300,
+    "artifacts": {
+      "stderr.txt": "stderr.txt",
+      "stdout.txt": "stdout.txt",
+      "model.FCStd": "model.FCStd",
+      "input.py": "input.py",
+      "worker-result.json": "worker-result.json",
+      "worker-events.jsonl": "worker-events.jsonl",
+      "owned-pid.json": "owned-pid.json",
+      "request.json": "request.json",
+      "user.cfg": "user.cfg",
+      "system.cfg": "system.cfg",
+      "events.jsonl": "events.jsonl",
+      "result.json": "result.json"
+    },
+    "owned_pid": 61552,
+    "reference": {
+      "volume_mm3": 22239.9556819442,
+      "volume_rule": "below_22500_and_within_1_percent",
+      "bbox_tolerance_mm": 0.1,
+      "face_count": 15,
+      "source": "runbook section 6; run02/run04/run05-cad.json"
+    },
+    "document_closed": true,
+    "predicate_details": {
+      "version": 1,
+      "task_id": "A-box-pocket-fillet",
+      "checks": [
+        {
+          "predicate": "feature_chain",
+          "sub_check_id": "feature_chain.aggregate",
+          "expected": true,
+          "actual": false
+        }
+      ],
+      "truncated": false,
+      "omitted": 0
+    },
+    "editability_ok": null,
+    "skill_warnings": null,
+    "export_ms": null,
+    "message_code": "worker_failed"
+  },
+  "wall_ms": 535.487,
+  "exit_code": 1,
+  "stdout": "{\"schema\": \"cad-harness.cad_run.v0\", \"task_id\": \"A-box-pocket-fillet\", \"geometry_ok\": null, \"timings_ms\": {\"build\": 188.0000000819564, \"recompute\": 0.0, \"probe\": 30.999999959021807, \"save\": 15.00000013038516}, \"cad_run_id\": \"2b597c8662c34029b89e9a9a41463dfd\", \"attempt_id\": \"ca94ec08346840b8a93a406df3248933\", \"recipe\": \"freecadcmd\", \"script_sha256\": \"63ff4d1cf81cd306615f5f6024f72ae566f2be5e91e0d6ca3688a29c7268b743\", \"source_sha256\": null, \"status\": \"failed\", \"failed_phase\": \"probe\", \"code_owner\": \"script\", \"next_actor\": \"sol\", \"cad_exit_code\": 0, \"script_completed\": true, \"probe_pass\": false, \"probe_status\": \"predicate_fail\", \"cleanup_status\": \"exited\", \"removed_warning_lines\": 0, \"measurements\": {\"bound_box_mm\": {\"x_min\": -20.000000000000007, \"x_max\": 20.000000000000163, \"y_min\": -15.0, \"y_max\": 15.000000000000174, \"z_min\": 0.0, \"z_max\": 20.0, \"x_length\": 40.00000000000017, \"y_length\": 30.000000000000174, \"z_length\": 20.0}, \"volume_mm3\": 22239.9556819442, \"area_mm2\": 5364.637121611783, \"face_count\": 15, \"solid_count\": 1, \"is_valid\": true}, \"predicate_diff\": [\"feature_chain\"], \"timeout_s\": 300, \"artifacts\": {\"stderr.txt\": \"stderr.txt\", \"stdout.txt\": \"stdout.txt\", \"model.FCStd\": \"model.FCStd\", \"input.py\": \"input.py\", \"worker-result.json\": \"worker-result.json\", \"worker-events.jsonl\": \"worker-events.jsonl\", \"owned-pid.json\": \"owned-pid.json\", \"request.json\": \"request.json\", \"user.cfg\": \"user.cfg\", \"system.cfg\": \"system.cfg\", \"events.jsonl\": \"events.jsonl\", \"result.json\": \"result.json\"}, \"owned_pid\": 61552, \"reference\": {\"volume_mm3\": 22239.9556819442, \"volume_rule\": \"below_22500_and_within_1_percent\", \"bbox_tolerance_mm\": 0.1, \"face_count\": 15, \"source\": \"runbook section 6; run02/run04/run05-cad.json\"}, \"document_closed\": true, \"predicate_details\": {\"version\": 1, \"task_id\": \"A-box-pocket-fillet\", \"checks\": [{\"predicate\": \"feature_chain\", \"sub_check_id\": \"feature_chain.aggregate\", \"expected\": true, \"actual\": false}], \"truncated\": false, \"omitted\": 0}, \"editability_ok\": null, \"skill_warnings\": null, \"export_ms\": null, \"message_code\": \"worker_failed\"}\n",
+  "stderr": ""
+}
