@@ -1,0 +1,3 @@
+{"kind": "ready", "owned_pid": 33016, "gui_up": 0, "ts": "2026-10-20T15:27:05.835329+00:00"}
+{"kind": "event", "phase": "build", "event": "build_finished", "status": "ok", "ts": "2026-10-20T15:27:06.037999+00:00"}
+{"kind": "event", "phase": "probe", "event": "probe_finished", "status": "failed", "data": {"predicate": {"bbox": true, "volume": true, "faces": true, "valid_solid": true, "pocket_floor": true, "pocket_walls": true, "pocket_inner_sharp": true, "feature_counts": true, "standard_auxiliaries": true, "feature_chain": false, "outer_fillet": true, "sketches": true, "pad_pocket_lengths": true, "pad_one_direction": true}}, "ts": "2026-10-20T15:27:06.065310+00:00"}

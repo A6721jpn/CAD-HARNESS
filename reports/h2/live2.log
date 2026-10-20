@@ -1,0 +1,1 @@
+{"cycle_id": "20261020T152636Z-330b164e", "status": "completed", "geometry_pass": true, "tokens": {"input": 229431, "cached_input": 59008, "output": 8296, "reasoning": 966, "total": 237727}, "wall_ms": 264340.087, "report": "C:\\dev\\CAD-HARNESS-h2\\reports\\h2\\20261020T152636Z-330b164e\\cycle.json"}

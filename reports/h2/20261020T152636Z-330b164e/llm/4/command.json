@@ -1,0 +1,1 @@
+["C:\\Users\\backo\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe", "exec", "--json", "--sandbox", "read-only", "--skip-git-repo-check", "--ephemeral", "-C", "C:\\dev\\CAD-HARNESS-h2\\reports\\h2\\20261020T152636Z-330b164e\\llm\\4\\empty-workdir", "-c", "approval_policy=\"never\"", "-c", "model_reasoning_effort=\"low\"", "-"]
