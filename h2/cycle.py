@@ -11,10 +11,11 @@ from pathlib import Path
 import time
 import uuid
 
-from .edits import apply_edits, rank, validate_proposals, verdict
+from .edits import apply_edits, validate_proposals
 from .library import materialize_library
 from .runtime import (CadRunner, CodexClient, elapsed, extract_code, extract_json,
                       sum_tokens, token_usage)
+from .statistics import cache_metrics, decide, rank_group, summarize
 
 ROOT = Path(__file__).resolve().parents[1]
 BOUNDARY = ("Use only the information in this prompt. Do not read tools/fixtures, existing "
@@ -37,13 +38,16 @@ class BudgetExceeded(RuntimeError):
 
 class Cycle:
     def __init__(self, root=ROOT, *, task="A-box-pocket-fillet", candidates=3,
-                 max_calls=20, cycle_id=None, llm=None, cad=None):
+                 max_calls=100, repeats=1, model=None, cycle_id=None, llm=None, cad=None):
         if task != "A-box-pocket-fillet":
             raise ValueError("MVP supports only A-box-pocket-fillet")
-        if type(candidates) is not int or candidates < 1 or type(max_calls) is not int or max_calls < 1:
-            raise ValueError("candidates and max_calls must be positive integers")
+        if type(candidates) is not int or candidates < 1 or type(max_calls) is not int or not 1 <= max_calls <= 100:
+            raise ValueError("candidates must be positive and max_calls must be 1..100")
+        if type(repeats) is not int or repeats < 1:
+            raise ValueError("repeats must be a positive integer")
         self.root = Path(root).resolve()
         self.task_id, self.count, self.max_calls = task, candidates, max_calls
+        self.repeats, self.model = repeats, model
         self.id = cycle_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ-") + uuid.uuid4().hex[:8]
         if not self.id or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_" for c in self.id):
             raise ValueError("Unsafe cycle id")
@@ -53,7 +57,12 @@ class Cycle:
         self.llm, self.cad = llm or CodexClient(), cad or CadRunner(self.root)
         self.data = {"schema": "h2.cycle.v1", "cycle_id": self.id, "task_id": task,
                      "mode": "LIBRARY_ONLY", "k": 1, "created_at": now(),
-                     "max_llm_calls": max_calls, "status": "running", "runs": {},
+                     "max_llm_calls": max_calls, "repeats": repeats, "requested_model": model,
+                     "decision_rule": "D15", "std_convention": "sample; N=1 uses zero",
+                     "cache_policy": {"intent": "warm_after_one_excluded_warmup_run",
+                                      "guaranteed_equal_cache": False,
+                                      "limitation": "Provider controls cache hits; measured per call and group"},
+                     "status": "running", "runs": {}, "groups": {}, "execution_order": [],
                      "llm_calls": [], "stages": {}, "proposals": [], "library_entries": []}
 
     def call(self, prompt, harness, role):
@@ -63,6 +72,7 @@ class Cycle:
         settings = harness["executor"]
         record = {"call_id": index, "role": role, "requested_model": settings.get("model"),
                   "model": None, "model_source": None, "model_reason": "call_not_completed",
+                  "cache_phase": "warmup" if role.startswith("warmup/") else "post_warmup",
                   "reasoning_effort": settings["reasoning_effort"], "tokens": token_usage(None),
                   "wall_ms": None, "log_dir": str((self.report / "llm" / str(index)).relative_to(self.root))}
         self.data["llm_calls"].append(record)
@@ -74,6 +84,7 @@ class Cycle:
             record.update(model=response.get("model"), model_source=response.get("model_source"),
                           model_reason=response.get("model_reason") if response.get("model") else
                           response.get("model_reason", "model_not_reported_by_client"))
+            record["cache"] = cache_metrics(record["tokens"])
             if response.get("error"):
                 raise RuntimeError(response["error"])
             return response["text"]
@@ -87,8 +98,10 @@ class Cycle:
         start = time.perf_counter()
         calls_start = len(self.data["llm_calls"])
         run = {"harness": harness, "attempts": [], "geometry_pass": False,
-               "attempt_count": 0, "tokens": token_usage(None), "wall_ms": None}
+               "attempt_count": 0, "tokens": token_usage(None), "wall_ms": None,
+               "included_in_comparison": name != "warmup"}
         self.data["runs"][name] = run
+        self.data["execution_order"].append(name)
         previous, feedback = None, None
         try:
             for number in range(1, harness["max_attempts"] + 1):
@@ -129,8 +142,22 @@ class Cycle:
             run["attempt_count"] = len(run["attempts"])
             run["tokens"] = sum_tokens(self.data["llm_calls"][calls_start:])
             run["wall_ms"] = elapsed(start)
+            run["cache"] = cache_metrics(run["tokens"])
             run["final_code_summary"] = self.code_summary(previous)
         return run
+
+    def run_name(self, group, repeat):
+        return group if self.repeats == 1 else f"{group}-r{repeat}"
+
+    def execute_group(self, group, harness, task):
+        names = []
+        for repeat in range(1, self.repeats + 1):
+            name = self.run_name(group, repeat)
+            self.execute(name, harness, task)
+            names.append(name)
+        result = summarize(names, self.data["runs"])
+        self.data["groups"][group] = result
+        return result
 
     @staticmethod
     def code_summary(code):
@@ -165,7 +192,9 @@ class Cycle:
                   "cad_exit_code,script_completed,cleanup_status,timings_ms, "
                   "set_reasoning_effort/low|medium. Each operation has only op and value. "
                   "Each candidate has only edit and rationale. No repeated scalar op within an edit.\n"
-                  + json.dumps({"base": base, "run0": run0, "prior_library": history}, ensure_ascii=False))
+                  + json.dumps({"base": base, "run0": run0,
+                                "baseline_traces": [self.data["runs"][name] for name in run0["run_names"]],
+                                "prior_library": history}, ensure_ascii=False))
         proposer = {"executor": {**base["executor"], "reasoning_effort": "medium"}}
         for retry in range(2):
             answer = self.call(prompt, proposer, "propose" if retry == 0 else "propose-retry")
@@ -177,12 +206,13 @@ class Cycle:
                 prompt += "\nYour invalid response:\n" + answer + "\nValidation error: " + str(exc)
 
     def compose(self, base, task, candidates):
-        run0 = self.data["runs"]["run0"]
+        run0 = self.data["groups"]["run0"]
         for i, candidate in enumerate(candidates):
             candidate["variant"] = f"probe-{i + 1}"
-            candidate["verdict"] = verdict(run0, self.data["runs"][candidate["variant"]])
+            candidate["decision"] = decide(run0, self.data["groups"][candidate["variant"]])
+            candidate["verdict"] = candidate["decision"]["verdict"]
         supported = sorted((c for c in candidates if c["verdict"] == "supported"),
-                           key=lambda c: rank(self.data["runs"][c["variant"]]))
+                           key=lambda c: rank_group(self.data["groups"][c["variant"]]))
         composition = {"supported": [c["variant"] for c in supported], "adopted": [],
                        "fallback": False, "selected_run": "run0", "harness": base}
         self.data["composition"] = composition
@@ -190,8 +220,9 @@ class Cycle:
             return
         edits = [c["edit"] for c in supported]
         harness = apply_edits(base, edits)
-        composed = self.execute("composed", harness, task)
-        if composed["geometry_pass"]:
+        composed = self.execute_group("composed", harness, task)
+        composition["decision"] = decide(run0, composed)
+        if composition["decision"]["verdict"] == "supported":
             composition.update(adopted=[c["variant"] for c in supported],
                                selected_run="composed", harness=harness)
         else:
@@ -230,12 +261,13 @@ class Cycle:
     def append_library(self, candidates):
         adopted = self.data["composition"]["adopted"]
         for candidate in candidates:
-            probe = self.data["runs"][candidate["variant"]]
-            run0 = self.data["runs"]["run0"]
+            probe = self.data["groups"][candidate["variant"]]
+            run0 = self.data["groups"]["run0"]
             entry = {"entry_id": uuid.uuid4().hex, "domain": "cad-freecad", "task_id": self.task_id,
                      "cycle_id": self.id, "created_at": now(), "edit": candidate["edit"],
                      "verdict": candidate["verdict"],
                      "contrast": {"run0": self.metrics(run0), "probe": self.metrics(probe)},
+                     "decision": candidate["decision"],
                      "lesson": (candidate["rationale"] + " Measured verdict: " + candidate["verdict"]
                                 + "; run0=" + json.dumps(self.metrics(run0))
                                 + "; probe=" + json.dumps(self.metrics(probe)) + "."),
@@ -247,13 +279,16 @@ class Cycle:
 
     @staticmethod
     def metrics(run):
-        return {key: run[key] for key in ("geometry_pass", "attempt_count", "tokens", "wall_ms")}
+        return {key: run[key] for key in ("n", "run_names", "geometry_pass", "pass_count", "pass_rate",
+                                         "attempt_count", "tokens", "wall_ms", "statistics", "cache")}
 
     def run(self):
         start = time.perf_counter()
         self.report.mkdir(parents=True, exist_ok=False)
         try:
             base = json.loads((self.root / "h2" / "base" / "harness.json").read_text(encoding="utf-8"))
+            if self.model:
+                base["executor"]["model"] = self.model
             task = json.loads((self.root / "h2" / "tasks" / f"{self.task_id}.json").read_text(encoding="utf-8"))
             # Snapshot before Run0: entries from this cycle can never influence proposals.
             records = [json.loads(line) for line in self.library.read_text(encoding="utf-8").splitlines()
@@ -261,19 +296,27 @@ class Cycle:
             history = materialize_library(records)
             self.data["prior_library_record_count"] = len(records)
             self.data["prior_library_count"] = len(history)
-            run0 = self.stage("run0", lambda: self.execute("run0", base, task))
+            self.stage("warmup", lambda: self.execute("warmup", base, task))
+            run0 = self.stage("run0", lambda: self.execute_group("run0", base, task))
             candidates = self.stage("propose", lambda: self.propose(base, run0, history))
             self.data["proposals"] = candidates
 
             def probes():
-                for i, candidate in enumerate(candidates):
-                    self.execute(f"probe-{i + 1}", apply_edits(base, [candidate["edit"]]), task)
+                # Repetition outermost: c1,c2,c3; c1,c2,c3; ... never concurrent.
+                for repeat in range(1, self.repeats + 1):
+                    for i, candidate in enumerate(candidates):
+                        self.execute(self.run_name(f"probe-{i + 1}", repeat),
+                                     apply_edits(base, [candidate["edit"]]), task)
+                for i in range(1, len(candidates) + 1):
+                    names = [self.run_name(f"probe-{i}", r) for r in range(1, self.repeats + 1)]
+                    self.data["groups"][f"probe-{i}"] = summarize(names, self.data["runs"])
 
             self.stage("probe", probes)
             self.stage("compose", lambda: self.compose(base, task, candidates))
             self.stage("library", lambda: self.append_library(candidates))
             self.data["status"] = "completed"
-            self.data["geometry_pass"] = self.data["runs"][self.data["composition"]["selected_run"]]["geometry_pass"]
+            selected = self.data["groups"][self.data["composition"]["selected_run"]]
+            self.data["geometry_pass"], self.data["pass_rate"] = selected["geometry_pass"], selected["pass_rate"]
         except Exception as exc:
             self.data["status"] = "budget_exhausted" if isinstance(exc, BudgetExceeded) else "failed"
             self.data["error"] = f"{type(exc).__name__}: {exc}"
@@ -281,6 +324,12 @@ class Cycle:
             self.data["completed_at"] = now()
             self.data["wall_ms"] = elapsed(start)
             self.data["tokens"] = sum_tokens(self.data["llm_calls"])
+            measured_ids = {a["llm_call_id"] for name, r in self.data["runs"].items() if name != "warmup"
+                            for a in r["attempts"]}
+            self.data["comparison_tokens"] = sum_tokens([c for c in self.data["llm_calls"] if c["call_id"] in measured_ids])
+            self.data["cache"] = cache_metrics(self.data["tokens"])
+            self.data["comparison_wall_ms"] = sum(r["wall_ms"] for name, r in self.data["runs"].items()
+                                                  if name != "warmup")
             self.data["llm_call_count"] = len(self.data["llm_calls"])
             self.data["cad_wall_ms"] = sum(a.get("cad_wall_ms", 0) for r in self.data["runs"].values()
                                           for a in r["attempts"])
@@ -292,14 +341,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--task", default="A-box-pocket-fillet", choices=["A-box-pocket-fillet"])
     parser.add_argument("--candidates", type=int, default=3)
-    parser.add_argument("--max-llm-calls", type=int, default=20)
+    parser.add_argument("--max-llm-calls", type=int, default=100)
+    parser.add_argument("--repeats", type=int, default=1)
+    parser.add_argument("-m", "--model", default="gpt-6.1-sol")
     args = parser.parse_args()
-    if args.candidates < 1 or args.max_llm_calls < 1:
-        parser.error("candidates and max-llm-calls must be positive")
-    cycle = Cycle(task=args.task, candidates=args.candidates, max_calls=args.max_llm_calls)
+    if args.candidates < 1 or not 1 <= args.max_llm_calls <= 100 or args.repeats < 1:
+        parser.error("candidates/repeats must be positive; max-llm-calls must be 1..100")
+    cycle = Cycle(task=args.task, candidates=args.candidates, max_calls=args.max_llm_calls,
+                  repeats=args.repeats, model=args.model)
     data = cycle.run()
     print(json.dumps({"cycle_id": cycle.id, "status": data["status"],
                       "geometry_pass": data.get("geometry_pass"), "tokens": data["tokens"],
+                      "pass_rate": data.get("pass_rate"), "repeats": args.repeats, "model": args.model,
                       "wall_ms": data["wall_ms"], "report": str(cycle.report / "cycle.json")}, ensure_ascii=False))
     return 0 if data["status"] == "completed" else 1
 

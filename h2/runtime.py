@@ -8,7 +8,7 @@ import subprocess
 import sys
 import time
 
-TOKEN_KEYS = ("input", "cached_input", "output", "reasoning", "total")
+TOKEN_KEYS = ("input", "cached_input", "uncached_input", "output", "reasoning", "total")
 
 
 def elapsed(start):
@@ -27,6 +27,9 @@ def token_usage(usage):
             if value is None:
                 value = usage.get("output_tokens_details", {}).get("reasoning_tokens")
         result[key] = value if type(value) is int and value >= 0 else None
+    result["uncached_input"] = (result["input"] - result["cached_input"]
+                                if result["input"] is not None and result["cached_input"] is not None
+                                and result["cached_input"] <= result["input"] else None)
     if result["total"] is None and result["input"] is not None and result["output"] is not None:
         # Cached input and reasoning are subsets, not additional tokens.
         result["total"] = result["input"] + result["output"]
@@ -59,8 +62,8 @@ def parse_events(stdout):
     return final, token_usage(usage)
 
 
-def reported_model(stdout):
-    """Record only model identity reported in runtime metadata, never a config guess."""
+def reported_model(stdout, explicit_model=None):
+    """Distinguish runtime model evidence from an explicitly selected CLI model."""
     models = set()
     for line in stdout.splitlines():
         try:
@@ -79,6 +82,9 @@ def reported_model(stdout):
                 models.add(value)
     if len(models) == 1:
         return {"model": models.pop(), "model_source": "runtime_events", "model_reason": None}
+    if not models and explicit_model:
+        return {"model": explicit_model, "model_source": "explicit_cli_argument",
+                "model_reason": "runtime_model_not_reported; explicit -m selection recorded"}
     return {"model": None, "model_source": None,
             "model_reason": "conflicting_runtime_models" if models else "model_not_reported_in_runtime_events"}
 
@@ -112,7 +118,7 @@ class CodexClient:
                    "--skip-git-repo-check", "--ephemeral", "-C", str(work),
                    "-c", 'approval_policy="never"', "-c", f'model_reasoning_effort="{effort}"']
         if model:
-            command += ["--model", model]
+            command += ["-m", model]
         command.append("-")
         (log_dir / "command.json").write_text(json.dumps(command), encoding="utf-8")
         start = time.perf_counter()
@@ -130,7 +136,7 @@ class CodexClient:
         if process.returncode:
             error = f"codex exit={process.returncode}: {error or 'failed'}"
         return {"text": final, "tokens": tokens, "wall_ms": wall_ms,
-                "exit_code": process.returncode, "error": error, **reported_model(process.stdout)}
+                "exit_code": process.returncode, "error": error, **reported_model(process.stdout, model)}
 
 
 class CadRunner:

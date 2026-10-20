@@ -14,3 +14,5 @@
 2026-10-21 00:29 h2lead: 補完エントリは提案入力前に元エントリへ統合（重複防止）。commit/push 後、2周目 (D10) を起動。
 2026-10-21 00:31 h2lead: 実走#2 完了 cycle=20261020T152636Z-330b164e completed geometry_pass=true tokens_total=237727 reasoning=966 wall=264s。分析を h2sol に依頼。
 2026-10-21 00:34 h2lead: #2 分析受領（Run0 pass、候補 3 件すべて同等で支持なし、#1 教訓 3 件の受け渡しを確認）。MVP 合格条件 3 つ充足で完了 (D11, D12)。commit/push。
+2026-10-21 08:50 h2lead: ユーザー承認 08:47 の N=3 反復比較に着手。D13-D15 を決定し、h2sol に依頼 #5。
+2026-10-21 08:54 h2lead: #5 受領（--repeats 実装、stub 17件成功、model=gpt-6.1-sol）。commit/push し、実走#3 (N=3) を起動。

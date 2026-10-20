@@ -13,6 +13,7 @@ from h2.edits import apply_edits, rank, validate_proposals, verdict
 from h2.library import materialize_library
 from h2.runtime import CadRunner, CodexClient, parse_events, reported_model, token_usage
 from h2.supplement import supplement_cycle
+from h2.statistics import decide, distribution, summarize
 
 SOURCE = Path(__file__).resolve().parents[1]
 CODE = "```python\ndef build(doc):\n    return doc\n```"
@@ -47,6 +48,8 @@ class StubCAD:
     def __call__(self, script, out_dir, task):
         self.calls.append((script, out_dir, task))
         name, attempt = out_dir.parent.name, out_dir.name
+        if "-r" in name:
+            name = name.rsplit("-r", 1)[0]
         passed = (self.always_pass or not (name == "run0" and attempt == "a1")) and not (
             self.composed_fail and name == "composed")
         return {"result": {"probe_status": "pass" if passed else "fail",
@@ -78,7 +81,7 @@ class CycleTests(unittest.TestCase):
 
     def run_cycle(self, llm=None, cad=None, **kwargs):
         llm, cad = llm or StubLLM(), cad or StubCAD()
-        cycle = Cycle(self.root, cycle_id="stub-cycle", llm=llm, cad=cad, **kwargs)
+        cycle = Cycle(self.root, cycle_id=kwargs.pop("cycle_id", "stub-cycle"), llm=llm, cad=cad, **kwargs)
         clock = itertools.count(1, .001)
         with patch("time.perf_counter", side_effect=lambda: next(clock)):
             result = cycle.run()
@@ -89,11 +92,12 @@ class CycleTests(unittest.TestCase):
         self.assertEqual(data["status"], "completed")
         self.assertTrue(data["geometry_pass"])
         self.assertEqual(data["runs"]["run0"]["attempt_count"], 2)
-        self.assertEqual(len(cad.calls), 6)
-        self.assertEqual(data["llm_call_count"], 7)
-        self.assertEqual(data["tokens"]["total"], 105)
-        self.assertEqual(data["cad_wall_ms"], 12)
-        self.assertEqual(set(data["stages"]), {"run0", "propose", "probe", "compose", "library"})
+        self.assertEqual(len(cad.calls), 7)
+        self.assertEqual(data["llm_call_count"], 8)
+        self.assertEqual(data["tokens"]["total"], 120)
+        self.assertEqual(data["comparison_tokens"]["total"], 90)
+        self.assertEqual(data["cad_wall_ms"], 14)
+        self.assertEqual(set(data["stages"]), {"warmup", "run0", "propose", "probe", "compose", "library"})
         self.assertTrue(all(s["wall_ms"] > 0 for s in data["stages"].values()))
         entries = [json.loads(line) for line in self.library.read_text(encoding="utf-8").splitlines()]
         self.assertEqual(entries[0], self.prior)
@@ -101,10 +105,10 @@ class CycleTests(unittest.TestCase):
         self.assertTrue(all(e["verdict"] == "supported" and e["adopted_in_composed"] for e in entries[1:]))
         self.assertEqual(self.base_path.read_bytes(), self.original_base)
         self.assertNotIn("Past learning", llm.prompts[0][0])
-        self.assertIn("Past learning", llm.prompts[2][0])
-        self.assertEqual(llm.prompts[2][1], "medium")
-        self.assertIn('"previous_code": "def build(doc)', llm.prompts[1][0])
-        self.assertIn('"predicate_diff": {"bbox": false}', llm.prompts[1][0])
+        self.assertIn("Past learning", llm.prompts[3][0])
+        self.assertEqual(llm.prompts[3][1], "medium")
+        self.assertIn('"previous_code": "def build(doc)', llm.prompts[2][0])
+        self.assertIn('"predicate_diff": {"bbox": false}', llm.prompts[2][0])
         for script, out_dir, task in cad.calls:
             self.assertTrue(script.is_relative_to(self.root / "reports/cad-run/h2/stub-cycle"))
             self.assertEqual(script.parent.name, "inputs")
@@ -117,7 +121,7 @@ class CycleTests(unittest.TestCase):
         self.assertEqual(data["composition"]["adopted"], ["probe-1"])
         self.assertEqual(data["composition"]["selected_run"], "probe-1")
         self.assertTrue(data["geometry_pass"])
-        self.assertEqual(len(cad.calls), 8)  # composed uses its max_attempts=3
+        self.assertEqual(len(cad.calls), 9)  # includes excluded warmup
 
     def test_human_stops_attempts_and_does_not_support_claim(self):
         _, data, _, _ = self.run_cycle(cad=StubCAD(human=True))
@@ -136,14 +140,14 @@ class CycleTests(unittest.TestCase):
         _, data, llm, cad = self.run_cycle(llm=StubLLM(invalid_always=True))
         self.assertEqual(data["status"], "failed")
         self.assertEqual(llm.proposals, 2)
-        self.assertEqual(len(cad.calls), 2)
+        self.assertEqual(len(cad.calls), 3)
         self.assertEqual(self.library.read_bytes(), before)
 
     def test_budget_stops_and_retains_partial_measurements(self):
         cycle, data, llm, cad = self.run_cycle(max_calls=3)
         self.assertEqual(data["status"], "budget_exhausted")
         self.assertEqual(len(llm.prompts), 3)
-        self.assertEqual(len(cad.calls), 2)
+        self.assertEqual(len(cad.calls), 3)
         self.assertEqual(data["tokens"]["total"], 45)
         self.assertTrue((cycle.report / "cycle.json").exists())
         self.assertEqual(data["library_entries"], [])
@@ -184,7 +188,7 @@ class CycleTests(unittest.TestCase):
                                                      "output_tokens": 30}}])
         text, usage = parse_events(events)
         self.assertEqual(text, CODE)
-        self.assertEqual(usage, {"input": 100, "cached_input": 20, "output": 30,
+        self.assertEqual(usage, {"input": 100, "cached_input": 20, "uncached_input": 80, "output": 30,
                                  "reasoning": None, "total": 130})
         self.assertTrue(all(x is None for x in token_usage(None).values()))
         with patch("h2.runtime.subprocess.run") as process:
@@ -226,6 +230,9 @@ class CycleTests(unittest.TestCase):
         unknown = reported_model('{"type":"thread.started","thread_id":"opaque"}')
         self.assertIsNone(unknown["model"])
         self.assertEqual(unknown["model_reason"], "model_not_reported_in_runtime_events")
+        selected = reported_model('{"type":"thread.started"}', "gpt-6.1-sol")
+        self.assertEqual(selected["model"], "gpt-6.1-sol")
+        self.assertEqual(selected["model_source"], "explicit_cli_argument")
         with patch("h2.runtime.subprocess.run") as process:
             process.return_value.stdout, process.return_value.stderr, process.return_value.returncode = events, "", 0
             response = CodexClient("stub")("prompt", effort="low", model="requested-model",
@@ -233,6 +240,7 @@ class CycleTests(unittest.TestCase):
             self.assertEqual(response["model"], "reported-model")
             self.assertEqual(response["model_source"], "runtime_events")
             self.assertEqual(response["tokens"]["reasoning"], 2)
+            self.assertEqual(process.call_args.args[0][-3:-1], ["-m", "requested-model"])
         _, data, _, _ = self.run_cycle()
         self.assertIsNone(data["llm_calls"][0]["model"])
         self.assertEqual(data["llm_calls"][0]["model_reason"], "model_not_reported_by_client")
@@ -258,8 +266,8 @@ class CycleTests(unittest.TestCase):
         self.library.write_text(''.join(json.dumps(row) + '\n' for row in rows), encoding="utf-8")
         original_library = self.library.read_bytes()
         supplement = supplement_cycle(self.root, cycle.id)
-        self.assertEqual(supplement["tokens"]["reasoning"], 7)
-        self.assertEqual(supplement["tokens"]["total"], 105)
+        self.assertEqual(supplement["tokens"]["reasoning"], 8)
+        self.assertEqual(supplement["tokens"]["total"], 120)
         self.assertEqual(supplement["runs"]["run0"]["tokens"]["reasoning"], 2)
         self.assertEqual(supplement["library_entries"][0]["contrast"]["probe"]["tokens"]["reasoning"], 1)
         corrected = json.loads(report.read_text(encoding="utf-8"))
@@ -321,6 +329,82 @@ class CycleTests(unittest.TestCase):
         correction["contrast"]["probe"]["tokens"]["total"] = 16
         with self.assertRaises(ValueError):
             materialize_library(rows)
+
+    def test_repeats_round_robin_warmup_statistics_library_and_model(self):
+        llm = StubLLM()
+        active = False
+        def sequential_llm(prompt, *, effort, model, log_dir):
+            nonlocal active
+            self.assertFalse(active)
+            active = True
+            try:
+                self.assertEqual(model, "gpt-6.1-sol")
+                response = llm(prompt, effort=effort, model=model, log_dir=log_dir)
+                response.update(model=model, model_source="explicit_cli_argument", model_reason=None)
+                return response
+            finally:
+                active = False
+        _, data, _, _ = self.run_cycle(repeats=3, model="gpt-6.1-sol", llm=sequential_llm)
+        self.assertEqual(data["status"], "completed")
+        self.assertEqual(data["max_llm_calls"], 100)
+        expected = (["warmup"] + [f"run0-r{r}" for r in range(1, 4)]
+                    + [f"probe-{i}-r{r}" for r in range(1, 4) for i in range(1, 4)]
+                    + [f"composed-r{r}" for r in range(1, 4)])
+        self.assertEqual(data["execution_order"], expected)
+        self.assertEqual(data["llm_call_count"], 20)
+        self.assertEqual(data["tokens"]["total"], 300)
+        self.assertEqual(data["comparison_tokens"]["total"], 270)
+        self.assertFalse(data["runs"]["warmup"]["included_in_comparison"])
+        self.assertEqual(data["llm_calls"][0]["cache_phase"], "warmup")
+        self.assertTrue(all(c["cache_phase"] == "post_warmup" for c in data["llm_calls"][1:]))
+        self.assertTrue(all(c["model"] == "gpt-6.1-sol" for c in data["llm_calls"]))
+        self.assertTrue(all(c["tokens"]["uncached_input"] == 8 for c in data["llm_calls"]))
+        base, probe = data["groups"]["run0"], data["groups"]["probe-1"]
+        self.assertEqual(base["n"], 3)
+        self.assertEqual(base["pass_rate"], 1)
+        self.assertEqual(base["statistics"]["tokens"]["total"], {"mean": 30, "std": 0})
+        self.assertEqual(probe["statistics"]["tokens"]["total"], {"mean": 15, "std": 0})
+        self.assertAlmostEqual(probe["cache"]["cached_input_ratio"], .2)
+        self.assertEqual(data["composition"]["selected_run"], "composed")
+        self.assertEqual(data["groups"]["composed"]["n"], 3)
+        proposal = next(p for p, _, _ in llm.prompts if "Propose exactly" in p)
+        self.assertEqual(len(json.loads(proposal.split('\n', 1)[1])["baseline_traces"]), 3)
+        for entry in data["library_entries"]:
+            self.assertEqual(entry["contrast"]["probe"]["n"], 3)
+            self.assertEqual(entry["decision"]["rule"], "D15")
+            self.assertEqual(entry["contrast"]["run0"]["pass_rate"], 1)
+
+    def test_d15_pass_rate_saving_noise_unknowns_and_strict_boundaries(self):
+        def group(rate=1, tokens=(100, 100, 100), wall=(100, 100, 100)):
+            return {"n": 3, "pass_rate": rate, "infrastructure_failure": False,
+                    "statistics": {"tokens": {"total": distribution(tokens)}, "wall_ms": distribution(wall)}}
+        base = group()
+        self.assertEqual(decide(group(rate=1/3), group(rate=2/3))["verdict"], "supported")
+        self.assertEqual(decide(base, group(rate=2/3, tokens=(1,1,1)))["verdict"], "unsupported")
+        self.assertEqual(decide(base, group(tokens=(90,90,90)))["verdict"], "unsupported")
+        self.assertEqual(decide(base, group(tokens=(89,89,89)))["verdict"], "supported")
+        self.assertEqual(decide(base, group(tokens=(60,80,100)))["verdict"], "unsupported")
+        self.assertEqual(decide(base, group(wall=(50,50,50), tokens=(200,200,200)))["verdict"], "supported")
+        self.assertEqual(decide(base, group(tokens=(None,100,100)))["verdict"], "confounded")
+        self.assertEqual(decide(base, {**group(), "infrastructure_failure": True})["verdict"], "confounded")
+        self.assertEqual(distribution([1,2,3]), {"mean": 2, "std": 1})
+
+    def test_repeated_cycle_composition_fallback_and_budget(self):
+        _, data, _, _ = self.run_cycle(repeats=3, cad=StubCAD(composed_fail=True))
+        self.assertEqual(data["status"], "completed")
+        self.assertEqual(data["groups"]["composed"]["n"], 3)
+        self.assertEqual(data["groups"]["composed"]["pass_rate"], 0)
+        self.assertTrue(data["composition"]["fallback"])
+        self.assertEqual(data["composition"]["selected_run"], "probe-1")
+        self.assertEqual(data["pass_rate"], 1)
+        _, limited, _, _ = self.run_cycle(repeats=3, max_calls=5, cycle_id="limited")
+        self.assertEqual(limited["status"], "budget_exhausted")
+        self.assertEqual(limited["llm_call_count"], 5)
+        self.assertEqual(limited["library_entries"], [])
+        with self.assertRaises(ValueError):
+            Cycle(self.root, max_calls=101)
+        with self.assertRaises(ValueError):
+            Cycle(self.root, repeats=0)
 
 
 if __name__ == "__main__":
