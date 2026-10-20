@@ -12,6 +12,7 @@ import time
 import uuid
 
 from .edits import apply_edits, rank, validate_proposals, verdict
+from .library import materialize_library
 from .runtime import (CadRunner, CodexClient, elapsed, extract_code, extract_json,
                       sum_tokens, token_usage)
 
@@ -255,8 +256,10 @@ class Cycle:
             base = json.loads((self.root / "h2" / "base" / "harness.json").read_text(encoding="utf-8"))
             task = json.loads((self.root / "h2" / "tasks" / f"{self.task_id}.json").read_text(encoding="utf-8"))
             # Snapshot before Run0: entries from this cycle can never influence proposals.
-            history = [json.loads(line) for line in self.library.read_text(encoding="utf-8").splitlines()
+            records = [json.loads(line) for line in self.library.read_text(encoding="utf-8").splitlines()
                        if line.strip()] if self.library.exists() else []
+            history = materialize_library(records)
+            self.data["prior_library_record_count"] = len(records)
             self.data["prior_library_count"] = len(history)
             run0 = self.stage("run0", lambda: self.execute("run0", base, task))
             candidates = self.stage("propose", lambda: self.propose(base, run0, history))

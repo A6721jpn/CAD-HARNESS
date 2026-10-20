@@ -1,0 +1,21 @@
+test_accounting_supplement_preserves_originals_and_is_idempotent (test_cycle.CycleTests.test_accounting_supplement_preserves_originals_and_is_idempotent) ... ok
+test_budget_stops_and_retains_partial_measurements (test_cycle.CycleTests.test_budget_stops_and_retains_partial_measurements) ... ok
+test_cli_adapters_are_stubbed_and_preserve_usage (test_cycle.CycleTests.test_cli_adapters_are_stubbed_and_preserve_usage) ... ok
+test_composition_failure_falls_back_to_best_single_probe (test_cycle.CycleTests.test_composition_failure_falls_back_to_best_single_probe) ... ok
+test_full_cycle_appends_library_and_keeps_base_immutable (test_cycle.CycleTests.test_full_cycle_appends_library_and_keeps_base_immutable) ... ok
+test_human_stops_attempts_and_does_not_support_claim (test_cycle.CycleTests.test_human_stops_attempts_and_does_not_support_claim) ... ok
+test_library_supplements_fill_missing_tokens_without_duplicate_lessons (test_cycle.CycleTests.test_library_supplements_fill_missing_tokens_without_duplicate_lessons) ... ok
+test_proposal_validation_retries_once_only (test_cycle.CycleTests.test_proposal_validation_retries_once_only) ... ok
+test_reasoning_output_tokens_are_a_subset_including_zero (test_cycle.CycleTests.test_reasoning_output_tokens_are_a_subset_including_zero) ... ok
+test_reported_model_is_runtime_evidence_or_null_with_reason (test_cycle.CycleTests.test_reported_model_is_runtime_evidence_or_null_with_reason) ... ok
+test_scalar_conflicts_use_first_and_validation_rejects_unsafe_edits (test_cycle.CycleTests.test_scalar_conflicts_use_first_and_validation_rejects_unsafe_edits) ... ok
+test_second_cycle_proposer_gets_previous_entries_only_base_stays_fixed (test_cycle.CycleTests.test_second_cycle_proposer_gets_previous_entries_only_base_stays_fixed) ... ok
+test_support_tolerance_unknowns_and_ranking (test_cycle.CycleTests.test_support_tolerance_unknowns_and_ranking) ... ok
+test_twice_invalid_is_recorded_without_library_write (test_cycle.CycleTests.test_twice_invalid_is_recorded_without_library_write) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.250s
+
+OK
+
+Real library verified: 6 records -> 3 lessons, reasoning supplemented; originals unchanged.

@@ -25,9 +25,11 @@ cycle.jsonの元の値は保持し、accounting_supplementsの末尾に補完値
 今後はモデル名を実行ログの報告値から記録する。未取得ならnullと理由を保存する。
 実走#1の全13回はログにモデル名がなく、理由はmodel_not_reported_in_runtime_events。実値を推測しない。
 
-単体テスト13件成功、出力は [tests-request3.log](../reports/h2/tests-request3.log)。
+単体テスト14件成功、今回の出力は [tests-library-merge.log](../reports/h2/tests-library-merge.log)。
 二周連続のスタブテストで、2周目の提案に前周までのライブラリだけが渡り、当周の追記は含まれず、基準設定が固定のままであることを確認した。
-実際の2周目では提案ログのprior_libraryを確認する。現時点の前周データは経験3件＋補完3件の計6件。
+提案入力では補完を元の経験に統合し、元の教訓・識別子を保持して不足する計測値だけを埋める。
+実際の2周目では提案ログのprior_libraryを確認する。現時点の保存レコード6件は教訓3件に統合される。
+cycle.jsonのprior_library_record_countは保存件数、prior_library_countは統合後の教訓数を表す。保存ファイル自体は変更しない。
 
 根拠: [cycle.json](../reports/h2/20261020T151238Z-e7120eed/cycle.json)、[実走ログ](../reports/h2/live1.log)、[ライブラリ](../h2/library/cad-freecad.jsonl)。
 今回、実LLM・実FreeCADの追加実行はない。コミット対象にtools/__pycache__を含めない。

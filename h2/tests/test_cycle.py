@@ -10,6 +10,7 @@ import uuid
 
 from h2.cycle import Cycle
 from h2.edits import apply_edits, rank, validate_proposals, verdict
+from h2.library import materialize_library
 from h2.runtime import CadRunner, CodexClient, parse_events, reported_model, token_usage
 from h2.supplement import supplement_cycle
 
@@ -272,6 +273,11 @@ class CycleTests(unittest.TestCase):
 
     def test_second_cycle_proposer_gets_previous_entries_only_base_stays_fixed(self):
         _, first, _, _ = self.run_cycle()
+        correction = copy.deepcopy(first["library_entries"][0])
+        correction.update(entry_id="correction-only", entry_type="measurement_supplement",
+                          supplements_entry_id=correction["entry_id"], supplement_id="test-supplement")
+        with self.library.open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(correction) + '\n')
         previous = [json.loads(line) for line in self.library.read_text(encoding="utf-8").splitlines()]
         llm = StubLLM()
         second = Cycle(self.root, cycle_id="stub-cycle-2", llm=llm, cad=StubCAD())
@@ -281,13 +287,40 @@ class CycleTests(unittest.TestCase):
         self.assertEqual(data["status"], "completed")
         proposal_prompt = next(prompt for prompt, _, _ in llm.prompts if "Propose exactly" in prompt)
         supplied = json.loads(proposal_prompt.split('\n', 1)[1])["prior_library"]
-        self.assertEqual(supplied, previous)
+        self.assertEqual(supplied, materialize_library(previous))
         self.assertEqual(data["prior_library_count"], 4)
+        self.assertEqual(data["prior_library_record_count"], 5)
         supplied_ids = {row["entry_id"] for row in supplied}
         self.assertTrue({e["entry_id"] for e in first["library_entries"]}.issubset(supplied_ids))
         self.assertTrue(supplied_ids.isdisjoint({e["entry_id"] for e in data["library_entries"]}))
+        self.assertNotIn("correction-only", supplied_ids)
         self.assertEqual(data["runs"]["run0"]["harness"], json.loads(self.original_base))
         self.assertEqual(self.base_path.read_bytes(), self.original_base)
+
+    def test_library_supplements_fill_missing_tokens_without_duplicate_lessons(self):
+        original = {"entry_id": "original", "domain": "cad-freecad", "task_id": "A",
+                    "cycle_id": "previous", "edit": [{"op": "add_rule", "value": "guidance"}],
+                    "verdict": "supported", "lesson": "Original lesson",
+                    "contrast": {side: {"tokens": {"reasoning": None, "total": 15}}
+                                 for side in ("run0", "probe")}}
+        correction = copy.deepcopy(original)
+        correction.update(entry_id="correction", entry_type="measurement_supplement",
+                          supplements_entry_id="original", supplement_id="test", created_at="then",
+                          lesson="Accounting correction, not a lesson")
+        correction["contrast"]["run0"]["tokens"]["reasoning"] = 2
+        correction["contrast"]["probe"]["tokens"]["reasoning"] = 1
+        rows = [original, correction]
+        snapshot = copy.deepcopy(rows)
+        result = materialize_library(rows)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["entry_id"], "original")
+        self.assertEqual(result[0]["lesson"], "Original lesson")
+        self.assertEqual(result[0]["contrast"]["run0"]["tokens"], {"reasoning": 2, "total": 15})
+        self.assertEqual(result[0]["contrast"]["probe"]["tokens"]["reasoning"], 1)
+        self.assertEqual(rows, snapshot)
+        correction["contrast"]["probe"]["tokens"]["total"] = 16
+        with self.assertRaises(ValueError):
+            materialize_library(rows)
 
 
 if __name__ == "__main__":
