@@ -1,0 +1,1 @@
+2026-10-21 00:12 h2lead: 開始。協議結論=LIBRARY_ONLY を MVP 方針に採用。cad_run+probe の fixture smoke は status=ok probe=pass。仕様 design/h2-mvp/SPEC.md を作成。
