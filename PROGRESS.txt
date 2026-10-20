@@ -1,1 +1,8 @@
-2026-10-21 00:12 h2lead: 開始。協議結論=LIBRARY_ONLY を MVP 方針に採用。cad_run+probe の fixture smoke は status=ok probe=pass。仕様 design/h2-mvp/SPEC.md を作成。
+2026-10-21 00:05 h2lead: 開始。協議結論=LIBRARY_ONLY を MVP 方針に採用。cad_run+probe の fixture smoke は status=ok probe=pass。仕様 design/h2-mvp/SPEC.md を作成。
+2026-10-21 00:06 h2lead: h2sol に依頼#1（SPEC どおり h2/ 実装 + stub テスト → commit して報告、実走は OK 後）。branch push 済み (-u origin h2/mvp)。
+2026-10-21 00:08 h2lead: 運用変更（ユーザー 00:07）を docs/DECISIONS.md D4/D5 に記録。書きかけコードなし。h2sol の #1a 完了を待ち、その後に要約・commit・push を依頼する。
+2026-10-21 00:11 h2sol: h2/ MVP実装済み。外部接続なしの単体テスト9件成功。実LLM・実FreeCADはOK待ち。短い要約は docs/H2-SUMMARY.md。
+2026-10-21 00:11 h2sol: ASK: commit — Git管理領域の index.lock 作成が権限制限で失敗。権限拡大なし。実装は未コミット。
+2026-10-21 00:11 h2sol: ASK: push
+2026-10-21 00:11 h2sol: git push -u origin h2/mvp は通信制限で失敗（GitHub:443への接続不可）。実装は未送信。追加エージェントなし。
+2026-10-21 00:14 h2lead: ASK commit/push は D6 で解決（h2lead が機械的に commit/push、ユーザーが別案を望むなら指示を）。#1a を commit して push。

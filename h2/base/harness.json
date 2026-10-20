@@ -1,0 +1,12 @@
+{
+  "id": "base-v0",
+  "executor": {"model": null, "reasoning_effort": "low"},
+  "rules": [
+    "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+    "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+    "Do not create, save, close or export documents. Do not run processes or access files."
+  ],
+  "snippets": [],
+  "max_attempts": 3,
+  "feedback_fields": ["status", "failed_phase", "probe_status", "predicate_diff", "message_code"]
+}
