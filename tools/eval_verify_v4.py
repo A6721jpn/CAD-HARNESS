@@ -216,6 +216,15 @@ def parser():
     command.add_argument("--prior-summary-sha256", required=True)
     command.add_argument("--prior-ledger-sha256", required=True)
     command.add_argument("--cohort-sha256", required=True)
+    command = commands.add_parser("recover-final-prefix",
+                                  help="NONLIVE: recover saved episode 59 without any live/model/CAD call")
+    command.add_argument("--sealed-input", required=True)
+    command.add_argument("--prior-run", required=True)
+    command.add_argument("--run-dir", required=True)
+    command.add_argument("--prior-manifest-sha256", required=True)
+    command.add_argument("--prior-summary-sha256", required=True)
+    command.add_argument("--prior-ledger-sha256", required=True)
+    command.add_argument("--cohort-sha256", required=True)
     command = commands.add_parser("aggregate", help="re-evaluate recorded rows with existing v3 predicates")
     command.add_argument("--replay-aggregate")
     command.add_argument("--manifest")
@@ -472,6 +481,14 @@ def main(argv=None, *, process=None, native_process=None, wall=None, sleep=None,
                 prior_manifest_sha256=args.prior_manifest_sha256,
                 prior_summary_sha256=args.prior_summary_sha256,
                 prior_ledger_sha256=args.prior_ledger_sha256, cohort_sha256=args.cohort_sha256)
+        elif args.command == "recover-final-prefix":
+            # NONLIVE saved-record recovery: never set attempted_live or print private evidence.
+            recovered = live.recover_final_prefix(args.sealed_input, args.prior_run, args.run_dir,
+                prior_manifest_sha256=args.prior_manifest_sha256,
+                prior_summary_sha256=args.prior_summary_sha256,
+                prior_ledger_sha256=args.prior_ledger_sha256, cohort_sha256=args.cohort_sha256, root=ROOT)
+            value = {key: recovered[key] for key in ("status", "prefix_path", "prefix_sha256", "prefix_count",
+                                                    "prior_counted_calls", "live_calls", "live_cad_runs")}
         elif args.command == "preflight":
             value = (s1.preflight(policy_path=args.policy, profile=args.profile) if args.profile != "original"
                      else preflight(args.policy or DESIGN/"policy.json"))

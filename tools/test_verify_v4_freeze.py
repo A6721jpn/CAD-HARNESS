@@ -293,67 +293,78 @@ class FreezeV4(unittest.TestCase):
 
     def test_continuation_freezes_and_verifies_without_private_filesystem_access(self):
         self.host_mock.return_value = "DPC-019"
-        continuation = self.continuation()
-        with self.no_private_filesystem_access():
-            auth_path, auth = self.authorization(prior_counted_calls=20, continuation=continuation)
-            path, manifest = self.freeze(authorization_path=auth_path)
-            self.assertEqual(manifest["authorization"], auth)
-            self.assertEqual(manifest["authorization"]["charged_calls"], 163)
-            self.assertEqual(ledger.read_json(path.parent / "SHA256.json")["authorization"]["continuation"],
-                             continuation)
-            auth_path.unlink()
-            self.assertEqual(frozen.verify(path, root=self.root), manifest)
-            manifest["authorization"]["continuation"]["prefix_sha256"] = "f" * 64
-            self.rewrite(path, manifest)
-            with self.assertRaisesRegex(Stop, "sha_manifest_mismatch"):
-                frozen.verify(path, root=self.root)
+        for prefix_count, prior_counted_calls in ((18, 20), (59, 88)):
+            with self.subTest(prefix_count=prefix_count, prior_counted_calls=prior_counted_calls):
+                continuation = self.continuation(prefix_count=prefix_count)
+                with self.no_private_filesystem_access():
+                    auth_path, auth = self.authorization(prior_counted_calls=prior_counted_calls,
+                                                         continuation=continuation)
+                    path, manifest = self.freeze(authorization_path=auth_path)
+                    self.assertEqual(manifest["authorization"], auth)
+                    self.assertEqual(manifest["authorization"]["charged_calls"], 163)
+                    self.assertEqual(ledger.read_json(path.parent / "SHA256.json")["authorization"]["continuation"],
+                                     continuation)
+                    auth_path.unlink()
+                    self.assertEqual(frozen.verify(path, root=self.root), manifest)
+                    manifest["authorization"]["continuation"]["prefix_sha256"] = "f" * 64
+                    self.rewrite(path, manifest)
+                    with self.assertRaisesRegex(Stop, "sha_manifest_mismatch"):
+                        frozen.verify(path, root=self.root)
 
     def test_malformed_continuation_rejected_at_freeze_and_reenveloped_verify(self):
         self.host_mock.return_value = "DPC-019"
-        continuation = self.continuation()
-        malformed = []
-        for value in (None, False, 18, "continuation", []):
-            malformed.append(("object_type_" + repr(value), dict(continuation=value)))
-        for key in continuation:
-            value = dict(continuation)
-            del value[key]
-            malformed.append(("missing_" + key, dict(continuation=value)))
-        malformed.append(("extra_key", dict(continuation=dict(continuation, offset=18))))
-        for value in ("wrong", None, True, 4):
-            malformed.append(("schema_" + repr(value),
-                              dict(continuation=self.continuation(schema=value))))
-        for value in (True, False, None, "18", 18.0, 0, 17, 19):
-            malformed.append(("prefix_count_" + repr(value),
-                              dict(continuation=self.continuation(prefix_count=value))))
-        for value in ("", "prefix.json", "recovery/prefix.json", "C:prefix.json", None, True, 18, [], {}):
-            malformed.append(("prefix_path_" + repr(value),
-                              dict(continuation=self.continuation(prefix_path=value))))
-        for key in ("prefix_sha256", "prior_manifest_sha256", "prior_summary_sha256",
-                    "prior_ledger_sha256", "cohort_sha256"):
-            for value in (None, True, 64, [], {}, "", "a" * 63, "a" * 65, "A" * 64, "g" * 64,
-                          "a" * 64 + "\n"):
-                malformed.append((key + "_" + repr(value),
-                                  dict(continuation=self.continuation(**{key: value}))))
-        for value in (None, True, "20", 20.0, -1, 0, 4, 19, 21, 164):
-            malformed.append(("prior_counted_calls_" + repr(value), dict(prior_counted_calls=value)))
-        for value in (None, True, "163", 163.0, 162, 164):
-            malformed.append(("charged_calls_" + repr(value), dict(charged_calls=value)))
+        for prefix_count, prior_counted_calls in ((18, 20), (59, 88)):
+            continuation = self.continuation(prefix_count=prefix_count)
+            malformed = []
+            for value in (None, False, prefix_count, "continuation", []):
+                malformed.append(("object_type_" + repr(value), dict(continuation=value)))
+            for key in continuation:
+                value = dict(continuation)
+                del value[key]
+                malformed.append(("missing_" + key, dict(continuation=value)))
+            malformed.append(("extra_key", dict(continuation=dict(continuation, offset=prefix_count))))
+            for value in ("wrong", None, True, 4):
+                malformed.append(("schema_" + repr(value),
+                                  dict(continuation=dict(continuation, schema=value))))
+            other_prefix_count = 59 if prefix_count == 18 else 18
+            for value in (True, False, None, str(prefix_count), float(prefix_count),
+                          0, prefix_count - 1, prefix_count + 1, other_prefix_count):
+                malformed.append(("prefix_count_" + repr(value),
+                                  dict(continuation=dict(continuation, prefix_count=value))))
+            for value in ("", "prefix.json", "recovery/prefix.json", "C:prefix.json", None, True, 18, [], {}):
+                malformed.append(("prefix_path_" + repr(value),
+                                  dict(continuation=dict(continuation, prefix_path=value))))
+            for key in ("prefix_sha256", "prior_manifest_sha256", "prior_summary_sha256",
+                        "prior_ledger_sha256", "cohort_sha256"):
+                for value in (None, True, 64, [], {}, "", "a" * 63, "a" * 65, "A" * 64, "g" * 64,
+                              "a" * 64 + "\n"):
+                    malformed.append((key + "_" + repr(value),
+                                      dict(continuation=dict(continuation, **{key: value}))))
+            other_prior_counted_calls = 88 if prior_counted_calls == 20 else 20
+            for value in (None, True, False, str(prior_counted_calls), float(prior_counted_calls),
+                          -1, 0, 4, prior_counted_calls - 1, prior_counted_calls + 1,
+                          other_prior_counted_calls, 164):
+                malformed.append(("prior_counted_calls_" + repr(value), dict(prior_counted_calls=value)))
+            for value in (None, True, False, "163", 163.0, 162, 164):
+                malformed.append(("charged_calls_" + repr(value), dict(charged_calls=value)))
 
-        with self.no_private_filesystem_access():
-            auth_path, unused = self.authorization(prior_counted_calls=20, continuation=continuation)
-            path, original = self.freeze(authorization_path=auth_path)
-            for label, updates in malformed:
-                with self.subTest(case=label):
-                    values = dict(prior_counted_calls=20, continuation=continuation)
-                    values.update(updates)
-                    auth_path, auth = self.authorization(**values)
-                    with self.assertRaisesRegex(Stop, "live_authorization_contract"):
-                        self.freeze(authorization_path=auth_path)
-                    manifest = copy.deepcopy(original)
-                    manifest["authorization"] = auth
-                    self.rewrite(path, manifest, rebind=True)
-                    with self.assertRaisesRegex(Stop, "live_authorization_contract"):
-                        frozen.verify(path, root=self.root)
+            with self.no_private_filesystem_access():
+                auth_path, unused = self.authorization(prior_counted_calls=prior_counted_calls,
+                                                       continuation=continuation)
+                path, original = self.freeze(authorization_path=auth_path)
+                for label, updates in malformed:
+                    with self.subTest(prefix_count=prefix_count, prior_counted_calls=prior_counted_calls,
+                                      case=label):
+                        values = dict(prior_counted_calls=prior_counted_calls, continuation=continuation)
+                        values.update(updates)
+                        auth_path, auth = self.authorization(**values)
+                        with self.assertRaisesRegex(Stop, "live_authorization_contract"):
+                            self.freeze(authorization_path=auth_path)
+                        manifest = copy.deepcopy(original)
+                        manifest["authorization"] = auth
+                        self.rewrite(path, manifest, rebind=True)
+                        with self.assertRaisesRegex(Stop, "live_authorization_contract"):
+                            frozen.verify(path, root=self.root)
 
     def test_freecad_binary_and_observed_version_are_bound_without_cad_calls(self):
         path, unused = self.freeze()
