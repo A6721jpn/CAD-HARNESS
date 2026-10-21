@@ -40,6 +40,43 @@ def spec(case):
         holes=[{k:v for k,v in h.items() if k!='through'} for h in g['holes']],pockets=[{k:v for k,v in p.items() if k!='sharp'} for p in g['pockets']],finish=g['finish'])
 
 class V3Contracts(unittest.TestCase):
+    def test_attempt_identity_binds_sealed_gold_not_scoring_stratum(self):
+        from tools import cad_verify_v4_live as live
+        for group,profile in (("mvp","mvp-v1"),("geometry","verify-v3")):
+            with self.subTest(profile=profile),tempfile.TemporaryDirectory() as directory:
+                root=Path(directory).resolve()
+                where=root/"reports/cad-run/request-mvp1"
+                attempt=where/"a1-mvp1"
+                attempt.mkdir(parents=True)
+                source=b"# independent DEV metadata fixture; never executed\n"
+                gold_bytes=json.dumps(dict(case_id="DEV-SAVED-TASK")).encode("utf-8")
+                gold=root/"gold.json"
+                gold.write_bytes(gold_bytes)
+                (attempt/"gold.json").write_bytes(gold_bytes)
+                (attempt/"input.py").write_bytes(source)
+                result=dict(schema="cad-harness.cad_run.v0",task_id="DEV-SAVED-TASK",
+                    probe_profile=profile,script_sha256=evaluation.sha(source),
+                    gold_sha256=evaluation.sha(gold_bytes),status="failed",
+                    geometry_ok=False,editability_ok=None,probe_pass=False,
+                    stage_statuses=dict(build="pass",geometry="fail",editability="not_reached",
+                                        export="not_reached",reimport="not_reached"),
+                    stage_measurements=dict(build={},geometry={},editability=None,export=None,reimport=None))
+                record=dict(out_dir=attempt.relative_to(root).as_posix(),source_sha256=evaluation.sha(source),
+                    result=result,stage="initial",attempt=1,started_elapsed_s=0,ended_elapsed_s=1,
+                    build_timeout_s=300,reimport_timeout_s=300)
+                report=dict(status="failed",wall_ms=1000,attempts=[record],llm_calls=1)
+                entry=dict(group=group,case="DEV-SCORING-STRATUM",route="mvp" if group=="mvp" else "source")
+                (attempt/"result.json").write_text(json.dumps(result),encoding="utf-8")
+                evaluation.check_attempts(root,entry,report,where,gold)
+                row=live.score_episode(entry,report,"independent-dev",wall_s=1,active_s=1)
+                self.assertEqual((row["completed"],row["passed"],row["final"]["geometry"]),
+                                 (True,False,False))
+                # A result using the stratum instead of its bound gold identity is still refused.
+                result["task_id"]=entry["case"]
+                (attempt/"result.json").write_text(json.dumps(result),encoding="utf-8")
+                with self.assertRaisesRegex(ValueError,"attempt_gold_binding"):
+                    evaluation.check_attempts(root,entry,report,where,gold)
+
     def test_solfix_a2_fault_source_sha_mirrors_driver_reextraction_for_crlf_fixture(self):
         crlf=SOURCE.replace('\n','\r\n')
         expected=hashlib.sha256(cad_agent.source_from_final(crlf).encode('utf-8')).hexdigest()

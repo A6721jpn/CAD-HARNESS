@@ -208,6 +208,14 @@ def parser():
     command.add_argument("--tasks")
     command.add_argument("--run-dir", required=True)
     command.add_argument("--profile", choices=("original", "c-s1", "c-s2", "c-s3"), default="original")
+    command = commands.add_parser("recover-prefix", help="recover saved episode 18 without any live/model/CAD call")
+    command.add_argument("--sealed-input", required=True)
+    command.add_argument("--prior-run", required=True)
+    command.add_argument("--run-dir", required=True)
+    command.add_argument("--prior-manifest-sha256", required=True)
+    command.add_argument("--prior-summary-sha256", required=True)
+    command.add_argument("--prior-ledger-sha256", required=True)
+    command.add_argument("--cohort-sha256", required=True)
     command = commands.add_parser("aggregate", help="re-evaluate recorded rows with existing v3 predicates")
     command.add_argument("--replay-aggregate")
     command.add_argument("--manifest")
@@ -459,6 +467,11 @@ def main(argv=None, *, process=None, native_process=None, wall=None, sleep=None,
             s1._manifest_inputs(args.input_manifest, args.prepared, profile=args.profile)
             value = pilot.bundle_prepared_request(args.request, args.input_manifest, args.prepared,
                                                   args.run_dir, context_path=args.context)
+        elif args.command == "recover-prefix":
+            value = live.recover_prefix(args.sealed_input, args.prior_run, args.run_dir,
+                prior_manifest_sha256=args.prior_manifest_sha256,
+                prior_summary_sha256=args.prior_summary_sha256,
+                prior_ledger_sha256=args.prior_ledger_sha256, cohort_sha256=args.cohort_sha256)
         elif args.command == "preflight":
             value = (s1.preflight(policy_path=args.policy, profile=args.profile) if args.profile != "original"
                      else preflight(args.policy or DESIGN/"policy.json"))

@@ -380,8 +380,11 @@ def check_attempts(root,entry,report,where,gold):
         if r!=a["result"] or sha((out/"input.py").read_bytes())!=a["source_sha256"]:
             raise ValueError("attempt_result_binding")
         profile="mvp-v1" if entry["group"]=="mvp" else "verify-v3"
-        if (r.get("schema")!="cad-harness.cad_run.v0" or r.get("probe_profile")!=profile or r.get("task_id")!=entry["case"]
-                or r.get("script_sha256")!=a["source_sha256"] or r.get("gold_sha256")!=sha(gold.read_bytes())
+        gold_bytes=gold.read_bytes()
+        # The entry case is a scoring stratum; the sealed gold owns the task identity.
+        task_id=read_json(gold_bytes.decode("utf-8"))["case_id"]
+        if (r.get("schema")!="cad-harness.cad_run.v0" or r.get("probe_profile")!=profile or r.get("task_id")!=task_id
+                or r.get("script_sha256")!=a["source_sha256"] or r.get("gold_sha256")!=sha(gold_bytes)
                 or sha((out/"gold.json").read_bytes())!=r["gold_sha256"]): raise ValueError("attempt_gold_binding")
         if profile=="verify-v3":
             statuses=r.get('stage_statuses');measurements=r.get('stage_measurements')

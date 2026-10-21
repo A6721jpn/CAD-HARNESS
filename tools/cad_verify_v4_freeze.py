@@ -248,6 +248,20 @@ def _authorization(value, commitment_sha256, model, quota_snapshot):
             or not isinstance(value.get("quota_snapshot"), str)
             or _quota_path(value["quota_snapshot"]) != quota_snapshot):
         raise Stop("live_authorization_contract")
+    if "continuation" in value:
+        continuation = value["continuation"]
+        digests = ("prefix_sha256", "prior_manifest_sha256", "prior_summary_sha256",
+                   "prior_ledger_sha256", "cohort_sha256")
+        if (not isinstance(continuation, dict)
+                or set(continuation) != {"schema", "prefix_count", "prefix_path", *digests}
+                or continuation["schema"] != "cad-harness.holdout-continuation.v4"
+                or type(continuation["prefix_count"]) is not int or continuation["prefix_count"] != 18
+                or not isinstance(continuation["prefix_path"], str) or not continuation["prefix_path"]
+                or not Path(continuation["prefix_path"]).is_absolute()
+                or any(not _digest(continuation[key]) for key in digests)
+                or value["prior_counted_calls"] != 20):
+            raise Stop("live_authorization_contract")
+        # Frozen references only: private prefix bytes are admitted by the live runner.
 
 
 def freeze(policy_path, commitment_path, run_dir, *, root=ROOT, generator_model=MODEL,

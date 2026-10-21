@@ -5,6 +5,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -670,6 +671,289 @@ def validate_report(entry, card, base, out, report):
                 raise Stop("harness:first_response_binding")
 
 
+def _canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
+def _digest(value):
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def _unlinked(path, *, directory=False):
+    path = Path(path).absolute()
+    if any(p.is_symlink() or (hasattr(p, "is_junction") and p.is_junction())
+           for p in (path, *path.parents)):
+        raise Stop("continuation_linked_input")
+    if not (path.is_dir() if directory else path.is_file()):
+        raise Stop("continuation_input_missing")
+    return path.resolve()
+
+
+def _bound_file(path, digest, evidence):
+    path = _unlinked(path)
+    if not _digest(digest) or ledger.file_sha(path) != digest:
+        raise Stop("continuation_file_hash_mismatch")
+    evidence[str(path)] = digest
+    return path
+
+
+def _prefix_destination(run_dir, *protected):
+    destination = Path(run_dir).absolute().resolve()
+    if any(destination.is_relative_to(Path(path).resolve()) for path in protected):
+        raise Stop("continuation_output_inside_historical_input")
+
+
+def _prior_rows(document, entries):
+    if (not isinstance(document, dict)
+            or document.get("schema") != "cad-harness.holdout-results.v4"
+            or not isinstance(document.get("groups"), dict)):
+        raise Stop("continuation_prior_summary_contract")
+    flattened = [row for group in document["groups"].values() for row in group]
+    if (len(flattened) != 60 or any(not isinstance(row, dict) for row in flattened)
+            or len({row.get("id") for row in flattened}) != 60):
+        raise Stop("continuation_prior_rows_contract")
+    by_id = {row["id"]: row for row in flattened}
+    ordered = []
+    for entry in entries:
+        row = by_id.get(entry["id"])
+        if (row is None or _canonical(row.get("manifest_entry")) != _canonical(entry)
+                or _canonical({key: row.get(key) for key in entry}) != _canonical(entry)):
+            raise Stop("continuation_prior_row_order_binding")
+        ordered.append(row)
+    if len({row.get("run") for row in ordered}) != 60:
+        raise Stop("continuation_prior_run_identity")
+    return ordered
+
+
+def _prior_costs(path, manifest, entries):
+    authorization = manifest.get("authorization")
+    if (not isinstance(authorization, dict)
+            or type(authorization.get("charged_calls")) is not int
+            or authorization["charged_calls"] != 163
+            or type(authorization.get("prior_counted_calls")) is not int
+            or not 0 <= authorization["prior_counted_calls"] <= 20
+            or "continuation" in authorization):
+        raise Stop("continuation_prior_authorization_contract")
+    events = list(ledger.rows(path))
+    starts, ends = {}, {}
+    allowed = {entry["id"] for entry in entries[:18]}
+    for event in events:
+        kind = event["event"]
+        if kind in ("episode_started", "episode_finished", "attempt_started", "attempt_finished"):
+            if event.get("episode_id") not in allowed:
+                raise Stop("continuation_prior_activity_after_prefix")
+        if kind not in ("attempt_started", "attempt_finished"):
+            continue
+        target = starts if kind == "attempt_started" else ends
+        key = event.get("attempt_id")
+        if not isinstance(key, str) or not key or key in target:
+            raise Stop("continuation_prior_attempt_identity")
+        target[key] = event
+    for key, end in ends.items():
+        start = starts.get(key)
+        if (start is None or any(start.get(k) != end.get(k)
+                                 for k in ("episode_id", "operation"))
+                or end.get("operation") not in ("model", "cad")):
+            raise Stop("continuation_prior_attempt_binding")
+        if end["operation"] == "model":
+            charged = end.get("charged")
+            if charged is not None and type(charged) is not bool:
+                raise Stop("continuation_prior_charge_contract")
+            if charged is False and end.get("provider_rejected") is not True:
+                raise Stop("continuation_prior_charge_contract")
+    if any(start.get("operation") not in ("model", "cad") for start in starts.values()):
+        raise Stop("continuation_prior_attempt_binding")
+    costs = ledger.summarize(path)
+    prior = authorization["prior_counted_calls"] + costs["conservative_reserved_calls"]
+    if prior != 20:
+        raise Stop("continuation_prior_count_must_equal_20")
+    return events, costs
+
+
+def _saved_episode18(entry, card, base, prior, manifest, events, evidence):
+    episode = _unlinked(prior/"episode-018", directory=True)
+    where = episode/"reports/cad-run/request-mvp1"
+    driver_path = _unlinked(where/"driver-run.json")
+    evidence[str(driver_path)] = ledger.file_sha(driver_path)
+    report = ledger.read_json(driver_path)
+    request = safe_input(base, entry["request"]).read_bytes()
+    gold = safe_input(base, card["gold"])
+    identity = {
+        "schema": "cad-harness.cad_agent.verify3", "run_id": "request-mvp1",
+        "mode": "description", "probe_profile": "verify-v3", "route": entry["route"],
+        "preview": entry["group"] == "dev", "task_id": ledger.read_json(gold)["case_id"],
+        "description_sha256": ledger.sha(request), "input_sha256": ledger.sha(request),
+        "gold_sha256": ledger.file_sha(gold),
+    }
+    if any(report.get(key) != value for key, value in identity.items()):
+        raise Stop("continuation_saved_driver_binding")
+    for key, name in (("compiler_sha256", "tools/cad_spec.py"),
+                      ("probe_sha256", "tools/cad_verify_v3_probe.py"),
+                      ("shared_probe_sha256", "tools/cad_verify_probe.py")):
+        if report.get(key) != manifest["files"].get(name):
+            raise Stop("continuation_saved_source_binding")
+    for name, digest in manifest["files"].items():
+        if name.startswith("tools/") and name.endswith(".py"):
+            _bound_file(safe_input(episode, name), digest, evidence)
+    for key, name in (("skill_sha256", "skills/freecad-modeling/SKILL.md"),
+                      ("schema_sha256", "design/cad-harness-mvp/build-schema.json")):
+        path = safe_input(episode, name)
+        if report.get(key) != ledger.sha(path.read_text(encoding="utf-8").encode("utf-8")):
+            raise Stop("continuation_saved_source_binding")
+        expected = manifest.get("skill_sha256") if key == "skill_sha256" else manifest["files"].get(name)
+        _bound_file(path, expected, evidence)
+    for name in ("design/cad-harness-mvp/eval-v1/schema.json",
+                 "design/cad-harness-verify-v3/gold-schema.json"):
+        _bound_file(safe_input(episode, name), manifest["files"].get(name), evidence)
+    episode_events = [event for event in events if event.get("episode_id") == entry["id"]]
+    finished = [event for event in episode_events if event["event"] == "episode_finished"]
+    if len(finished) != 1:
+        raise Stop("continuation_saved_timing_missing")
+    timing = {key: finished[0].get(key) for key in ("wall_s", "active_s")}
+    if (any(type(value) not in (int, float) or not math.isfinite(value) or value < 0
+            for value in timing.values()) or timing["active_s"] > timing["wall_s"]):
+        raise Stop("continuation_saved_timing_invalid")
+    ended = [event for event in episode_events if event["event"] == "attempt_finished"]
+    started = [event for event in episode_events if event["event"] == "attempt_started"]
+    if {event["attempt_id"] for event in started} != {event["attempt_id"] for event in ended}:
+        raise Stop("continuation_saved_attempt_unfinished")
+    for event in ended:
+        start = next(item for item in started if item["attempt_id"] == event["attempt_id"])
+        submitted_path = safe_input(prior, event["attempt_id"]+"/submitted.json")
+        _bound_file(submitted_path, start.get("submitted_sha256"), evidence)
+        submitted = ledger.read_json(submitted_path)
+        if (submitted.get("request_sha256") != ledger.sha(request)
+                or submitted.get("skill_sha256") != manifest.get("skill_sha256")):
+            raise Stop("continuation_saved_submission_binding")
+        for name, digest in submitted.get("files", {}).items():
+            path = _unlinked(name)
+            if not path.is_relative_to(prior):
+                raise Stop("continuation_saved_submission_escape")
+            _bound_file(path, digest, evidence)
+        streams = event.get("streams")
+        if not isinstance(streams, dict) or set(streams) != {"stdout", "stderr"}:
+            raise Stop("continuation_saved_stream_missing")
+        for stream in streams.values():
+            path = _unlinked(stream["path"])
+            if not path.is_relative_to(prior) or stream.get("complete") is not True:
+                raise Stop("continuation_saved_stream_incomplete")
+            _bound_file(path, stream.get("sha256"), evidence)
+            if path.stat().st_size != stream.get("bytes"):
+                raise Stop("continuation_saved_stream_size")
+    cad_results = [ledger.read_json(event["streams"]["stdout"]["path"])
+                   for event in ended if event["operation"] == "cad"]
+    if cad_results != [attempt["result"] for attempt in report.get("attempts", [])]:
+        raise Stop("continuation_saved_cad_ledger_binding")
+    if sum(event.get("charged") is not False for event in ended if event["operation"] == "model") != report.get("llm_calls"):
+        raise Stop("continuation_saved_model_ledger_binding")
+    v3.check_calls(report, entry, request, None, where)
+    validate_report(entry, card, base, episode, report)
+    if v3.harness_failure(report):
+        raise Stop("continuation_saved_harness_failure")
+    # Include all saved report/artifact bytes, not just the successful CAD files.
+    # evidence_sha256 is the canonical hash of this absolute-path/digest mapping.
+    for path in sorted(where.rglob("*")):
+        if path.is_file():
+            path = _unlinked(path)
+            evidence[str(path)] = ledger.file_sha(path)
+    report["_rubric"] = card.get("rubric")
+    row = score_episode(entry, report, entry["id"], **timing)
+    return row, dict(episode_sequence=18, driver_sha256=evidence[str(driver_path)],
+                     **timing, row_sha256=None)
+
+
+def _prefix_material(sealed_input, prior_run, *, prior_manifest_sha256,
+                     prior_summary_sha256, prior_ledger_sha256, cohort_sha256, root=ROOT):
+    prior = _unlinked(prior_run, directory=True)
+    evidence = {}
+    references = dict(prior_manifest_sha256=prior_manifest_sha256,
+                      prior_summary_sha256=prior_summary_sha256,
+                      prior_ledger_sha256=prior_ledger_sha256, cohort_sha256=cohort_sha256)
+    paths = {}
+    for key, name in (("prior_manifest_sha256", "manifest.json"),
+                      ("prior_summary_sha256", "summary.json"),
+                      ("prior_ledger_sha256", "ledger.jsonl"), ("cohort_sha256", "cohort.json")):
+        paths[name] = _bound_file(prior/name, references[key], evidence)
+    sealed = _bound_file(sealed_input, cohort_sha256, evidence)
+    manifest = ledger.read_json(paths["manifest.json"])
+    if manifest.get("schema") != "cad-harness.manifest.v4":
+        raise Stop("continuation_prior_manifest_contract")
+    commitment = manifest["commitment"]
+    _bound_file(commitment["path"], commitment["sha256"], evidence)
+    cohort = load_cohort(sealed, manifest)
+    if ledger.read_json(paths["cohort.json"]) != cohort:
+        raise Stop("continuation_prior_cohort_binding")
+    rows = _prior_rows(ledger.read_json(paths["summary.json"]), cohort["entries"])
+    events, costs = _prior_costs(paths["ledger.jsonl"], manifest, cohort["entries"])
+    entry = cohort["entries"][17]
+    card = ledger.read_json(safe_input(sealed.parent, entry["acceptance"]))
+    row, recovery = _saved_episode18(entry, card, sealed.parent, prior, manifest, events, evidence)
+    tokens = rows[17].get("tokens")
+    episode_cost = costs["per_episode"].get(entry["id"])
+    if (not isinstance(tokens, dict) or set(tokens) != set(ledger.USAGE_KEYS)
+            or episode_cost is None
+            or tokens != {key: value["total"] for key, value in episode_cost["tokens"].items()}):
+        raise Stop("continuation_saved_token_binding")
+    row["tokens"] = tokens
+    recovery.update(row_sha256=ledger.sha(_canonical(row)), evidence_sha256=ledger.sha(_canonical(evidence)))
+    prefix = dict(schema="cad-harness.holdout-prefix.v4", prefix_count=18, prior_counted_calls=20,
+                  **references, prior_run_dir=str(prior), prefix17_sha256=ledger.sha(_canonical(rows[:17])),
+                  rows=rows[:17]+[row], recovery=recovery)
+    return prefix, dict(schema="cad-harness.holdout-prefix-evidence.v4", files=evidence,
+                        prior_costs=costs, prior_cost_scope="original_segment_only",
+                        inherited_before_prior_segment=manifest["authorization"]["prior_counted_calls"])
+
+
+def recover_prefix(sealed_input, prior_run, run_dir, *, prior_manifest_sha256,
+                   prior_summary_sha256, prior_ledger_sha256, cohort_sha256, root=ROOT):
+    """Recover only saved 18; preserve 1–17 and never execute or claim anything."""
+    prefix, evidence = _prefix_material(sealed_input, prior_run,
+        prior_manifest_sha256=prior_manifest_sha256, prior_summary_sha256=prior_summary_sha256,
+        prior_ledger_sha256=prior_ledger_sha256, cohort_sha256=cohort_sha256, root=root)
+    _prefix_destination(run_dir, prior_run, Path(sealed_input).parent)
+    out = ledger.new_directory(run_dir)
+    ledger.write_json(out/"prefix.json", prefix)
+    ledger.write_json(out/"evidence.json", evidence)
+    return dict(status="RECOVERED", prefix_path=str(out/"prefix.json"),
+                prefix_sha256=ledger.file_sha(out/"prefix.json"), prefix_count=18,
+                prior_counted_calls=20, live_calls=0, live_cad_runs=0)
+
+
+def _admit_continuation(manifest, sealed_input, *, root=ROOT):
+    authorization = manifest["authorization"]
+    if "continuation" not in authorization:
+        return None
+    continuation = authorization["continuation"]
+    fields = {"schema", "prefix_count", "prefix_path", "prefix_sha256",
+              "prior_manifest_sha256", "prior_summary_sha256", "prior_ledger_sha256", "cohort_sha256"}
+    if (not isinstance(continuation, dict) or set(continuation) != fields
+            or continuation["schema"] != "cad-harness.holdout-continuation.v4"
+            or type(continuation["prefix_count"]) is not int or continuation["prefix_count"] != 18
+            or type(authorization.get("charged_calls")) is not int or authorization["charged_calls"] != 163
+            or type(authorization.get("prior_counted_calls")) is not int
+            or authorization["prior_counted_calls"] != 20
+            or not isinstance(continuation["prefix_path"], str) or not continuation["prefix_path"]
+            or not Path(continuation["prefix_path"]).is_absolute()
+            or any(not _digest(continuation[key]) for key in fields if key.endswith("sha256"))):
+        raise Stop("continuation_authorization_contract")
+    path = _bound_file(continuation["prefix_path"], continuation["prefix_sha256"], {})
+    raw = path.read_bytes()
+    prefix = ledger.read_json(path)
+    references = {key: continuation[key] for key in
+                  ("prior_manifest_sha256", "prior_summary_sha256", "prior_ledger_sha256", "cohort_sha256")}
+    if (not isinstance(prefix, dict) or type(prefix.get("prefix_count")) is not int
+            or type(prefix.get("prior_counted_calls")) is not int
+            or not isinstance(prefix.get("prior_run_dir"), str) or not prefix["prior_run_dir"]
+            or not Path(prefix["prior_run_dir"]).is_absolute()):
+        raise Stop("continuation_prefix_contract")
+    expected, evidence = _prefix_material(sealed_input, prefix["prior_run_dir"], root=root, **references)
+    # Canonical bytes distinguish booleans from integers and bind every proof/row field.
+    if _canonical(prefix) != _canonical(expected) or ledger.sha(raw) != continuation["prefix_sha256"]:
+        raise Stop("continuation_prefix_binding")
+    return dict(prefix=expected, raw=raw, evidence=evidence, authorization=continuation)
+
+
 def run_holdout(manifest_path, sealed_input, run_dir, *, root=ROOT, process=stream_process,
                 wall=None, sleep=time.sleep):
     # No input, output directory or executable is touched before this authorization gate.
@@ -678,21 +962,41 @@ def run_holdout(manifest_path, sealed_input, run_dir, *, root=ROOT, process=stre
         raise Stop("live_manifest_authorization_required")
     manifest["manifest_sha256"] = ledger.file_sha(manifest_path)
     cohort = load_cohort(sealed_input, manifest)
+    admitted = _admit_continuation(manifest, sealed_input, root=root)
+    prefix_count = 18 if admitted else 0
+    if admitted:
+        _prefix_destination(run_dir, admitted["prefix"]["prior_run_dir"],
+                            Path(sealed_input).parent, Path(admitted["authorization"]["prefix_path"]).parent)
     out = ledger.new_directory(run_dir)
     freezing.claim(manifest_path, out)
     ledger.write_json(out/"manifest.json", manifest)
     ledger.write_json(out/"cohort.json", cohort)
+    if admitted:
+        audit = ledger.new_directory(out/"continuation")
+        (audit/"prefix.json").write_bytes(admitted["raw"])
+        ledger.write_json(audit/"evidence.json", admitted["evidence"])
+        prior = Path(admitted["prefix"]["prior_run_dir"])
+        for name in ("manifest.json", "summary.json", "ledger.jsonl", "cohort.json"):
+            (audit/("prior-"+name)).write_bytes((prior/name).read_bytes())
+        driver = prior/"episode-018/reports/cad-run/request-mvp1/driver-run.json"
+        (audit/"driver-run.json").write_bytes(driver.read_bytes())
     wall = wall or WallClock()
     started = wall()
-    rows, stop_reason = [], None
+    rows, stop_reason = admitted["prefix"]["rows"] if admitted else [], None
     skill = agent.bundle(root)
     with ledger.Journal(out/"ledger.jsonl", out.name, "holdout", clock=wall, now=wall.utc) as journal:
         guard = LiveGuard(manifest, lambda: freezing.verify(manifest_path, root=root), clock=wall, journal=journal)
         transport = LiveTransport(manifest, journal, out, "", skill, guard, root=root, wall=wall, process=process, sleep=sleep)
         active_started = transport.clock()
-        journal.append("run_started", manifest_sha256=manifest["manifest_sha256"], cohort_sha256=ledger.file_sha(sealed_input), evidence_mode=transport.evidence_mode)
+        continuation_fields = {}
+        if admitted:
+            continuation_fields = dict(continuation=admitted["authorization"], prefix_count=18,
+                                       prior_counted_calls=20, cost_scope="current_segment_only")
+        journal.append("run_started", manifest_sha256=manifest["manifest_sha256"],
+                       cohort_sha256=ledger.file_sha(sealed_input), evidence_mode=transport.evidence_mode,
+                       **continuation_fields)
         try:
-            for index, entry in enumerate(cohort["entries"]):
+            for index, entry in enumerate(cohort["entries"][prefix_count:], prefix_count):
                 # No score/model output is printed while the one fixed cohort runs.
                 if stop_reason:
                     rows.append(v3.empty_row(entry, entry["id"], stop_reason))
@@ -728,7 +1032,7 @@ def run_holdout(manifest_path, sealed_input, run_dir, *, root=ROOT, process=stre
         journal.append("run_finished", wall_s=wall()-started, active_s=transport.clock()-active_started,
                        wall_missing_reason=None, stop_reason=stop_reason)
     costs = ledger.summarize(out/"ledger.jsonl")
-    for row in rows:
+    for row in rows[prefix_count:]:
         episode_cost = costs["per_episode"].get(row["id"])
         if episode_cost:
             row["tokens"] = {k: value["total"] for k, value in episode_cost["tokens"].items()}
@@ -740,5 +1044,16 @@ def run_holdout(manifest_path, sealed_input, run_dir, *, root=ROOT, process=stre
                   costs=costs, generator=manifest["generator"],
                   overload_robustness="VERIFIED" if transport.evidence_mode == "live" and transport.recoveries else "UNVERIFIED",
                   pilot="not_run", stop_reason=stop_reason)
+    if admitted:
+        new_calls = costs["conservative_reserved_calls"]
+        result.update(continuation=dict(
+            authorization=admitted["authorization"], prefix_evidence="continuation/evidence.json",
+            prior_run_dir=admitted["prefix"]["prior_run_dir"], prefix_count=18,
+            remaining_count=42, cost_scope="current_segment_only",
+            prior_costs_path="continuation/evidence.json",
+            prior_ledger_path="continuation/prior-ledger.jsonl",
+            prior_counted_calls=20, new_counted_calls=new_calls, cumulative_counted_calls=20+new_calls))
+        costs.update(cost_scope="current_segment_only", prior_counted_calls=20,
+                     new_counted_calls=new_calls, cumulative_counted_calls=20+new_calls)
     ledger.write_json(out/"summary.json", result)
     return result
