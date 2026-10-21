@@ -539,7 +539,9 @@ def load_cohort(path, manifest):
 
 def setup_episode(out, skill, root):
     for name, content in (("skills/freecad-modeling/SKILL.md", skill),
-                          ("design/cad-harness-mvp/build-schema.json", (Path(root)/"design/cad-harness-mvp/build-schema.json").read_bytes())):
+                          ("design/cad-harness-mvp/build-schema.json", (Path(root)/"design/cad-harness-mvp/build-schema.json").read_bytes()),
+                          ("design/cad-harness-mvp/eval-v1/schema.json", (Path(root)/"design/cad-harness-mvp/eval-v1/schema.json").read_bytes()),
+                          ("design/cad-harness-verify-v3/gold-schema.json", (Path(root)/"design/cad-harness-verify-v3/gold-schema.json").read_bytes())):
         target = Path(out)/name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(content)

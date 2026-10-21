@@ -1,10 +1,13 @@
-"""No-network/no-CAD regressions for manifest-authorized v4 execution."""
+"""Mocked transport regressions and opt-in independent native episode coverage."""
 import copy
 from contextlib import contextmanager
+import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -245,6 +248,40 @@ class LiveTests(unittest.TestCase):
             self.assertEqual(event["usage"]["values"]["input_tokens"], 10)
             self.assertIsNone(event["usage"]["values"]["reasoning_output_tokens"])
             self.assertEqual(event["streams"]["stderr"]["bytes"], len(b"raw stderr\r\n"))
+
+
+@unittest.skipUnless(
+    os.environ.get("CAD_VERIFY_ARTIFACT_NATIVE") == "1"
+    and sys.version_info[:3] == (3, 11, 14)
+    and importlib.util.find_spec("FreeCAD") is not None,
+    "set CAD_VERIFY_ARTIFACT_NATIVE=1 under pinned native FreeCAD Python")
+class NativeEpisodeTests(unittest.TestCase):
+    def test_isolated_offline_episode_measures_independent_fixture(self):
+        from tools import cad_spec
+        from tools.fixtures.cad_mvp_build import held_out_specs
+
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            episode = base / "episode"
+            live.setup_episode(episode, agent.bundle(), ROOT)
+            source = base / "fixture.py"
+            source.write_text(cad_spec.compile_spec(held_out_specs()["H_RECT_CHAMFER"]),
+                              encoding="utf-8")
+            completed = subprocess.run(
+                [sys.executable, "-B", str(episode / "tools/cad_run.py"),
+                 "--script", str(source), "--out-dir", str(episode / "reports/cad-run/dev-mvp1"),
+                 "--task", "H_RECT_CHAMFER", "--recipe", "freecadcmd",
+                 "--gold", str(ROOT / "tools/fixtures/mvp/H_RECT_CHAMFER.gold.json"),
+                 "--probe-profile", "mvp-v1", "--timeout-s", "60",
+                 "--end-to-end-s", "90"],
+                cwd=str(episode), stdin=subprocess.DEVNULL, capture_output=True,
+                text=True, encoding="utf-8", timeout=120)
+            result = json.loads(completed.stdout)
+            self.assertEqual(completed.returncode, 0, result)
+            self.assertEqual(
+                (completed.returncode, result["probe_pass"], result["geometry_ok"],
+                 result["editability_ok"], result["document_closed"], result["cleanup_status"]),
+                (0, True, True, True, True, "exited"), completed.stderr)
 
 
 if __name__ == "__main__":

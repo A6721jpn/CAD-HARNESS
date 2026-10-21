@@ -144,7 +144,8 @@ class FreezeV4(unittest.TestCase):
                  "skills/cad-harness-v4/SKILL.md", "skills/cad-harness-v4/modeling.md",
                  "skills/freecad-modeling/SKILL.md", frozen.DESIGN + "/policy.json",
                  frozen.DESIGN + "/PLAN-V4-UPDATE-U1.md", frozen.DESIGN + "/DECISIONS.md",
-                 "design/cad-harness-mvp/build-schema.json")
+                 "design/cad-harness-mvp/build-schema.json",
+                 "design/cad-harness-mvp/eval-v1/schema.json")
         for name in names:
             with self.subTest(name=name):
                 path, unused = self.freeze()

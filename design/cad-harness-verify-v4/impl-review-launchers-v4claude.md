@@ -242,3 +242,69 @@ This is not an authorization, a lock, live admission or `final_v4_ready`. Still 
 4. Only then the conditionally authorized original-163 maximum, under fresh 55% consult / 60% stop and the frozen original authority.
 
 The family, benchmark and pilot pools need their own separate authorizations. No commit, push, lock, live, model- or CAD-generation call, or source/permission change was made by v4claude. P8 was not contacted.
+
+## 10. Original60 live holdout — **RUNNING** (public aggregate receipt, 2026-10-20)
+
+Authority: handoff section "ORIGINAL LIVE RELEASE" (handoff SHA-256 at read `c4b55af6a07f86834586c608e8875bdebe29f81d5623eb8edc701b034a052668`). Operator: v4claude (custodian, `claude-opus-5-5`). Claude is not the CAD generator. The frozen CLI's generator is `openai-codex/gpt-6.1-sol` / `xhigh` through OMP `omp/18.11.2` (`97f5c9d5…`).
+
+Independent pre-launch verification by v4claude (no model or provider probe):
+
+| Gate | Observed |
+|---|---|
+| Post-push implementation lock | `reports/verify-v4-postpush-dev-20261020T120859Z/implementation-lock/manifest.json`. Own `verify-integrated-lock` EXIT 0, empty stderr (12:26:44Z–12:28:38Z). `sha256_file` `47f7aece81e3b0520fcd7763353e8ac7124913c61213126a9bbb27ea64900026`; raw `772654ec…`; HEAD `2de524e69506812bdb48c31605a212742e57cd1a`, tree `67928cb9…`; canonical `files[]` `5ee94cd9…` (410, recomputed); 5 recipes; proof `9ac92610…`; offline_locked, authorization null, `final_v4_ready` false |
+| Original freeze manifest | Own `cad_verify_v4_freeze.verify` PASS (12:26:44Z). `sha256_file` `83df1cbd33c87173b53aea861f878ad6e3b93fe6a94151b6e63ea68e8538bae2`; raw `2351964a…`; 138 source records. Authorization: phase holdout, profile original, charged_calls 163, clock confirmation and independent control validation true. It binds the post-push lock `47f7aece…`, the reviewed publications `f665255e…`/`253e2a9f…`/`169f918f…` and commitment `d87165ce…` |
+| Profile preflight | `profile-preflight.json` `275e0771…` (non-billed metadata, 12:12:37Z) |
+| Working tree | `tools/` and schemas clean against HEAD `2de524e` |
+| Sealed cohort | Unchanged original60 `cohort.json` `45bb80a58c4c692a16b2039bff576f9c8db582ab1cc66ce48aed3bd4a3258c65`, 37412 bytes; 91/91 committed files match bytes and SHA-256. Used in place, with no copy, reauthoring, shuffle or borrowing |
+| Claim state before launch | No `manifest.claim.json` present (unclaimed) |
+| Quota at launch | Live publisher snapshot `omp-usage-1792499362484-7d=3`, observed 12:29:22.484Z, 3%. This is evidence at launch, not future admission; the frozen guard re-checks each admission (consult 55%, stop 60%, maximum snapshot age 300 s) |
+| Operator environment | `OMP_PROFILE=cad-harness`; `PI_CONFIG_DIR` absent |
+
+Launch (single, actual):
+- **Exact frozen command:** `C:/Users/backo/AppData/Local/Programs/Python/Python312/python.exe -B -m tools.eval_verify_v4 run --profile original --phase holdout --manifest C:/dev/CAD-HARNESS-herdr/reports/verify-v4-postpush-dev-20261020T120859Z/original-freeze/manifest.json --sealed-input <unchanged original60 cohort.json> --run-dir <private run-1>`, cwd `C:/dev/CAD-HARNESS-herdr`.
+- **Custody process:**
+  - A private launcher outside the repository (`launcher.py` `e94ceb44…`) starts the CLI as an OS process with stdin = DEVNULL and full parent stdout/stderr captured to files.
+  - It has no timeout, retry or restart, and it records PID/start/exit.
+  - The launcher was started detached (hidden), so tool deadlines and reviewer-context or API interruptions do not terminate it. No job breakaway, sandbox change or permission change was made.
+  - The frozen code itself enforces closed stdin for model calls, rule 6 (600 s overload wait, identical resend), caps and the ledger, which is flushed per event.
+- **Process:** launcher PID 61740 (started 2026-10-20T12:30:33.145Z); frozen CLI PID 60704 (started 12:30:33.240Z). Launch record `22b66e1e…`.
+- **One-time claim:** `manifest.claim.json` written at 12:30:33Z (`31f57869…`). The run directory is private custody outside the repository.
+- **State at 12:31Z:** RUNNING. Both processes alive; episode 1 in progress.
+
+No per-case outcomes are inspected or disclosed during the run. Raw parent/model outputs, the ledger, cohort inputs and scores stay private. The run is not steered: no mid-cohort fixes, retakes or restarts. If the process stops for any reason, the run stays INCOMPLETE and is reported as STOP; it is not resumed. Limitation: the quota guard is admission/backoff based, not a global in-flight watchdog. A terminal aggregate receipt follows at completion.
+
+### 10.1 Terminal status — **STOP / INCOMPLETE** (2026-10-20T12:32:21Z)
+
+The frozen CLI (PID 60704) exited with return code 1 at 12:32:21.6Z. The launcher (PID 61740) recorded the exit and finished. Parent stderr: 0 bytes. Parent stdout: 100265 bytes, retained privately (`e80037f2…`). Exit record `5f6f0725…`. Both processes are gone. No FreeCAD process remains, and no OMP process was started by or after this run (all existing OMP processes predate it and were not touched).
+
+| Aggregate | Value |
+|---|---|
+| Result | schema `cad-harness.holdout-results.v4`; status **INCOMPLETE**; evidence_mode live; fresh_holdout incomplete; pilot not_run |
+| Stop reason | `harness:legacy_runtime` |
+| Episodes | 4 of 60 started and finished, then stop; 56 not started (recorded as not_started rows) |
+| Counted/charged model calls | 4 known (physical model attempts 4; conservative reserved 4); maximum 163, planned 83; no padding |
+| CAD attempts | 1 |
+| Rule 6 (server_overloaded 600 s wait, identical resend) | 0 exempt overload attempts; not exercised: **UNVERIFIED** (not observed) |
+| Tokens (known subtotal) | input 15753, cached input 0, cache-write 0, output 3336. Reasoning-output tokens missing on all 4 episodes; other token fields missing on the 1 no-model episode. Price/currency unknown, so `full_cost_known` is false |
+| Capture | 10 expected, 10 complete, 0 missing/partial; 0 unfinished attempts |
+| Wall / active | 107.8 s operational wall = active; wait 0 (no observations) |
+| Ledger events | run_started 1, episode_started 4, quota_checked 24, attempt_started 5, attempt_finished 5, episode_finished 4, run_finished 1 (44 lines) |
+| Suite flags | valid_suite true, versions_consistent true, deadline_ok true, complete false, core_complete false, bar_met false |
+| Quota | All 24 admission checks passed (the run did not stop on quota). Live snapshot after stop: 3% at 12:34:31.9Z |
+| Private identities | ledger `5867a5b796506497ba17990347f5eb3fc5d3c5d864b5db5c7842c97e4deff812`; summary `fb0f4b4622ed4a19e126c4a9be5a1bcb4b0fbbab9b6b8a5290042513373d5915`; cost ledger `calls.csv` `04c414932a2d4e733d1b3e4169ffcc155d470734a7d33d794aaf6759298ed9f1`; run manifest copy `809ceff8…`; cohort copy `45bb80a5…` (unchanged) |
+
+**Cause (frozen-source finding for sol; v4claude makes no fix):**
+- The stop came from the cohort's deterministic **offline legacy control**. That route makes no model call: the frozen runner executes a committed legacy script through the episode-local copy of `tools/cad_run.py`.
+- `cad_run` failed at **preflight** with `FileNotFoundError` (status input_error, FreeCAD not launched, probe not_run). `execute_episode` (`tools/cad_verify_v4_live.py:560–571`) correctly treats an unsettled run as `harness:legacy_runtime` and stops the cohort.
+- Root cause:
+  - `setup_episode` (`tools/cad_verify_v4_live.py:540–549`) copies only `tools/**/*.py`, `skills/freecad-modeling/SKILL.md` and `design/cad-harness-mvp/build-schema.json` into the episode directory.
+  - The copied `cad_run.py` → `cad_spec_probe.load_gold` reads `GOLD_SCHEMA = <episode>/design/cad-harness-mvp/eval-v1/schema.json` (`tools/cad_spec_probe.py:8`, path relative to the copy).
+  - That file is never copied, so every offline legacy control with a gold (`--probe-profile mvp-v1`) fails before FreeCAD starts.
+- This is independent of the model, the cohort data, quota and rights. The cohort input files were present and unchanged.
+- Apparent coverage gap: the existing offline and native suites did not exercise this live offline-route episode layout.
+
+**Consequences, per authority:**
+- The one-time manifest claim (`manifest.claim.json` `31f57869…`) is consumed. The run is INCOMPLETE and is **not** resumed, restarted or retaken.
+- No per-case outcomes or scores are published or were used to steer anything. Raw outputs, the ledger, per-episode records and the cohort remain private in custody.
+- Any further original run needs a USER decision and the full chain: a source fix by sol, review, commit/push, a NEW post-push lock and a NEW original freeze/authorization with a fresh claim. The consumed counted calls (4) must be accounted against the 163 maximum under whatever the USER decides.
+- No other pool was touched. No source, rights, permission or ACL change, commit, push or lock was made. No P8 contact.

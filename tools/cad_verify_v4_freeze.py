@@ -31,6 +31,7 @@ REQUIRED_FREECAD = "1.1.4"
 FIXED_FILES = (
     "skills/freecad-modeling/SKILL.md",
     "design/cad-harness-mvp/build-schema.json",
+    "design/cad-harness-mvp/eval-v1/schema.json",
     "design/cad-harness-verify-v3/gold-schema.json",
     *(DESIGN + "/" + name for name in (
         "policy.json", "ledger.schema.json", "pilot-rubric.json",
