@@ -92,7 +92,7 @@ class FreezeV4(unittest.TestCase):
 
     def authorization(self, **updates):
         value = dict(schema="cad-harness.live-authorization.v4", phase="holdout", charged_calls=163,
-                     clock_confirmation=True, model=frozen.MODEL, host="DPC-019",
+                     prior_counted_calls=0, clock_confirmation=True, model=frozen.MODEL, host="DPC-019",
                      quota_snapshot=str(self.base / "absent-quota.json"), independent_control_validation=True,
                      holdout_commitment_sha256=ledger.file_sha(self.commitment))
         value.update(updates)
@@ -251,7 +251,7 @@ class FreezeV4(unittest.TestCase):
 
     def test_explicit_authorization_freezes_but_never_invokes_model_or_cad(self):
         self.host_mock.return_value = "DPC-019"
-        auth_path, auth = self.authorization()
+        auth_path, auth = self.authorization(prior_counted_calls=4)
         path, manifest = self.freeze(authorization_path=auth_path)
         self.assertEqual(manifest["authorization"], auth)
         self.assertEqual(manifest["quota_snapshot"], auth["quota_snapshot"])
@@ -288,6 +288,14 @@ class FreezeV4(unittest.TestCase):
         self.assertIsNone(frozen.verify(path, root=self.root)["authorization"])
         with self.assertRaisesRegex(Stop, "live_freecad_identity_missing_or_wrong_version"):
             self.freeze(authorization_path=auth_path)
+
+    def test_prior_count_invalid_type_or_out_of_budget_rejected(self):
+        self.host_mock.return_value = "DPC-019"
+        for prior in (-1, True, 4.0, 164, None):
+            with self.subTest(prior=prior):
+                auth_path, unused = self.authorization(prior_counted_calls=prior)
+                with self.assertRaisesRegex(Stop, "live_authorization_contract"):
+                    self.freeze(authorization_path=auth_path)
 
     def test_authorization_requires_every_evidence_field(self):
         self.host_mock.return_value = "DPC-019"

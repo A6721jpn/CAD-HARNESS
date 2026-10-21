@@ -136,3 +136,12 @@ Still open (not answered): the U1 tape location; the U2 "minimal concave-face co
 - Finish the bounded repair, verification, review, explicit commit/push and a NEW verified post-push lock; update the final `PROGRESS.txt` line and wait. If a material decision is needed, stop with **`ASK:`**.
 - Existing prohibitions remain: no CAE, Fusion/SolidWorks, main `C:/dev/CAD-HARNESS` working-tree edits, shared-path ACL/ownership changes, new permissions or director contact. Old seals/failed proposals are retained, not rewritten.
 - User note time10:56JST. Actual recovery baseline observed UTC2026-10-21T02:06:53.348273Z; baseline recorded before source changes.
+
+## USER 2026-10-21 — same60 rerun with cumulative163, budget-only repair approved
+- USER15:13JST authorizes a new full run of the SAME60, not new tasks, with a fresh authorization/claim. Preserve the first attempt's four counted calls and INCOMPLETE/consumed-claim evidence; the cumulative ceiling is163 and this run may consume at most159 new counted calls.
+- Preflight showed908589c5 accepted only a fresh0/163 budget. USER answered **「累計管理だけ修正・再固定して開始」**: minimally implement frozen prior-count carryover, test it, create a NEW verified lock, then start the same60. No bypass, runtime monkeypatch, fabricated quota, dummy charges or race-prone external cap.
+- Keep acceptance gates, policy numbers, cards, scoring and cohort bytes/order unchanged. If repair scope extends beyond budget counting, or any code fix becomes necessary during production, STOP without fixing and report **ASK:**.
+- Stop at55% and ASK; stop at60%; preserve existing overload600-second wait/identical resend/uncapped exemption and full-wall accounting. No borrowing from other pools.
+- v4claude (Opus) receives ONLY Sol-written summaries, never code/diffs. Do not use Gemini or Grok. Preserve private-data and CAE/Fusion/SolidWorks/main-working-tree/shared-ACL/permission/director prohibitions.
+- Required sequence: budget-only proof and summary-based check, bounded code commit/push and NEW verified lock, new frozen authorization carrying the four prior calls, fresh claim and SAME60 run. After terminal completion record results/new+cumulative counts, commit/push authorized result records, update finalPROGRESS and idle.
+- Budget-repair baseline recorded before source changes at UTC2026-10-21T08:40:39.751633Z in `reports/verify-v4-budget-carryover-20261021T084039Z/baseline.json`. The original908 seal remains immutable history; the new implementation lock will supersede it without changing the60 tasks.

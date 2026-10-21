@@ -55,10 +55,13 @@ class LiveGuard:
         authorization = manifest.get("authorization")
         if not isinstance(authorization, dict) or authorization.get("charged_calls") != 163:
             raise Stop("live_manifest_authorization_required")
+        prior = authorization.get("prior_counted_calls")
+        if type(prior) is not int or not 0 <= prior <= 163:
+            raise Stop("live_manifest_authorization_required")
         self.manifest, self.check_identity = manifest, check_identity
         self.clock = clock or WallClock()
         self.journal, self.deadline = journal, None
-        self.calls, self.call_budget = 0, 163
+        self.calls, self.call_budget = prior, 163
         self.episode_start, self.episode_cap = 0, 0
         self.stop_reason = None
 

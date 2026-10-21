@@ -238,6 +238,8 @@ def _authorization(value, commitment_sha256, model, quota_snapshot):
             or value.get("schema") != "cad-harness.live-authorization.v4"
             or value.get("phase") != "holdout"
             or type(value.get("charged_calls")) is not int or value["charged_calls"] != 163
+            or type(value.get("prior_counted_calls")) is not int
+            or not 0 <= value["prior_counted_calls"] <= 163
             or value.get("clock_confirmation") is not True
             or value.get("model") != model or model != MODEL
             or value.get("host") != REQUIRED_HOST

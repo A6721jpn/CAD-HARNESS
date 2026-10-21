@@ -55,9 +55,9 @@ class LiveTests(unittest.TestCase):
                 for journal in self.journals:
                     journal.close()
 
-    def transport(self, base, outputs, *, quota=None, maximum=3):
+    def transport(self, base, outputs, *, quota=None, maximum=3, prior_counted_calls=0):
         clock = agent.ReplayClock()
-        manifest = dict(authorization=dict(charged_calls=163), files={}, quota_snapshot="unit-quota",
+        manifest = dict(authorization=dict(charged_calls=163, prior_counted_calls=prior_counted_calls), files={}, quota_snapshot="unit-quota",
                         generator=dict(omp="unit-omp", version="unit-version",
                                        model="openai-codex/gpt-6.1-sol", thinking="xhigh"))
         journal = ledger.Journal(base/"ledger.jsonl", "unit", "holdout", clock=clock, now=clock.utc)
@@ -87,6 +87,42 @@ class LiveTests(unittest.TestCase):
         last = work/"last.txt"
         argv = live.LiveSkillAdapter(agent.bundle(), "original request").exec_argv("unit", work, last, "original request", agent.bundle().decode())
         return transport, guard, clock, observed, argv, work, last, journal
+
+    def test_prior_four_limits_new_calls_to_159_across_episodes(self):
+        guard = live.LiveGuard(dict(authorization=dict(charged_calls=163, prior_counted_calls=4)), lambda: None)
+        guard.check = lambda: dict(decision="allow")
+        for _ in range(159):
+            guard.before_episode(1)
+            guard.before_call()
+        self.assertEqual(guard.calls, 163)
+        with self.assertRaisesRegex(ValueError, "insufficient_call_budget"):
+            guard.before_episode(1)
+        self.assertEqual(guard.calls, 163)
+
+    def test_exhausted_prior_budget_admits_no_new_call(self):
+        guard = live.LiveGuard(dict(authorization=dict(charged_calls=163, prior_counted_calls=163)), lambda: None)
+        guard.check = lambda: dict(decision="allow")
+        with self.assertRaisesRegex(ValueError, "insufficient_call_budget"):
+            guard.before_call()
+        self.assertEqual(guard.calls, 163)
+
+    def test_invalid_or_missing_prior_count_is_not_a_fresh_budget(self):
+        for prior in (-1, True, 4.0, 164, None):
+            with self.subTest(prior=prior), self.assertRaisesRegex(ValueError, "authorization_required"):
+                live.LiveGuard(dict(authorization=dict(charged_calls=163, prior_counted_calls=prior)), lambda: None)
+        with self.assertRaisesRegex(ValueError, "authorization_required"):
+            live.LiveGuard(dict(authorization=dict(charged_calls=163)), lambda: None)
+
+    def test_exempt_overload_preserves_prior_four_and_charges_only_success(self):
+        with self.temporary() as directory:
+            transport, guard, clock, calls, argv, work, last, journal = self.transport(
+                Path(directory), [OVERLOAD, response("answer")], maximum=1, prior_counted_calls=4)
+            transport(argv, cwd=work, timeout=420)
+            self.assertEqual((guard.calls, last.read_text(), len(calls)), (5, "answer", 2))
+            events = list(ledger.rows(journal.path))
+            self.assertEqual([e["charged"] for e in events if e["event"] == "attempt_finished"], [False, True])
+            self.assertEqual(sum(e["actual_s"] for e in events if e["event"] == "wait_finished"), 600)
+            self.assertEqual(transport.clock(), 10)
 
     def test_many_overloads_at_last_budget_slot_are_exempt_and_preserve_active_time(self):
         with self.temporary() as directory:
@@ -177,7 +213,7 @@ class LiveTests(unittest.TestCase):
                 snapshot = base/"quota.json"
                 ledger.write_json(snapshot, dict(snapshot_id="unit", observed_at=clock.utc(), used_percent=used))
                 clock.advance(age)
-                guard = live.LiveGuard(dict(authorization=dict(charged_calls=163), quota_snapshot=str(snapshot)), lambda: None, clock=clock)
+                guard = live.LiveGuard(dict(authorization=dict(charged_calls=163, prior_counted_calls=0), quota_snapshot=str(snapshot)), lambda: None, clock=clock)
                 with self.assertRaisesRegex(ValueError, reason):
                     guard.before_episode(3)
                 self.assertEqual(guard.calls, 0)
