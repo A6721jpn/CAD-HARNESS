@@ -1,0 +1,5484 @@
+{
+  "schema": "h2.cycle.v1",
+  "cycle_id": "20261020T235259Z-1c8abd76",
+  "task_id": "A-box-pocket-fillet",
+  "mode": "LIBRARY_ONLY",
+  "k": 1,
+  "created_at": "2026-10-20T23:52:59.353687+00:00",
+  "max_llm_calls": 100,
+  "repeats": 3,
+  "requested_model": "gpt-6.1-sol",
+  "decision_rule": "D15",
+  "std_convention": "sample; N=1 uses zero",
+  "cache_policy": {
+    "intent": "warm_after_one_excluded_warmup_run",
+    "guaranteed_equal_cache": false,
+    "limitation": "Provider controls cache hits; measured per call and group"
+  },
+  "status": "completed",
+  "runs": {
+    "warmup": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 1,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 2203.999999910593,
+              "recompute": 0.0,
+              "probe": 61.99999991804361,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "daf6fd76fd274967a1b953cd119eaa22",
+            "attempt_id": "c06a5d86ca32450fae679de54ad88a14",
+            "recipe": "freecadcmd",
+            "script_sha256": "215179f023fa6bef5c132bbfa7b1fe3d58399c515474a5e3472ea2ae54b99a69",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 65392,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 3412.117,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\warmup\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\warmup\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 2,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 203.00000021234155,
+              "recompute": 0.0,
+              "probe": 15.999999828636646,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "16fcbbd97e8e479abea3267945fb52c7",
+            "attempt_id": "9b911ba9c850411088b33158334a13e8",
+            "recipe": "freecadcmd",
+            "script_sha256": "efc0b7ea448b96108fe09834c2f64154c4467f5f577c58a174c87c5883f08531",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 58700,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 525.983,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\warmup\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\warmup\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 43207,
+        "cached_input": 16640,
+        "uncached_input": 26567,
+        "output": 2133,
+        "reasoning": 266,
+        "total": 45340
+      },
+      "wall_ms": 49742.462,
+      "included_in_comparison": false,
+      "cache": {
+        "cached_input": 16640,
+        "uncached_input": 26567,
+        "cached_input_ratio": 0.38512278103085146,
+        "uncached_input_ratio": 0.6148772189691485
+      },
+      "final_code_summary": {
+        "sha256": "5e5234f32c5f954f5da456357f9e6a6cc9b0a5434b22d0b88b12792bdaf1fbb4",
+        "line_count": 124,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "edges.append",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "inverse.multVec",
+          "len",
+          "pad.Shape.isNull",
+          "pocket.Shape.isNull",
+          "pocket_sketch.Placement.inverse",
+          "pocket_sketch.addConstraint",
+          "pocket_sketch.addGeometry",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "run0-r1": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 3,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 186.9999999180436,
+              "recompute": 0.0,
+              "probe": 31.00000019185245,
+              "save": 15.999999828636646
+            },
+            "cad_run_id": "571116e8a5654a9596dfe2547c624f39",
+            "attempt_id": "fb73ed6d17c548e78850a6fd323cbf27",
+            "recipe": "freecadcmd",
+            "script_sha256": "d8d91ee5cc63b10fea8b01ac75e33645192076d41c30528cf87d83e30407b1d8",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 46652,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 531.847,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r1\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r1\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 4,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 15.00000013038516,
+              "save": 0.0
+            },
+            "cad_run_id": "629d1cf8d58b43dda841f945d8acc57e",
+            "attempt_id": "cdb60d891e2b4afaa297edb4519ef603",
+            "recipe": "freecadcmd",
+            "script_sha256": "ad98a26b1018908f446062bb2bfca6b1b5a905316ed55d93c2cf75428b314d5d",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 58592,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 633.711,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r1\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r1\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 41429,
+        "cached_input": 9216,
+        "uncached_input": 32213,
+        "output": 1864,
+        "reasoning": 181,
+        "total": 43293
+      },
+      "wall_ms": 41465.77,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 32213,
+        "cached_input_ratio": 0.22245287117719473,
+        "uncached_input_ratio": 0.7775471288228053
+      },
+      "final_code_summary": {
+        "sha256": "1369e9f3c401f86d561dd482ea24b51ebd99d4d57b8e4b2653649c79bec9bea8",
+        "line_count": 111,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "attachment_frame.inverse",
+          "attachment_frame.inverse().multiply",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "pad.Shape.isNull",
+          "pad.Shape.isValid",
+          "pocket.Shape.isNull",
+          "pocket.Shape.isValid",
+          "pocket_sketch.AttachmentOffset.inverse",
+          "pocket_sketch.Placement.multiply",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "run0-r2": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 5,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 203.00000021234155,
+              "recompute": 0.0,
+              "probe": 31.999999890103936,
+              "save": 0.0
+            },
+            "cad_run_id": "e3e074cd7ed940dcaf39328ca7cfc666",
+            "attempt_id": "eb56d7ec8f6e4c2daf0fc902867ae8e1",
+            "recipe": "freecadcmd",
+            "script_sha256": "97205acad31382e21832a78d2d4995b8a5b6bf0a82e004dfa02b44179faa349f",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 23164,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 521.579,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r2\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r2\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 6,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 15.999999828636646,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "05458705506944d39f08430ebbe9648a",
+            "attempt_id": "0ffac4f2387641b8ac74fd8740a25588",
+            "recipe": "freecadcmd",
+            "script_sha256": "1967c708d01adc93c00eb51523e86d69a05fad26d07e77c282f5be1875e27663",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 50248,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 525.689,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r2\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r2\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 41627,
+        "cached_input": 16512,
+        "uncached_input": 25115,
+        "output": 2167,
+        "reasoning": 263,
+        "total": 43794
+      },
+      "wall_ms": 41856.312,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 16512,
+        "uncached_input": 25115,
+        "cached_input_ratio": 0.39666562567564323,
+        "uncached_input_ratio": 0.6033343743243568
+      },
+      "final_code_summary": {
+        "sha256": "d9988535461abe1644371352ede50cdb115d335b4ebea2debb180884b93e660d",
+        "line_count": 112,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "len",
+          "outer_edges.append",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "run0-r3": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 7,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 186.9999999180436,
+              "recompute": 0.0,
+              "probe": 31.00000019185245,
+              "save": 15.999999828636646
+            },
+            "cad_run_id": "82188482882f479082cb7d0be3ae96d2",
+            "attempt_id": "dfd2d19a145a455c9662f723b5e462b2",
+            "recipe": "freecadcmd",
+            "script_sha256": "5c94c00a942959496fe25bc711a81a9159c01904e352e1b90762f1803bde1274",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 61388,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 613.774,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r3\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r3\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 8,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 15.00000013038516,
+              "save": 15.999999828636646
+            },
+            "cad_run_id": "7eeb0391405e4450b98943a9822394d1",
+            "attempt_id": "6cc11e4c5bd5427c90a8047709ba5b5b",
+            "recipe": "freecadcmd",
+            "script_sha256": "7c5e8c4fef77976ee9fef9424b75a5a9f478a4c975f2173750d1a56d1f651399",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 15232,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 531.43,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r3\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\run0-r3\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 43360,
+        "cached_input": 7296,
+        "uncached_input": 36064,
+        "output": 2137,
+        "reasoning": 199,
+        "total": 45497
+      },
+      "wall_ms": 43023.864,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 7296,
+        "uncached_input": 36064,
+        "cached_input_ratio": 0.16826568265682657,
+        "uncached_input_ratio": 0.8317343173431735
+      },
+      "final_code_summary": {
+        "sha256": "6d870d779edd20c181da20154bc1a4d43e8ad2e2464289ba1e5d48b047d220b3",
+        "line_count": 114,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "len",
+          "outer_top_edges.append",
+          "pad.Shape.isNull",
+          "pocket.Shape.isNull",
+          "pocket.Shape.isValid",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-1-r1": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "Before submitting the first attempt for a box-pocket-fillet task, verify that the returned Body contains a connected sketch-based additive feature, sketch-based Pocket, and Fillet; check their profile and predecessor links and the final Body tip. Correct solid geometry alone does not establish a correct feature chain."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 10,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 31.00000019185245,
+              "save": 0.0
+            },
+            "cad_run_id": "4c79cca2e5e54022b3535a3e122451ac",
+            "attempt_id": "60d59bc24a9c4c23881ba14aa2dd0930",
+            "recipe": "freecadcmd",
+            "script_sha256": "d7a72f74b33b7df60423d548590a1b97da4ced88bf242b3c0c77da1fa6286b0a",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 58668,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 635.131,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r1\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r1\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 11,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.00000015087426,
+              "recompute": 0.0,
+              "probe": 15.999999828636646,
+              "save": 0.0
+            },
+            "cad_run_id": "0f97a83f23ff4af28bebddb5c3d4e7ca",
+            "attempt_id": "33724db19bd6455c9dfbd90fb0dcf546",
+            "recipe": "freecadcmd",
+            "script_sha256": "14a2d7b2b7628f9dc83763900261e97433a6955a848d63f8c2fa026e5bad2037",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 53440,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 528.476,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r1\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r1\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 12,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 186.9999999180436,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "033b5460e6554c7082d8363bc3c76c36",
+            "attempt_id": "796824cd920342fcb4405a96ecfc6a75",
+            "recipe": "freecadcmd",
+            "script_sha256": "532c7977a62db8b20066cb21fd5ab2d047aa74f3caac1a7145cb704a73929346",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 57708,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 476.089,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r1\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r1\\a3"
+        }
+      ],
+      "geometry_pass": false,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 63278,
+        "cached_input": 9216,
+        "uncached_input": 54062,
+        "output": 3827,
+        "reasoning": 579,
+        "total": 67105
+      },
+      "wall_ms": 79863.049,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 54062,
+        "cached_input_ratio": 0.1456430354941686,
+        "uncached_input_ratio": 0.8543569645058314
+      },
+      "final_code_summary": {
+        "sha256": "b04015990d28417e7e45840e96e2c58adaa7737d515fe60da5503184fd81687c",
+        "line_count": 149,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "add_rectangle",
+          "all",
+          "any",
+          "body.Shape.isNull",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "getattr",
+          "inverse.multVec",
+          "isinstance",
+          "len",
+          "linked_object",
+          "one_side",
+          "outer_edges.append",
+          "pad.Shape.isNull",
+          "pocket.Shape.isNull",
+          "range",
+          "set",
+          "shape.isNull",
+          "shape.isValid",
+          "sketch.Placement.inverse",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-2-r1": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "If feature_chain is the sole failed predicate and feedback confirms completed execution and valid geometry, preserve the dimensions and focus the retry on feature types, Body membership, profile links, predecessor links, and final tip. Treat the aggregate failure as insufficient to identify any particular broken relationship."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code",
+          "measurements",
+          "script_completed",
+          "cad_exit_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 13,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "9a0030de7dcf4441a758ebef1160da67",
+            "attempt_id": "09b5c222468e49269dd4bd6dd3733461",
+            "recipe": "freecadcmd",
+            "script_sha256": "c9e4aef1b7a1d355985469d384b3ce64f2eafe2c67a067ef1c8f0e933fc8fc51",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 62000,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 537.625,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r1\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r1\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 14,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "459ee6fb7e7e4884bb8226e0b2762651",
+            "attempt_id": "18a46207d81f4d7bab523cb046934845",
+            "recipe": "freecadcmd",
+            "script_sha256": "a684b90c8fed860f4bf883f0af546a4811d256d4767d2b2a922721e64eec88ff",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 66536,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 471.721,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r1\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r1\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 15,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 15.00000013038516
+            },
+            "cad_run_id": "4cf0271f509f4fd684c1f74e8d53e378",
+            "attempt_id": "77b5970b1a534094844707e317d90031",
+            "recipe": "freecadcmd",
+            "script_sha256": "d2052c3648e8e53e137a60c8823fa90d6c32d2f4e182de1f2c042faa94bc41de",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 22060,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 520.991,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r1\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r1\\a3"
+        }
+      ],
+      "geometry_pass": false,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 63182,
+        "cached_input": 16896,
+        "uncached_input": 46286,
+        "output": 2750,
+        "reasoning": 249,
+        "total": 65932
+      },
+      "wall_ms": 56171.377,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 16896,
+        "uncached_input": 46286,
+        "cached_input_ratio": 0.26741793548795545,
+        "uncached_input_ratio": 0.7325820645120446
+      },
+      "final_code_summary": {
+        "sha256": "9c3df078adc93bcdc9257be176733613fb69fff18fcaf568605886c8ec5b4bb1",
+        "line_count": 92,
+        "api_calls": [
+          "'Edge{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "len",
+          "outer_edges.append",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-3-r1": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 16,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "d39c1db3197c479ea2794a1011f5b4f7",
+            "attempt_id": "5dfdcde90a5b44789a75f9d7aed82994",
+            "recipe": "freecadcmd",
+            "script_sha256": "648d59a1ad894dfbfc344a7377e098a53a4008c9e84291125a467d46975abaa1",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 51564,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 529.306,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r1\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r1\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 17,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.99999984912574,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 0.0
+            },
+            "cad_run_id": "991a01dfe0b340b9b6c1a23bd1566ab0",
+            "attempt_id": "e650ccbce01a411d92e0c02680141c69",
+            "recipe": "freecadcmd",
+            "script_sha256": "b737925d8cb7625da8047275f2339658d87623ef9d1faa14d9d661f0d6829eb9",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 40672,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 594.413,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r1\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r1\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 41420,
+        "cached_input": 26624,
+        "uncached_input": 14796,
+        "output": 2017,
+        "reasoning": 372,
+        "total": 43437
+      },
+      "wall_ms": 45469.44,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 26624,
+        "uncached_input": 14796,
+        "cached_input_ratio": 0.6427812650893289,
+        "uncached_input_ratio": 0.35721873491067113
+      },
+      "final_code_summary": {
+        "sha256": "8309c37db7e379f3d002ece4f9feeaf0ed488e686143c89be9bfeff9001af991",
+        "line_count": 112,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "add_rectangle",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "inverse.multVec",
+          "len",
+          "outer_edges.append",
+          "pad.Shape.isNull",
+          "pad.Shape.isValid",
+          "pocket.Shape.isNull",
+          "pocket.Shape.isValid",
+          "range",
+          "sketch.Placement.inverse",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-1-r2": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "Before submitting the first attempt for a box-pocket-fillet task, verify that the returned Body contains a connected sketch-based additive feature, sketch-based Pocket, and Fillet; check their profile and predecessor links and the final Body tip. Correct solid geometry alone does not establish a correct feature chain."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 18,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.99999984912574,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "ebee7775993a46fba081e686cc4ec14d",
+            "attempt_id": "2455e99eeb0f415484ae5051a0782a97",
+            "recipe": "freecadcmd",
+            "script_sha256": "44709b0e1bdf841ef2b7b4ca65ad4af629bb1464fd44462aa8dadcac82563517",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 66204,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 529.209,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r2\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r2\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 19,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 188.0000000819564,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "971bc79400e04cef81ef9c8e93c34f7a",
+            "attempt_id": "e110d8bf4ef24107a0831f639985e2e4",
+            "recipe": "freecadcmd",
+            "script_sha256": "a37796890846eae1422b0161b2c9686f11f77010c6fb66cb8eab857f09e4f1a0",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 11980,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 469.557,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r2\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r2\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 20,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.99999984912574,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 0.0
+            },
+            "cad_run_id": "868e008b88d04afc944cb6a4123e730c",
+            "attempt_id": "ee2b818406e54f5580cf9bf264d065c1",
+            "recipe": "freecadcmd",
+            "script_sha256": "e37a03a61366a3d3ce8e40d864e23914f4dcb777aa9459406f530e2f16cea13b",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 65104,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 524.055,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r2\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r2\\a3"
+        }
+      ],
+      "geometry_pass": false,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 63156,
+        "cached_input": 16640,
+        "uncached_input": 46516,
+        "output": 3408,
+        "reasoning": 459,
+        "total": 66564
+      },
+      "wall_ms": 72414.637,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 16640,
+        "uncached_input": 46516,
+        "cached_input_ratio": 0.2634745709037938,
+        "uncached_input_ratio": 0.7365254290962062
+      },
+      "final_code_summary": {
+        "sha256": "c4c9e107fef2fea1b31b2b3dae127687f4f268b93d3a4f4326364b1ab11d435e",
+        "line_count": 119,
+        "api_calls": [
+          "'Edge{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "body.Shape.isNull",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.isDerivedFrom",
+          "isinstance",
+          "len",
+          "linked_object",
+          "one_side",
+          "outer_edges.append",
+          "pad.isDerivedFrom",
+          "pocket.isDerivedFrom",
+          "range",
+          "rectangle",
+          "shape.isNull",
+          "shape.isValid",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-2-r2": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "If feature_chain is the sole failed predicate and feedback confirms completed execution and valid geometry, preserve the dimensions and focus the retry on feature types, Body membership, profile links, predecessor links, and final tip. Treat the aggregate failure as insufficient to identify any particular broken relationship."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code",
+          "measurements",
+          "script_completed",
+          "cad_exit_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 21,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.00000015087426,
+              "recompute": 0.0,
+              "probe": 31.999999890103936,
+              "save": 14.999999897554517
+            },
+            "cad_run_id": "10e9a2823ecb45c0947f33f61961f9e9",
+            "attempt_id": "46fd9bc0dc484dbabec73a3dc23c709d",
+            "recipe": "freecadcmd",
+            "script_sha256": "2ffefc783c2b7a1430d73ae6eda0446699e4ab9dab3be28fb11535ab8872987b",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 23772,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 533.832,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r2\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r2\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 22,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.99999984912574,
+              "recompute": 0.0,
+              "probe": 15.00000013038516,
+              "save": 15.999999828636646
+            },
+            "cad_run_id": "8fd00e2678834be9966671a7ee9bfe11",
+            "attempt_id": "783dbaaa61104e29ac5f72b82280e54c",
+            "recipe": "freecadcmd",
+            "script_sha256": "ee04a5c24918f8c91bd0bc9ecd9e2c421fad622930913cb25a7ed42f15deed52",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 52156,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 529.019,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r2\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r2\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 41698,
+        "cached_input": 0,
+        "uncached_input": 41698,
+        "output": 1944,
+        "reasoning": 312,
+        "total": 43642
+      },
+      "wall_ms": 39012.364,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 41698,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      },
+      "final_code_summary": {
+        "sha256": "7f83acfedfa368a405aec4eb5b3290c4bc1f245b957bd782e07ad15430509fdc",
+        "line_count": 103,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "inverse.multVec",
+          "len",
+          "outer_edges.append",
+          "range",
+          "rectangle",
+          "sketch.Placement.inverse",
+          "sketch.addConstraint",
+          "sketch.addGeometry",
+          "top_faces.append"
+        ]
+      }
+    },
+    "probe-3-r2": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 23,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 31.00000019185245,
+              "save": 0.0
+            },
+            "cad_run_id": "9810e4ae7ac44aedb365c5394696e7fe",
+            "attempt_id": "dc43367518d84174bd77ee1eacd38d7a",
+            "recipe": "freecadcmd",
+            "script_sha256": "21f12c02176b1d474fda668aa271c4f3755b1e6404b2b040bf4d756a84c7691a",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 62924,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 535.467,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r2\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r2\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 24,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 186.9999999180436,
+              "recompute": 0.0,
+              "probe": 31.00000019185245,
+              "save": 15.999999828636646
+            },
+            "cad_run_id": "4fc086c345464d699584c97959104811",
+            "attempt_id": "e1cb0d83ac7e4cc0a66955f3e3b51823",
+            "recipe": "freecadcmd",
+            "script_sha256": "03af80fb9f57c495048d93484d0893c6a08d5af10eb0355741a8f2497977afcd",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 61524,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 528.343,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r2\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r2\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 41404,
+        "cached_input": 13312,
+        "uncached_input": 28092,
+        "output": 2098,
+        "reasoning": 430,
+        "total": 43502
+      },
+      "wall_ms": 91351.009,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 13312,
+        "uncached_input": 28092,
+        "cached_input_ratio": 0.3215148294850739,
+        "uncached_input_ratio": 0.6784851705149261
+      },
+      "final_code_summary": {
+        "sha256": "2858eff4313ab2dd9de68e7f1d653f5da626f544917ccf193e7bd0168c701949",
+        "line_count": 116,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "len",
+          "one_sided",
+          "outer_top_edges.append",
+          "pocket_sketch.Placement.inverse",
+          "pocket_sketch.Placement.inverse().multiply",
+          "range",
+          "rectangle",
+          "setattr",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-1-r3": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "Before submitting the first attempt for a box-pocket-fillet task, verify that the returned Body contains a connected sketch-based additive feature, sketch-based Pocket, and Fillet; check their profile and predecessor links and the final Body tip. Correct solid geometry alone does not establish a correct feature chain."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 25,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "774309fa1fc741959864476fa917234f",
+            "attempt_id": "34da3dc6082342028ed9f1d48a4d9e35",
+            "recipe": "freecadcmd",
+            "script_sha256": "7accfddc0a100a2bfee7e715f7923dfcbeaed15407bddf82bd9536f0ef0dc8cc",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 49268,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "AssertionError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 474.025,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r3\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r3\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 26,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.99999984912574,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "59552d46b48f4232aaba95df5784ed55",
+            "attempt_id": "2a2279bfbe654587a78fa9302a6ebc96",
+            "recipe": "freecadcmd",
+            "script_sha256": "3574806e4919e640620940ca83bc099ff18a517baf2c8f62ccbedb4ed54472f9",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 47780,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 469.216,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r3\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r3\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 27,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 172.0000000204891,
+              "recompute": null,
+              "probe": null,
+              "save": null
+            },
+            "cad_run_id": "8a6fecf4b52a4157a723b5b73412df96",
+            "attempt_id": "e0e9d63c032449ca83547caf15de1236",
+            "recipe": "freecadcmd",
+            "script_sha256": "150920c47bffe42d81469e9f72c28f8943784a22e8eed2172b69916fd99c537d",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "build",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": false,
+            "probe_pass": null,
+            "probe_status": "not_run",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": null,
+            "predicate_diff": null,
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 52808,
+            "reference": null,
+            "document_closed": true,
+            "predicate_details": null,
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "error_type": "RuntimeError",
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 474.597,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r3\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-1-r3\\a3"
+        }
+      ],
+      "geometry_pass": false,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 63056,
+        "cached_input": 24192,
+        "uncached_input": 38864,
+        "output": 3122,
+        "reasoning": 376,
+        "total": 66178
+      },
+      "wall_ms": 65323.957,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 24192,
+        "uncached_input": 38864,
+        "cached_input_ratio": 0.3836589698046181,
+        "uncached_input_ratio": 0.6163410301953819
+      },
+      "final_code_summary": {
+        "sha256": "323e69a16ed5f177c0bcd44fe9f5a81c18441dc9cd76d37492960309ede1aa9e",
+        "line_count": 107,
+        "api_calls": [
+          "'Edge{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "feature.Shape.isNull",
+          "feature.Shape.isValid",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "pocket.Shape.isNull",
+          "range",
+          "rectangle",
+          "require",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-2-r3": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "low"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files.",
+          "If feature_chain is the sole failed predicate and feedback confirms completed execution and valid geometry, preserve the dimensions and focus the retry on feature types, Body membership, profile links, predecessor links, and final tip. Treat the aggregate failure as insufficient to identify any particular broken relationship."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code",
+          "measurements",
+          "script_completed",
+          "cad_exit_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 28,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.00000015087426,
+              "recompute": 0.0,
+              "probe": 31.999999890103936,
+              "save": 0.0
+            },
+            "cad_run_id": "2c2e56e3e0df448c8777bbf3e18ab574",
+            "attempt_id": "eb2b61d54129403ca669e49048d7ed96",
+            "recipe": "freecadcmd",
+            "script_sha256": "277f322d49773e1ad3bd33581006f6e801db74a8ee6ccff6fc06734e4dc84eee",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 3632,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 521.16,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r3\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r3\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 29,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "dba7eec770c94260bad0d9c891b2a033",
+            "attempt_id": "c705a65d5ee44e3090f64ded878ae78b",
+            "recipe": "freecadcmd",
+            "script_sha256": "d8bcc9cb50bab602f40c012e90bb7738c788e4b6c1a4d49703f9ba9d1015293e",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 60272,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 526.126,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r3\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r3\\a2"
+        },
+        {
+          "number": 3,
+          "llm_call_id": 30,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 16.00000006146729,
+              "save": 0.0
+            },
+            "cad_run_id": "4ec02b62e8574438aae439973b97d1bc",
+            "attempt_id": "10f25b8905e54a6d9c45f798e20d8d97",
+            "recipe": "freecadcmd",
+            "script_sha256": "fa67e576e85a8f2b3d9df0556d0d53be81cd1941ee27f7bfbede74fa5d096a02",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 592,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 629.973,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r3\\inputs\\a3-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-2-r3\\a3"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 3,
+      "tokens": {
+        "input": 63165,
+        "cached_input": 43008,
+        "uncached_input": 20157,
+        "output": 2782,
+        "reasoning": 271,
+        "total": 65947
+      },
+      "wall_ms": 63707.318,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 43008,
+        "uncached_input": 20157,
+        "cached_input_ratio": 0.6808834006174306,
+        "uncached_input_ratio": 0.3191165993825694
+      },
+      "final_code_summary": {
+        "sha256": "11ef118313963883633d0d2fa0f8a11ab6296b708d0ed66f920c707703ec9445",
+        "line_count": 113,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "len",
+          "outer_edges.append",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    },
+    "probe-3-r3": {
+      "harness": {
+        "id": "base-v0",
+        "executor": {
+          "model": "gpt-6.1-sol",
+          "reasoning_effort": "medium"
+        },
+        "rules": [
+          "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+          "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+          "Do not create, save, close or export documents. Do not run processes or access files."
+        ],
+        "snippets": [],
+        "max_attempts": 3,
+        "feedback_fields": [
+          "status",
+          "failed_phase",
+          "probe_status",
+          "predicate_diff",
+          "message_code"
+        ]
+      },
+      "attempts": [
+        {
+          "number": 1,
+          "llm_call_id": 31,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 187.99999984912574,
+              "recompute": 0.0,
+              "probe": 30.999999959021807,
+              "save": 16.00000006146729
+            },
+            "cad_run_id": "fd23d0c8cfe6453e816715d1b7d3d86c",
+            "attempt_id": "38a274eff49544e39376bdbc120f3236",
+            "recipe": "freecadcmd",
+            "script_sha256": "512041b4e395d98b706407d80ebfbfef9e9bf2718d29966d6792d624ff5c2ebe",
+            "source_sha256": null,
+            "status": "failed",
+            "failed_phase": "probe",
+            "code_owner": "script",
+            "next_actor": "sol",
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": false,
+            "probe_status": "predicate_fail",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 2,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [
+              "feature_chain"
+            ],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 55896,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [
+                {
+                  "predicate": "feature_chain",
+                  "sub_check_id": "feature_chain.aggregate",
+                  "expected": true,
+                  "actual": false
+                }
+              ],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null,
+            "message_code": "worker_failed"
+          },
+          "cad_wall_ms": 537.972,
+          "cad_exit_code": 1,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r3\\inputs\\a1-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r3\\a1"
+        },
+        {
+          "number": 2,
+          "llm_call_id": 32,
+          "result": {
+            "schema": "cad-harness.cad_run.v0",
+            "task_id": "A-box-pocket-fillet",
+            "geometry_ok": null,
+            "timings_ms": {
+              "build": 202.9999999795109,
+              "recompute": 0.0,
+              "probe": 16.00000006146729,
+              "save": 15.00000013038516
+            },
+            "cad_run_id": "f703e119158c4c6ba0db21cc137db653",
+            "attempt_id": "c0c359f3ca5047e198b3beb2a1cb9727",
+            "recipe": "freecadcmd",
+            "script_sha256": "e389215f0288a0e9c3d19699c5c697b4cb8f543b6c6f0856896f4408c755e6ab",
+            "source_sha256": null,
+            "status": "ok",
+            "failed_phase": null,
+            "code_owner": null,
+            "next_actor": null,
+            "cad_exit_code": 0,
+            "script_completed": true,
+            "probe_pass": true,
+            "probe_status": "pass",
+            "cleanup_status": "exited",
+            "removed_warning_lines": 0,
+            "measurements": {
+              "bound_box_mm": {
+                "x_min": -20.000000000000007,
+                "x_max": 20.000000000000163,
+                "y_min": -15.0,
+                "y_max": 15.000000000000174,
+                "z_min": 0.0,
+                "z_max": 20.0,
+                "x_length": 40.00000000000017,
+                "y_length": 30.000000000000174,
+                "z_length": 20.0
+              },
+              "volume_mm3": 22239.9556819442,
+              "area_mm2": 5364.637121611783,
+              "face_count": 15,
+              "solid_count": 1,
+              "is_valid": true
+            },
+            "predicate_diff": [],
+            "timeout_s": 300,
+            "artifacts": {
+              "stderr.txt": "stderr.txt",
+              "stdout.txt": "stdout.txt",
+              "model.FCStd": "model.FCStd",
+              "input.py": "input.py",
+              "worker-result.json": "worker-result.json",
+              "worker-events.jsonl": "worker-events.jsonl",
+              "owned-pid.json": "owned-pid.json",
+              "request.json": "request.json",
+              "user.cfg": "user.cfg",
+              "system.cfg": "system.cfg",
+              "events.jsonl": "events.jsonl",
+              "result.json": "result.json"
+            },
+            "owned_pid": 59304,
+            "reference": {
+              "volume_mm3": 22239.9556819442,
+              "volume_rule": "below_22500_and_within_1_percent",
+              "bbox_tolerance_mm": 0.1,
+              "face_count": 15,
+              "source": "runbook section 6; run02/run04/run05-cad.json"
+            },
+            "document_closed": true,
+            "predicate_details": {
+              "version": 1,
+              "task_id": "A-box-pocket-fillet",
+              "checks": [],
+              "truncated": false,
+              "omitted": 0
+            },
+            "editability_ok": null,
+            "skill_warnings": null,
+            "export_ms": null
+          },
+          "cad_wall_ms": 524.766,
+          "cad_exit_code": 0,
+          "script": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r3\\inputs\\a2-build.py",
+          "out_dir": "reports\\cad-run\\h2\\20261020T235259Z-1c8abd76\\probe-3-r3\\a2"
+        }
+      ],
+      "geometry_pass": true,
+      "attempt_count": 2,
+      "tokens": {
+        "input": 41388,
+        "cached_input": 22528,
+        "uncached_input": 18860,
+        "output": 1995,
+        "reasoning": 274,
+        "total": 43383
+      },
+      "wall_ms": 42257.911,
+      "included_in_comparison": true,
+      "cache": {
+        "cached_input": 22528,
+        "uncached_input": 18860,
+        "cached_input_ratio": 0.5443123610708418,
+        "uncached_input_ratio": 0.4556876389291582
+      },
+      "final_code_summary": {
+        "sha256": "df1d4bccd19b30ccdc4ece2516bfaab30ef464af63dc7c4e3a4aa5bf0a3415c9",
+        "line_count": 117,
+        "api_calls": [
+          "'Edge{}'.format",
+          "'Face{}'.format",
+          "App.Placement",
+          "App.Rotation",
+          "App.Vector",
+          "Part.LineSegment",
+          "RuntimeError",
+          "Sketcher.Constraint",
+          "abs",
+          "all",
+          "any",
+          "body.newObject",
+          "doc.addObject",
+          "doc.recompute",
+          "enumerate",
+          "fillet.Shape.isNull",
+          "fillet.Shape.isValid",
+          "getattr",
+          "len",
+          "one_sided",
+          "opening.Placement.inverse",
+          "opening.Placement.inverse().multiply",
+          "outer_top_edges.append",
+          "pad.Shape.isNull",
+          "pocket.Shape.isNull",
+          "range",
+          "rectangle",
+          "sketch.addConstraint",
+          "sketch.addGeometry"
+        ]
+      }
+    }
+  },
+  "groups": {
+    "run0": {
+      "n": 3,
+      "run_names": [
+        "run0-r1",
+        "run0-r2",
+        "run0-r3"
+      ],
+      "pass_count": 3,
+      "pass_rate": 1.0,
+      "geometry_pass": true,
+      "attempt_count": 6,
+      "tokens": {
+        "input": 126416,
+        "cached_input": 33024,
+        "uncached_input": 93392,
+        "output": 6168,
+        "reasoning": 643,
+        "total": 132584
+      },
+      "wall_ms": 126345.946,
+      "cache": {
+        "cached_input": 33024,
+        "uncached_input": 93392,
+        "cached_input_ratio": 0.26123275534742435,
+        "uncached_input_ratio": 0.7387672446525757
+      },
+      "infrastructure_failure": false,
+      "statistics": {
+        "attempts": {
+          "mean": 2,
+          "std": 0.0
+        },
+        "wall_ms": {
+          "mean": 42115.31533333333,
+          "std": 810.6949322755985
+        },
+        "tokens": {
+          "input": {
+            "mean": 42138.666666666664,
+            "std": 1062.328731294289
+          },
+          "cached_input": {
+            "mean": 11008,
+            "std": 4862.31549778498
+          },
+          "uncached_input": {
+            "mean": 31130.666666666668,
+            "std": 5554.16369342256
+          },
+          "output": {
+            "mean": 2056,
+            "std": 166.9520889357183
+          },
+          "reasoning": {
+            "mean": 214.33333333333334,
+            "std": 43.096790290383964
+          },
+          "total": {
+            "mean": 44194.666666666664,
+            "std": 1155.3373244785842
+          }
+        }
+      }
+    },
+    "probe-1": {
+      "n": 3,
+      "run_names": [
+        "probe-1-r1",
+        "probe-1-r2",
+        "probe-1-r3"
+      ],
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "geometry_pass": false,
+      "attempt_count": 9,
+      "tokens": {
+        "input": 189490,
+        "cached_input": 50048,
+        "uncached_input": 139442,
+        "output": 10357,
+        "reasoning": 1414,
+        "total": 199847
+      },
+      "wall_ms": 217601.643,
+      "cache": {
+        "cached_input": 50048,
+        "uncached_input": 139442,
+        "cached_input_ratio": 0.26411947860045387,
+        "uncached_input_ratio": 0.7358805213995461
+      },
+      "infrastructure_failure": false,
+      "statistics": {
+        "attempts": {
+          "mean": 3,
+          "std": 0.0
+        },
+        "wall_ms": {
+          "mean": 72533.881,
+          "std": 7270.279457817834
+        },
+        "tokens": {
+          "input": {
+            "mean": 63163.333333333336,
+            "std": 111.18153323881324
+          },
+          "cached_input": {
+            "mean": 16682.666666666668,
+            "std": 7488.091167536179
+          },
+          "uncached_input": {
+            "mean": 46480.666666666664,
+            "std": 7599.061608733892
+          },
+          "output": {
+            "mean": 3452.3333333333335,
+            "std": 354.5847336439251
+          },
+          "reasoning": {
+            "mean": 471.3333333333333,
+            "std": 102.06043960973975
+          },
+          "total": {
+            "mean": 66615.66666666667,
+            "std": 465.654736186945
+          }
+        }
+      }
+    },
+    "probe-2": {
+      "n": 3,
+      "run_names": [
+        "probe-2-r1",
+        "probe-2-r2",
+        "probe-2-r3"
+      ],
+      "pass_count": 2,
+      "pass_rate": 0.6666666666666666,
+      "geometry_pass": false,
+      "attempt_count": 8,
+      "tokens": {
+        "input": 168045,
+        "cached_input": 59904,
+        "uncached_input": 108141,
+        "output": 7476,
+        "reasoning": 832,
+        "total": 175521
+      },
+      "wall_ms": 158891.059,
+      "cache": {
+        "cached_input": 59904,
+        "uncached_input": 108141,
+        "cached_input_ratio": 0.35647594394358656,
+        "uncached_input_ratio": 0.6435240560564135
+      },
+      "infrastructure_failure": false,
+      "statistics": {
+        "attempts": {
+          "mean": 2.6666666666666665,
+          "std": 0.5773502691896257
+        },
+        "wall_ms": {
+          "mean": 52963.68633333333,
+          "std": 12656.111086162855
+        },
+        "tokens": {
+          "input": {
+            "mean": 56015,
+            "std": 12398.888619549738
+          },
+          "cached_input": {
+            "mean": 19968,
+            "std": 21667.9464647668
+          },
+          "uncached_input": {
+            "mean": 36047,
+            "std": 13951.039782037753
+          },
+          "output": {
+            "mean": 2492,
+            "std": 474.8515557519002
+          },
+          "reasoning": {
+            "mean": 277.3333333333333,
+            "std": 31.9739477283199
+          },
+          "total": {
+            "mean": 58507,
+            "std": 12873.469811981538
+          }
+        }
+      }
+    },
+    "probe-3": {
+      "n": 3,
+      "run_names": [
+        "probe-3-r1",
+        "probe-3-r2",
+        "probe-3-r3"
+      ],
+      "pass_count": 3,
+      "pass_rate": 1.0,
+      "geometry_pass": true,
+      "attempt_count": 6,
+      "tokens": {
+        "input": 124212,
+        "cached_input": 62464,
+        "uncached_input": 61748,
+        "output": 6110,
+        "reasoning": 1076,
+        "total": 130322
+      },
+      "wall_ms": 179078.36000000002,
+      "cache": {
+        "cached_input": 62464,
+        "uncached_input": 61748,
+        "cached_input_ratio": 0.5028821691946028,
+        "uncached_input_ratio": 0.4971178308053972
+      },
+      "infrastructure_failure": false,
+      "statistics": {
+        "attempts": {
+          "mean": 2,
+          "std": 0.0
+        },
+        "wall_ms": {
+          "mean": 59692.78666666667,
+          "std": 27463.80819568791
+        },
+        "tokens": {
+          "input": {
+            "mean": 41404,
+            "std": 16.0
+          },
+          "cached_input": {
+            "mean": 20821.333333333332,
+            "std": 6818.127993322898
+          },
+          "uncached_input": {
+            "mean": 20582.666666666668,
+            "std": 6813.339073709259
+          },
+          "output": {
+            "mean": 2036.6666666666667,
+            "std": 54.24327915358117
+          },
+          "reasoning": {
+            "mean": 358.6666666666667,
+            "std": 78.85006869580604
+          },
+          "total": {
+            "mean": 43440.666666666664,
+            "std": 59.58467364459869
+          }
+        }
+      }
+    }
+  },
+  "execution_order": [
+    "warmup",
+    "run0-r1",
+    "run0-r2",
+    "run0-r3",
+    "probe-1-r1",
+    "probe-2-r1",
+    "probe-3-r1",
+    "probe-1-r2",
+    "probe-2-r2",
+    "probe-3-r2",
+    "probe-1-r3",
+    "probe-2-r3",
+    "probe-3-r3"
+  ],
+  "llm_calls": [
+    {
+      "call_id": 1,
+      "role": "warmup/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 22010,
+        "cached_input": 8320,
+        "uncached_input": 13690,
+        "output": 895,
+        "reasoning": 93,
+        "total": 22905
+      },
+      "wall_ms": 20664.165,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\1",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 8320,
+        "uncached_input": 13690,
+        "cached_input_ratio": 0.3780099954566106,
+        "uncached_input_ratio": 0.6219900045433894
+      }
+    },
+    {
+      "call_id": 2,
+      "role": "warmup/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21197,
+        "cached_input": 8320,
+        "uncached_input": 12877,
+        "output": 1238,
+        "reasoning": 173,
+        "total": 22435
+      },
+      "wall_ms": 25131.096,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\2",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 8320,
+        "uncached_input": 12877,
+        "cached_input_ratio": 0.3925083738264849,
+        "uncached_input_ratio": 0.607491626173515
+      }
+    },
+    {
+      "call_id": 3,
+      "role": "run0-r1/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20271,
+        "cached_input": 0,
+        "uncached_input": 20271,
+        "output": 840,
+        "reasoning": 83,
+        "total": 21111
+      },
+      "wall_ms": 19330.694,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\3",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 20271,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 4,
+      "role": "run0-r1/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21158,
+        "cached_input": 9216,
+        "uncached_input": 11942,
+        "output": 1024,
+        "reasoning": 98,
+        "total": 22182
+      },
+      "wall_ms": 20960.678,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\4",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 11942,
+        "cached_input_ratio": 0.4355799224879478,
+        "uncached_input_ratio": 0.5644200775120523
+      }
+    },
+    {
+      "call_id": 5,
+      "role": "run0-r2/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20271,
+        "cached_input": 7296,
+        "uncached_input": 12975,
+        "output": 1064,
+        "reasoning": 126,
+        "total": 21335
+      },
+      "wall_ms": 23751.843,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\5",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 7296,
+        "uncached_input": 12975,
+        "cached_input_ratio": 0.3599230427704603,
+        "uncached_input_ratio": 0.6400769572295397
+      }
+    },
+    {
+      "call_id": 6,
+      "role": "run0-r2/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21356,
+        "cached_input": 9216,
+        "uncached_input": 12140,
+        "output": 1103,
+        "reasoning": 137,
+        "total": 22459
+      },
+      "wall_ms": 17049.544,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\6",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 12140,
+        "cached_input_ratio": 0.431541487169882,
+        "uncached_input_ratio": 0.5684585128301181
+      }
+    },
+    {
+      "call_id": 7,
+      "role": "run0-r3/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20271,
+        "cached_input": 0,
+        "uncached_input": 20271,
+        "output": 1054,
+        "reasoning": 130,
+        "total": 21325
+      },
+      "wall_ms": 20976.469,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\7",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 20271,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 8,
+      "role": "run0-r3/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 23089,
+        "cached_input": 7296,
+        "uncached_input": 15793,
+        "output": 1083,
+        "reasoning": 69,
+        "total": 24172
+      },
+      "wall_ms": 20892.789,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\8",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 7296,
+        "uncached_input": 15793,
+        "cached_input_ratio": 0.3159946294772402,
+        "uncached_input_ratio": 0.6840053705227598
+      }
+    },
+    {
+      "call_id": 9,
+      "role": "propose",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 30070,
+        "cached_input": 13312,
+        "uncached_input": 16758,
+        "output": 518,
+        "reasoning": 190,
+        "total": 30588
+      },
+      "wall_ms": 17026.404,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\9",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 13312,
+        "uncached_input": 16758,
+        "cached_input_ratio": 0.44270036581310274,
+        "uncached_input_ratio": 0.5572996341868972
+      }
+    },
+    {
+      "call_id": 10,
+      "role": "probe-1-r1/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20330,
+        "cached_input": 0,
+        "uncached_input": 20330,
+        "output": 1119,
+        "reasoning": 175,
+        "total": 21449
+      },
+      "wall_ms": 24058.243,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\10",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 20330,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 11,
+      "role": "probe-1-r1/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21431,
+        "cached_input": 9216,
+        "uncached_input": 12215,
+        "output": 1192,
+        "reasoning": 169,
+        "total": 22623
+      },
+      "wall_ms": 24461.973,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\11",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 12215,
+        "cached_input_ratio": 0.43003126312351264,
+        "uncached_input_ratio": 0.5699687368764874
+      }
+    },
+    {
+      "call_id": 12,
+      "role": "probe-1-r1/a3",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21517,
+        "cached_input": 0,
+        "uncached_input": 21517,
+        "output": 1516,
+        "reasoning": 235,
+        "total": 23033
+      },
+      "wall_ms": 29690.97,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\12",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 21517,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 13,
+      "role": "probe-2-r1/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20326,
+        "cached_input": 16896,
+        "uncached_input": 3430,
+        "output": 906,
+        "reasoning": 107,
+        "total": 21232
+      },
+      "wall_ms": 19316.003,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\13",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 16896,
+        "uncached_input": 3430,
+        "cached_input_ratio": 0.8312506149758929,
+        "uncached_input_ratio": 0.16874938502410708
+      }
+    },
+    {
+      "call_id": 14,
+      "role": "probe-2-r1/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21421,
+        "cached_input": 0,
+        "uncached_input": 21421,
+        "output": 1020,
+        "reasoning": 80,
+        "total": 22441
+      },
+      "wall_ms": 19678.325,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\14",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 21421,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 15,
+      "role": "probe-2-r1/a3",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21435,
+        "cached_input": 0,
+        "uncached_input": 21435,
+        "output": 824,
+        "reasoning": 62,
+        "total": 22259
+      },
+      "wall_ms": 15636.662,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\15",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 21435,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 16,
+      "role": "probe-3-r1/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 20271,
+        "cached_input": 13312,
+        "uncached_input": 6959,
+        "output": 849,
+        "reasoning": 102,
+        "total": 21120
+      },
+      "wall_ms": 19783.756,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\16",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 13312,
+        "uncached_input": 6959,
+        "cached_input_ratio": 0.6567016920724187,
+        "uncached_input_ratio": 0.3432983079275813
+      }
+    },
+    {
+      "call_id": 17,
+      "role": "probe-3-r1/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 21149,
+        "cached_input": 13312,
+        "uncached_input": 7837,
+        "output": 1168,
+        "reasoning": 270,
+        "total": 22317
+      },
+      "wall_ms": 24554.315,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\17",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 13312,
+        "uncached_input": 7837,
+        "cached_input_ratio": 0.6294387441486595,
+        "uncached_input_ratio": 0.3705612558513405
+      }
+    },
+    {
+      "call_id": 18,
+      "role": "probe-1-r2/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20330,
+        "cached_input": 8320,
+        "uncached_input": 12010,
+        "output": 1061,
+        "reasoning": 194,
+        "total": 21391
+      },
+      "wall_ms": 23985.516,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\18",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 8320,
+        "uncached_input": 12010,
+        "cached_input_ratio": 0.40924741760944416,
+        "uncached_input_ratio": 0.5907525823905558
+      }
+    },
+    {
+      "call_id": 19,
+      "role": "probe-1-r2/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21330,
+        "cached_input": 0,
+        "uncached_input": 21330,
+        "output": 1210,
+        "reasoning": 195,
+        "total": 22540
+      },
+      "wall_ms": 24553.531,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\19",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 21330,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 20,
+      "role": "probe-1-r2/a3",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21496,
+        "cached_input": 8320,
+        "uncached_input": 13176,
+        "output": 1137,
+        "reasoning": 70,
+        "total": 22633
+      },
+      "wall_ms": 22340.28,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\20",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 8320,
+        "uncached_input": 13176,
+        "cached_input_ratio": 0.3870487532564198,
+        "uncached_input_ratio": 0.6129512467435803
+      }
+    },
+    {
+      "call_id": 21,
+      "role": "probe-2-r2/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20326,
+        "cached_input": 0,
+        "uncached_input": 20326,
+        "output": 825,
+        "reasoning": 72,
+        "total": 21151
+      },
+      "wall_ms": 16799.737,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\21",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 20326,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 22,
+      "role": "probe-2-r2/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21372,
+        "cached_input": 0,
+        "uncached_input": 21372,
+        "output": 1119,
+        "reasoning": 240,
+        "total": 22491
+      },
+      "wall_ms": 21142.455,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\22",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 21372,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 23,
+      "role": "probe-3-r2/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 20271,
+        "cached_input": 0,
+        "uncached_input": 20271,
+        "output": 924,
+        "reasoning": 185,
+        "total": 21195
+      },
+      "wall_ms": 21799.468,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\23",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 20271,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 24,
+      "role": "probe-3-r2/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 21133,
+        "cached_input": 13312,
+        "uncached_input": 7821,
+        "output": 1174,
+        "reasoning": 245,
+        "total": 22307
+      },
+      "wall_ms": 68479.338,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\24",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 13312,
+        "uncached_input": 7821,
+        "cached_input_ratio": 0.6299152983485544,
+        "uncached_input_ratio": 0.3700847016514456
+      }
+    },
+    {
+      "call_id": 25,
+      "role": "probe-1-r3/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20330,
+        "cached_input": 0,
+        "uncached_input": 20330,
+        "output": 933,
+        "reasoning": 131,
+        "total": 21263
+      },
+      "wall_ms": 20088.013,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\25",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 0,
+        "uncached_input": 20330,
+        "cached_input_ratio": 0.0,
+        "uncached_input_ratio": 1.0
+      }
+    },
+    {
+      "call_id": 26,
+      "role": "probe-1-r3/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21251,
+        "cached_input": 7296,
+        "uncached_input": 13955,
+        "output": 1110,
+        "reasoning": 140,
+        "total": 22361
+      },
+      "wall_ms": 22379.712,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\26",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 7296,
+        "uncached_input": 13955,
+        "cached_input_ratio": 0.34332501999905884,
+        "uncached_input_ratio": 0.6566749800009412
+      }
+    },
+    {
+      "call_id": 27,
+      "role": "probe-1-r3/a3",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21475,
+        "cached_input": 16896,
+        "uncached_input": 4579,
+        "output": 1079,
+        "reasoning": 105,
+        "total": 22554
+      },
+      "wall_ms": 21426.494,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\27",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 16896,
+        "uncached_input": 4579,
+        "cached_input_ratio": 0.7867753201396973,
+        "uncached_input_ratio": 0.2132246798603027
+      }
+    },
+    {
+      "call_id": 28,
+      "role": "probe-2-r3/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 20326,
+        "cached_input": 9216,
+        "uncached_input": 11110,
+        "output": 836,
+        "reasoning": 72,
+        "total": 21162
+      },
+      "wall_ms": 17925.094,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\28",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 11110,
+        "cached_input_ratio": 0.4534094263504871,
+        "uncached_input_ratio": 0.5465905736495129
+      }
+    },
+    {
+      "call_id": 29,
+      "role": "probe-2-r3/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21395,
+        "cached_input": 16896,
+        "uncached_input": 4499,
+        "output": 874,
+        "reasoning": 66,
+        "total": 22269
+      },
+      "wall_ms": 22880.636,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\29",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 16896,
+        "uncached_input": 4499,
+        "cached_input_ratio": 0.7897172236503857,
+        "uncached_input_ratio": 0.21028277634961434
+      }
+    },
+    {
+      "call_id": 30,
+      "role": "probe-2-r3/a3",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "low",
+      "tokens": {
+        "input": 21444,
+        "cached_input": 16896,
+        "uncached_input": 4548,
+        "output": 1072,
+        "reasoning": 133,
+        "total": 22516
+      },
+      "wall_ms": 21212.494,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\30",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 16896,
+        "uncached_input": 4548,
+        "cached_input_ratio": 0.7879127028539452,
+        "uncached_input_ratio": 0.2120872971460548
+      }
+    },
+    {
+      "call_id": 31,
+      "role": "probe-3-r3/a1",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 20271,
+        "cached_input": 13312,
+        "uncached_input": 6959,
+        "output": 815,
+        "reasoning": 88,
+        "total": 21086
+      },
+      "wall_ms": 17391.668,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\31",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 13312,
+        "uncached_input": 6959,
+        "cached_input_ratio": 0.6567016920724187,
+        "uncached_input_ratio": 0.3432983079275813
+      }
+    },
+    {
+      "call_id": 32,
+      "role": "probe-3-r3/a2",
+      "requested_model": "gpt-6.1-sol",
+      "model": "gpt-6.1-sol",
+      "model_source": "explicit_cli_argument",
+      "model_reason": "runtime_model_not_reported; explicit -m selection recorded",
+      "cache_phase": "post_warmup",
+      "reasoning_effort": "medium",
+      "tokens": {
+        "input": 21117,
+        "cached_input": 9216,
+        "uncached_input": 11901,
+        "output": 1180,
+        "reasoning": 186,
+        "total": 22297
+      },
+      "wall_ms": 23796.106,
+      "log_dir": "reports\\h2\\20261020T235259Z-1c8abd76\\llm\\32",
+      "exit_code": 0,
+      "error": null,
+      "cache": {
+        "cached_input": 9216,
+        "uncached_input": 11901,
+        "cached_input_ratio": 0.4364256286404319,
+        "uncached_input_ratio": 0.5635743713595681
+      }
+    }
+  ],
+  "stages": {
+    "warmup": {
+      "status": "completed",
+      "wall_ms": 49744.304
+    },
+    "run0": {
+      "status": "completed",
+      "wall_ms": 126350.657
+    },
+    "propose": {
+      "status": "completed",
+      "wall_ms": 17028.7
+    },
+    "probe": {
+      "status": "completed",
+      "wall_ms": 555586.219
+    },
+    "compose": {
+      "status": "completed",
+      "wall_ms": 0.015
+    },
+    "library": {
+      "status": "completed",
+      "wall_ms": 1.419
+    }
+  },
+  "proposals": [
+    {
+      "edit": [
+        {
+          "op": "add_rule",
+          "value": "Before submitting the first attempt for a box-pocket-fillet task, verify that the returned Body contains a connected sketch-based additive feature, sketch-based Pocket, and Fillet; check their profile and predecessor links and the final Body tip. Correct solid geometry alone does not establish a correct feature chain."
+        }
+      ],
+      "rationale": "All three baseline first attempts failed only feature_chain despite matching the successful geometry. An explicit first-attempt review targets the repeated extra attempt. Prior structural guidance had mixed results, so improvement remains unproven.",
+      "variant": "probe-1",
+      "decision": {
+        "rule": "D15",
+        "verdict": "unsupported",
+        "qualifying_metrics": [],
+        "reason": "lower_pass_rate"
+      },
+      "verdict": "unsupported"
+    },
+    {
+      "edit": [
+        {
+          "op": "set_feedback_fields",
+          "value": [
+            "status",
+            "failed_phase",
+            "probe_status",
+            "predicate_diff",
+            "message_code",
+            "measurements",
+            "script_completed",
+            "cad_exit_code"
+          ]
+        },
+        {
+          "op": "add_rule",
+          "value": "If feature_chain is the sole failed predicate and feedback confirms completed execution and valid geometry, preserve the dimensions and focus the retry on feature types, Body membership, profile links, predecessor links, and final tip. Treat the aggregate failure as insufficient to identify any particular broken relationship."
+        }
+      ],
+      "rationale": "Helps retries distinguish structural failures from execution or geometry failures. Every baseline recovered without changing measured geometry. Earlier feedback experiments showed mixed results, so this is a targeted diagnostic hypothesis.",
+      "variant": "probe-2",
+      "decision": {
+        "rule": "D15",
+        "verdict": "unsupported",
+        "qualifying_metrics": [],
+        "reason": "lower_pass_rate"
+      },
+      "verdict": "unsupported"
+    },
+    {
+      "edit": [
+        {
+          "op": "set_reasoning_effort",
+          "value": "medium"
+        }
+      ],
+      "rationale": "Tests whether additional reasoning alone reduces the consistent first-attempt structural failure. The prior unsupported experiment combined medium reasoning with added guidance, leaving its independent effect unknown. Retain only if fewer retries outweigh the added reasoning cost.",
+      "variant": "probe-3",
+      "decision": {
+        "rule": "D15",
+        "verdict": "unsupported",
+        "qualifying_metrics": [],
+        "reason": "no_saving_exceeds_ten_percent_and_noise"
+      },
+      "verdict": "unsupported"
+    }
+  ],
+  "library_entries": [
+    {
+      "entry_id": "31dbef8f5d364e1b81f4cedd3f6c42cb",
+      "domain": "cad-freecad",
+      "task_id": "A-box-pocket-fillet",
+      "cycle_id": "20261020T235259Z-1c8abd76",
+      "created_at": "2026-10-21T00:05:28.073432+00:00",
+      "edit": [
+        {
+          "op": "add_rule",
+          "value": "Before submitting the first attempt for a box-pocket-fillet task, verify that the returned Body contains a connected sketch-based additive feature, sketch-based Pocket, and Fillet; check their profile and predecessor links and the final Body tip. Correct solid geometry alone does not establish a correct feature chain."
+        }
+      ],
+      "verdict": "unsupported",
+      "contrast": {
+        "run0": {
+          "n": 3,
+          "run_names": [
+            "run0-r1",
+            "run0-r2",
+            "run0-r3"
+          ],
+          "geometry_pass": true,
+          "pass_count": 3,
+          "pass_rate": 1.0,
+          "attempt_count": 6,
+          "tokens": {
+            "input": 126416,
+            "cached_input": 33024,
+            "uncached_input": 93392,
+            "output": 6168,
+            "reasoning": 643,
+            "total": 132584
+          },
+          "wall_ms": 126345.946,
+          "statistics": {
+            "attempts": {
+              "mean": 2,
+              "std": 0.0
+            },
+            "wall_ms": {
+              "mean": 42115.31533333333,
+              "std": 810.6949322755985
+            },
+            "tokens": {
+              "input": {
+                "mean": 42138.666666666664,
+                "std": 1062.328731294289
+              },
+              "cached_input": {
+                "mean": 11008,
+                "std": 4862.31549778498
+              },
+              "uncached_input": {
+                "mean": 31130.666666666668,
+                "std": 5554.16369342256
+              },
+              "output": {
+                "mean": 2056,
+                "std": 166.9520889357183
+              },
+              "reasoning": {
+                "mean": 214.33333333333334,
+                "std": 43.096790290383964
+              },
+              "total": {
+                "mean": 44194.666666666664,
+                "std": 1155.3373244785842
+              }
+            }
+          },
+          "cache": {
+            "cached_input": 33024,
+            "uncached_input": 93392,
+            "cached_input_ratio": 0.26123275534742435,
+            "uncached_input_ratio": 0.7387672446525757
+          }
+        },
+        "probe": {
+          "n": 3,
+          "run_names": [
+            "probe-1-r1",
+            "probe-1-r2",
+            "probe-1-r3"
+          ],
+          "geometry_pass": false,
+          "pass_count": 0,
+          "pass_rate": 0.0,
+          "attempt_count": 9,
+          "tokens": {
+            "input": 189490,
+            "cached_input": 50048,
+            "uncached_input": 139442,
+            "output": 10357,
+            "reasoning": 1414,
+            "total": 199847
+          },
+          "wall_ms": 217601.643,
+          "statistics": {
+            "attempts": {
+              "mean": 3,
+              "std": 0.0
+            },
+            "wall_ms": {
+              "mean": 72533.881,
+              "std": 7270.279457817834
+            },
+            "tokens": {
+              "input": {
+                "mean": 63163.333333333336,
+                "std": 111.18153323881324
+              },
+              "cached_input": {
+                "mean": 16682.666666666668,
+                "std": 7488.091167536179
+              },
+              "uncached_input": {
+                "mean": 46480.666666666664,
+                "std": 7599.061608733892
+              },
+              "output": {
+                "mean": 3452.3333333333335,
+                "std": 354.5847336439251
+              },
+              "reasoning": {
+                "mean": 471.3333333333333,
+                "std": 102.06043960973975
+              },
+              "total": {
+                "mean": 66615.66666666667,
+                "std": 465.654736186945
+              }
+            }
+          },
+          "cache": {
+            "cached_input": 50048,
+            "uncached_input": 139442,
+            "cached_input_ratio": 0.26411947860045387,
+            "uncached_input_ratio": 0.7358805213995461
+          }
+        }
+      },
+      "decision": {
+        "rule": "D15",
+        "verdict": "unsupported",
+        "qualifying_metrics": [],
+        "reason": "lower_pass_rate"
+      },
+      "lesson": "All three baseline first attempts failed only feature_chain despite matching the successful geometry. An explicit first-attempt review targets the repeated extra attempt. Prior structural guidance had mixed results, so improvement remains unproven. Measured verdict: unsupported; run0={\"n\": 3, \"run_names\": [\"run0-r1\", \"run0-r2\", \"run0-r3\"], \"geometry_pass\": true, \"pass_count\": 3, \"pass_rate\": 1.0, \"attempt_count\": 6, \"tokens\": {\"input\": 126416, \"cached_input\": 33024, \"uncached_input\": 93392, \"output\": 6168, \"reasoning\": 643, \"total\": 132584}, \"wall_ms\": 126345.946, \"statistics\": {\"attempts\": {\"mean\": 2, \"std\": 0.0}, \"wall_ms\": {\"mean\": 42115.31533333333, \"std\": 810.6949322755985}, \"tokens\": {\"input\": {\"mean\": 42138.666666666664, \"std\": 1062.328731294289}, \"cached_input\": {\"mean\": 11008, \"std\": 4862.31549778498}, \"uncached_input\": {\"mean\": 31130.666666666668, \"std\": 5554.16369342256}, \"output\": {\"mean\": 2056, \"std\": 166.9520889357183}, \"reasoning\": {\"mean\": 214.33333333333334, \"std\": 43.096790290383964}, \"total\": {\"mean\": 44194.666666666664, \"std\": 1155.3373244785842}}}, \"cache\": {\"cached_input\": 33024, \"uncached_input\": 93392, \"cached_input_ratio\": 0.26123275534742435, \"uncached_input_ratio\": 0.7387672446525757}}; probe={\"n\": 3, \"run_names\": [\"probe-1-r1\", \"probe-1-r2\", \"probe-1-r3\"], \"geometry_pass\": false, \"pass_count\": 0, \"pass_rate\": 0.0, \"attempt_count\": 9, \"tokens\": {\"input\": 189490, \"cached_input\": 50048, \"uncached_input\": 139442, \"output\": 10357, \"reasoning\": 1414, \"total\": 199847}, \"wall_ms\": 217601.643, \"statistics\": {\"attempts\": {\"mean\": 3, \"std\": 0.0}, \"wall_ms\": {\"mean\": 72533.881, \"std\": 7270.279457817834}, \"tokens\": {\"input\": {\"mean\": 63163.333333333336, \"std\": 111.18153323881324}, \"cached_input\": {\"mean\": 16682.666666666668, \"std\": 7488.091167536179}, \"uncached_input\": {\"mean\": 46480.666666666664, \"std\": 7599.061608733892}, \"output\": {\"mean\": 3452.3333333333335, \"std\": 354.5847336439251}, \"reasoning\": {\"mean\": 471.3333333333333, \"std\": 102.06043960973975}, \"total\": {\"mean\": 66615.66666666667, \"std\": 465.654736186945}}}, \"cache\": {\"cached_input\": 50048, \"uncached_input\": 139442, \"cached_input_ratio\": 0.26411947860045387, \"uncached_input_ratio\": 0.7358805213995461}}.",
+      "adopted_in_composed": false
+    },
+    {
+      "entry_id": "5de61f88e98b45c5b90d3da261bb01a2",
+      "domain": "cad-freecad",
+      "task_id": "A-box-pocket-fillet",
+      "cycle_id": "20261020T235259Z-1c8abd76",
+      "created_at": "2026-10-21T00:05:28.073432+00:00",
+      "edit": [
+        {
+          "op": "set_feedback_fields",
+          "value": [
+            "status",
+            "failed_phase",
+            "probe_status",
+            "predicate_diff",
+            "message_code",
+            "measurements",
+            "script_completed",
+            "cad_exit_code"
+          ]
+        },
+        {
+          "op": "add_rule",
+          "value": "If feature_chain is the sole failed predicate and feedback confirms completed execution and valid geometry, preserve the dimensions and focus the retry on feature types, Body membership, profile links, predecessor links, and final tip. Treat the aggregate failure as insufficient to identify any particular broken relationship."
+        }
+      ],
+      "verdict": "unsupported",
+      "contrast": {
+        "run0": {
+          "n": 3,
+          "run_names": [
+            "run0-r1",
+            "run0-r2",
+            "run0-r3"
+          ],
+          "geometry_pass": true,
+          "pass_count": 3,
+          "pass_rate": 1.0,
+          "attempt_count": 6,
+          "tokens": {
+            "input": 126416,
+            "cached_input": 33024,
+            "uncached_input": 93392,
+            "output": 6168,
+            "reasoning": 643,
+            "total": 132584
+          },
+          "wall_ms": 126345.946,
+          "statistics": {
+            "attempts": {
+              "mean": 2,
+              "std": 0.0
+            },
+            "wall_ms": {
+              "mean": 42115.31533333333,
+              "std": 810.6949322755985
+            },
+            "tokens": {
+              "input": {
+                "mean": 42138.666666666664,
+                "std": 1062.328731294289
+              },
+              "cached_input": {
+                "mean": 11008,
+                "std": 4862.31549778498
+              },
+              "uncached_input": {
+                "mean": 31130.666666666668,
+                "std": 5554.16369342256
+              },
+              "output": {
+                "mean": 2056,
+                "std": 166.9520889357183
+              },
+              "reasoning": {
+                "mean": 214.33333333333334,
+                "std": 43.096790290383964
+              },
+              "total": {
+                "mean": 44194.666666666664,
+                "std": 1155.3373244785842
+              }
+            }
+          },
+          "cache": {
+            "cached_input": 33024,
+            "uncached_input": 93392,
+            "cached_input_ratio": 0.26123275534742435,
+            "uncached_input_ratio": 0.7387672446525757
+          }
+        },
+        "probe": {
+          "n": 3,
+          "run_names": [
+            "probe-2-r1",
+            "probe-2-r2",
+            "probe-2-r3"
+          ],
+          "geometry_pass": false,
+          "pass_count": 2,
+          "pass_rate": 0.6666666666666666,
+          "attempt_count": 8,
+          "tokens": {
+            "input": 168045,
+            "cached_input": 59904,
+            "uncached_input": 108141,
+            "output": 7476,
+            "reasoning": 832,
+            "total": 175521
+          },
+          "wall_ms": 158891.059,
+          "statistics": {
+            "attempts": {
+              "mean": 2.6666666666666665,
+              "std": 0.5773502691896257
+            },
+            "wall_ms": {
+              "mean": 52963.68633333333,
+              "std": 12656.111086162855
+            },
+            "tokens": {
+              "input": {
+                "mean": 56015,
+                "std": 12398.888619549738
+              },
+              "cached_input": {
+                "mean": 19968,
+                "std": 21667.9464647668
+              },
+              "uncached_input": {
+                "mean": 36047,
+                "std": 13951.039782037753
+              },
+              "output": {
+                "mean": 2492,
+                "std": 474.8515557519002
+              },
+              "reasoning": {
+                "mean": 277.3333333333333,
+                "std": 31.9739477283199
+              },
+              "total": {
+                "mean": 58507,
+                "std": 12873.469811981538
+              }
+            }
+          },
+          "cache": {
+            "cached_input": 59904,
+            "uncached_input": 108141,
+            "cached_input_ratio": 0.35647594394358656,
+            "uncached_input_ratio": 0.6435240560564135
+          }
+        }
+      },
+      "decision": {
+        "rule": "D15",
+        "verdict": "unsupported",
+        "qualifying_metrics": [],
+        "reason": "lower_pass_rate"
+      },
+      "lesson": "Helps retries distinguish structural failures from execution or geometry failures. Every baseline recovered without changing measured geometry. Earlier feedback experiments showed mixed results, so this is a targeted diagnostic hypothesis. Measured verdict: unsupported; run0={\"n\": 3, \"run_names\": [\"run0-r1\", \"run0-r2\", \"run0-r3\"], \"geometry_pass\": true, \"pass_count\": 3, \"pass_rate\": 1.0, \"attempt_count\": 6, \"tokens\": {\"input\": 126416, \"cached_input\": 33024, \"uncached_input\": 93392, \"output\": 6168, \"reasoning\": 643, \"total\": 132584}, \"wall_ms\": 126345.946, \"statistics\": {\"attempts\": {\"mean\": 2, \"std\": 0.0}, \"wall_ms\": {\"mean\": 42115.31533333333, \"std\": 810.6949322755985}, \"tokens\": {\"input\": {\"mean\": 42138.666666666664, \"std\": 1062.328731294289}, \"cached_input\": {\"mean\": 11008, \"std\": 4862.31549778498}, \"uncached_input\": {\"mean\": 31130.666666666668, \"std\": 5554.16369342256}, \"output\": {\"mean\": 2056, \"std\": 166.9520889357183}, \"reasoning\": {\"mean\": 214.33333333333334, \"std\": 43.096790290383964}, \"total\": {\"mean\": 44194.666666666664, \"std\": 1155.3373244785842}}}, \"cache\": {\"cached_input\": 33024, \"uncached_input\": 93392, \"cached_input_ratio\": 0.26123275534742435, \"uncached_input_ratio\": 0.7387672446525757}}; probe={\"n\": 3, \"run_names\": [\"probe-2-r1\", \"probe-2-r2\", \"probe-2-r3\"], \"geometry_pass\": false, \"pass_count\": 2, \"pass_rate\": 0.6666666666666666, \"attempt_count\": 8, \"tokens\": {\"input\": 168045, \"cached_input\": 59904, \"uncached_input\": 108141, \"output\": 7476, \"reasoning\": 832, \"total\": 175521}, \"wall_ms\": 158891.059, \"statistics\": {\"attempts\": {\"mean\": 2.6666666666666665, \"std\": 0.5773502691896257}, \"wall_ms\": {\"mean\": 52963.68633333333, \"std\": 12656.111086162855}, \"tokens\": {\"input\": {\"mean\": 56015, \"std\": 12398.888619549738}, \"cached_input\": {\"mean\": 19968, \"std\": 21667.9464647668}, \"uncached_input\": {\"mean\": 36047, \"std\": 13951.039782037753}, \"output\": {\"mean\": 2492, \"std\": 474.8515557519002}, \"reasoning\": {\"mean\": 277.3333333333333, \"std\": 31.9739477283199}, \"total\": {\"mean\": 58507, \"std\": 12873.469811981538}}}, \"cache\": {\"cached_input\": 59904, \"uncached_input\": 108141, \"cached_input_ratio\": 0.35647594394358656, \"uncached_input_ratio\": 0.6435240560564135}}.",
+      "adopted_in_composed": false
+    },
+    {
+      "entry_id": "79e6c3e71b2f441999bfd473cbd1cefc",
+      "domain": "cad-freecad",
+      "task_id": "A-box-pocket-fillet",
+      "cycle_id": "20261020T235259Z-1c8abd76",
+      "created_at": "2026-10-21T00:05:28.074943+00:00",
+      "edit": [
+        {
+          "op": "set_reasoning_effort",
+          "value": "medium"
+        }
+      ],
+      "verdict": "unsupported",
+      "contrast": {
+        "run0": {
+          "n": 3,
+          "run_names": [
+            "run0-r1",
+            "run0-r2",
+            "run0-r3"
+          ],
+          "geometry_pass": true,
+          "pass_count": 3,
+          "pass_rate": 1.0,
+          "attempt_count": 6,
+          "tokens": {
+            "input": 126416,
+            "cached_input": 33024,
+            "uncached_input": 93392,
+            "output": 6168,
+            "reasoning": 643,
+            "total": 132584
+          },
+          "wall_ms": 126345.946,
+          "statistics": {
+            "attempts": {
+              "mean": 2,
+              "std": 0.0
+            },
+            "wall_ms": {
+              "mean": 42115.31533333333,
+              "std": 810.6949322755985
+            },
+            "tokens": {
+              "input": {
+                "mean": 42138.666666666664,
+                "std": 1062.328731294289
+              },
+              "cached_input": {
+                "mean": 11008,
+                "std": 4862.31549778498
+              },
+              "uncached_input": {
+                "mean": 31130.666666666668,
+                "std": 5554.16369342256
+              },
+              "output": {
+                "mean": 2056,
+                "std": 166.9520889357183
+              },
+              "reasoning": {
+                "mean": 214.33333333333334,
+                "std": 43.096790290383964
+              },
+              "total": {
+                "mean": 44194.666666666664,
+                "std": 1155.3373244785842
+              }
+            }
+          },
+          "cache": {
+            "cached_input": 33024,
+            "uncached_input": 93392,
+            "cached_input_ratio": 0.26123275534742435,
+            "uncached_input_ratio": 0.7387672446525757
+          }
+        },
+        "probe": {
+          "n": 3,
+          "run_names": [
+            "probe-3-r1",
+            "probe-3-r2",
+            "probe-3-r3"
+          ],
+          "geometry_pass": true,
+          "pass_count": 3,
+          "pass_rate": 1.0,
+          "attempt_count": 6,
+          "tokens": {
+            "input": 124212,
+            "cached_input": 62464,
+            "uncached_input": 61748,
+            "output": 6110,
+            "reasoning": 1076,
+            "total": 130322
+          },
+          "wall_ms": 179078.36000000002,
+          "statistics": {
+            "attempts": {
+              "mean": 2,
+              "std": 0.0
+            },
+            "wall_ms": {
+              "mean": 59692.78666666667,
+              "std": 27463.80819568791
+            },
+            "tokens": {
+              "input": {
+                "mean": 41404,
+                "std": 16.0
+              },
+              "cached_input": {
+                "mean": 20821.333333333332,
+                "std": 6818.127993322898
+              },
+              "uncached_input": {
+                "mean": 20582.666666666668,
+                "std": 6813.339073709259
+              },
+              "output": {
+                "mean": 2036.6666666666667,
+                "std": 54.24327915358117
+              },
+              "reasoning": {
+                "mean": 358.6666666666667,
+                "std": 78.85006869580604
+              },
+              "total": {
+                "mean": 43440.666666666664,
+                "std": 59.58467364459869
+              }
+            }
+          },
+          "cache": {
+            "cached_input": 62464,
+            "uncached_input": 61748,
+            "cached_input_ratio": 0.5028821691946028,
+            "uncached_input_ratio": 0.4971178308053972
+          }
+        }
+      },
+      "decision": {
+        "rule": "D15",
+        "verdict": "unsupported",
+        "qualifying_metrics": [],
+        "reason": "no_saving_exceeds_ten_percent_and_noise"
+      },
+      "lesson": "Tests whether additional reasoning alone reduces the consistent first-attempt structural failure. The prior unsupported experiment combined medium reasoning with added guidance, leaving its independent effect unknown. Retain only if fewer retries outweigh the added reasoning cost. Measured verdict: unsupported; run0={\"n\": 3, \"run_names\": [\"run0-r1\", \"run0-r2\", \"run0-r3\"], \"geometry_pass\": true, \"pass_count\": 3, \"pass_rate\": 1.0, \"attempt_count\": 6, \"tokens\": {\"input\": 126416, \"cached_input\": 33024, \"uncached_input\": 93392, \"output\": 6168, \"reasoning\": 643, \"total\": 132584}, \"wall_ms\": 126345.946, \"statistics\": {\"attempts\": {\"mean\": 2, \"std\": 0.0}, \"wall_ms\": {\"mean\": 42115.31533333333, \"std\": 810.6949322755985}, \"tokens\": {\"input\": {\"mean\": 42138.666666666664, \"std\": 1062.328731294289}, \"cached_input\": {\"mean\": 11008, \"std\": 4862.31549778498}, \"uncached_input\": {\"mean\": 31130.666666666668, \"std\": 5554.16369342256}, \"output\": {\"mean\": 2056, \"std\": 166.9520889357183}, \"reasoning\": {\"mean\": 214.33333333333334, \"std\": 43.096790290383964}, \"total\": {\"mean\": 44194.666666666664, \"std\": 1155.3373244785842}}}, \"cache\": {\"cached_input\": 33024, \"uncached_input\": 93392, \"cached_input_ratio\": 0.26123275534742435, \"uncached_input_ratio\": 0.7387672446525757}}; probe={\"n\": 3, \"run_names\": [\"probe-3-r1\", \"probe-3-r2\", \"probe-3-r3\"], \"geometry_pass\": true, \"pass_count\": 3, \"pass_rate\": 1.0, \"attempt_count\": 6, \"tokens\": {\"input\": 124212, \"cached_input\": 62464, \"uncached_input\": 61748, \"output\": 6110, \"reasoning\": 1076, \"total\": 130322}, \"wall_ms\": 179078.36000000002, \"statistics\": {\"attempts\": {\"mean\": 2, \"std\": 0.0}, \"wall_ms\": {\"mean\": 59692.78666666667, \"std\": 27463.80819568791}, \"tokens\": {\"input\": {\"mean\": 41404, \"std\": 16.0}, \"cached_input\": {\"mean\": 20821.333333333332, \"std\": 6818.127993322898}, \"uncached_input\": {\"mean\": 20582.666666666668, \"std\": 6813.339073709259}, \"output\": {\"mean\": 2036.6666666666667, \"std\": 54.24327915358117}, \"reasoning\": {\"mean\": 358.6666666666667, \"std\": 78.85006869580604}, \"total\": {\"mean\": 43440.666666666664, \"std\": 59.58467364459869}}}, \"cache\": {\"cached_input\": 62464, \"uncached_input\": 61748, \"cached_input_ratio\": 0.5028821691946028, \"uncached_input_ratio\": 0.4971178308053972}}.",
+      "adopted_in_composed": false
+    }
+  ],
+  "prior_library_record_count": 9,
+  "prior_library_count": 6,
+  "composition": {
+    "supported": [],
+    "adopted": [],
+    "fallback": false,
+    "selected_run": "run0",
+    "harness": {
+      "id": "base-v0",
+      "executor": {
+        "model": "gpt-6.1-sol",
+        "reasoning_effort": "low"
+      },
+      "rules": [
+        "Use FreeCAD 1.1.4 Python APIs and PartDesign features.",
+        "Define build(doc), construct in the supplied document, and return the PartDesign Body.",
+        "Do not create, save, close or export documents. Do not run processes or access files."
+      ],
+      "snippets": [],
+      "max_attempts": 3,
+      "feedback_fields": [
+        "status",
+        "failed_phase",
+        "probe_status",
+        "predicate_diff",
+        "message_code"
+      ]
+    }
+  },
+  "geometry_pass": true,
+  "pass_rate": 1.0,
+  "completed_at": "2026-10-21T00:05:28.075461+00:00",
+  "wall_ms": 748720.93,
+  "tokens": {
+    "input": 681440,
+    "cached_input": 235392,
+    "uncached_input": 446048,
+    "output": 32762,
+    "reasoning": 4421,
+    "total": 714202
+  },
+  "comparison_tokens": {
+    "input": 608163,
+    "cached_input": 205440,
+    "uncached_input": 402723,
+    "output": 30111,
+    "reasoning": 3965,
+    "total": 638274
+  },
+  "cache": {
+    "cached_input": 235392,
+    "uncached_input": 446048,
+    "cached_input_ratio": 0.3454332002817563,
+    "uncached_input_ratio": 0.6545667997182437
+  },
+  "comparison_wall_ms": 681917.008,
+  "llm_call_count": 32,
+  "cad_wall_ms": 19397.199
+}

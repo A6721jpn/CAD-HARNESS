@@ -1,0 +1,2 @@
+{"kind": "ready", "owned_pid": 11980, "gui_up": 0, "ts": "2026-10-21T00:00:03.294870+00:00"}
+{"kind": "event", "phase": "build", "event": "build_finished", "status": "failed", "ts": "2026-10-21T00:00:03.482100+00:00"}

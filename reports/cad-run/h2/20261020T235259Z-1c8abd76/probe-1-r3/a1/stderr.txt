@@ -1,0 +1,4 @@
+The 'Midplane' property being set for the extrusion of BaseSketch is deprecated and has been replaced by the 'SideType' property in FeatureExtrude. Please update your script, this property will be removed in a future version.
+Deprecated Midplane property was explicitly set to False: assuming SideType='One side'
+The 'Midplane' property being set for the extrusion of PocketSketch is deprecated and has been replaced by the 'SideType' property in FeatureExtrude. Please update your script, this property will be removed in a future version.
+Deprecated Midplane property was explicitly set to False: assuming SideType='One side'

@@ -16,3 +16,5 @@
 2026-10-21 00:34 h2lead: #2 分析受領（Run0 pass、候補 3 件すべて同等で支持なし、#1 教訓 3 件の受け渡しを確認）。MVP 合格条件 3 つ充足で完了 (D11, D12)。commit/push。
 2026-10-21 08:50 h2lead: ユーザー承認 08:47 の N=3 反復比較に着手。D13-D15 を決定し、h2sol に依頼 #5。
 2026-10-21 08:54 h2lead: #5 受領（--repeats 実装、stub 17件成功、model=gpt-6.1-sol）。commit/push し、実走#3 (N=3) を起動。
+2026-10-21 09:06 h2lead: 実走#3 (N=3) 完了 cycle=20261020T235259Z-1c8abd76 completed pass_rate=1.0 model=gpt-6.1-sol tokens_total=714202 wall=749s。分析を h2sol に依頼。
+2026-10-21 09:08 h2lead: N=3 結果: ベース 3/3 44.2k±1.2k tok 42.1±0.8s / c1 0/3 66.6k 72.5s / c2 2/3 58.5k±12.9k 53.0±12.7s / c3 3/3 43.4k±0.1k 59.7±27.5s。全案 unsupported、改善なし、ベース採用。キャッシュ比率は 26-50% でそろわず (D16, D17)。commit/push して待機。
