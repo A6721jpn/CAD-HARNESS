@@ -1,0 +1,12 @@
+{
+  "paid_model_calls": 0,
+  "out": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-01",
+  "started_at": "2026-10-22T06:28:37.483396+00:00",
+  "status": "FAIL",
+  "com_exit": 1,
+  "error_type": "RuntimeError",
+  "error": "COM_stage_failed:blind_pocket_failed",
+  "finished_at": "2026-10-22T06:28:41.804974+00:00",
+  "total_seconds": 4.321416399907321,
+  "manual_recovery_required": false
+}

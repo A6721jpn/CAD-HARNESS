@@ -1,0 +1,760 @@
+{
+  "status": "PASS",
+  "paid_model_calls": 0,
+  "at": "2026-10-22T06:32:03.917345+00:00",
+  "solidworks_revision": "34.3.0",
+  "solidworks_pid": 41448,
+  "initial_documents": 0,
+  "template": "C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2026\\templates\\部品.prtdot",
+  "stages": {
+    "positive": {
+      "build_s": 5.623525399947539,
+      "selected_outer_edges_SI": [
+        [
+          [
+            0.02,
+            0.015,
+            0.02
+          ],
+          [
+            -0.02,
+            0.015,
+            0.02
+          ]
+        ],
+        [
+          [
+            0.02,
+            -0.015,
+            0.02
+          ],
+          [
+            0.02,
+            0.015,
+            0.02
+          ]
+        ],
+        [
+          [
+            -0.02,
+            -0.015,
+            0.02
+          ],
+          [
+            0.02,
+            -0.015,
+            0.02
+          ]
+        ],
+        [
+          [
+            -0.02,
+            0.015,
+            0.02
+          ],
+          [
+            -0.02,
+            -0.015,
+            0.02
+          ]
+        ]
+      ],
+      "history": {
+        "features": [
+          {
+            "name": "ｺﾒﾝﾄ",
+            "type": "CommentsFolder"
+          },
+          {
+            "name": "お気に入り",
+            "type": "FavoriteFolder"
+          },
+          {
+            "name": "履歴",
+            "type": "HistoryFolder"
+          },
+          {
+            "name": "選択ｾｯﾄ",
+            "type": "SelectionSetFolder"
+          },
+          {
+            "name": "ｾﾝｻｰ",
+            "type": "SensorFolder"
+          },
+          {
+            "name": "ﾃﾞｻﾞｲﾝ ﾊﾞｲﾝﾀﾞｰ",
+            "type": "DocsFolder"
+          },
+          {
+            "name": "ｱﾉﾃｰﾄ ｱｲﾃﾑ",
+            "type": "DetailCabinet"
+          },
+          {
+            "name": "ｻｰﾌｪｽ ﾎﾞﾃﾞｨ",
+            "type": "SurfaceBodyFolder"
+          },
+          {
+            "name": "ｿﾘｯﾄﾞ ﾎﾞﾃﾞｨ",
+            "type": "SolidBodyFolder"
+          },
+          {
+            "name": "照明とｶﾒﾗ",
+            "type": "EnvFolder"
+          },
+          {
+            "name": "ﾏｰｸｱｯﾌﾟ",
+            "type": "InkMarkupFolder"
+          },
+          {
+            "name": "関係式",
+            "type": "EqnFolder"
+          },
+          {
+            "name": "材料 <指定なし>",
+            "type": "MaterialFolder"
+          },
+          {
+            "name": "正面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "平面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "右側面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "原点",
+            "type": "OriginProfileFeature"
+          },
+          {
+            "name": "ｽｹｯﾁ1",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Boss",
+            "type": "Extrusion"
+          },
+          {
+            "name": "ｽｹｯﾁ2",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Pocket",
+            "type": "ICE"
+          },
+          {
+            "name": "M0_TopR3",
+            "type": "Fillet"
+          }
+        ],
+        "driving_mm": {
+          "M0_Boss": 20.0,
+          "M0_Pocket": 5.0,
+          "M0_TopR3": 3.0
+        }
+      },
+      "mass": {
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI_density_1": [
+          -1.0228174306070803e-18,
+          4.463203333558169e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          2.224000702814264e-05,
+          2.414906107825438e-09,
+          3.771291514290561e-09,
+          4.823360835741221e-09,
+          6.475694624985762e-15,
+          2.8423315757545394e-26,
+          -1.102193588007919e-25
+        ],
+        "role": "secondary_cross_check_only"
+      },
+      "native": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\positive.sldprt",
+        "sha256": "9abee1e433f9bc4808a97a649dffd440e5394bf2d56da349d989ae605fe3d5d2",
+        "bytes": 67059,
+        "errors": 0,
+        "warnings": 0
+      },
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\before-reopen.step",
+        "sha256": "3ea31af32cbe97d7caa172f49859b57f3ec77a05a7d28dca60ede86b37ff54cb",
+        "bytes": 34614,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    "reopened": {
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\reopened.step",
+        "sha256": "33d2ee0ee2e108414c28db696a754b9a941198bf9b61e4c027a7076bff51bcee",
+        "bytes": 34596,
+        "errors": 0,
+        "warnings": 0
+      },
+      "history": {
+        "features": [
+          {
+            "name": "ｺﾒﾝﾄ",
+            "type": "CommentsFolder"
+          },
+          {
+            "name": "お気に入り",
+            "type": "FavoriteFolder"
+          },
+          {
+            "name": "履歴",
+            "type": "HistoryFolder"
+          },
+          {
+            "name": "選択ｾｯﾄ",
+            "type": "SelectionSetFolder"
+          },
+          {
+            "name": "ｾﾝｻｰ",
+            "type": "SensorFolder"
+          },
+          {
+            "name": "ﾃﾞｻﾞｲﾝ ﾊﾞｲﾝﾀﾞｰ",
+            "type": "DocsFolder"
+          },
+          {
+            "name": "ｱﾉﾃｰﾄ ｱｲﾃﾑ",
+            "type": "DetailCabinet"
+          },
+          {
+            "name": "ｻｰﾌｪｽ ﾎﾞﾃﾞｨ",
+            "type": "SurfaceBodyFolder"
+          },
+          {
+            "name": "ｿﾘｯﾄﾞ ﾎﾞﾃﾞｨ",
+            "type": "SolidBodyFolder"
+          },
+          {
+            "name": "照明とｶﾒﾗ",
+            "type": "EnvFolder"
+          },
+          {
+            "name": "ﾏｰｸｱｯﾌﾟ",
+            "type": "InkMarkupFolder"
+          },
+          {
+            "name": "関係式",
+            "type": "EqnFolder"
+          },
+          {
+            "name": "材料 <指定なし>",
+            "type": "MaterialFolder"
+          },
+          {
+            "name": "正面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "平面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "右側面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "原点",
+            "type": "OriginProfileFeature"
+          },
+          {
+            "name": "ｽｹｯﾁ1",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Boss",
+            "type": "Extrusion"
+          },
+          {
+            "name": "ｽｹｯﾁ2",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Pocket",
+            "type": "ICE"
+          },
+          {
+            "name": "M0_TopR3",
+            "type": "Fillet"
+          }
+        ],
+        "driving_mm": {
+          "M0_Boss": 20.0,
+          "M0_Pocket": 5.0,
+          "M0_TopR3": 3.0
+        }
+      },
+      "mass": {
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI_density_1": [
+          -1.0414141111635726e-18,
+          5.230316406513479e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          2.224000702814264e-05,
+          2.414906107825438e-09,
+          3.771291514290561e-09,
+          4.8233608357412215e-09,
+          6.475694624985762e-15,
+          3.745865365911647e-26,
+          -1.0634314282844459e-25
+        ],
+        "role": "secondary_cross_check_only"
+      },
+      "seconds": 2.326065900037065
+    },
+    "edited": {
+      "expected_height_mm": 21.0,
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\edited.step",
+        "sha256": "9a0c22524fcfbd2c6997abb744d85fe641c36bd05949ce5cfa9bb55753f08a5f",
+        "bytes": 34590,
+        "errors": 0,
+        "warnings": 0
+      },
+      "history": {
+        "features": [
+          {
+            "name": "ｺﾒﾝﾄ",
+            "type": "CommentsFolder"
+          },
+          {
+            "name": "お気に入り",
+            "type": "FavoriteFolder"
+          },
+          {
+            "name": "履歴",
+            "type": "HistoryFolder"
+          },
+          {
+            "name": "選択ｾｯﾄ",
+            "type": "SelectionSetFolder"
+          },
+          {
+            "name": "ｾﾝｻｰ",
+            "type": "SensorFolder"
+          },
+          {
+            "name": "ﾃﾞｻﾞｲﾝ ﾊﾞｲﾝﾀﾞｰ",
+            "type": "DocsFolder"
+          },
+          {
+            "name": "ｱﾉﾃｰﾄ ｱｲﾃﾑ",
+            "type": "DetailCabinet"
+          },
+          {
+            "name": "ｻｰﾌｪｽ ﾎﾞﾃﾞｨ",
+            "type": "SurfaceBodyFolder"
+          },
+          {
+            "name": "ｿﾘｯﾄﾞ ﾎﾞﾃﾞｨ",
+            "type": "SolidBodyFolder"
+          },
+          {
+            "name": "照明とｶﾒﾗ",
+            "type": "EnvFolder"
+          },
+          {
+            "name": "ﾏｰｸｱｯﾌﾟ",
+            "type": "InkMarkupFolder"
+          },
+          {
+            "name": "関係式",
+            "type": "EqnFolder"
+          },
+          {
+            "name": "材料 <指定なし>",
+            "type": "MaterialFolder"
+          },
+          {
+            "name": "正面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "平面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "右側面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "原点",
+            "type": "OriginProfileFeature"
+          },
+          {
+            "name": "ｽｹｯﾁ1",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Boss",
+            "type": "Extrusion"
+          },
+          {
+            "name": "ｽｹｯﾁ2",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Pocket",
+            "type": "ICE"
+          },
+          {
+            "name": "M0_TopR3",
+            "type": "Fillet"
+          }
+        ],
+        "driving_mm": {
+          "M0_Boss": 21.0,
+          "M0_Pocket": 5.0,
+          "M0_TopR3": 3.0
+        }
+      },
+      "mass": {
+        "volume_mm3": 23440.002202834905,
+        "area_mm2": 5504.644012833842,
+        "raw_SI_density_1": [
+          -2.1173563177899e-18,
+          -1.7975472906237173e-18,
+          0.009879100550754367,
+          2.3440002202834905e-05,
+          0.005504644012833842,
+          2.3440002202834905e-05,
+          2.616262169701732e-09,
+          4.042647280270695e-09,
+          5.0733593162805015e-09,
+          6.5736995146216414e-15,
+          -1.3421333577477885e-25,
+          1.9075144173363412e-26
+        ],
+        "role": "secondary_cross_check_only"
+      },
+      "seconds": 0.9263081999961287
+    },
+    "restored": {
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\restored.step",
+        "sha256": "1df30048590c43865e4259b5cb1db4acd1b8df4868fe4df2e245993a926257b5",
+        "bytes": 34582,
+        "errors": 0,
+        "warnings": 0
+      },
+      "history": {
+        "features": [
+          {
+            "name": "ｺﾒﾝﾄ",
+            "type": "CommentsFolder"
+          },
+          {
+            "name": "お気に入り",
+            "type": "FavoriteFolder"
+          },
+          {
+            "name": "履歴",
+            "type": "HistoryFolder"
+          },
+          {
+            "name": "選択ｾｯﾄ",
+            "type": "SelectionSetFolder"
+          },
+          {
+            "name": "ｾﾝｻｰ",
+            "type": "SensorFolder"
+          },
+          {
+            "name": "ﾃﾞｻﾞｲﾝ ﾊﾞｲﾝﾀﾞｰ",
+            "type": "DocsFolder"
+          },
+          {
+            "name": "ｱﾉﾃｰﾄ ｱｲﾃﾑ",
+            "type": "DetailCabinet"
+          },
+          {
+            "name": "ｻｰﾌｪｽ ﾎﾞﾃﾞｨ",
+            "type": "SurfaceBodyFolder"
+          },
+          {
+            "name": "ｿﾘｯﾄﾞ ﾎﾞﾃﾞｨ",
+            "type": "SolidBodyFolder"
+          },
+          {
+            "name": "照明とｶﾒﾗ",
+            "type": "EnvFolder"
+          },
+          {
+            "name": "ﾏｰｸｱｯﾌﾟ",
+            "type": "InkMarkupFolder"
+          },
+          {
+            "name": "関係式",
+            "type": "EqnFolder"
+          },
+          {
+            "name": "材料 <指定なし>",
+            "type": "MaterialFolder"
+          },
+          {
+            "name": "正面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "平面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "右側面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "原点",
+            "type": "OriginProfileFeature"
+          },
+          {
+            "name": "ｽｹｯﾁ1",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Boss",
+            "type": "Extrusion"
+          },
+          {
+            "name": "ｽｹｯﾁ2",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Pocket",
+            "type": "ICE"
+          },
+          {
+            "name": "M0_TopR3",
+            "type": "Fillet"
+          }
+        ],
+        "driving_mm": {
+          "M0_Boss": 20.0,
+          "M0_Pocket": 5.0,
+          "M0_TopR3": 3.0
+        }
+      },
+      "mass": {
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI_density_1": [
+          -9.670273889376032e-19,
+          5.183824705122248e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          2.224000702814264e-05,
+          2.414906107825438e-09,
+          3.771291514290561e-09,
+          4.8233608357412215e-09,
+          6.475694624985762e-15,
+          3.8475806132362736e-26,
+          -1.1044568269275406e-25
+        ],
+        "role": "secondary_cross_check_only"
+      },
+      "seconds": 0.9131867999676615
+    },
+    "negative": {
+      "build_s": 5.426817299798131,
+      "selected_outer_edges_SI": [
+        [
+          [
+            0.02,
+            0.015,
+            0.02
+          ],
+          [
+            -0.02,
+            0.015,
+            0.02
+          ]
+        ],
+        [
+          [
+            0.02,
+            -0.015,
+            0.02
+          ],
+          [
+            0.02,
+            0.015,
+            0.02
+          ]
+        ],
+        [
+          [
+            -0.02,
+            -0.015,
+            0.02
+          ],
+          [
+            0.02,
+            -0.015,
+            0.02
+          ]
+        ],
+        [
+          [
+            -0.02,
+            0.015,
+            0.02
+          ],
+          [
+            -0.02,
+            -0.015,
+            0.02
+          ]
+        ]
+      ],
+      "history": {
+        "features": [
+          {
+            "name": "ｺﾒﾝﾄ",
+            "type": "CommentsFolder"
+          },
+          {
+            "name": "お気に入り",
+            "type": "FavoriteFolder"
+          },
+          {
+            "name": "履歴",
+            "type": "HistoryFolder"
+          },
+          {
+            "name": "選択ｾｯﾄ",
+            "type": "SelectionSetFolder"
+          },
+          {
+            "name": "ｾﾝｻｰ",
+            "type": "SensorFolder"
+          },
+          {
+            "name": "ﾃﾞｻﾞｲﾝ ﾊﾞｲﾝﾀﾞｰ",
+            "type": "DocsFolder"
+          },
+          {
+            "name": "ｱﾉﾃｰﾄ ｱｲﾃﾑ",
+            "type": "DetailCabinet"
+          },
+          {
+            "name": "ｻｰﾌｪｽ ﾎﾞﾃﾞｨ",
+            "type": "SurfaceBodyFolder"
+          },
+          {
+            "name": "ｿﾘｯﾄﾞ ﾎﾞﾃﾞｨ",
+            "type": "SolidBodyFolder"
+          },
+          {
+            "name": "照明とｶﾒﾗ",
+            "type": "EnvFolder"
+          },
+          {
+            "name": "ﾏｰｸｱｯﾌﾟ",
+            "type": "InkMarkupFolder"
+          },
+          {
+            "name": "関係式",
+            "type": "EqnFolder"
+          },
+          {
+            "name": "材料 <指定なし>",
+            "type": "MaterialFolder"
+          },
+          {
+            "name": "正面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "平面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "右側面",
+            "type": "RefPlane"
+          },
+          {
+            "name": "原点",
+            "type": "OriginProfileFeature"
+          },
+          {
+            "name": "ｽｹｯﾁ1",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Boss",
+            "type": "Extrusion"
+          },
+          {
+            "name": "ｽｹｯﾁ2",
+            "type": "ProfileFeature"
+          },
+          {
+            "name": "M0_Pocket",
+            "type": "ICE"
+          },
+          {
+            "name": "M0_TopR3",
+            "type": "Fillet"
+          }
+        ],
+        "driving_mm": {
+          "M0_Boss": 20.0,
+          "M0_Pocket": 6.0,
+          "M0_TopR3": 3.0
+        }
+      },
+      "mass": {
+        "volume_mm3": 21940.007028142634,
+        "area_mm2": 5434.644012833841,
+        "raw_SI_density_1": [
+          -1.131057904619624e-18,
+          5.301833927904487e-19,
+          0.009315230642832037,
+          2.1940007028142635e-05,
+          0.0054346440128338405,
+          2.1940007028142635e-05,
+          2.4013003422022474e-09,
+          3.7533107486673686e-09,
+          4.80773583574122e-09,
+          6.475694624985762e-15,
+          3.470595019497202e-26,
+          -1.0552960330146106e-25
+        ],
+        "role": "secondary_cross_check_only"
+      },
+      "native": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\wrong-depth.sldprt",
+        "sha256": "c02d2bbac0d3bf4eccf4c12b683b55d42c98f6a85d9d6aca26043954d4001866",
+        "bytes": 67417,
+        "errors": 0,
+        "warnings": 0
+      },
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-20261022-03\\wrong-depth.step",
+        "sha256": "ed99e97f9fdac6963537bf4a43c731e72e48f82f3642e117402a5ade8c922655",
+        "bytes": 34602,
+        "errors": 0,
+        "warnings": 0
+      }
+    }
+  },
+  "final_documents": 0,
+  "original_native_unchanged": true,
+  "COM_state_unknown": false,
+  "seconds": 19.296455099945888
+}

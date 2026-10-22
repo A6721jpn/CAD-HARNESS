@@ -1,0 +1,10 @@
+{
+  "schema": "cad-harness.build-spec.v1",
+  "family": "rect_prism",
+  "units": "mm",
+  "frame": "world",
+  "regions": [{"bounds": [-20, 20, -15, 15, 0, 20]}],
+  "pockets": [{"bounds": [-10, 10, -7.5, 7.5], "top_z": 20, "depth": 6}],
+  "holes": [],
+  "finish": {"kind": "fillet", "size": 3, "target": "top_outer"}
+}
