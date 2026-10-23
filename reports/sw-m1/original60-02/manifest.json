@@ -1,0 +1,36 @@
+{
+  "schema": "sw-harness.M1-portability.v1",
+  "scope": "mechanical_gold_portability_only_not_model_evaluation",
+  "paid_model_calls": 0,
+  "source_sha256": {
+    "tools/sw_m1.py": "c4056d7e0203749df08bbc0ced824610671fa2bc626c043b9d7519d84fee58ae",
+    "tools/sw_m1_inputs.py": "53f3cb4ea7b90811da57474bbd0849c72ce213eef5a0c5f0612c0cbee06066ef",
+    "tools/sw_m1_build.py": "a961e298c07038deebc5ed1607989bff912fcc5977d82c13c85195d1923d9b82",
+    "tools/sw_m1_judge.py": "456dae92d4fb755a948e0cd24975dbfb4ef8c6c616b0c346f46997c7b3de4b2b",
+    "tools/sw_m1_distance.py": "f9512b5be0e9c6e8ed88f0416301d3936365826a8aeb61e25308a27d547bf49e",
+    "tools/sw_m1_saved.py": "92a773affb4af565be08eb8244def0b307f37a7db108cf303b346d8ed02b84d9",
+    "tools/sw_m0.py": "d3c4faca5dbd85090013e606f40e6f8ad577a21f956f0e192eb1e28dd8ba1170",
+    "tools/sw_m0_distance.py": "b0e1f23b42cc4dd07c06f944522b377d2eba3bafba08a9fb6f4b0380f21d65e5",
+    "tools/cad_verify_probe.py": "9490412af39079b27a316f58e7037aabf97af0f0971d490af35c27e29de7b0de",
+    "tools/cad_verify_v3_probe.py": "f09968471aa5002361ed5829d0930f486e963be5ed12ece820ebb97b0e759994",
+    "tools/cad_verify_v4_s3_judges.py": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1"
+  },
+  "input_packet_sha256": "5cbce70361ba765cae0e68beabdabb40ec7713b647f9e93e38574a29822adec6",
+  "original_v4_result_changed": false,
+  "started_at": "2026-10-23T03:39:34.431377+00:00",
+  "saved_run_manifest_sha256": "cbc4f360e4c2580ba072990ed304a06619d0f97f615308984aece7617f51163c",
+  "original_source_sha256": {
+    "tools/sw_m1.py": "fbeef41564bab543ac26acfb9470466ad13a049174ebff20a62678e548b54050",
+    "tools/sw_m1_inputs.py": "53f3cb4ea7b90811da57474bbd0849c72ce213eef5a0c5f0612c0cbee06066ef",
+    "tools/sw_m1_build.py": "8f878ab3c48c20981524f505a094cb688c4cae728b69babf54557b6aa5455927",
+    "tools/sw_m1_judge.py": "c5c3b91c8505241c646dc903bb49e8b63eeff8fc323299f157499b35d608662f",
+    "tools/sw_m1_distance.py": "f9512b5be0e9c6e8ed88f0416301d3936365826a8aeb61e25308a27d547bf49e",
+    "tools/sw_m0_distance.py": "b0e1f23b42cc4dd07c06f944522b377d2eba3bafba08a9fb6f4b0380f21d65e5",
+    "tools/cad_verify_probe.py": "9490412af39079b27a316f58e7037aabf97af0f0971d490af35c27e29de7b0de",
+    "tools/cad_verify_v3_probe.py": "f09968471aa5002361ed5829d0930f486e963be5ed12ece820ebb97b0e759994",
+    "tools/cad_verify_v4_s3_judges.py": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1"
+  },
+  "original_execution_seconds": 844.0847700000741,
+  "timing_scope": "original_execution_plus_incremental_recheck",
+  "new_native_generation": false
+}

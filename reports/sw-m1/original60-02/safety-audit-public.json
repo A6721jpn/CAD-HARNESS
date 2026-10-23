@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "paid_model_calls": 0,
+  "case_evidence_records": 55,
+  "owned_COM_sessions": 54,
+  "SW_pids": [
+    41448
+  ],
+  "all_initial_and_final_documents_zero_and_state_known": true,
+  "native_files_checked": 54,
+  "all_native_hashes_unchanged": true,
+  "STEP_files_checked": 222,
+  "all_STEP_hashes_match": true,
+  "gold_files_checked": 20,
+  "all_gold_hashes_unchanged": true
+}
