@@ -1,0 +1,827 @@
+{
+  "status": "PASS",
+  "paid_model_calls": 0,
+  "at": "2026-10-23T01:08:31.650121+00:00",
+  "FreeCAD": [
+    "1",
+    "1",
+    "4",
+    "20260928 (Git shallow)",
+    "Unknown",
+    "2026/09/28 13:46:34",
+    "(HEAD detached at 4fd3bf320)",
+    "4fd3bf320d9566a27e60069fc8387448aaa3a094"
+  ],
+  "OCCT": "7.8.1",
+  "unchanged_G2_judge_sha256": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1",
+  "control_definition_sha256": "c00d7274e5ed3ed375cd7faef33edbcde6c12c8e346d94d11a67b8e03acaa0cc",
+  "surfaces": {
+    "g2": {
+      "G2": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103827445695e-07,
+            6.502012738035578e-06,
+            3.0762484609174425e-05
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle",
+            "1/mm"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "maximum_curvature_per_mm": 0.012,
+          "metric": "g2_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "G1": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103827445695e-07,
+            6.502012738035578e-06
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "metric": "g1_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "whole_surface_deviation": {
+        "status": "PASS",
+        "measured": {
+          "lower_mm": 0.0,
+          "upper_mm": 3.4641040971412193e-07
+        },
+        "evidence": {
+          "cells": 2,
+          "resource_exhausted": false,
+          "coverage": "full_bidirectional_trimmed_regions",
+          "method": "bernstein_correspondence_upper_native_closestpoint_lower"
+        },
+        "target_mm": 0.005
+      },
+      "native_coordinate_uncertainty_mm": 1.0000005684341886e-07,
+      "all_faces_mapped": true,
+      "step_sha256": "4b21704b3cb525910124a342f1dc712d343e1ef41a9694e2812f36cda4dd4dd7",
+      "surface_types": [
+        "BSplineSurface",
+        "BSplineSurface"
+      ]
+    },
+    "g1_only": {
+      "G2": {
+        "status": "FAIL",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0,
+            0.744737563425735
+          ],
+          "upper": null
+        },
+        "evidence": {
+          "cells": 1,
+          "coverage": "all_registered_and_automatic_exact_native_seams",
+          "automatic_native_seams": 0,
+          "method": "oriented_normal_and_ambient_shape_operator_intervals"
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "maximum_curvature_per_mm": 0.012,
+          "metric": "g2_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "G1": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103825522732e-07,
+            6.50201273702398e-06
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "metric": "g1_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "whole_surface_deviation": {
+        "status": "FAIL",
+        "measured": {
+          "lower_mm": 0.39999979999988655,
+          "upper_mm": 0.4000002000002308
+        },
+        "evidence": {
+          "cells": 1,
+          "coverage": "full_bidirectional_trimmed_regions",
+          "method": "bernstein_correspondence_upper_native_closestpoint_lower"
+        },
+        "target_mm": 0.005
+      },
+      "native_coordinate_uncertainty_mm": 1.0000005684341886e-07,
+      "all_faces_mapped": true,
+      "step_sha256": "c41d3229824985e42ead75d610dd0d150e54b890dc73d146b77741bd1f232e5e",
+      "surface_types": [
+        "BSplineSurface",
+        "BSplineSurface"
+      ]
+    },
+    "within": {
+      "G2": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103827445695e-07,
+            6.502012738035578e-06,
+            3.076248460927587e-05
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle",
+            "1/mm"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "maximum_curvature_per_mm": 0.012,
+          "metric": "g2_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "G1": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103827445695e-07,
+            6.502012738035578e-06
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "metric": "g1_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "whole_surface_deviation": {
+        "status": "PASS",
+        "measured": {
+          "lower_mm": 0.001999799999886313,
+          "upper_mm": 0.0020002000201252705
+        },
+        "evidence": {
+          "cells": 2,
+          "resource_exhausted": false,
+          "coverage": "full_bidirectional_trimmed_regions",
+          "method": "bernstein_correspondence_upper_native_closestpoint_lower"
+        },
+        "target_mm": 0.005
+      },
+      "native_coordinate_uncertainty_mm": 1.0000005684341886e-07,
+      "all_faces_mapped": true,
+      "step_sha256": "3cda351a8f1d1da5f6a939fb9711b6884c0566bc31a487c5f83e2944925bb0b8",
+      "surface_types": [
+        "BSplineSurface",
+        "BSplineSurface"
+      ]
+    },
+    "displaced": {
+      "G2": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103827445695e-07,
+            6.5020127379500945e-06,
+            3.0762484609258864e-05
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle",
+            "1/mm"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "maximum_curvature_per_mm": 0.012,
+          "metric": "g2_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "G1": {
+        "status": "PASS",
+        "measured": {
+          "lower": [
+            0.0,
+            0.0
+          ],
+          "upper": [
+            3.464103827445695e-07,
+            6.5020127379500945e-06
+          ]
+        },
+        "evidence": {
+          "cells": 1,
+          "resource_exhausted": false,
+          "coverage": "all_registered_grid_face_boundaries_and_actual_native_knot_seams",
+          "method": "physical_interval_residuals_or_exact_single_spline_Ck_with_regular_jacobian",
+          "structural_exact_seams": 0,
+          "automatic_native_seams": 0,
+          "continuous_interval_seams": 1,
+          "units": [
+            "mm",
+            "sin_angle"
+          ]
+        },
+        "criterion": {
+          "maximum_position_mm": 0.008,
+          "maximum_normal_sin": 0.009,
+          "metric": "g1_continuity",
+          "resources": {
+            "max_depth": 16,
+            "max_cells": 60000
+          },
+          "seams": [
+            {
+              "a": {
+                "patch": 0,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              },
+              "b": {
+                "patch": 1,
+                "axis": "u",
+                "value": 1.0,
+                "range": [
+                  0.0,
+                  1.0
+                ],
+                "reverse": false
+              }
+            }
+          ]
+        },
+        "all_actual_faces": 2,
+        "card_source": "existing v4 native-control continuity helper thresholds unchanged"
+      },
+      "whole_surface_deviation": {
+        "status": "FAIL",
+        "measured": {
+          "lower_mm": 0.00999979999988621,
+          "upper_mm": 0.01000020000412751
+        },
+        "evidence": {
+          "cells": 1,
+          "coverage": "full_bidirectional_trimmed_regions",
+          "method": "bernstein_correspondence_upper_native_closestpoint_lower"
+        },
+        "target_mm": 0.005
+      },
+      "native_coordinate_uncertainty_mm": 1.0000005684341886e-07,
+      "all_faces_mapped": true,
+      "step_sha256": "f21a283ee560cea0cad0bfcc5c1f702e139c97a499d6c2ff6b36bec68d8bf734",
+      "surface_types": [
+        "BSplineSurface",
+        "BSplineSurface"
+      ]
+    }
+  },
+  "whole_box_boundary": {
+    "positive": {
+      "status": "PASS",
+      "maximum_mm": 0.005,
+      "lower_mm": 0.0,
+      "upper_mm": 0.0012525058783113233,
+      "method": "entire_boundary_dual_offset_shell_containment_with_native_tolerance_guard",
+      "kernel_assumption": "OCCT arc offsets approximate true parallel solids within requested precision; valid BRep boolean classification",
+      "sampling_can_only_supply_FAIL_lower_witnesses": true,
+      "trials": [
+        {
+          "radius_mm": 0.004996658828918236,
+          "directions": [
+            {
+              "contained": true,
+              "outside_faces": 0,
+              "inside_erosion_faces": 0,
+              "outside_area_mm2": 0.0,
+              "inside_area_mm2": 0.0
+            },
+            {
+              "contained": true,
+              "outside_faces": 0,
+              "inside_erosion_faces": 0,
+              "outside_area_mm2": 0.0,
+              "inside_area_mm2": 0.0
+            }
+          ],
+          "contained": true
+        },
+        {
+          "radius_mm": 0.002498329414459118,
+          "directions": [
+            {
+              "contained": true,
+              "outside_faces": 0,
+              "inside_erosion_faces": 0,
+              "outside_area_mm2": 0.0,
+              "inside_area_mm2": 0.0
+            },
+            {
+              "contained": true,
+              "outside_faces": 0,
+              "inside_erosion_faces": 0,
+              "outside_area_mm2": 0.0,
+              "inside_area_mm2": 0.0
+            }
+          ],
+          "contained": true
+        },
+        {
+          "radius_mm": 0.001249164707229559,
+          "directions": [
+            {
+              "contained": true,
+              "outside_faces": 0,
+              "inside_erosion_faces": 0,
+              "outside_area_mm2": 0.0,
+              "inside_area_mm2": 0.0
+            },
+            {
+              "contained": true,
+              "outside_faces": 0,
+              "inside_erosion_faces": 0,
+              "outside_area_mm2": 0.0,
+              "inside_area_mm2": 0.0
+            }
+          ],
+          "contained": true
+        },
+        {
+          "radius_mm": 0.0006245823536147795,
+          "directions": [],
+          "contained": null,
+          "error": "Null shape"
+        }
+      ],
+      "native_precision_mm": 4.176463852205148e-07,
+      "numerical_guard_mm": 3.3411710817641185e-06,
+      "directed_lower_mm": [
+        0.0,
+        0.0
+      ],
+      "reason": "both_entire_boundaries_contained_in_guarded_offset_shells"
+    },
+    "negative": {
+      "status": "FAIL",
+      "maximum_mm": 0.005,
+      "lower_mm": 0.009999164707231122,
+      "upper_mm": null,
+      "method": "entire_boundary_dual_offset_shell_containment_with_native_tolerance_guard",
+      "kernel_assumption": "OCCT arc offsets approximate true parallel solids within requested precision; valid BRep boolean classification",
+      "sampling_can_only_supply_FAIL_lower_witnesses": true,
+      "trials": [],
+      "native_precision_mm": 4.176463852205148e-07,
+      "numerical_guard_mm": 3.3411710817641185e-06,
+      "directed_lower_mm": [
+        0.009999164707231122,
+        0.009999164707231122
+      ],
+      "reason": "actual_boundary_closestpoint_lower_exceeds_target"
+    },
+    "negative_description": "explicit independent DEV rigid +0.01mm X translation of the whole SW-derived box boundary",
+    "reference": "unchanged v4 cad_spec.build_native on handwritten original positive spec",
+    "reference_volume_mm3": 22239.9556819442,
+    "SW_STEP_volume_mm3": 22239.955602331283,
+    "original_SW_STEP_sha256": "6689bb03bc02d78cd44315b05853c934fa680b6195015715a2ca3e9ddd54b2f9"
+  },
+  "mass_audit": {
+    "source_sha256": "b9879343a46b444c2a342801d5937ffe9b6ecb2b93815dfac397ac0cbab9ea45",
+    "legacy_body_mass": {
+      "volume_mm3": 22240.007028142638,
+      "area_mm2": 5364.644012833842,
+      "raw_SI_density_1": [
+        -1.0414141111635726e-18,
+        4.439957482862553e-19,
+        0.009385169056303854,
+        2.224000702814264e-05,
+        0.005364644012833842,
+        2.224000702814264e-05,
+        2.414906107825438e-09,
+        3.771291514290561e-09,
+        4.8233608357412215e-09,
+        6.475694624985762e-15,
+        2.4533956587975402e-26,
+        -1.114628351660003e-25
+      ],
+      "role": "secondary_cross_check_only"
+    },
+    "extension_levels": [
+      {
+        "level": 0,
+        "status": 0,
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI": [
+          -8.182539444856642e-19,
+          5.230316406513478e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          0.02224000702814264,
+          2.414906107825438e-06,
+          3.771291514290561e-06,
+          4.823360835741221e-06,
+          6.475694624985762e-12,
+          4.051011107885527e-23,
+          -1.0634314282844458e-22,
+          0.0
+        ]
+      },
+      {
+        "level": 1,
+        "status": 0,
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI": [
+          -8.182539444856642e-19,
+          5.230316406513478e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          0.02224000702814264,
+          2.414906107825438e-06,
+          3.771291514290561e-06,
+          4.823360835741221e-06,
+          6.475694624985762e-12,
+          4.051011107885527e-23,
+          -1.0634314282844458e-22,
+          1.0
+        ]
+      },
+      {
+        "level": 2,
+        "status": 0,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065,
+        "raw_SI": [
+          -8.182558413325283e-19,
+          9.391345451657427e-19,
+          0.009385185102206296,
+          2.2239955472277766e-05,
+          0.005364638364707907,
+          0.022239955472277764,
+          2.41490766990342e-06,
+          3.771287275377778e-06,
+          4.823343941340426e-06,
+          4.354266294885853e-13,
+          5.343510015290337e-23,
+          -2.9567947429647577e-23,
+          2.0
+        ]
+      }
+    ],
+    "object_levels": [
+      {
+        "level": 0,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065
+      },
+      {
+        "level": 1,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065
+      },
+      {
+        "level": 2,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065
+      }
+    ],
+    "object_initial_accuracy": 0,
+    "source_unchanged": true,
+    "analytic_volume_mm3": 22239.955682586937,
+    "FreeCAD_STEP_volume_mm3": 22239.955602331283,
+    "legacy_minus_FreeCAD_mm3": 0.05142581135442015,
+    "legacy_minus_high_accuracy_mm3": 0.05155586487308028,
+    "high_accuracy_minus_FreeCAD_mm3": -0.0001300535186601337,
+    "high_accuracy_minus_analytic_mm3": -0.00021030917196185328,
+    "legacy_minus_analytic_mm3": 0.05134555570111843,
+    "interpretation": "Body.GetMassProperties default integration versus explicit higher-accuracy IMassProperty2; residual STEP/OCCT and numerical integration difference recorded separately; no scoring change",
+    "handling": "SW volume remains secondary cross-check only. Original values preserved, never substituted into v4 geometry scoring.",
+    "higher_accuracy_explains_major_difference": true
+  },
+  "seconds": 7.5793081999290735
+}

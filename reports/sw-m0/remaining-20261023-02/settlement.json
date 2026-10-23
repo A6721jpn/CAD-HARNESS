@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-23T01:12:50.489777+00:00",
+  "existing_SW": {
+    "pid": 41448,
+    "document_count": 0
+  },
+  "global_agent_links": [
+    {
+      "path": "C:/Users/backo/.codex/AGENTS.md",
+      "target": "C:\\Users\\backo\\agents-config\\projects\\C\\Users\\backo\\.codex\\AGENTS.md--9fa0f80897f5\\AGENTS.md",
+      "symlink": true
+    },
+    {
+      "path": "C:/Users/backo/.omp/agent/AGENTS.md",
+      "target": "C:\\Users\\backo\\agents-config\\projects\\C\\Users\\backo\\.omp\\agent\\AGENTS.md--c7753c3d6664\\AGENTS.md",
+      "symlink": true
+    }
+  ],
+  "paid_model_calls": 0,
+  "app_exit_or_restart": false,
+  "new_rights_or_ACL_changes": false,
+  "main_result": "remaining-20261023-02/result.json",
+  "state": "proofs_complete_local_commit_pending"
+}

@@ -1,0 +1,318 @@
+{"event": "call_started", "at": "2026-10-23T01:08:22.150079+00:00", "method": "RevisionNumber"}
+{"event": "call_finished", "at": "2026-10-23T01:08:22.151084+00:00", "method": "RevisionNumber", "seconds": 0.0005129000637680292}
+{"event": "call_started", "at": "2026-10-23T01:08:22.151084+00:00", "method": "GetProcessID"}
+{"event": "call_finished", "at": "2026-10-23T01:08:22.151084+00:00", "method": "GetProcessID", "seconds": 0.00038029998540878296}
+{"event": "call_started", "at": "2026-10-23T01:08:22.151084+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:22.151084+00:00", "method": "GetDocumentCount", "seconds": 0.00037409993819892406}
+{"event": "call_started", "at": "2026-10-23T01:08:22.151084+00:00", "method": "GetUserPreferenceStringValue"}
+{"event": "call_finished", "at": "2026-10-23T01:08:22.151084+00:00", "method": "GetUserPreferenceStringValue", "seconds": 0.0003573000431060791}
+{"event": "call_started", "at": "2026-10-23T01:08:22.152587+00:00", "method": "GetModeler"}
+{"event": "call_finished", "at": "2026-10-23T01:08:22.152587+00:00", "method": "GetModeler", "seconds": 0.0008227000944316387}
+{"event": "call_started", "at": "2026-10-23T01:08:22.152587+00:00", "method": "NewDocument"}
+{"event": "call_finished", "at": "2026-10-23T01:08:22.896640+00:00", "method": "NewDocument", "seconds": 0.7437112000770867}
+{"event": "call_started", "at": "2026-10-23T01:08:22.896640+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.404749+00:00", "method": "GetTitle", "seconds": 0.5078499000519514}
+{"event": "call_started", "at": "2026-10-23T01:08:23.404749+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.407298+00:00", "method": "GetDocumentCount", "seconds": 0.0025239000096917152}
+{"event": "call_started", "at": "2026-10-23T01:08:23.407298+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.411293+00:00", "method": "GetTitle", "seconds": 0.0038434001617133617}
+{"event": "call_started", "at": "2026-10-23T01:08:23.425967+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.432050+00:00", "method": "GetTitle", "seconds": 0.006285300012677908}
+{"event": "call_started", "at": "2026-10-23T01:08:23.433050+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.439063+00:00", "method": "GetDocumentCount", "seconds": 0.00611729989759624}
+{"event": "call_started", "at": "2026-10-23T01:08:23.439063+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.444595+00:00", "method": "GetTitle", "seconds": 0.006206999998539686}
+{"event": "call_started", "at": "2026-10-23T01:08:23.456284+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.462323+00:00", "method": "GetTitle", "seconds": 0.006112300092354417}
+{"event": "call_started", "at": "2026-10-23T01:08:23.462844+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.474516+00:00", "method": "CreateBsplineSurface", "seconds": 0.011831600219011307}
+{"event": "call_started", "at": "2026-10-23T01:08:23.474516+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.492263+00:00", "method": "CreateSheetFromSurface", "seconds": 0.017850799951702356}
+{"event": "call_started", "at": "2026-10-23T01:08:23.492263+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.531876+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.03941339999437332}
+{"event": "call_started", "at": "2026-10-23T01:08:23.561452+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.565099+00:00", "method": "GetDocumentCount", "seconds": 0.004886399954557419}
+{"event": "call_started", "at": "2026-10-23T01:08:23.566608+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.572139+00:00", "method": "GetTitle", "seconds": 0.006172099849209189}
+{"event": "call_started", "at": "2026-10-23T01:08:23.585625+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.589688+00:00", "method": "GetTitle", "seconds": 0.004973899805918336}
+{"event": "call_started", "at": "2026-10-23T01:08:23.590688+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.602517+00:00", "method": "CreateBsplineSurface", "seconds": 0.01256699999794364}
+{"event": "call_started", "at": "2026-10-23T01:08:23.606101+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.622302+00:00", "method": "CreateSheetFromSurface", "seconds": 0.016795799834653735}
+{"event": "call_started", "at": "2026-10-23T01:08:23.625838+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.656777+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.030717700021341443}
+{"event": "call_started", "at": "2026-10-23T01:08:23.695039+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.735646+00:00", "method": "EditRebuild3", "seconds": 0.040715100010856986}
+{"event": "call_started", "at": "2026-10-23T01:08:23.735646+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.739460+00:00", "method": "GetDocumentCount", "seconds": 0.004275700077414513}
+{"event": "call_started", "at": "2026-10-23T01:08:23.739460+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.745532+00:00", "method": "GetTitle", "seconds": 0.005931199993938208}
+{"event": "call_started", "at": "2026-10-23T01:08:23.755954+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.762066+00:00", "method": "GetTitle", "seconds": 0.005269599845632911}
+{"event": "call_started", "at": "2026-10-23T01:08:23.774395+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.980110+00:00", "method": "SaveAs", "seconds": 0.20555520011112094}
+{"event": "call_started", "at": "2026-10-23T01:08:23.980110+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.989202+00:00", "method": "GetTitle", "seconds": 0.008552599931135774}
+{"event": "call_started", "at": "2026-10-23T01:08:23.989202+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:23.994488+00:00", "method": "GetDocumentCount", "seconds": 0.005418700166046619}
+{"event": "call_started", "at": "2026-10-23T01:08:23.994488+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.001015+00:00", "method": "GetTitle", "seconds": 0.005971900187432766}
+{"event": "call_started", "at": "2026-10-23T01:08:24.012656+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.020490+00:00", "method": "GetTitle", "seconds": 0.007278400007635355}
+{"event": "call_started", "at": "2026-10-23T01:08:24.032668+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.138961+00:00", "method": "SaveAs", "seconds": 0.10602750000543892}
+{"event": "call_started", "at": "2026-10-23T01:08:24.139489+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.145254+00:00", "method": "GetTitle", "seconds": 0.0059426999650895596}
+{"event": "call_started", "at": "2026-10-23T01:08:24.145774+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.150922+00:00", "method": "GetDocumentCount", "seconds": 0.005805300083011389}
+{"event": "call_started", "at": "2026-10-23T01:08:24.150922+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.159608+00:00", "method": "GetTitle", "seconds": 0.008578200126066804}
+{"event": "call_started", "at": "2026-10-23T01:08:24.172980+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.178120+00:00", "method": "GetTitle", "seconds": 0.005060099996626377}
+{"event": "call_started", "at": "2026-10-23T01:08:24.178120+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.318455+00:00", "method": "CloseDoc", "seconds": 0.14053669990971684}
+{"event": "call_started", "at": "2026-10-23T01:08:24.318959+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:24.321492+00:00", "method": "GetDocumentCount", "seconds": 0.003338000038638711}
+{"event": "call_started", "at": "2026-10-23T01:08:24.321492+00:00", "method": "NewDocument"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.000593+00:00", "method": "NewDocument", "seconds": 0.6787640999536961}
+{"event": "call_started", "at": "2026-10-23T01:08:25.001163+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.001163+00:00", "method": "GetTitle", "seconds": 0.0008631001692265272}
+{"event": "call_started", "at": "2026-10-23T01:08:25.001163+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.331356+00:00", "method": "GetDocumentCount", "seconds": 0.32960459985770285}
+{"event": "call_started", "at": "2026-10-23T01:08:25.331356+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.333963+00:00", "method": "GetTitle", "seconds": 0.0025024001952260733}
+{"event": "call_started", "at": "2026-10-23T01:08:25.357424+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.370096+00:00", "method": "GetTitle", "seconds": 0.012688599992543459}
+{"event": "call_started", "at": "2026-10-23T01:08:25.373096+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.379916+00:00", "method": "GetDocumentCount", "seconds": 0.006697400007396936}
+{"event": "call_started", "at": "2026-10-23T01:08:25.379916+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.387114+00:00", "method": "GetTitle", "seconds": 0.007183500099927187}
+{"event": "call_started", "at": "2026-10-23T01:08:25.398329+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.404573+00:00", "method": "GetTitle", "seconds": 0.006602099863812327}
+{"event": "call_started", "at": "2026-10-23T01:08:25.404573+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.416293+00:00", "method": "CreateBsplineSurface", "seconds": 0.011365300044417381}
+{"event": "call_started", "at": "2026-10-23T01:08:25.419333+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.435539+00:00", "method": "CreateSheetFromSurface", "seconds": 0.01673370017670095}
+{"event": "call_started", "at": "2026-10-23T01:08:25.439052+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.479116+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.04067360004410148}
+{"event": "call_started", "at": "2026-10-23T01:08:25.512545+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.516615+00:00", "method": "GetDocumentCount", "seconds": 0.004124699858948588}
+{"event": "call_started", "at": "2026-10-23T01:08:25.516615+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.522197+00:00", "method": "GetTitle", "seconds": 0.0057351000141352415}
+{"event": "call_started", "at": "2026-10-23T01:08:25.535840+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.541223+00:00", "method": "GetTitle", "seconds": 0.006005199858918786}
+{"event": "call_started", "at": "2026-10-23T01:08:25.541223+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.552841+00:00", "method": "CreateBsplineSurface", "seconds": 0.010878399945795536}
+{"event": "call_started", "at": "2026-10-23T01:08:25.555347+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.567639+00:00", "method": "CreateSheetFromSurface", "seconds": 0.012358400039374828}
+{"event": "call_started", "at": "2026-10-23T01:08:25.569270+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.604796+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.03489390015602112}
+{"event": "call_started", "at": "2026-10-23T01:08:25.636786+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.674155+00:00", "method": "EditRebuild3", "seconds": 0.03753830003552139}
+{"event": "call_started", "at": "2026-10-23T01:08:25.674155+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.678178+00:00", "method": "GetDocumentCount", "seconds": 0.0036047999747097492}
+{"event": "call_started", "at": "2026-10-23T01:08:25.678178+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.684234+00:00", "method": "GetTitle", "seconds": 0.006387300090864301}
+{"event": "call_started", "at": "2026-10-23T01:08:25.695761+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.702400+00:00", "method": "GetTitle", "seconds": 0.006255799904465675}
+{"event": "call_started", "at": "2026-10-23T01:08:25.714741+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.898349+00:00", "method": "SaveAs", "seconds": 0.18364219996146858}
+{"event": "call_started", "at": "2026-10-23T01:08:25.899961+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.908025+00:00", "method": "GetTitle", "seconds": 0.008247400168329477}
+{"event": "call_started", "at": "2026-10-23T01:08:25.908616+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.914224+00:00", "method": "GetDocumentCount", "seconds": 0.0055244998075068}
+{"event": "call_started", "at": "2026-10-23T01:08:25.914224+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.919927+00:00", "method": "GetTitle", "seconds": 0.00569669995456934}
+{"event": "call_started", "at": "2026-10-23T01:08:25.930633+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:25.936160+00:00", "method": "GetTitle", "seconds": 0.004899600055068731}
+{"event": "call_started", "at": "2026-10-23T01:08:25.948253+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.055770+00:00", "method": "SaveAs", "seconds": 0.10833110008388758}
+{"event": "call_started", "at": "2026-10-23T01:08:26.062492+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.070863+00:00", "method": "GetTitle", "seconds": 0.00848380010575056}
+{"event": "call_started", "at": "2026-10-23T01:08:26.070863+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.076906+00:00", "method": "GetDocumentCount", "seconds": 0.00563320005312562}
+{"event": "call_started", "at": "2026-10-23T01:08:26.076906+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.081498+00:00", "method": "GetTitle", "seconds": 0.00492909993045032}
+{"event": "call_started", "at": "2026-10-23T01:08:26.093058+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.099782+00:00", "method": "GetTitle", "seconds": 0.006675299955531955}
+{"event": "call_started", "at": "2026-10-23T01:08:26.099782+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.238307+00:00", "method": "CloseDoc", "seconds": 0.13926569977775216}
+{"event": "call_started", "at": "2026-10-23T01:08:26.238307+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.243771+00:00", "method": "GetDocumentCount", "seconds": 0.004476499976590276}
+{"event": "call_started", "at": "2026-10-23T01:08:26.243771+00:00", "method": "NewDocument"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.902495+00:00", "method": "NewDocument", "seconds": 0.6588179999962449}
+{"event": "call_started", "at": "2026-10-23T01:08:26.902495+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:26.902766+00:00", "method": "GetTitle", "seconds": 0.0008042999543249607}
+{"event": "call_started", "at": "2026-10-23T01:08:26.902766+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.218106+00:00", "method": "GetDocumentCount", "seconds": 0.31495849997736514}
+{"event": "call_started", "at": "2026-10-23T01:08:27.218106+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.220136+00:00", "method": "GetTitle", "seconds": 0.002368000103160739}
+{"event": "call_started", "at": "2026-10-23T01:08:27.226766+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.231794+00:00", "method": "GetTitle", "seconds": 0.005710100056603551}
+{"event": "call_started", "at": "2026-10-23T01:08:27.235807+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.242510+00:00", "method": "GetDocumentCount", "seconds": 0.006694799987599254}
+{"event": "call_started", "at": "2026-10-23T01:08:27.242510+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.248701+00:00", "method": "GetTitle", "seconds": 0.006014199927449226}
+{"event": "call_started", "at": "2026-10-23T01:08:27.258857+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.264997+00:00", "method": "GetTitle", "seconds": 0.005671799881383777}
+{"event": "call_started", "at": "2026-10-23T01:08:27.265500+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.278363+00:00", "method": "CreateBsplineSurface", "seconds": 0.012897799955680966}
+{"event": "call_started", "at": "2026-10-23T01:08:27.280874+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.297920+00:00", "method": "CreateSheetFromSurface", "seconds": 0.01692449999973178}
+{"event": "call_started", "at": "2026-10-23T01:08:27.301477+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.340219+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.038890300085768104}
+{"event": "call_started", "at": "2026-10-23T01:08:27.389143+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.391741+00:00", "method": "GetDocumentCount", "seconds": 0.0020119999535381794}
+{"event": "call_started", "at": "2026-10-23T01:08:27.391741+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.403967+00:00", "method": "GetTitle", "seconds": 0.01217679982073605}
+{"event": "call_started", "at": "2026-10-23T01:08:27.416116+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.422214+00:00", "method": "GetTitle", "seconds": 0.0060709998942911625}
+{"event": "call_started", "at": "2026-10-23T01:08:27.422214+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.434532+00:00", "method": "CreateBsplineSurface", "seconds": 0.013439699774608016}
+{"event": "call_started", "at": "2026-10-23T01:08:27.439041+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.454487+00:00", "method": "CreateSheetFromSurface", "seconds": 0.016057400032877922}
+{"event": "call_started", "at": "2026-10-23T01:08:27.457992+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.492467+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.03473429987207055}
+{"event": "call_started", "at": "2026-10-23T01:08:27.529657+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.577141+00:00", "method": "EditRebuild3", "seconds": 0.04699639999307692}
+{"event": "call_started", "at": "2026-10-23T01:08:27.577141+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.584236+00:00", "method": "GetDocumentCount", "seconds": 0.006795400055125356}
+{"event": "call_started", "at": "2026-10-23T01:08:27.584751+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.591706+00:00", "method": "GetTitle", "seconds": 0.007771200034767389}
+{"event": "call_started", "at": "2026-10-23T01:08:27.604310+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.609972+00:00", "method": "GetTitle", "seconds": 0.005640299990773201}
+{"event": "call_started", "at": "2026-10-23T01:08:27.622479+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.819294+00:00", "method": "SaveAs", "seconds": 0.1969192000105977}
+{"event": "call_started", "at": "2026-10-23T01:08:27.819294+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.828164+00:00", "method": "GetTitle", "seconds": 0.008616199949756265}
+{"event": "call_started", "at": "2026-10-23T01:08:27.828745+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.834382+00:00", "method": "GetDocumentCount", "seconds": 0.005569499917328358}
+{"event": "call_started", "at": "2026-10-23T01:08:27.834382+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.838940+00:00", "method": "GetTitle", "seconds": 0.005212200107052922}
+{"event": "call_started", "at": "2026-10-23T01:08:27.850699+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.858002+00:00", "method": "GetTitle", "seconds": 0.007001599995419383}
+{"event": "call_started", "at": "2026-10-23T01:08:27.869700+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.982159+00:00", "method": "SaveAs", "seconds": 0.11142770014703274}
+{"event": "call_started", "at": "2026-10-23T01:08:27.987255+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.993360+00:00", "method": "GetTitle", "seconds": 0.005560199962928891}
+{"event": "call_started", "at": "2026-10-23T01:08:27.993360+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:27.998972+00:00", "method": "GetDocumentCount", "seconds": 0.005286999978125095}
+{"event": "call_started", "at": "2026-10-23T01:08:27.998972+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:28.003495+00:00", "method": "GetTitle", "seconds": 0.004856300074607134}
+{"event": "call_started", "at": "2026-10-23T01:08:28.015585+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:28.021148+00:00", "method": "GetTitle", "seconds": 0.00520599982701242}
+{"event": "call_started", "at": "2026-10-23T01:08:28.021148+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-23T01:08:28.164506+00:00", "method": "CloseDoc", "seconds": 0.14443470002152026}
+{"event": "call_started", "at": "2026-10-23T01:08:28.164506+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:28.170204+00:00", "method": "GetDocumentCount", "seconds": 0.004919700091704726}
+{"event": "call_started", "at": "2026-10-23T01:08:28.170204+00:00", "method": "NewDocument"}
+{"event": "call_finished", "at": "2026-10-23T01:08:28.819251+00:00", "method": "NewDocument", "seconds": 0.6483507000375539}
+{"event": "call_started", "at": "2026-10-23T01:08:28.819251+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:28.820261+00:00", "method": "GetTitle", "seconds": 0.001511499984189868}
+{"event": "call_started", "at": "2026-10-23T01:08:28.820261+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.137506+00:00", "method": "GetDocumentCount", "seconds": 0.3170905001461506}
+{"event": "call_started", "at": "2026-10-23T01:08:29.137506+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.137506+00:00", "method": "GetTitle", "seconds": 0.0003418999258428812}
+{"event": "call_started", "at": "2026-10-23T01:08:29.151600+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.156892+00:00", "method": "GetTitle", "seconds": 0.005345300072804093}
+{"event": "call_started", "at": "2026-10-23T01:08:29.161402+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.166735+00:00", "method": "GetDocumentCount", "seconds": 0.0054166000336408615}
+{"event": "call_started", "at": "2026-10-23T01:08:29.166735+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.172357+00:00", "method": "GetTitle", "seconds": 0.005243099993094802}
+{"event": "call_started", "at": "2026-10-23T01:08:29.184087+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.189650+00:00", "method": "GetTitle", "seconds": 0.006413500057533383}
+{"event": "call_started", "at": "2026-10-23T01:08:29.189650+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.201424+00:00", "method": "CreateBsplineSurface", "seconds": 0.010745899984613061}
+{"event": "call_started", "at": "2026-10-23T01:08:29.202930+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.218863+00:00", "method": "CreateSheetFromSurface", "seconds": 0.015582699794322252}
+{"event": "call_started", "at": "2026-10-23T01:08:29.222997+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.259169+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.03584229992702603}
+{"event": "call_started", "at": "2026-10-23T01:08:29.289449+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.289953+00:00", "method": "GetDocumentCount", "seconds": 0.0006061999592930079}
+{"event": "call_started", "at": "2026-10-23T01:08:29.289953+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.295517+00:00", "method": "GetTitle", "seconds": 0.00563589995726943}
+{"event": "call_started", "at": "2026-10-23T01:08:29.306293+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.311865+00:00", "method": "GetTitle", "seconds": 0.005223700078204274}
+{"event": "call_started", "at": "2026-10-23T01:08:29.311865+00:00", "method": "CreateBsplineSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.322422+00:00", "method": "CreateBsplineSurface", "seconds": 0.011063100071623921}
+{"event": "call_started", "at": "2026-10-23T01:08:29.324929+00:00", "method": "CreateSheetFromSurface"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.340098+00:00", "method": "CreateSheetFromSurface", "seconds": 0.0143866001162678}
+{"event": "call_started", "at": "2026-10-23T01:08:29.342149+00:00", "method": "CreateFeatureFromBody3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.394180+00:00", "method": "CreateFeatureFromBody3", "seconds": 0.05167419998906553}
+{"event": "call_started", "at": "2026-10-23T01:08:29.425830+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.464732+00:00", "method": "EditRebuild3", "seconds": 0.03898590011522174}
+{"event": "call_started", "at": "2026-10-23T01:08:29.464732+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.468264+00:00", "method": "GetDocumentCount", "seconds": 0.0038215001113712788}
+{"event": "call_started", "at": "2026-10-23T01:08:29.468264+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.472417+00:00", "method": "GetTitle", "seconds": 0.0037914998829364777}
+{"event": "call_started", "at": "2026-10-23T01:08:29.485037+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.491136+00:00", "method": "GetTitle", "seconds": 0.0061824999283999205}
+{"event": "call_started", "at": "2026-10-23T01:08:29.502832+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.690696+00:00", "method": "SaveAs", "seconds": 0.18831179989501834}
+{"event": "call_started", "at": "2026-10-23T01:08:29.692209+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.700241+00:00", "method": "GetTitle", "seconds": 0.00815220014192164}
+{"event": "call_started", "at": "2026-10-23T01:08:29.700755+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.706022+00:00", "method": "GetDocumentCount", "seconds": 0.00550450012087822}
+{"event": "call_started", "at": "2026-10-23T01:08:29.706022+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.712138+00:00", "method": "GetTitle", "seconds": 0.0055240001529455185}
+{"event": "call_started", "at": "2026-10-23T01:08:29.723618+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.729229+00:00", "method": "GetTitle", "seconds": 0.005295600043609738}
+{"event": "call_started", "at": "2026-10-23T01:08:29.742649+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.845061+00:00", "method": "SaveAs", "seconds": 0.10336269997060299}
+{"event": "call_started", "at": "2026-10-23T01:08:29.851131+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.856293+00:00", "method": "GetTitle", "seconds": 0.0054299000184983015}
+{"event": "call_started", "at": "2026-10-23T01:08:29.856293+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.865413+00:00", "method": "GetDocumentCount", "seconds": 0.008573099970817566}
+{"event": "call_started", "at": "2026-10-23T01:08:29.865413+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.869965+00:00", "method": "GetTitle", "seconds": 0.005351400002837181}
+{"event": "call_started", "at": "2026-10-23T01:08:29.883178+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:29.887808+00:00", "method": "GetTitle", "seconds": 0.0053865001536905766}
+{"event": "call_started", "at": "2026-10-23T01:08:29.887808+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-23T01:08:30.023044+00:00", "method": "CloseDoc", "seconds": 0.13454799982719123}
+{"event": "call_started", "at": "2026-10-23T01:08:30.023044+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:30.028157+00:00", "method": "GetDocumentCount", "seconds": 0.0049311998300254345}
+{"event": "call_started", "at": "2026-10-23T01:08:30.029244+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:30.046542+00:00", "method": "GetDocumentCount", "seconds": 0.017677700147032738}
+{"event": "call_started", "at": "2026-10-23T01:08:30.047584+00:00", "method": "OpenDoc6"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.063674+00:00", "method": "OpenDoc6", "seconds": 1.0166615000925958}
+{"event": "call_started", "at": "2026-10-23T01:08:31.063674+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.069830+00:00", "method": "GetTitle", "seconds": 0.005895999958738685}
+{"event": "call_started", "at": "2026-10-23T01:08:31.069830+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.075677+00:00", "method": "GetDocumentCount", "seconds": 0.00603480008430779}
+{"event": "call_started", "at": "2026-10-23T01:08:31.075677+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.081203+00:00", "method": "GetTitle", "seconds": 0.005076299887150526}
+{"event": "call_started", "at": "2026-10-23T01:08:31.093397+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.099415+00:00", "method": "GetTitle", "seconds": 0.006245299940928817}
+{"event": "call_started", "at": "2026-10-23T01:08:31.101954+00:00", "method": "ClearSelection2"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.108705+00:00", "method": "ClearSelection2", "seconds": 0.006739400094375014}
+{"event": "call_started", "at": "2026-10-23T01:08:31.108705+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.124129+00:00", "method": "GetBodies2", "seconds": 0.015660200035199523}
+{"event": "call_started", "at": "2026-10-23T01:08:31.124129+00:00", "method": "GetMassProperties"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.131241+00:00", "method": "GetMassProperties", "seconds": 0.006767099956050515}
+{"event": "call_started", "at": "2026-10-23T01:08:31.145544+00:00", "method": "GetMassProperties2"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.150916+00:00", "method": "GetMassProperties2", "seconds": 0.0056130001321434975}
+{"event": "call_started", "at": "2026-10-23T01:08:31.150916+00:00", "method": "GetMassProperties2"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.156502+00:00", "method": "GetMassProperties2", "seconds": 0.006030099932104349}
+{"event": "call_started", "at": "2026-10-23T01:08:31.156502+00:00", "method": "GetMassProperties2"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.163521+00:00", "method": "GetMassProperties2", "seconds": 0.006231700070202351}
+{"event": "call_started", "at": "2026-10-23T01:08:31.163521+00:00", "method": "CreateMassProperty2"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.174350+00:00", "method": "CreateMassProperty2", "seconds": 0.010869799880310893}
+{"event": "call_started", "at": "2026-10-23T01:08:31.192327+00:00", "method": "Recalculate"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.196359+00:00", "method": "Recalculate", "seconds": 0.005509800044819713}
+{"event": "call_started", "at": "2026-10-23T01:08:31.213615+00:00", "method": "Recalculate"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.220160+00:00", "method": "Recalculate", "seconds": 0.006180400028824806}
+{"event": "call_started", "at": "2026-10-23T01:08:31.237381+00:00", "method": "Recalculate"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.242613+00:00", "method": "Recalculate", "seconds": 0.00552380015142262}
+{"event": "call_started", "at": "2026-10-23T01:08:31.257154+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.262299+00:00", "method": "GetDocumentCount", "seconds": 0.005522799910977483}
+{"event": "call_started", "at": "2026-10-23T01:08:31.262815+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.267945+00:00", "method": "GetTitle", "seconds": 0.0052177999168634415}
+{"event": "call_started", "at": "2026-10-23T01:08:31.278703+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.284584+00:00", "method": "GetTitle", "seconds": 0.005275700008496642}
+{"event": "call_started", "at": "2026-10-23T01:08:31.284584+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.433637+00:00", "method": "CloseDoc", "seconds": 0.15036730002611876}
+{"event": "call_started", "at": "2026-10-23T01:08:31.433637+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.439243+00:00", "method": "GetDocumentCount", "seconds": 0.0045541999861598015}
+{"event": "call_started", "at": "2026-10-23T01:08:31.439753+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-23T01:08:31.440758+00:00", "method": "GetDocumentCount", "seconds": 0.0013504999224096537}

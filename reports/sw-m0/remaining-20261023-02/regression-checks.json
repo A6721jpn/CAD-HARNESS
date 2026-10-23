@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-23T01:10:59.594681+00:00",
+  "native_regression_exit": 0,
+  "native_regression_stdout": "",
+  "native_regression_stderr": "...\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.284s\r\n\r\nOK\r\n",
+  "paid_model_calls": 0,
+  "actual_integration": "reports/sw-m0/remaining-20261023-02/result.json",
+  "status": "PASS"
+}

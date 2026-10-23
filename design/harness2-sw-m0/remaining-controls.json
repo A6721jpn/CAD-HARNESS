@@ -1,0 +1,10 @@
+{
+  "description": "Independent M0 controls, not pilot or holdout data. Polynomial coefficients and G2 tolerances reuse the existing v4 test_reparameterized_nonplanar_g2 and continuity helper; no existing card changes.",
+  "polynomial_mm": [{"i":2,"j":0,"value":0.07},{"i":1,"j":1,"value":0.04},{"i":0,"j":2,"value":0.11},{"i":3,"j":0,"value":0.015}],
+  "patch_regions_mm": [[0,1,0,1],[1,2,0,1]],
+  "negative_curvature_delta": 0.4,
+  "cases": [{"id":"g2","curvature_decoy":false,"shift_z_mm":0},{"id":"g1_only","curvature_decoy":true,"shift_z_mm":0},{"id":"within","curvature_decoy":false,"shift_z_mm":0.002},{"id":"displaced","curvature_decoy":false,"shift_z_mm":0.01}],
+  "continuity": {"maximum_position_mm":0.008,"maximum_normal_sin":0.009,"maximum_curvature_per_mm":0.012},
+  "maximum_deviation_mm": 0.005,
+  "resources": {"max_depth":16,"max_cells":60000}
+}

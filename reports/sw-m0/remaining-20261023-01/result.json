@@ -1,0 +1,41 @@
+{
+  "status": "FAIL",
+  "paid_model_calls": 0,
+  "started_at": "2026-10-23T01:05:49.145140+00:00",
+  "out": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01",
+  "source_sha256": {
+    "tools/sw_m0.py": "d3c4faca5dbd85090013e606f40e6f8ad577a21f956f0e192eb1e28dd8ba1170",
+    "tools/sw_m0_remaining.py": "20e8336dfe002a781c8a1186c84ba4dcc89619b7be524f4888d398f89b9e2a39",
+    "tools/sw_m0_remaining_probe.py": "37e5aa3d073beab2809c0e046ba2b45993d930718f7ae26f87bdb6875d3d00ec",
+    "tools/sw_m0_distance.py": "b0e1f23b42cc4dd07c06f944522b377d2eba3bafba08a9fb6f4b0380f21d65e5",
+    "tools/cad_verify_v4_s3_judges.py": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1",
+    "design/harness2-sw-m0/remaining-controls.json": "c00d7274e5ed3ed375cd7faef33edbcde6c12c8e346d94d11a67b8e03acaa0cc"
+  },
+  "com_exit": 0,
+  "judge_exit": 1,
+  "judge": {
+    "status": "FAIL",
+    "paid_model_calls": 0,
+    "at": "2026-10-23T01:05:59.103274+00:00",
+    "FreeCAD": [
+      "1",
+      "1",
+      "4",
+      "20260928 (Git shallow)",
+      "Unknown",
+      "2026/09/28 13:46:34",
+      "(HEAD detached at 4fd3bf320)",
+      "4fd3bf320d9566a27e60069fc8387448aaa3a094"
+    ],
+    "OCCT": "7.8.1",
+    "unchanged_G2_judge_sha256": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1",
+    "control_definition_sha256": "c00d7274e5ed3ed375cd7faef33edbcde6c12c8e346d94d11a67b8e03acaa0cc",
+    "surfaces": {},
+    "error_type": "OCCError",
+    "error": "",
+    "seconds": 0.051490799989551306
+  },
+  "seconds": 10.035345300100744,
+  "finished_at": "2026-10-23T01:05:59.182296+00:00",
+  "manual_recovery_required": false
+}

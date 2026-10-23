@@ -1,0 +1,188 @@
+{
+  "status": "PASS",
+  "paid_model_calls": 0,
+  "started_at": "2026-10-23T01:05:49.256742+00:00",
+  "cases": {
+    "g2": {
+      "native": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\g2.sldprt",
+        "sha256": "fd53b4d81cbe7d818d966a32c215d2cba3f1f5a46880422f3162c66cc831dfd9",
+        "bytes": 60295,
+        "errors": 0,
+        "warnings": 0
+      },
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\g2.step",
+        "sha256": "d75ddf0c254ff85b1a5a027f98dfa684a737bc46df3a22b2fa7feae8b24501c0",
+        "bytes": 17232,
+        "errors": 0,
+        "warnings": 0
+      },
+      "seconds": 2.130800300044939
+    },
+    "g1_only": {
+      "native": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\g1_only.sldprt",
+        "sha256": "63e49cca1f7705041b9842726c7935a19173a9290af23112a651c600422d2846",
+        "bytes": 59212,
+        "errors": 0,
+        "warnings": 0
+      },
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\g1_only.step",
+        "sha256": "1004d08a739a149f4642647cc867385ed047f76fcd5a923c269efb163f67febc",
+        "bytes": 17270,
+        "errors": 0,
+        "warnings": 0
+      },
+      "seconds": 1.6862347000278533
+    },
+    "within": {
+      "native": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\within.sldprt",
+        "sha256": "5e4dd7dca09990bf192cc9a5e55c6423e1cb5016284b571f8904738a73bf2c61",
+        "bytes": 61076,
+        "errors": 0,
+        "warnings": 0
+      },
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\within.step",
+        "sha256": "12c16533a60696de9dc01b78c262bc7ee39c262b0269a0cb1aae4acc9653567a",
+        "bytes": 17285,
+        "errors": 0,
+        "warnings": 0
+      },
+      "seconds": 1.740537100005895
+    },
+    "displaced": {
+      "native": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\displaced.sldprt",
+        "sha256": "fb17b436704c68d78acb83f4c29b56bdb77f9ea14b998dcc3df5f5030c662dd0",
+        "bytes": 60706,
+        "errors": 0,
+        "warnings": 0
+      },
+      "step": {
+        "path": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\remaining-20261023-01\\displaced.step",
+        "sha256": "ae6014242664449d30894e85cf29b3d6fdc4b8cf0ede6db2906c478d08897c78",
+        "bytes": 17293,
+        "errors": 0,
+        "warnings": 0
+      },
+      "seconds": 1.6917018999811262
+    }
+  },
+  "solidworks_pid": 41448,
+  "revision": "34.3.0",
+  "initial_documents": 0,
+  "mass_audit": {
+    "source_sha256": "b9879343a46b444c2a342801d5937ffe9b6ecb2b93815dfac397ac0cbab9ea45",
+    "legacy_body_mass": {
+      "volume_mm3": 22240.007028142638,
+      "area_mm2": 5364.644012833842,
+      "raw_SI_density_1": [
+        -1.0414141111635726e-18,
+        4.439957482862553e-19,
+        0.009385169056303854,
+        2.224000702814264e-05,
+        0.005364644012833842,
+        2.224000702814264e-05,
+        2.414906107825438e-09,
+        3.771291514290561e-09,
+        4.823360835741221e-09,
+        6.475694624985762e-15,
+        2.4533956587975402e-26,
+        -1.114628351660003e-25
+      ],
+      "role": "secondary_cross_check_only"
+    },
+    "extension_levels": [
+      {
+        "level": 0,
+        "status": 0,
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI": [
+          -1.0414141111635726e-18,
+          4.439957482862553e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          0.02224000702814264,
+          2.414906107825438e-06,
+          3.771291514290561e-06,
+          4.8233608357412205e-06,
+          6.475694624985762e-12,
+          2.45339565879754e-23,
+          -1.114628351660003e-22,
+          0.0
+        ]
+      },
+      {
+        "level": 1,
+        "status": 0,
+        "volume_mm3": 22240.007028142638,
+        "area_mm2": 5364.644012833842,
+        "raw_SI": [
+          -1.0414141111635726e-18,
+          4.439957482862553e-19,
+          0.009385169056303854,
+          2.224000702814264e-05,
+          0.005364644012833842,
+          0.02224000702814264,
+          2.414906107825438e-06,
+          3.771291514290561e-06,
+          4.8233608357412205e-06,
+          6.475694624985762e-12,
+          2.45339565879754e-23,
+          -1.114628351660003e-22,
+          1.0
+        ]
+      },
+      {
+        "level": 2,
+        "status": 0,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065,
+        "raw_SI": [
+          -8.182558413325283e-19,
+          8.647476504991492e-19,
+          0.009385185102206296,
+          2.2239955472277766e-05,
+          0.005364638364707907,
+          0.022239955472277764,
+          2.41490766990342e-06,
+          3.771287275377777e-06,
+          4.823343941340426e-06,
+          4.354266294885853e-13,
+          5.343510015290337e-23,
+          -3.058507335717502e-23,
+          2.0
+        ]
+      }
+    ],
+    "object_levels": [
+      {
+        "level": 0,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065
+      },
+      {
+        "level": 1,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065
+      },
+      {
+        "level": 2,
+        "volume_mm3": 22239.955472277765,
+        "area_mm2": 5364.6383647079065
+      }
+    ],
+    "object_initial_accuracy": 0,
+    "source_unchanged": true
+  },
+  "final_documents": 0,
+  "COM_state_unknown": false,
+  "seconds": 9.49353380012326,
+  "finished_at": "2026-10-23T01:05:58.750659+00:00"
+}
