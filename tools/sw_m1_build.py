@@ -180,11 +180,11 @@ class Builder:
         if kind in ('rect_prism','rect_stack'):
             regions=p.get('regions') or [dict(bounds=p['bbox'])]
             for r in regions:self.rect_pad(r['bounds'])
-            base_parameter=self.edit_parameter
             for q in p.get('pockets',[]):self.pocket(q)
+            base_parameter=self.edit_parameter
             for h in p.get('holes',[]):self.holes([h],p['bbox'][4:6])
             self.finish(p['bbox'],p.get('finish'))
-            if not p.get('finish') and not p.get('pockets'):self.edit_parameter=base_parameter
+            if not p.get('finish'):self.edit_parameter=base_parameter
         elif kind=='roller':
             self.begin(2,0);self.circle(0,0,0,p['radius']);self.circle(0,0,0,p['bore_radius']);sk,n=self.end()
             self.extrude(sk,n,2,1,p['length'])

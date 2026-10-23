@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "paid_model_calls": 0,
+  "source_sha256": {
+    "tools/sw_m1.py": "c4056d7e0203749df08bbc0ced824610671fa2bc626c043b9d7519d84fee58ae",
+    "tools/sw_m1_build.py": "a961e298c07038deebc5ed1607989bff912fcc5977d82c13c85195d1923d9b82",
+    "tools/sw_m1_judge.py": "456dae92d4fb755a948e0cd24975dbfb4ef8c6c616b0c346f46997c7b3de4b2b",
+    "tools/sw_m1_saved.py": "92a773affb4af565be08eb8244def0b307f37a7db108cf303b346d8ed02b84d9"
+  },
+  "independent_fixture": "public_P2_without_finish_analytic_volume",
+  "new_native_cases": 1,
+  "saved_native_edit_only_cases": 1,
+  "seconds": 33.42680320004001
+}

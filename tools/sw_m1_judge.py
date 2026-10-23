@@ -46,6 +46,9 @@ def independent_reference(g):
         spec={k:copy.deepcopy(v) for k,v in s.items() if k in ('regions','steps','center_xy','pockets','holes','finish')}
         spec.update(schema='cad-harness.build-spec.v1',family=s['profile'],units='mm',frame='world')
         for q in spec.get('pockets',[]):q.pop('sharp',None)
+        # `through` is validated gold metadata; explicit z already specifies the
+        # complete cut. It is not a field in the strict executable build spec.
+        for q in spec.get('holes',[]):q.pop('through',None)
         doc=App.newDocument('M1_Independent_Reference')
         try:return build_native(doc,validate_spec(spec)).Shape.copy()
         finally:App.closeDocument(doc.Name)
@@ -147,7 +150,7 @@ def judge(job_path):
             edited=load_shape(out/'edited.step');restored=load_shape(out/'restored.step')
             changed=shape.cut(edited).Volume+edited.cut(shape).Volume
             uncertainty=max(shape.getTolerance(1),edited.getTolerance(1))*(shape.Area+edited.Area)
-            restore=boundary_distance(shape,restored,.005,refinements=1)
+            restore=boundary_distance(shape,restored,.005)
             detail['SW_operational_edit']={'changed_symmetric_volume_mm3':changed,'uncertainty_mm3':uncertainty,
                 'restore':restore,'restored_original_geometry':original_geometry(restored,g),
                 'scope':'ONE consumed native SW parameter; NOT complete original FreeCAD role certification'}

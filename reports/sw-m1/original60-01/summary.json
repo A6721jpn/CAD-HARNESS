@@ -1,0 +1,32 @@
+{
+  "schema": "sw-harness.M1-portability.v1",
+  "scope": "mechanical_gold_portability_only_not_model_evaluation",
+  "paid_model_calls": 0,
+  "source_sha256": {
+    "tools/sw_m1.py": "fbeef41564bab543ac26acfb9470466ad13a049174ebff20a62678e548b54050",
+    "tools/sw_m1_inputs.py": "53f3cb4ea7b90811da57474bbd0849c72ce213eef5a0c5f0612c0cbee06066ef",
+    "tools/sw_m1_build.py": "8f878ab3c48c20981524f505a094cb688c4cae728b69babf54557b6aa5455927",
+    "tools/sw_m1_judge.py": "c5c3b91c8505241c646dc903bb49e8b63eeff8fc323299f157499b35d608662f",
+    "tools/sw_m1_distance.py": "f9512b5be0e9c6e8ed88f0416301d3936365826a8aeb61e25308a27d547bf49e",
+    "tools/sw_m0_distance.py": "b0e1f23b42cc4dd07c06f944522b377d2eba3bafba08a9fb6f4b0380f21d65e5",
+    "tools/cad_verify_probe.py": "9490412af39079b27a316f58e7037aabf97af0f0971d490af35c27e29de7b0de",
+    "tools/cad_verify_v3_probe.py": "f09968471aa5002361ed5829d0930f486e963be5ed12ece820ebb97b0e759994",
+    "tools/cad_verify_v4_s3_judges.py": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1"
+  },
+  "input_packet_sha256": "5cbce70361ba765cae0e68beabdabb40ec7713b647f9e93e38574a29822adec6",
+  "original_v4_result_changed": false,
+  "started_at": "2026-10-23T03:01:22.445286+00:00",
+  "finished_at": "2026-10-23T03:15:26.531226+00:00",
+  "seconds": 844.0847700000741,
+  "status": "COMPLETE",
+  "rows": 60,
+  "geometry_pass": 45,
+  "geometry_fail": 0,
+  "extra_distance_pass": 41,
+  "not_applicable": 15,
+  "build_failed": 0,
+  "negative_rejected": 6,
+  "negative_false_pass": 0,
+  "SW_operational_edit_pass": 35,
+  "manual_recovery_required": false
+}
