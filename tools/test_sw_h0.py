@@ -86,7 +86,7 @@ class H0SafetyTests(unittest.TestCase):
         observed=json.loads(context.split(runtime.agent.MARKER,1)[1])['observations']['result']
         self.assertIs(observed['measurements']['original_geometry_pass'],False)
 
-    def test_two_episode_provider_calls_both_survive_cost_aggregation(self):
+    def test_successful_and_failed_episode_calls_share_accounting_and_fail_closed(self):
         runtime.PRIVATE.mkdir(parents=True,exist_ok=True)
         with tempfile.TemporaryDirectory(dir=runtime.PRIVATE) as tmp:
             root=Path(tmp);packet=root/'inputs-private.json';packet.write_text('[]')
@@ -115,13 +115,32 @@ class H0SafetyTests(unittest.TestCase):
                             entry={},process=provider)
                         transport.episode='synthetic-'+str(number)
                         guard.before_episode(1);guard.before_call()
-                        transport([str(executable),'exec','-o',str(out/'final.txt'),
+                        completed=transport([str(executable),'exec','-o',str(out/'final.txt'),
                             'developer_instructions='+json.dumps('fixed'),'synthetic request'],
                             cwd=str(out),timeout=10)
+                        self.assertEqual(completed.returncode,0)
+                        self.assertIsNone(transport.fatal)
                     costs=ledger.summarize(root/'journal.jsonl')
                     self.assertEqual(costs['physical_model_attempts'],2)
                     self.assertEqual(costs['conservative_reserved_calls'],pool.used)
                     self.assertEqual(costs['capture']['complete'],4)
+                    def refused(argv,captures,**kwargs):
+                        captures['stderr'].feed(b'synthetic launch refusal\n')
+                        return 1
+                    out=root/'refused';out.mkdir()
+                    transport=runtime.Transport(manifest,journal,out,'synthetic request',b'fixed',guard,
+                        entry={},process=refused)
+                    transport.episode='synthetic-refused'
+                    guard.before_episode(1);guard.before_call()
+                    completed=transport([str(executable),'exec','-o',str(out/'final.txt'),
+                        'developer_instructions='+json.dumps('fixed'),'synthetic request'],
+                        cwd=str(out),timeout=10)
+                    self.assertEqual(completed.returncode,1)
+                    self.assertEqual(transport.fatal,'H0_model_launch_or_response_failure')
+                    costs=ledger.summarize(root/'journal.jsonl')
+                    self.assertEqual(costs['physical_model_attempts'],3)
+                    self.assertEqual(pool.used,3)
+                    self.assertEqual(costs['capture']['complete'],6)
 
 
 if __name__=='__main__':unittest.main()

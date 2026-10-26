@@ -1,5 +1,6 @@
 """H0's frozen input lease, model isolation, quota guard and SW transport."""
 import copy
+import importlib.util
 import json
 import math
 import os
@@ -18,6 +19,20 @@ from tools.cad_verify_guard import Stop,quota_snapshot
 PRIVATE=inputs.PRIVATE/'h0'
 PUBLIC=base.ROOT/'reports/sw-h0'
 SELECTED=(23,24,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45)
+MODEL_CONFIG=copy.deepcopy(live.OMP_CONFIG)
+MODEL_CONFIG.update(enabledProviders=['openai-codex'],disabledProviders=[],enabledModels=[freezing.MODEL])
+
+
+def _scoped_transport():
+    # Respect the user's explicit Codex authorization only for this invocation.
+    # Do not mutate global provider preferences or the original v4 module.
+    spec=importlib.util.spec_from_file_location('tools._sw_h0_live_transport',live.__file__)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    module.OMP_CONFIG=MODEL_CONFIG
+    return module.LiveTransport
+
+
+_LiveTransport=_scoped_transport()
 
 
 def original_inputs():
@@ -59,6 +74,7 @@ def freeze(run):
         charged_call_cap=40,selected=list(SELECTED),policy_sha256=policy_sha,files=files,
         input_files=bound,inputs_packet_sha256=ledger.file_sha(out/'inputs-private.json'),
         cohort_sha256=inputs.COHORT_SHA,skill_sha256=ledger.sha(skill),
+        generator_config_sha256=ledger.sha(json.dumps(MODEL_CONFIG,sort_keys=True).encode()),
         generator=generator,host=host,quota_snapshot='C:/dev/v4-ops/quota.json',
         authorization='USER 2026-10-26 23:15 JST H0 development 40; 23:20 standing batches <=50; H0 remains 40',
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),
@@ -69,6 +85,7 @@ def freeze(run):
     public={k:manifest[k] for k in ('schema','scope','run','charged_call_cap','selected','policy_sha256','cohort_sha256','skill_sha256')}
     public.update(manifest_sha256=ledger.file_sha(out/'manifest.json'),source_sha256=files,
         generator={k:generator[k] for k in ('model','thinking','version','sha256')},
+        generator_access={k:MODEL_CONFIG[k] for k in ('enabledProviders','disabledProviders','enabledModels')},
         authorization_recorded=True,live_model_calls=0,prepared_at=ledger.utc())
     ledger.write_json(pub/'manifest-public.json',public)
     return manifest
@@ -173,7 +190,7 @@ class SafeAdapter(live.LiveSkillAdapter):
         return self.context(data)
 
 
-class Transport(live.LiveTransport):
+class Transport(_LiveTransport):
     def __init__(self,manifest,journal,out,request,skill,guard,*,entry,process=None,**kwargs):
         production=process is None
         super().__init__(manifest,journal,out,request,skill,guard,
@@ -185,7 +202,11 @@ class Transport(live.LiveTransport):
         self.logical_call=guard.pool.used
 
     def _invoke(self,argv,**kwargs):
-        if len(argv)>1 and argv[1] in ('exec','--version'):return super()._invoke(argv,**kwargs)
+        if len(argv)>1 and argv[1] in ('exec','--version'):
+            completed=super()._invoke(argv,**kwargs)
+            if argv[1]=='exec' and (completed.returncode!=0 or not Path(argv[argv.index('-o')+1]).is_file()):
+                self.fatal='H0_model_launch_or_response_failure'
+            return completed
         self.guard.check()
         if '--script' not in argv or '--generator' not in argv or argv[argv.index('--generator')+1]!='compiler':
             raise Stop('H0_only_fixed_spec_compiler')

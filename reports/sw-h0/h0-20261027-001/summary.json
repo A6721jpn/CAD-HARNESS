@@ -1,0 +1,68 @@
+{
+  "scope": "H0-development40",
+  "status": "COMPLETE",
+  "selected": 18,
+  "attempted": 18,
+  "completed": 18,
+  "passed": 0,
+  "not_run": 42,
+  "wall_s": 33.65600000019185,
+  "stopped_reason": null,
+  "manifest_sha256": "72a617445e72d09adcc43fcb0fbb583bc0acdfd695a5bf7d1d432aeae548f8c4",
+  "accounting": {
+    "scope": "harness2-solidworks-H0-development40-20261026",
+    "cap": 40,
+    "conservative_reserved_calls": 18,
+    "accepted_or_failed_calls": 18,
+    "pending_or_unknown_calls": 0,
+    "verified_overload_rejections": 0,
+    "remaining": 22,
+    "billing_missing_reason": "invoice_not_provided"
+  },
+  "tokens": {
+    "input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 18,
+      "known": 0,
+      "missing": 18,
+      "missing_reason": "missing_contributions"
+    },
+    "cached_input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 18,
+      "known": 0,
+      "missing": 18,
+      "missing_reason": "missing_contributions"
+    },
+    "cache_write_input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 18,
+      "known": 0,
+      "missing": 18,
+      "missing_reason": "missing_contributions"
+    },
+    "output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 18,
+      "known": 0,
+      "missing": 18,
+      "missing_reason": "missing_contributions"
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 18,
+      "known": 0,
+      "missing": 18,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice",
+  "overload_robustness": "UNVERIFIED",
+  "SW_manual_recovery_required": false
+}

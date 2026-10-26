@@ -1,0 +1,13 @@
+{
+  "status": "FAIL",
+  "evidence_mode": "unit_mock_with_real_CAD",
+  "live_model_calls": 0,
+  "mock_responses": 1,
+  "real_CAD_attempts": 0,
+  "wrong_spec_rejected": false,
+  "frozen_driver_repair_calls": 0,
+  "passed": false,
+  "captured_transport_streams": 2,
+  "stopped_reason": "H0_CAD_backend_stopped",
+  "seconds": 300.094000000041
+}
