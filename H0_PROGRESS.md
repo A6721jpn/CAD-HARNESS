@@ -76,3 +76,8 @@
 - 今回の追加/変更ファイル：`H0_PLAN.md`、`H0_PROGRESS.md`、`H0_SUMMARY.md`、`tools/sw_h0_runtime.py`、`tools/test_sw_h0.py`、`tools/sw_h0_diagnose.py`、公開001結果とsmoke04結果。元M0/M1/v4実装や保護refは変更していない。保護refの確認値はherdr/v4とv4-freecad-final=`5f96e2f…`、tag v4-freecad-57of60=`0f545110…`、h2/mvp=`3ac25c8…`、作業branch=h2/sw。
 - 残件順序：①ユーザーがSWの応答とハーネス文書状態を確認（終了・再起動で回避しない）②確認後に所有lockの安全性を判断し、無課金smokeを再検証③成功後だけ新規002を固定④同じ18題・順序を共有残り22以内で実施⑤公開集計・commit/push。
 - **次のコマンドはまだ実行禁止**。ユーザー確認と所有lockの安全確認後の候補は、cwd=`C:/dev/CAD-HARNESS-sw`で `C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h0.py smoke --run h0-smoke-05`。今は停止を記録してh2/swへcommit・pushするだけで、その後待機する。
+
+## 公開保存完了・待機
+
+- WIP/未ロックの停止checkpoint `17ada38`を`origin/h2/sw`へpush成功（remote `7d049b2..17ada38`）。非公開gold・raw出力・`__pycache__`は含めていない。この停止記録の追記も同branchへ保存する。
+- 最終状態：**STOPPED、SW応答とハーネス文書状態のユーザー確認待ち**。002未固定・未実行、40枠の保守計上18・残22、55%ASK/60%停止は不変。公開コード修正の単体回帰21件は合格したが、無課金SW smokeは300.094秒で停止しており、再開許可や成功証明の代わりにはしない。稼働中jobなし。SW終了・再起動・保護branch/tag変更なし。新しい手順・生成は始めず待機する。
