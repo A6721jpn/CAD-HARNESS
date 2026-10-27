@@ -150,3 +150,19 @@
 - M0_SUMMARYとH0_SUMMARYを最新成功状態へ更新し、public resume JSONをprelive snapshotへ変更。H0_PLANに更新後34.4.0/owned-view制御・両確認の証拠を記載した。source bindingがtools全Pythonを含むことを確認し、`sw_m0.py`の変更も次のmanifestへ含まれる。
 - dashboard-builderへmajor milestone更新を依頼したが、専用toolのmodel/effort不一致で再び保存不能。モデル変更・代替公開はしていない。ダッシュボード不調は課金や安全ゲートを変える理由にしない。
 - **現在動作中jobなし。次の実コマンド**はcheckpoint commit後、`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h0.py prepare --run h0-20261027-002`、成功後同じvenvの`... run --run h0-20261027-002`（cwd SW worktree）。freeze後はH0_PLAN・tools・skill・policyを変更せず、H0_PROGRESSなど非凍結の進捗だけを追記する。55%ASK/60%停止・gold非公開・単一生成childを守る。
+
+## Handoff — 002ライブ実行中、固定物を変更しない
+
+- 回復と独立予算のcheckpointは`3da5d9d`、`origin/h2/sw`へpush済み（`87ec4ef..3da5d9d`）。23件の回帰と標準M0/smoke05の実動作証拠、失敗とrename lock、H2事前計画を含む。元gold/private raw/`__pycache__`は含めていない。
+- 002の新規prepareが成功。schema v2、manifest SHA256 **`db2209467f2abbc299a01e9bb49b2423f9737fe185e2ffdea11c5f9bce6914f6`**。Codex `gpt-6.1-sol` xhigh、omp/18.11.2、exe SHA `97f5c9d5…`。共有development40の既存18予約を保持し、開始時残22。当初の同じ18題・元順序を固定。新しい独立poolはまだ使っていない。
+- `.../python.exe -B tools/sw_h0.py run --run h0-20261027-002`を **bg_53** として開始済み（deadlineなし、内部の元時間枠/予算/quota監視は有効）。現在の生成成立・件数・成績は未確認。**重複run/prepare・ソース編集・H0_PLAN/skill/policy変更・別のCodex worker起動をしない。** 親と単一生成childで最大2を守る。
+- 完了通知を待ち、`reports/sw-h0/h0-20261027-002/{summary,rows}.json`だけを読む。private inputs/gold/model応答/raw stdout/stderrは親から開かない。必要な基盤診断は固定プログラムが既知のコード・サイズ・hashだけを出力する。H0_PROGRESSは固定対象外なので追記可。
+- 次：①bg_53自動結果②公開の有効回答/実CAD/合否と全pool会計を集計③基盤失敗なら保存後に原因修正し別claim、残枠不足なら未完了の元順序分だけ新独立40枠（承認50以下）で続行④H0結果commit/push⑤H0後、H2_SKILL_PLANに従い新データ・スキル記述のみ交互各5回の段階へ。55%は委任の例外としてASK、60%停止。SW無応答なら稼働中を終了/再起動せず停止する。
+
+## 002完了：初回選択18題すべて合格
+
+- `bg_53`は正常完了。選択/実行/完了18、合格18、不合格0、非選択not_run42。元60全体の合格率とは表示しない。内訳はspec11題で各1回の実CADが幾何・native編集復元・独立再読込すべて合格、ask7題も元rubricで合格。すべて1生成、parse修復0、ライブCAD修復0。controller wall414.797秒。
+- 新規モデル送信18。旧001の失敗18予約も維持し、共有poolの保守計上36/40、pending0、残4、検証済みoverload拒否0。原163枠を使っていない。今回の入力66,574（cached10,368）、出力4,488は18件すべてusage既知。reasoningは18件すべて不明、料金不明。旧18失敗のトークンが不明なので全36件の総トークンをこの既知subtotalで置き換えない。overload robustnessはUNVERIFIEDのまま。
+- source/skill/policy/カード/採点を固定実行中に変更していない。gold・原要求・モデル生出力は親から開かず、公開summary/rowsと完了stdoutの許可済みprojectionだけを読んだ。実モデル起動のCodex限定overlayも今回の有効応答で成立した。追加のH0継続batchは不要で、独立40poolの新規課金使用はまだ0。
+- 公開証拠`reports/sw-h0/h0-20261027-002/{manifest-public,rows,summary}.json`。H0_SUMMARYはこの002から自動生成された部分H0集計。001は削除せず別の起動障害セグメントとして残す。最初に記録した18題のH0を完了し、指示どおり新規独立データのHarness²段階へ進む。残り42題を合格扱いせず、original60を改善に使わない。
+- 次はH0結果とこのメモをh2/swへcommit/push。その後H2_SKILL_PLANの固定条件で、スキル本文だけを変える外側ランナー・独立fixture author・cache整合/ペア/予算の検証を実装。新しい封印ホールドアウトを比較前に作る。各版5回交互、50以下の新batchを使い、旧H0の残4を流用しない。起動中SWの終了/再起動禁止・55%ASK/60%停止・同時Codex2は維持する。
