@@ -1,0 +1,12 @@
+{
+  "source_epoch": "skill-20261028-02",
+  "diagnostic": {
+    "user_events": 2,
+    "trial_label_in_user": true,
+    "payload_filename_in_user": true,
+    "runtime_envelope_in_user": true,
+    "live_model_calls": 0
+  },
+  "raw_content_disclosed": false,
+  "original_v4_or_h0_source_edited": false
+}

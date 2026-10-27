@@ -1,0 +1,16 @@
+{
+  "experiment": "skill-20261028-03",
+  "eligible_for_live_calibration_comparison_or_holdout": false,
+  "reason": "Native @file expansion exposes the trial label and filename in the user message; not a skill-text-only intervention.",
+  "disposition": "operationally_interrupted_not_a_capability_score",
+  "reserved_model_calls": 6,
+  "pending_or_unknown_calls": 0,
+  "comparison_status": "not_run",
+  "final_holdout_status": "not_run",
+  "all_raw_and_results_preserved": true,
+  "native_timeout_or_restart_performed": false,
+  "post_stop_SW_readiness": {"pid": 53084, "revision": "34.4.0", "documents": 0},
+  "preserved_lock": "session.lock.stale-20261028-h2-epoch03-guard",
+  "next_epoch": "skill-20261028-04",
+  "candidate_text_changed": false
+}

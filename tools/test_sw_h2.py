@@ -123,6 +123,32 @@ class CustodyGates(unittest.TestCase):
         self.assertNotIn('98765.4321',encoded)
         self.assertNotIn('reference_secret_coordinate',encoded)
 
+    def test_resolved_user_packet_rejects_filename_and_arm_headers(self):
+        with tempfile.TemporaryDirectory(dir=PRIVATE) as temp:
+            root=Path(temp);payload=root/'payload.json';stdout=root/'stdout.bin'
+            packet=dict(request='Independent fixture request',runtime_data=dict(target='spec'))
+            ledger.write_json(payload,packet)
+            text=json.dumps(packet)
+            def emit(value):
+                stdout.write_text(json.dumps(dict(type='message_end',message=dict(role='user',content=[dict(type='text',text=value)])))+'\n',encoding='utf-8')
+            emit(text)
+            self.assertTrue(native.user_packet_matches(stdout,payload))
+            emit('<file path="run-P01B/payload.json">'+text+'</file>')
+            self.assertFalse(native.user_packet_matches(stdout,payload))
+
+    def test_prompt_verification_needs_unchanged_user_data_not_an_assistant_echo(self):
+        with tempfile.TemporaryDirectory(dir=PRIVATE) as temp:
+            root=Path(temp);payload=root/'payload.json'
+            packet=dict(request='Independent fixture request',runtime_data=dict(target='spec'))
+            ledger.write_json(payload,packet)
+            for index,(role,value) in enumerate((('assistant',packet),
+                    ('user',dict(packet,request='Changed requirement')),
+                    ('user',dict(packet,trial_label='P01B')))):
+                stdout=root/(str(index)+'.bin')
+                stdout.write_text(json.dumps(dict(type='message_end',message=dict(role=role,
+                    content=[dict(type='text',text=json.dumps(value))])))+'\n',encoding='utf-8')
+                self.assertFalse(native.user_packet_matches(stdout,payload))
+
 
 class DurableSchedule(unittest.TestCase):
     def setUp(self):

@@ -112,11 +112,75 @@ def driver(adapter,transport,experiment,entry):
     return scope['run_driver']
 
 
-class Transport(runtime.Transport):
+def literal_transport():
+    # H0 makes a private v4 transport class on each module load. Change only
+    # that new class, never either production import or the files on disk.
+    spec=importlib.util.spec_from_file_location('tools._sw_h2_literal_runtime',ROOT/'tools/sw_h0_runtime.py')
+    local=importlib.util.module_from_spec(spec);spec.loader.exec_module(local)
+    source=Path(local._LiveTransport._invoke.__code__.co_filename)
+    tree=ast.parse(source.read_text(encoding='utf-8'))
+    classes=[n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='LiveTransport']
+    if len(classes)!=1:raise Stop('H2_transport_class_identity')
+    methods=[n for n in classes[0].body if isinstance(n,ast.FunctionDef) and n.name=='_invoke']
+    if len(methods)!=1:raise Stop('H2_transport_method_identity')
+    method=methods[0];before=ast.dump(method,include_attributes=False)
+    expected=ast.dump(ast.parse('"@"+str(payload)',mode='eval').body,include_attributes=False)
+    class LiteralOnly(ast.NodeTransformer):
+        count=0
+        def visit_BinOp(self,node):
+            if ast.dump(node,include_attributes=False)==expected:
+                self.count+=1
+                return ast.copy_location(ast.parse("payload.read_text(encoding='utf-8')",mode='eval').body,node)
+            return self.generic_visit(node)
+    visitor=LiteralOnly();visitor.visit(method)
+    if visitor.count!=1:raise Stop('H2_transport_payload_expression_changed')
+    scope=dict(local._LiveTransport._invoke.__globals__)
+    exec(compile(ast.fix_missing_locations(ast.Module(body=[method],type_ignores=[])),
+        str(source)+'[H2-literal-prompt]','exec'),scope)
+    local._LiveTransport._invoke=scope['_invoke']
+    proof=dict(original_invoke_ast_sha256=ledger.sha(before.encode()),
+        literal_invoke_ast_sha256=ledger.sha(ast.dump(method,include_attributes=False).encode()),
+        replacement_count=visitor.count,input_mode='literal_json_argument',stdin='DEVNULL',
+        numeric_scoring_slots_or_timers_changed=False)
+    return local.Transport,proof
+
+
+def user_packet_matches(stdout,payload):
+    """Verify resolved native user messages, not merely the file/argv wrapper."""
+    expected=canonical(ledger.read_json(payload));seen=0
+    with Path(stdout).open('rb') as stream:
+        for raw in stream:
+            try:event=json.loads(raw)
+            except (ValueError,UnicodeError):continue
+            message=event.get('message') if isinstance(event,dict) else None
+            if not isinstance(message,dict) or message.get('role')!='user':continue
+            content=message.get('content')
+            if isinstance(content,str):text=content
+            elif isinstance(content,list) and all(isinstance(c,dict) and c.get('type')=='text' and isinstance(c.get('text'),str) for c in content):
+                text=''.join(c['text'] for c in content)
+            else:return False
+            try:actual=json.loads(text)
+            except ValueError:return False
+            if canonical(actual)!=expected:return False
+            seen+=1
+    return seen>0
+
+
+_TRANSPORT_BASE,TRANSPORT_ADAPTATION=literal_transport()
+
+
+class Transport(_TRANSPORT_BASE):
     def _invoke(self,argv,**kwargs):
         model=len(argv)>1 and argv[1] in ('exec','--version')
         if model:kwargs['cwd']=self.manifest['generation_cwd']
-        try:return super()._invoke(argv,**kwargs)
+        try:
+            completed=super()._invoke(argv,**kwargs)
+            if model and argv[1]=='exec' and not self.fatal:
+                payload=self.out/('logical-%04d'%self.logical_call)/'payload.json'
+                if not user_packet_matches(self.out/self.last_attempt/'stdout.bin',payload):
+                    self.fatal=self.guard.stop_reason='H2_model_prompt_envelope_mismatch'
+                    raise Stop(self.fatal)
+            return completed
         except BaseException:
             if not model:self.manifest['_native_uncertain']=True
             raise
@@ -187,13 +251,14 @@ def prepare(experiment,*,smoke=False):
     work=private_path(out/'generator-cwd');work.mkdir(exist_ok=True)
     prefix='preflight' if smoke else 'experiment'
     path=out/(prefix+'-manifest.json')
-    manifest=dict(schema='harness2.solidworks.skill.freeze.v2',experiment=experiment,prepared_at=ledger.utc(),
+    manifest=dict(schema='harness2.solidworks.skill.freeze.v3',experiment=experiment,prepared_at=ledger.utc(),
         policy_sha256=policy,files=files,input_files=bound,generator=generator,host=host,solidworks=solidworks,
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')},
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),generator_config_sha256=ledger.sha(canonical(runtime.MODEL_CONFIG)),
         quota_snapshot='C:/dev/v4-ops/quota.json',generation_cwd=str(work),context_manifest=str(path),
         evidence_mode='unit_mock' if smoke else 'live',
         skill_sha256={arm:ledger.sha(value) for arm,value in bundles().items()},fixture_admission=adaptation,
+        transport_adaptation=TRANSPORT_ADAPTATION,
         development_ids=[e['case'] for e in entries if e['role']=='development'],
         holdout_ids=[e['case'] for e in entries if e['role']=='holdout'],
         protocol=dict(calibration_per_case=5,baseline_pass_counts=[2,3],matched_pairs=5,max_pairs=10,
@@ -204,7 +269,7 @@ def prepare(experiment,*,smoke=False):
             'USER 2026-10-28 01:18/01:30: autonomous skill-text-only independent Codex batches <=50; conservatively cap40')
     ledger.write_json(path,manifest)
     digest=ledger.file_sha(path);ledger.write_json(out/(prefix+'-SHA256.json'),{'manifest_sha256':digest})
-    public={k:manifest[k] for k in ('schema','experiment','prepared_at','policy_sha256','skill_sha256','fixture_admission','protocol','development_ids','holdout_ids','solidworks','evidence_mode')}
+    public={k:manifest[k] for k in ('schema','experiment','prepared_at','policy_sha256','skill_sha256','fixture_admission','transport_adaptation','protocol','development_ids','holdout_ids','solidworks','evidence_mode')}
     public.update(manifest_sha256=digest,source_sha256=files,generator={k:generator[k] for k in ('model','thinking','version','sha256')},live_model_calls=0)
     ledger.write_json(fixtures.PUBLIC/experiment/(prefix+'-manifest-public.json'),public)
     return public
@@ -214,7 +279,7 @@ def load(experiment):
     out,entries,bound=context(experiment)
     path=out/'experiment-manifest.json';manifest=ledger.read_json(path)
     if ledger.file_sha(path)!=ledger.read_json(out/'experiment-SHA256.json')['manifest_sha256']:raise Stop('H2_experiment_manifest_changed')
-    if (manifest['schema']!='harness2.solidworks.skill.freeze.v2' or manifest['experiment']!=experiment
+    if (manifest['schema']!='harness2.solidworks.skill.freeze.v3' or manifest['experiment']!=experiment
             or manifest['input_files']!=bound or manifest['skill_sha256']!={a:ledger.sha(b) for a,b in bundles().items()}
             or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING):raise Stop('H2_experiment_binding')
     current=freezing.bindings(ROOT);current['H2_SKILL_PLAN.md']=ledger.file_sha(ROOT/'H2_SKILL_PLAN.md')
@@ -240,11 +305,12 @@ def trial_manifest(experiment,shared,entry,label,variant,pool_name,pool_scope):
 
 def initial_measurement(events,episode):
     accepted=[e for e in events if e.get('event')=='attempt_finished' and e.get('operation')=='model' and e.get('charged') is True]
-    if not accepted:return dict(initial_usage=None,initial_payload_sha256=None,initial_cwd=None)
+    if not accepted:return dict(initial_usage=None,initial_payload_sha256=None,initial_cwd=None,initial_model_input_verified=False)
     first=accepted[0];values=(first.get('usage') or {}).get('values',{})
     path=episode/('logical-%04d'%first['logical_call_id'])/'payload.json'
     submitted=ledger.read_json(episode/first['attempt_id']/'submitted.json')
     return dict(initial_usage={name:values.get(key) for name,key in (
             ('input_uncached_tokens','input_tokens'),('cache_read_tokens','cached_input_tokens'),
             ('cache_write_tokens','cache_write_input_tokens'))},
-        initial_payload_sha256=ledger.file_sha(path),initial_cwd=submitted['cwd'])
+        initial_payload_sha256=ledger.file_sha(path),initial_cwd=submitted['cwd'],
+        initial_model_input_verified=user_packet_matches(first['streams']['stdout']['path'],path))

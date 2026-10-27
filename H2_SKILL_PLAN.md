@@ -54,3 +54,18 @@
 - 正負native制御20件を全通過してからv2 runtime/skill A+B/入力/host/counter単位を新manifestへ固定する。キャッシュの整合幅・5回較正・最初の2/5または3/5候補・A/B交互5整合組・最大10ペア・採用/最終5全通過の条件は変更しない。
 - scopeと判定を保った難度選択であり、dataset02の満点をBの利得にしない。全候補が床/天井ならそのepochをgate未成立として記録する。Bの出力や新holdoutを見て課題・文・閾値を調整しない。
 - OMP counter単位の根拠は公開row（cache-readがuncachedより大きい）とmaintainerの説明：https://github.com/can1357/oh-my-pi/issues/4469 。v1のcache条件がこの型を拒否することはモデル0の再現で確認済み。原ledgerの値はそのまま保持し、H2の比較DTOだけを明示的な3区分へ変更する。数値の採点・元policy・カードは変更しない。
+
+## Epoch03停止理由：展開後user promptの盲検化
+
+- 保存済みepoch02のnative stdoutを固定プログラムが再読し、user eventにtrial ID・`payload.json`名・runtime envelopeが含まれることを真偽だけで確認した（モデル0）。`@file`のheaderが実行先をモデルへ見せるため、payload SHAとcwdだけの照合ではA/Bの初期入力同一性を証明できない。本文・Gold・モデル出力値は親へ表示していない。
+- この実際の盲検化欠陥を見つけた時点で、epoch03を比較/採用の証拠には使わない。凍結対象の本計画をこの記録で更新し、既存guardのsource変更検知で停止させる。quotaを偽装したり、稼働SWやnative CAD workerをkillしたりしない。進行中のnative操作は既存の所有権/timeout処理に委ね、全予約・raw・完了済み結果を保持する。
+- 次epochではCLIへファイル添付ではなくJSON本文をliteral引数として渡す隔離transportを使う。元v4/H0ファイルは編集せず、native `_invoke`のargv末尾のpayload式だけをprivate classへ変換し、前後AST/hashと置換1箇所をmanifestへ固定する。stdinは引き続きDEVNULL。実際に返ったuser messageからheader/arm IDの不在と、request/runtime_data本文の同一性を機械確認する。異なるmodeling文以外を変えるA/B比較は行わない。
+- 新しいdev/holdoutは同じ公開LEVELSで別seedとし、候補Bは編集しない。policy・カード・採点・数値許容差・時間/call枠・cache幅・採用条件は変更しない。epoch03の呼出しも全て会計へ残す。
+
+## Epoch04事前登録：literal inputの同一性を実streamで確認
+
+- `skill-20261028-04`は同じLEVELS・同じ候補Bのまま、別seedのdev5/holdout5を封印する。epoch03の部分結果と課題は比較へ持ち込まない。
+- freeze v3はprivate native `_invoke`のpayload argv式の置換1箇所をhash固定する。archive payload/configと完全stdout/stderrは従来どおり保存し、実argvもliteral本文を正確に記録する。元v4/H0ファイル、slots、タイマー、policy、数値採点は変更しない。
+- 実native user messageをJSONとして機械parseし、request/runtime_dataがarchive packetと一致し、file/arm headerや余分なmetadataがないことを各応答で確認する。不在・不一致は機械的な比較前提違反として止め、次のモデルを呼ばない。raw本文は親/Gitへ出さず、確認flagとhashだけ公開する。
+- stdinはDEVNULL。literal引数にはWindows command-line長制限があるため、超過時に黙ってfile/stdinへfallbackしない。旧@file wrapperや別stdin運用へ戻して比較成立を装わない。
+- cache単位/1 percentage point・較正5回/2–3合格・交互5整合ペア/最大10・B+2合格/重大発明非増加/call・active非悪化・fresh5全通過の採用条件は維持する。

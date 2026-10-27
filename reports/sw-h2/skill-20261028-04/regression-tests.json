@@ -1,0 +1,16 @@
+{
+  "scope": "SolidWorks harness regressions including resolved input blinding",
+  "runner": "FreeCAD 1.1.4 pinned Python SDK",
+  "environment": {
+    "CAD_SW_M0_NATIVE": "1"
+  },
+  "tests": 44,
+  "new_h2_tests": 21,
+  "existing_tests": 23,
+  "result": "PASS",
+  "skipped": 0,
+  "live_model_calls": 0,
+  "solidworks_calls": 0,
+  "command": "import sys,unittest;sys.path[:0]=['C:/dev/CAD-HARNESS-sw','C:/dev/CAD/.tools/freecad/FreeCAD_1.1.4-Windows-x86_64-py311/bin'];suite=unittest.defaultTestLoader.discover('tools',pattern='test_sw*.py');result=unittest.TextTestRunner(verbosity=2).run(suite);raise SystemExit(not result.wasSuccessful())",
+  "stderr_sha256": "fe18d27a1308b2edfa649820de8bb019bdea252e0a160e8ce54d1ab7bd5f35f4"
+}

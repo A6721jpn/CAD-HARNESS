@@ -238,3 +238,21 @@
 
 - `bg_61`のv2 mock/real CAD smokeもPASS（episode64.953秒、tool66.92秒）。mock2、実CAD2、誤仕様拒否、元R1=1、完全capture8、実モデル0。counter修正のbefore=False/after=Trueとpacket不変を公開`cache-counter-smoke.json`へ保存した。
 - 生成前quotaは15%（2026-10-27T19:49:55.822Z）。epoch03はまだ課金0。sourceと上記無課金証拠をcommit/pushし、v2共通manifestを一度作成して新較正へ進む。
+
+- H2停止 {"status": "STOPPED", "at": "2026-10-27T19:58:07.670803+00:00", "reason": "STOP_SW_state_unknown_no_restart", "manual_SW_recovery_required": true}
+
+## Handoff：実prompt盲検化修正、epoch04の無課金制御中
+
+- epoch03 source/無課金証拠は`624cd8f`としてh2/swへpush済みだった。v2 manifest SHAは`1f8f96287a1f68a20d04e23c7c2807a0533c98e3ae50d112b9ec60eaf9a07c39`。その後、保存済みnative user eventの機械再読でtrial ID/`payload.json` headerの露出を確認した（本文/Gold値は表示せず、モデル0）。A/Bに入る前に本計画へ欠陥を記録し、凍結guardのsource変更検知で`bg_62`を停止した。
+- 停止は396.76秒。モデル予約6/40・pending0・CAD6・最大quota15%を`accounting-public.json`で突合。公開rowは5件合格と1件のguard中断失敗のまま保持するが、**6件の能力スコアには使わない**。比較/holdoutはnot_run。epoch03全体を`quarantine.json`で比較対象外とし、課題/結果を次epochへ持ち込まない。
+- 印字は保守的に`STOP_SW_state_unknown_no_restart`だったが、保存reasonの機械確認は`H0_frozen_file_changed=True`、RPC/nonresponse=False。SWは同じ53084/34.4.0で応答・文書0を確認。controller49424不在と排他open成功後、lockを`session.lock.stale-20261028-h2-epoch03-guard`へrename保存。**SWの終了/再起動もnative worker killもしていない**。
+- 実装済み未commit：`sw_h2_runtime.py`でH0 runtimeを独立ロードし、そのprivate native `_invoke`の`@file`式1箇所だけをliteral JSON argvへ変更（元v4/H0ファイル・numeric state/slots/timersは未変更）。前後AST/hashをfreeze v3へ固定。全user eventがarchive request/runtime_dataと一致することを応答直後に機械検査し、不明/不一致では次モデルへ進めない。実model入力確認flagも公開rowへ出す。stdinはDEVNULL。
+- `sw_h2.py`のmockもliteral JSONを受け、実parser形のuser eventを出す。既存＋盲検化回帰のSDK全`test_sw*.py`は**44/44 PASS、skip0、1.785秒**。Evalの`h2R3UnitSDKObserved`に証拠。source変更はruntime/CLI/testと計画/このメモのみ。候補B・gold schema・policy・カード・判定・Native API・許容差は変更なし。
+- **現在のjobは`bg_63`のみ**。`skill-20261028-04`を同じLEVELS・別seed・新dev5/holdout5で封印し、正負20制御を実行中。epoch04の実モデル呼出しは0。親にGold/seed/raw/CADを表示しない。Codex generatorもまだ起動していない。
+- 次の一手：`bg_63`の自動結果を受領し、全制御PASS後に`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261028-04`。44テストreceiptと無課金証拠→source/epoch03会計/停止記録をcommit/push→v3 freeze→run。最初の実native user packetも自動検査し、通らなければ1件で止める。55%ASK/60%停止、SW無応答時の停止、max2、Gold machine-onlyは不変。
+
+- epoch04の`bg_63`は正負20件全PASS、812.56秒、モデル0。seal SHA `cbf19d770a914523fe0f950f905aee249942fe58d4a63130006a22bca01fb846`、factoryは同じ`fc05e68b5b49cdd718e1612cca11f3878a8f0f52b1815cfa271fbe400a5597b1`。新しいblind inputのmock＋real CAD smokeは`bg_64`で実行中。
+- 44テストreceiptと、旧native eventにheaderが存在したことの真偽だけの証拠をepoch04のpublicへ保存済み。次は`bg_64`の結果→source/停止会計/証拠commit・push→v3 freeze・run。実native streamの初回packet確認が通るまでは盲検化の実証済みとしない。
+
+- `bg_64`のliteral argv＋実SW/FreeCAD smokeはPASS（episode65.922秒、tool67.42秒）。mock2、CAD2、誤仕様拒否、元R1=1、完全capture8、モデル0。mockが実際に受けたliteral JSON user packetをnative parser形式へ渡し、metadata/header拒否の検査も通した。実CLIについては最初の実生成streamで同じ検査を行う。
+- source/停止記録/公開証拠をh2/swへcommit・pushした後、v3の`skill-20261028-04`をfreeze・runする。以後、code/skill/計画を変えず、実input未確認では比較を続けない。

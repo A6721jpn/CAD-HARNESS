@@ -20,7 +20,7 @@ from tools.cad_verify_guard import Stop,quota_snapshot
 QUOTA_STOPS=frozenset(('quota_soft_stop','quota_hard_stop','quota_snapshot_missing_or_invalid',
     'quota_snapshot_invalid','quota_snapshot_invalid_time','quota_snapshot_future','quota_snapshot_stale'))
 PUBLIC_STOPS=QUOTA_STOPS|frozenset(('H2_trial_stopped','STOP_SW_state_unknown_no_restart',
-    'STOP_SW_unavailable_or_documents_open','H2_SW_runtime_changed'))
+    'STOP_SW_unavailable_or_documents_open','H2_SW_runtime_changed','H2_model_prompt_envelope_mismatch'))
 
 
 def cache_match(a,b):
@@ -143,6 +143,7 @@ class Experiment:
         if stopped:ledger.write_json(out/'stop-private.json',dict(reason=stopped))
         events=list(ledger.rows(out/'ledger.jsonl'))
         measurements=native.initial_measurement(events,out/'episode')
+        if not measurements['initial_model_input_verified'] and not stopped:stopped='H2_model_prompt_envelope_mismatch'
         result=dict(row,**measurements,label=trial['label'],case=trial['case'],variant=trial['variant'],phase=phase,
             experiment_manifest_sha256=self.identity,manifest_sha256=manifest['manifest_sha256'],
             ledger_sha256=ledger.file_sha(out/'ledger.jsonl'),stopped=bool(stopped),
@@ -155,7 +156,7 @@ class Experiment:
         print(json.dumps({k:result[k] for k in ('label','variant','completed','passed','model_calls','cad_attempts','repair_calls','active_s')}),flush=True)
         if stopped:
             if self.native_uncertain:raise Stop('STOP_SW_state_unknown_no_restart')
-            raise Stop(stopped if stopped in QUOTA_STOPS else 'H2_trial_stopped')
+            raise Stop(stopped if stopped in PUBLIC_STOPS else 'H2_trial_stopped')
         if result['initial_cwd']!=self.shared['generation_cwd']:raise Stop('H2_generation_cwd_mismatch')
         return result
 
@@ -246,15 +247,17 @@ def smoke(experiment):
     spec=ledger.read_json(entry['control_spec_path']);wrong=copy.deepcopy(spec);wrong['pockets'][0]['depth']+=.1
     responses=iter((wrong,spec));submissions=[]
     def process(argv,captures,*,cwd,timeout):
-        payload=next(Path(value[1:]) for value in argv if value.startswith('@'))
-        packet=ledger.read_json(payload)
+        if any(value.startswith('@') for value in argv):raise Stop('H2_smoke_file_header_not_blind')
+        packet=json.loads(argv[-1])
         if set(packet)!={'request','runtime_data'} or packet['request']!=entry['gold']['description']:
             raise Stop('H2_smoke_request_binding')
         data=json.dumps(packet['runtime_data'])
         if any(key in data for key in ('target_mm3','description_sha256','provenance','gold_path','acceptance','target_volume','parameters')):
             raise Stop('H2_smoke_oracle_leak')
         if str(cwd)!=shared['generation_cwd'] or '--no-tools' not in argv:raise Stop('H2_smoke_invocation')
-        submissions.append(ledger.file_sha(payload))
+        submissions.append(ledger.sha(native.canonical(packet)))
+        user=dict(type='message_end',message=dict(role='user',content=[dict(type='text',text=argv[-1])]))
+        captures['stdout'].feed((json.dumps(user)+'\n').encode())
         event=dict(type='message_end',message=dict(role='assistant',provider='openai-codex',model='gpt-6.1-sol',
             content=[dict(type='text',text=cad_spec.canonical(next(responses)))],stopReason='stop'))
         captures['stdout'].feed((json.dumps(event)+'\n').encode());return 0
