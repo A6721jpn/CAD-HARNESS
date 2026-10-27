@@ -1,0 +1,68 @@
+{
+  "experiment": "skill-20261028-02",
+  "at": "2026-10-27T19:27:28.428433+00:00",
+  "experiment_manifest_sha256": "eab33e5514006133dbe5e20797d1609a39cd184511366d96c048263077e8e590",
+  "batches": [
+    {
+      "phase": "calibration",
+      "index": 1,
+      "scope": "harness2-solidworks-H2-skill-20261028-02-calibration-01",
+      "cap": 40,
+      "conservative_reserved_calls": 25,
+      "accepted_or_failed_calls": 25,
+      "pending_or_unknown_calls": 0,
+      "verified_overload_rejections": 0,
+      "remaining": 15,
+      "billing_missing_reason": "invoice_not_provided"
+    }
+  ],
+  "total_conservative_reserved_calls": 25,
+  "pending_or_unknown_calls": 0,
+  "physical_model_attempts": 25,
+  "CAD_attempts": 25,
+  "max_observed_quota_percent": 14,
+  "tokens": {
+    "input_tokens": {
+      "total": 83647,
+      "known_subtotal": 83647,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "cached_input_tokens": {
+      "total": 27648,
+      "known_subtotal": 27648,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "cache_write_input_tokens": {
+      "total": 0,
+      "known_subtotal": 0,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "output_tokens": {
+      "total": 40845,
+      "known_subtotal": 40845,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 25,
+      "known": 0,
+      "missing": 25,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice"
+}

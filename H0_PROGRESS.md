@@ -207,3 +207,20 @@
 - `bg_58`のH2自身のmock＋real CAD通しもPASS。`fixture/confirmed=false`を保持したまま入場し、改善文B bundle・共通cwd・実SW/FreeCAD・誤仕様拒否・元R1=1・完全capture8を確認。mock2、real CAD2、live0、episode36.390秒（tool37.96秒）。根拠は`reports/sw-h2/skill-20261028-02/preflight-smoke.json`。
 - 生成前のquota公開値は13%（snapshot `omp-usage-1793126906348-7d=13`、2026-10-27T18:48:26.348Z）。各生成の直前と実行中にも既存guardが再確認する。55%/60%は緩めない。
 - 次はこの実装と公開の無課金証拠だけをh2/swへcommit/pushし、live用manifestを一度作成して較正を開始する。課題・正解・raw・CADはprivate、元60は再利用しない。以降、共通sourceを変えず、gate不成立なら元版維持として記録する。
+
+## Handoff：H2版固定後のlive較正を開始
+
+- source＋無課金公開証拠18ファイルを`306e573`としてh2/swへcommit/push済み。__pycache__、Gold、seed、raw、CADは追加していない。
+- live共通manifestは2026-10-27T18:54:52.744446Z作成、SHA `eab33e5514006133dbe5e20797d1609a39cd184511366d96c048263077e8e590`。A skill `df6a2ff9df096e7be5815957318f00684810fd79422d203d6fcdf42c9de25109`、B skill `3c96a45fbe5639f71eecdd057757a1318462a463316db3dbcea3a908555d2616`。生成器Sol/xhigh・omp18.11.2。SW53084/revision34.4.0/実体hashも固定した。source/skill/計画は以後編集しない。
+- **進行中の実生成jobは`bg_59`だけ**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py run --experiment skill-20261028-02`。同時に別runを起動しない。親＋逐次generatorでCodex最大2。runnerが各生成前/実行中のquotaと各pool40上限を守り、較正→条件成立時の交互比較→採用条件成立時の新holdoutを進める。
+- 凍結後に追加したのは公開`regression-tests.json`（実40/40・模擬呼出しのみ）と、このメモ、privateの`publish-accounting.py`だけ。後者はGoldを読まず、controller終了後に各40枠とtrial ledgerの予約数を突合して公開会計を出す固定プログラム。まだ実行しない。
+- 残手順：`bg_59`の自動完了/停止結果を受領（pollしない）→次のコマンドで会計→public結果だけを集計→採用/元版維持と制約を記録→h2/swへ結果をcommit/pushして区切る。正解/private生成物は親へ表示しない。55%の停止ならASKして待ち、60%も停止。SW無応答なら終了/再起動をせず報告する。
+- **job終了後の正確な次コマンド**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261028-02/publish-accounting.py`。既存CLAIM・結果を消さず、完了済みの生成をやり直さない。
+
+## H2 dataset02：較正25/25、難度ゲート未成立
+
+- `bg_59`は正常終了（controller1570.28秒、episode合計1557.689秒）。H2D1〜H2D5はいずれも元版Aが5/5、全25試行が初回生成・初回CADでPASS。2/5または3/5の候補がなく、比較・最終holdoutは**not_run**。候補Bの改善効果も採用も主張せず、元版を維持する。結果は公開`skill-20261028-02/result.json`。
+- live会計は1つの独立calibration poolで25/40、pending0、物理モデル25、CAD25、overload免除0、最大観測quota14%。mock smokeの同prefix ledgerを除外する`evidence_mode=live`条件を会計用固定スクリプトへ追加して突合した。source/採点/生成物は変えていない。公開`accounting-public.json`の原カウンタはinput83,647、cache-read27,648、cache-write0、output40,845、reasoning別計測null、料金不明。
+- 次の比較前にcache測定の単位を修正する必要がある。公開rowにはnative input991/cache-read3456があり、OMPの`input`は総入力ではなくuncachedの区分。元native parserはそのまま`input_tokens`へ写すため、旧H2の「cache-read<=input」条件は正しいcached応答まで拒否する。upstream maintainerの説明もinputがprompt-minus-cachedであることを確認する：https://github.com/can1357/oh-my-pi/issues/4469 。今回は比較0組なので、この問題は25件の合否と難度ゲートの結果に影響しない。旧結果・旧manifestは書き換えない。
+- 次epochではuncached/read/writeの3区分を明示し、cache率をread/(uncached+read+write)で定義する。初回受理呼出しだけ・整合幅1 percentage point・最大10ペア・採用条件はそのまま。先に回帰検証し、新しい共通manifestを作る。
+- 01:30の全設計委任と「開発を進める」を適用し、元版維持の記録を確定したうえで、**別の独立難度ラダー**へ進む。変更は公開生成規則の穴数/角度の設計値だけ（8/9/11/13/17穴、いずれも既存schema上限64以内）。familyは既存rect_prism、箱/非貫通pocket/through holes、元許容差・policy・カード形式・判定・時間枠・call枠は変えない。候補B文は変更しない。新seed・新holdoutを先に封印し、正負20制御が全通過するまで課金を始めない。

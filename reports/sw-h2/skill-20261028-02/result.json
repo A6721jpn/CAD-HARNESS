@@ -1,0 +1,48 @@
+{
+  "schema": "harness2.solidworks.skill.result.v1",
+  "experiment": "skill-20261028-02",
+  "at": "2026-10-27T19:22:12.135005+00:00",
+  "experiment_manifest_sha256": "eab33e5514006133dbe5e20797d1609a39cd184511366d96c048263077e8e590",
+  "status": "complete",
+  "reason": "baseline_difficulty_gate_not_met",
+  "adopted": false,
+  "calibration": [
+    {
+      "case": "H2D1",
+      "passed": 5,
+      "n": 5
+    },
+    {
+      "case": "H2D2",
+      "passed": 5,
+      "n": 5
+    },
+    {
+      "case": "H2D3",
+      "passed": 5,
+      "n": 5
+    },
+    {
+      "case": "H2D4",
+      "passed": 5,
+      "n": 5
+    },
+    {
+      "case": "H2D5",
+      "passed": 5,
+      "n": 5
+    }
+  ],
+  "pair_count": 0,
+  "matched_pairs": 0,
+  "excluded_pair_indices": [],
+  "comparison": null,
+  "final_holdout_passed": 0,
+  "final_holdout_n": 0,
+  "total_reserved_model_calls": 25,
+  "wall_s": 1557.6889999988489,
+  "active_s": 1557.6889999988489,
+  "statistical_confirmation": false,
+  "model": "openai-codex/gpt-6.1-sol",
+  "thinking": "xhigh"
+}
