@@ -187,7 +187,7 @@ def prepare(experiment,*,smoke=False):
     work=private_path(out/'generator-cwd');work.mkdir(exist_ok=True)
     prefix='preflight' if smoke else 'experiment'
     path=out/(prefix+'-manifest.json')
-    manifest=dict(schema='harness2.solidworks.skill.freeze.v1',experiment=experiment,prepared_at=ledger.utc(),
+    manifest=dict(schema='harness2.solidworks.skill.freeze.v2',experiment=experiment,prepared_at=ledger.utc(),
         policy_sha256=policy,files=files,input_files=bound,generator=generator,host=host,solidworks=solidworks,
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')},
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),generator_config_sha256=ledger.sha(canonical(runtime.MODEL_CONFIG)),
@@ -198,6 +198,7 @@ def prepare(experiment,*,smoke=False):
         holdout_ids=[e['case'] for e in entries if e['role']=='holdout'],
         protocol=dict(calibration_per_case=5,baseline_pass_counts=[2,3],matched_pairs=5,max_pairs=10,
             cache_basis='initial_accepted_model_call',cache_max_difference_percentage_points=1,
+            cache_fraction='cache_read_tokens/(input_uncached_tokens+cache_read_tokens+cache_write_tokens)',
             required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,max_calls_per_episode=3),
         authorization='UNIT_MOCK_NO_LIVE_AUTHORIZATION' if smoke else
             'USER 2026-10-28 01:18/01:30: autonomous skill-text-only independent Codex batches <=50; conservatively cap40')
@@ -213,7 +214,7 @@ def load(experiment):
     out,entries,bound=context(experiment)
     path=out/'experiment-manifest.json';manifest=ledger.read_json(path)
     if ledger.file_sha(path)!=ledger.read_json(out/'experiment-SHA256.json')['manifest_sha256']:raise Stop('H2_experiment_manifest_changed')
-    if (manifest['schema']!='harness2.solidworks.skill.freeze.v1' or manifest['experiment']!=experiment
+    if (manifest['schema']!='harness2.solidworks.skill.freeze.v2' or manifest['experiment']!=experiment
             or manifest['input_files']!=bound or manifest['skill_sha256']!={a:ledger.sha(b) for a,b in bundles().items()}
             or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING):raise Stop('H2_experiment_binding')
     current=freezing.bindings(ROOT);current['H2_SKILL_PLAN.md']=ledger.file_sha(ROOT/'H2_SKILL_PLAN.md')
@@ -243,5 +244,7 @@ def initial_measurement(events,episode):
     first=accepted[0];values=(first.get('usage') or {}).get('values',{})
     path=episode/('logical-%04d'%first['logical_call_id'])/'payload.json'
     submitted=ledger.read_json(episode/first['attempt_id']/'submitted.json')
-    return dict(initial_usage={k:values.get(k) for k in ('input_tokens','cached_input_tokens')},
+    return dict(initial_usage={name:values.get(key) for name,key in (
+            ('input_uncached_tokens','input_tokens'),('cache_read_tokens','cached_input_tokens'),
+            ('cache_write_tokens','cache_write_input_tokens'))},
         initial_payload_sha256=ledger.file_sha(path),initial_cwd=submitted['cwd'])

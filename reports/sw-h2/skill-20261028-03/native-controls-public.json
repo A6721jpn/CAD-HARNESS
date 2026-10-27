@@ -1,0 +1,146 @@
+{
+  "status": "PASS",
+  "experiment": "skill-20261028-03",
+  "rows": [
+    {
+      "id": "H2D1",
+      "role": "development",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2D1",
+      "role": "development",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2D2",
+      "role": "development",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2D2",
+      "role": "development",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2D3",
+      "role": "development",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2D3",
+      "role": "development",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2D4",
+      "role": "development",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2D4",
+      "role": "development",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2D5",
+      "role": "development",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2D5",
+      "role": "development",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2H1",
+      "role": "holdout",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2H1",
+      "role": "holdout",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2H2",
+      "role": "holdout",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2H2",
+      "role": "holdout",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2H3",
+      "role": "holdout",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2H3",
+      "role": "holdout",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2H4",
+      "role": "holdout",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2H4",
+      "role": "holdout",
+      "control": "negative",
+      "passed": true
+    },
+    {
+      "id": "H2H5",
+      "role": "holdout",
+      "control": "positive",
+      "passed": true
+    },
+    {
+      "id": "H2H5",
+      "role": "holdout",
+      "control": "negative",
+      "passed": true
+    }
+  ],
+  "live_model_calls": 0,
+  "seal_sha256": "ab9c7d41b718063d8a0f3ab54fd780d223e90d0e1b368eb40c649e69c7b9ae28",
+  "factory_sha256": "fc05e68b5b49cdd718e1612cca11f3878a8f0f52b1815cfa271fbe400a5597b1",
+  "source_sha256": {
+    "tools/sw_m0.py": "cc24886da22451989c4d8c136868910b5bc5135d3fddeb5361ba4421cdef8570",
+    "tools/sw_m1_build.py": "e7644873cec89b859e5612a29ffd6e54de91a9afb7ce18972d3b14df8423b3ff",
+    "tools/sw_m1_judge.py": "456dae92d4fb755a948e0cd24975dbfb4ef8c6c616b0c346f46997c7b3de4b2b",
+    "tools/sw_m1_distance.py": "f9512b5be0e9c6e8ed88f0416301d3936365826a8aeb61e25308a27d547bf49e",
+    "tools/sw_h0_cad.py": "4d031cc7417ead7d9fc72e5e38bbaeb2eb03461d74468b113e63c8bbc3a6eaa2",
+    "tools/sw_h0_worker.py": "e68206f0281ef0d2b18649c92d288ab221f4b13f654f3bba23565b8bdcf52d6d",
+    "tools/sw_h0_verify.py": "99aea6115e79a8842a3047a5224fa192796f0d8b022f9b9091266cd0621d670c",
+    "tools/cad_spec.py": "03341cbb08453c501cb4dbc8f303b64a565e85b27f1a5c682df7dc5bf64b22c2",
+    "tools/cad_spec_probe.py": "48b00816d7ed0e3a99427f2066590b1980205675015f84a51e2064016be1beb3",
+    "tools/cad_verify_probe.py": "9490412af39079b27a316f58e7037aabf97af0f0971d490af35c27e29de7b0de",
+    "tools/cad_verify_v3_probe.py": "f09968471aa5002361ed5829d0930f486e963be5ed12ece820ebb97b0e759994",
+    "tools/sw_h2_fixtures.py": "fc05e68b5b49cdd718e1612cca11f3878a8f0f52b1815cfa271fbe400a5597b1",
+    "design/cad-harness-verify-v3/gold-schema.json": "9e6fe404f411134471cad1cb4100280e20846bc4e6753340538ed52a2d4ffce3",
+    "design/cad-harness-mvp/build-schema.json": "3764b618cd6c05eabfe6796070edfe67e071fe759b6df0c98dea5864a6d97bc1",
+    "design/cad-harness-verify-v4/policy.json": "c8a3eb5c2e40c20f9b6d6aeb568422dce2bd3ab99446c4c078e4befb67969f14"
+  }
+}

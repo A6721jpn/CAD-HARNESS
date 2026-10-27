@@ -1,0 +1,20 @@
+{
+  "before": {
+    "equal_native_cached_responses_accepted": false,
+    "real_model_calls": 0
+  },
+  "after": {
+    "initial_usage": {
+      "input_uncached_tokens": 991,
+      "cache_read_tokens": 3456,
+      "cache_write_tokens": 0
+    },
+    "equal_cached_response_accepted": true,
+    "generation_packet_unchanged": true,
+    "next_bank_min_spacing_disjoint": true,
+    "live_model_calls": 0
+  },
+  "counter_semantics_source": "https://github.com/can1357/oh-my-pi/issues/4469",
+  "original_scores_or_packets_modified": false,
+  "live_model_calls": 0
+}

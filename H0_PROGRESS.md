@@ -224,3 +224,17 @@
 - 次の比較前にcache測定の単位を修正する必要がある。公開rowにはnative input991/cache-read3456があり、OMPの`input`は総入力ではなくuncachedの区分。元native parserはそのまま`input_tokens`へ写すため、旧H2の「cache-read<=input」条件は正しいcached応答まで拒否する。upstream maintainerの説明もinputがprompt-minus-cachedであることを確認する：https://github.com/can1357/oh-my-pi/issues/4469 。今回は比較0組なので、この問題は25件の合否と難度ゲートの結果に影響しない。旧結果・旧manifestは書き換えない。
 - 次epochではuncached/read/writeの3区分を明示し、cache率をread/(uncached+read+write)で定義する。初回受理呼出しだけ・整合幅1 percentage point・最大10ペア・採用条件はそのまま。先に回帰検証し、新しい共通manifestを作る。
 - 01:30の全設計委任と「開発を進める」を適用し、元版維持の記録を確定したうえで、**別の独立難度ラダー**へ進む。変更は公開生成規則の穴数/角度の設計値だけ（8/9/11/13/17穴、いずれも既存schema上限64以内）。familyは既存rect_prism、箱/非貫通pocket/through holes、元許容差・policy・カード形式・判定・時間枠・call枠は変えない。候補B文は変更しない。新seed・新holdoutを先に封印し、正負20制御が全通過するまで課金を始めない。
+
+## Handoff：Epoch03の無課金制御待ち
+
+- dataset02の25/25とlive25/40の会計・全公開rowを`913f416`でh2/swへcommit/push済み。比較/holdoutはnot_run、元版維持。旧sourceはこのcommitで再現し、旧ファイルを書き換えない。
+- v1 cache条件は実native counterの991 uncached/3456 readを有効な同率ペアとして扱えなかった（無課金再現False）。H2だけを明示的uncached/read/write DTOと総入力分母へ修正し、freeze schemaをv2へ。保存済みledgerの機械だけの再読で、修正後は同率ペアTrue・生成packet SHA不変、モデル0を確認した。原ledger・v4 parser/判定・25件の採点は変更していない。
+- 修正後の固定SDK全`test_sw*.py`は**42/42 PASS、skip0、1.884秒**（既存23＋H2 19）。native cache-read>uncached、uncached0の有効cache、cache-writeの分母参加、不明/負値/bool/浮動値の拒否を含む。Eval変数`h2R2UnitSDKObserved`に証拠がある。新ラダー最小間隔の非重複条件も機械計算でTrue。
+- `bg_60`で`skill-20261028-03`の新seed/新dev5/新holdout5を封印し、正負20制御を実行中。**epoch03の実モデル呼出しは0**。Bの説明文は未変更。変更中のsourceは`sw_h2_fixtures.py`（公開LEVELSだけ）、`sw_h2_runtime.py`（counter DTO/v2）、`sw_h2.py`（cache率）、`test_sw_h2.py`、計画/メモ。元policy/schema/カード/判定/Native API/時間枠/呼出し枠は変更していない。
+- 次は`bg_60`の自動結果を受領（pollしない）。全制御成立後の正確な次コマンド：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261028-03`。42テストreceiptと無課金証拠を保存し、sourceをcommit/push→同CLI `freeze`→`run`。失敗時はモデルを呼ばず原因を切り分け、SW無応答は終了/再起動せず停止報告する。
+
+- `bg_60`完了：epoch03の正負20制御は全PASS、866.47秒、モデル0。新seal SHA `ab9c7d41b718063d8a0f3ab54fd780d223e90d0e1b368eb40c649e69c7b9ae28`、factory SHA `fc05e68b5b49cdd718e1612cca11f3878a8f0f52b1815cfa271fbe400a5597b1`。公開native証拠と42テストreceiptを保存済み。
+- 次のv2 smokeは`bg_61`で実行中（mockモデル＋real SW/FreeCAD、実モデル0）。完了後にこのepochのsource/公開証拠をcommit/pushし、`tools/sw_h2.py freeze --experiment skill-20261028-03`→`run`へ進む。source/候補文の途中改変はしない。
+
+- `bg_61`のv2 mock/real CAD smokeもPASS（episode64.953秒、tool66.92秒）。mock2、実CAD2、誤仕様拒否、元R1=1、完全capture8、実モデル0。counter修正のbefore=False/after=Trueとpacket不変を公開`cache-counter-smoke.json`へ保存した。
+- 生成前quotaは15%（2026-10-27T19:49:55.822Z）。epoch03はまだ課金0。sourceと上記無課金証拠をcommit/pushし、v2共通manifestを一度作成して新較正へ進む。

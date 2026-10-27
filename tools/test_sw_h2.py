@@ -17,19 +17,29 @@ def sample(passed=False):
     return dict(passed=passed,critical_invention=False,model_calls=1,active_s=2.)
 
 
+def cache_counts(uncached,read,writes=0):
+    return dict(initial_usage=dict(input_uncached_tokens=uncached,cache_read_tokens=read,cache_write_tokens=writes))
+
+
 class ComparisonGates(unittest.TestCase):
     def test_cache_exact_boundary_and_integer_precision(self):
-        row=lambda n,c:dict(initial_usage=dict(input_tokens=n,cached_input_tokens=c))
-        self.assertTrue(h2.cache_match(row(1000,100),row(1000,110))[0])
-        self.assertFalse(h2.cache_match(row(1000,100),row(1000,111))[0])
-        n=10**24
-        self.assertFalse(h2.cache_match(row(n,0),row(n,n//100+1))[0])
+        self.assertTrue(h2.cache_match(cache_counts(900,100),cache_counts(890,110))[0])
+        self.assertFalse(h2.cache_match(cache_counts(900,100),cache_counts(889,111))[0])
+        n=10**24;cached=n//100+1
+        self.assertFalse(h2.cache_match(cache_counts(n,0),cache_counts(n-cached,cached))[0])
 
     def test_unknown_invalid_or_boolean_cache_is_not_zero(self):
-        for n,c in ((None,None),(0,0),(True,0),(100,True),(100,-1),(100,101),(100,1.5)):
-            with self.subTest(input=n,cached=c):
-                row=dict(initial_usage=dict(input_tokens=n,cached_input_tokens=c))
+        for n,c,w in ((None,None,0),(0,0,0),(True,0,0),(100,True,0),(100,-1,0),(100,1.5,0),(100,50,None),(100,50,-1)):
+            with self.subTest(input=n,cached=c,writes=w):
+                row=cache_counts(n,c,w)
                 self.assertFalse(h2.cache_match(row,row)[0])
+
+    def test_native_cache_hits_larger_than_uncached_input_are_valid(self):
+        self.assertTrue(h2.cache_match(cache_counts(100,900),cache_counts(90,910))[0])
+        self.assertTrue(h2.cache_match(cache_counts(0,100),cache_counts(0,200))[0])
+
+    def test_cache_write_bucket_participates_in_total_input(self):
+        self.assertFalse(h2.cache_match(cache_counts(100,800,100),cache_counts(100,800,0))[0])
 
     def test_adoption_needs_two_more_passes(self):
         pairs=[dict(A=sample(i<2),B=sample(i<4)) for i in range(5)]

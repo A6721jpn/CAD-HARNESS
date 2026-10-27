@@ -25,8 +25,11 @@ PUBLIC_STOPS=QUOTA_STOPS|frozenset(('H2_trial_stopped','STOP_SW_state_unknown_no
 
 def cache_match(a,b):
     def valid(row):
-        usage=row.get('initial_usage') or {};n=usage.get('input_tokens');cached=usage.get('cached_input_tokens')
-        return (n,cached) if type(n) is int and type(cached) is int and n>0 and 0<=cached<=n else None
+        usage=row.get('initial_usage') or {}
+        counts=tuple(usage.get(k) for k in ('input_uncached_tokens','cache_read_tokens','cache_write_tokens'))
+        if any(type(v) is not int or v<0 for v in counts):return None
+        total=sum(counts)
+        return (total,counts[1]) if total>0 else None
     x,y=valid(a),valid(b)
     if x is None or y is None:return False,'unknown_or_invalid_initial_cache'
     if 100*abs(x[1]*y[0]-y[1]*x[0])>x[0]*y[0]:return False,'initial_cache_rate_mismatch'

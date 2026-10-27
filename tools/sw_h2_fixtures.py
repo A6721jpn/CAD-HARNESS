@@ -23,7 +23,9 @@ from tools.sw_m1_inputs import private_path
 from tools.cad_verify_guard import Stop
 
 PUBLIC=ROOT/'reports/sw-h2'
-LEVELS=((4,0),(4,45),(6,30),(5,17),(7,13))
+# Next independent bank after the first five levels all scored 5/5.
+# Design counts/angles only; original schema/caps/tolerances remain unchanged.
+LEVELS=((8,7),(9,11),(11,13),(13,17),(17,19))
 CONTROL_SOURCES=('tools/sw_m0.py','tools/sw_m1_build.py','tools/sw_m1_judge.py',
     'tools/sw_m1_distance.py','tools/sw_h0_cad.py','tools/sw_h0_worker.py','tools/sw_h0_verify.py',
     'tools/cad_spec.py','tools/cad_spec_probe.py','tools/cad_verify_probe.py','tools/cad_verify_v3_probe.py',
