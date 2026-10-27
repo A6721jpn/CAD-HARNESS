@@ -69,3 +69,10 @@
 - 実native user messageをJSONとして機械parseし、request/runtime_dataがarchive packetと一致し、file/arm headerや余分なmetadataがないことを各応答で確認する。不在・不一致は機械的な比較前提違反として止め、次のモデルを呼ばない。raw本文は親/Gitへ出さず、確認flagとhashだけ公開する。
 - stdinはDEVNULL。literal引数にはWindows command-line長制限があるため、超過時に黙ってfile/stdinへfallbackしない。旧@file wrapperや別stdin運用へ戻して比較成立を装わない。
 - cache単位/1 percentage point・較正5回/2–3合格・交互5整合ペア/最大10・B+2合格/重大発明非増加/call・active非悪化・fresh5全通過の採用条件は維持する。
+
+## Epoch05事前登録：既存schema内の次の難度段階
+
+- epoch04は実user packet25/25確認、較正25/25、26/40予約（元R1が1回）、比較/最終holdoutはnot_run、元版維持。満点をBの効果とせず、結果は`73595db`へ保存した。
+- `skill-20261028-05`を新seed・新dev5/holdout5で作る。公開の合成設計値は(19,7°),(21,11°),(23,13°),(25,17°),(29,19°)。半径範囲を30–40 mmとして、最大29穴・最大直径でも円周上の穴が重ならない範囲を保つ。これらは新しい合成fixtureの入力設定で、ユーザー実物の値や実測値ではない。既存64穴/rect_prism/非貫通pocket/through holesの内側であり、新feature/family/schema/APIを加えない。
+- 候補B・v3 blind transport・cache単位/整合幅・モデル・call/時間枠・許容差・判定/採点は変更しない。前epochの課題やholdoutを使い回さず、同じ候補文でdifficulty gateだけを独立に再較正する。B出力/holdoutの結果を見て設定を調整しない。
+- 新しい20正負native制御・SDK回帰・mock/real CAD smokeの通過後だけ共通sourceを再固定して課金を開始する。native制御自体が元の時間/判定条件を通らなければ、難度ゲート用の不正解とせず未実装/機械前提不成立として扱い、barを緩めない。

@@ -271,3 +271,17 @@
 - `bg_65`は正常終了（controller4179.08秒、episode合計4166.002秒）。初回の**実native user packet確認25/25、未確認0**。filename/arm headerを含まないJSON本文がrequest/runtime_dataと一致することを実streamで確認できた。これでv3の盲検化はmockだけの主張ではなくなった。
 - H2D1〜H2D5は全て元版Aが5/5、合計25/25。H2D2の1回だけ元R1を使い、実モデル/CAD各26、parse修復なし。1つの独立poolで26/40、pending0、overload免除0、最大観測quota17%。公開`result.json`と`accounting-public.json`を突合済み。B/比較/最終holdoutはnot_run、元版維持であり、改善効果は測れていない。
 - 次に進む理由は同じDIFFICULTY_LADDER_GATED条件（2/5または3/5）がまだ成立しないため。Bは変更せず、source上限64穴以内の独立ラダーで穴数を19/21/23/25/29へ進める。穴の重なりでanalytic Goldを壊さないよう、公開の合成設計半径範囲だけを30–40へ広げる（実測値ではない）。新しいfeature/family/API、許容差、採点、モデル、時間枠/call枠は追加・変更しない。新seed/新holdoutを封印し、正負native制御20件を先に通す。
+
+## Handoff：Epoch05の無課金制御を実行中
+
+- epoch04の実input確認25/25・較正25/25・26予約と全公開rowは`73595db`でh2/swへcommit/push済み。B/比較/最終holdoutはnot_run、元版維持。これまでのH2実予約はepoch02=25、隔離03=6、epoch04=26。旧H0の36/40とは別scope。
+- 未commitの変更は`tools/sw_h2_fixtures.py`の公開難度設定（19/21/23/25/29穴、半径30–40の合成設計値）と`H2_SKILL_PLAN.md`・本メモだけ。v3 runtime、候補B、policy/schema/カード/判定/Native API/許容差/slots/time/call枠は変えていない。元64穴上限内、最小半径/最大直径で全穴が非重複であることを機械計算してTrueを確認。
+- 固定SDKの全`test_sw*.py`は今回も**44/44 PASS、skip0、1.749秒**。Evalの`h2R4UnitSDKObserved`に証拠がある。新stress設計の境界計算は`h2StressDesign`。模擬poolの25予約はテスト内だけで実モデル0。
+- **現在のjobは`bg_66`のみ**：`tools/sw_h2_fixtures.py create --experiment skill-20261028-05`→`controls`。新seed/dev5/holdout5を封印し、正負20native制御を実行中。epoch05の実モデルは0。Gold/seed/CADを親へ表示せず、途中でsourceを変えない。
+- 正確な次コマンド（全制御PASS後）：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261028-05`。44テストreceipt/境界設計proof/無課金証拠→sourceをcommit/push→同CLIの`freeze`→`run`。native制御が元の条件を通らなければモデル不正解と混ぜず、barを緩めず原因を切り分ける。
+- 55%ASK/60%停止、各独立pool40、max2、SW稼働中の終了/再起動禁止、Gold machine-onlyは不変。直近公開quotaは17%。実input検査を通ってもdifficulty gate成立を推測しない。次も満点なら結果を記録し、Bの利得を作らない。
+
+- `bg_66`のepoch05正負20native制御は全PASS、1773.77秒、実モデル0。seal SHA `63871ef830fb0aa43daa51acc48beb9b802f5f90505fd78924d10170a5628c73`、factory SHA `bee593cc2188aff65a1c0facd17c822ce44ea04fbcd6c8ff4a6402c0d131930c`。29穴まで元条件でnative controlを通った。公開証拠・44テストreceipt・非重複境界proofを保存。
+- `bg_67`でepoch05のmock/real CAD smokeを実行中。元repair CAD枠内で誤仕様拒否→R1復旧も確認してからsourceをcommit/push・freeze・runする。比較生成はまだ開始していない。
+
+- `bg_67`の元repair枠smokeはPASS。mock2/実CAD2、誤仕様拒否、元R1=1、完全capture8、実モデル0、episode123.781秒（tool126.39秒）。Sourceとpublic証拠をcommit/pushし、同じv3 runtimeと候補文でepoch05をfreeze・runする。直前quotaは18%（2026-10-27T22:08:14.623Z）。

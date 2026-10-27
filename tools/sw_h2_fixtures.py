@@ -23,9 +23,10 @@ from tools.sw_m1_inputs import private_path
 from tools.cad_verify_guard import Stop
 
 PUBLIC=ROOT/'reports/sw-h2'
-# Next independent bank after the first five levels all scored 5/5.
-# Design counts/angles only; original schema/caps/tolerances remain unchanged.
-LEVELS=((8,7),(9,11),(11,13),(13,17),(17,19))
+# More work inside the existing 64-hole family after repeated baseline ceilings.
+# Synthetic design settings, not changed original cards or tolerances.
+LEVELS=((19,7),(21,11),(23,13),(25,17),(29,19))
+RADIUS_MM=(30,40)
 CONTROL_SOURCES=('tools/sw_m0.py','tools/sw_m1_build.py','tools/sw_m1_judge.py',
     'tools/sw_m1_distance.py','tools/sw_h0_cad.py','tools/sw_h0_worker.py','tools/sw_h0_verify.py',
     'tools/cad_spec.py','tools/cad_spec_probe.py','tools/cad_verify_probe.py','tools/cad_verify_v3_probe.py',
@@ -45,7 +46,7 @@ def clockwise_y_points(center,radius,count,start_deg):
 
 def make_case(seed,key,level):
     rng=random.Random(int.from_bytes(hashlib.sha256(seed+key.encode()).digest(),'big'))
-    radius=rng.randint(15,25);width=4*radius+rng.randint(20,28);depth=4*radius+rng.randint(18,26)
+    radius=rng.randint(*RADIUS_MM);width=4*radius+rng.randint(20,28);depth=4*radius+rng.randint(18,26)
     height=rng.randint(14,24);x0=rng.randint(-70,-20);y0=rng.randint(-50,-10);z0=rng.choice((-7,-3,2,6))
     sx,sy=rng.randint(-3,3),rng.randint(-3,3)
     center=[x0+width/2+sx,y0+depth/2+sy]

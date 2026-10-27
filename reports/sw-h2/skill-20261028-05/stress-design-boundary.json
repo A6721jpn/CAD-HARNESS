@@ -1,0 +1,5 @@
+{
+  "hole_count_within_original_64_limit": true,
+  "all_ring_holes_disjoint_at_minimum_radius_and_maximum_diameter": true,
+  "live_model_calls": 0
+}
