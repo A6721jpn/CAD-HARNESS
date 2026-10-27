@@ -1,0 +1,76 @@
+{
+  "experiment": "skill-20261028-04",
+  "at": "2026-10-27T21:33:32.117214+00:00",
+  "experiment_manifest_sha256": "aa6b99a106f6c48547af54de19e5badb2be16924117dcba09bcfb7198c47c17e",
+  "batches": [
+    {
+      "phase": "calibration",
+      "index": 1,
+      "scope": "harness2-solidworks-H2-skill-20261028-04-calibration-01",
+      "cap": 40,
+      "conservative_reserved_calls": 26,
+      "accepted_or_failed_calls": 26,
+      "pending_or_unknown_calls": 0,
+      "verified_overload_rejections": 0,
+      "remaining": 14,
+      "billing_missing_reason": "invoice_not_provided"
+    }
+  ],
+  "total_conservative_reserved_calls": 26,
+  "pending_or_unknown_calls": 0,
+  "physical_model_attempts": 26,
+  "CAD_attempts": 26,
+  "max_observed_quota_percent": 17,
+  "episodes_with_result": 25,
+  "initial_user_packets_verified": 25,
+  "initial_user_packets_unverified": 0,
+  "counter_semantics": {
+    "input_tokens": "OMP uncached input",
+    "cached_input_tokens": "OMP cache read",
+    "cache_write_input_tokens": "OMP cache write"
+  },
+  "tokens": {
+    "input_tokens": {
+      "total": 83842,
+      "known_subtotal": 83842,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "cached_input_tokens": {
+      "total": 31104,
+      "known_subtotal": 31104,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "cache_write_input_tokens": {
+      "total": 0,
+      "known_subtotal": 0,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "output_tokens": {
+      "total": 126175,
+      "known_subtotal": 126175,
+      "expected": 25,
+      "known": 25,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 25,
+      "known": 0,
+      "missing": 25,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice"
+}

@@ -256,3 +256,18 @@
 
 - `bg_64`のliteral argv＋実SW/FreeCAD smokeはPASS（episode65.922秒、tool67.42秒）。mock2、CAD2、誤仕様拒否、元R1=1、完全capture8、モデル0。mockが実際に受けたliteral JSON user packetをnative parser形式へ渡し、metadata/header拒否の検査も通した。実CLIについては最初の実生成streamで同じ検査を行う。
 - source/停止記録/公開証拠をh2/swへcommit・pushした後、v3の`skill-20261028-04`をfreeze・runする。以後、code/skill/計画を変えず、実input未確認では比較を続けない。
+
+## Handoff：v3 blind inputの実較正を実行中
+
+- source・44テスト/20制御/smoke証拠・epoch03の6予約と停止/隔離記録は`31b45a3`でh2/swへcommit/push済み。元v4/H0ファイル・Native API・policy・カード・採点・許容差は未変更。__pycache__/Gold/seed/raw/CADは追加していない。
+- epoch04 freeze v3は2026-10-27T20:22:26.304603Z作成、manifest SHA `aa6b99a106f6c48547af54de19e5badb2be16924117dcba09bcfb7198c47c17e`。native argv ASTの置換1箇所、literal JSON引数、stdin DEVNULLを固定。A/B skill SHAは従来と同じ`df6a2ff9df096e7be5815957318f00684810fd79422d203d6fcdf42c9de25109`/`3c96a45fbe5639f71eecdd057757a1318462a463316db3dbcea3a908555d2616`。
+- **現在の実生成jobは`bg_65`のみ**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py run --experiment skill-20261028-04`。別run/別generatorを起動しない。source/skill/計画は編集しない。実stdoutの各user packetはJSON本文の同一性を自動検査し、不明/不一致で次生成へ進めない。packet確認flag・cache/calls/timeだけをpublicへ出し、本文はprivateのまま。
+- 生成前の公開quotaは16%（2026-10-27T20:21:42.443Z）。各call直前/実行中にもguardが確認する。55%ASK/60%停止、各pool40、max2、SW終了/稼働中再起動禁止、Gold machine-onlyは不変。
+- **job終了後の正確な次コマンド**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261028-04/publish-accounting.py`。この固定publisherはGoldを読まず、controller終了後だけlive pool/ledgerを突合し、初回実inputの確認件数も出す。未実行。凍結後の追加はこのprivate artifactと本メモだけ。
+- 次は`bg_65`の自動結果を受領（pollしない）→会計→public結果の判定/採用または元版維持を記録→結果をcommit/push。比較ゲート/盲検化/採用が成立したと推測しない。旧epoch02のceiling、epoch03の中断は利得に算入しない。
+
+## Epoch04実結果：盲検化25/25、較正は再びceiling
+
+- `bg_65`は正常終了（controller4179.08秒、episode合計4166.002秒）。初回の**実native user packet確認25/25、未確認0**。filename/arm headerを含まないJSON本文がrequest/runtime_dataと一致することを実streamで確認できた。これでv3の盲検化はmockだけの主張ではなくなった。
+- H2D1〜H2D5は全て元版Aが5/5、合計25/25。H2D2の1回だけ元R1を使い、実モデル/CAD各26、parse修復なし。1つの独立poolで26/40、pending0、overload免除0、最大観測quota17%。公開`result.json`と`accounting-public.json`を突合済み。B/比較/最終holdoutはnot_run、元版維持であり、改善効果は測れていない。
+- 次に進む理由は同じDIFFICULTY_LADDER_GATED条件（2/5または3/5）がまだ成立しないため。Bは変更せず、source上限64穴以内の独立ラダーで穴数を19/21/23/25/29へ進める。穴の重なりでanalytic Goldを壊さないよう、公開の合成設計半径範囲だけを30–40へ広げる（実測値ではない）。新しいfeature/family/API、許容差、採点、モデル、時間枠/call枠は追加・変更しない。新seed/新holdoutを封印し、正負native制御20件を先に通す。
