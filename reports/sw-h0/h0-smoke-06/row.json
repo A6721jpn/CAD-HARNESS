@@ -1,0 +1,20 @@
+{
+  "sequence": 23,
+  "group": "geometry",
+  "route": "spec",
+  "selected": true,
+  "completed": true,
+  "passed": true,
+  "geometry": true,
+  "editability": true,
+  "reimport": true,
+  "q_score": null,
+  "critical_invention": false,
+  "model_calls": 2,
+  "cad_attempts": 2,
+  "parse_repairs": 0,
+  "repair_calls": 1,
+  "wall_s": 60.51599999982864,
+  "active_s": 60.51599999982864,
+  "failure_class": null
+}

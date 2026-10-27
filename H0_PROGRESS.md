@@ -166,3 +166,44 @@
 - source/skill/policy/カード/採点を固定実行中に変更していない。gold・原要求・モデル生出力は親から開かず、公開summary/rowsと完了stdoutの許可済みprojectionだけを読んだ。実モデル起動のCodex限定overlayも今回の有効応答で成立した。追加のH0継続batchは不要で、独立40poolの新規課金使用はまだ0。
 - 公開証拠`reports/sw-h0/h0-20261027-002/{manifest-public,rows,summary}.json`。H0_SUMMARYはこの002から自動生成された部分H0集計。001は削除せず別の起動障害セグメントとして残す。最初に記録した18題のH0を完了し、指示どおり新規独立データのHarness²段階へ進む。残り42題を合格扱いせず、original60を改善に使わない。
 - 次はH0結果とこのメモをh2/swへcommit/push。その後H2_SKILL_PLANの固定条件で、スキル本文だけを変える外側ランナー・独立fixture author・cache整合/ペア/予算の検証を実装。新しい封印ホールドアウトを比較前に作る。各版5回交互、50以下の新batchを使い、旧H0の残4を流用しない。起動中SWの終了/再起動禁止・55%ASK/60%停止・同時Codex2は維持する。
+
+## Harness²開始：新データの由来を偽装しない
+
+- H0公開結果は`41aec01`としてh2/swへcommit/push済み。初回選択18題のライブH0完了を区切りとし、残42はnot_runのまま明示して次段階へ。動作中の生成jobなし。
+- 元のGold schemaは`authority=fixture, confirmed=false`を正式に持つが、production run_driverは非previewでhuman確認を要求する。新しい合成課題をhuman提供/確認済みと偽装して通さない。委員会で認められた「本番custodyなしの外側開発ランナー」として、新しい封印fixture専用のadmissionを用意する。
+- 採る方法は元driverを変更せず独立ロードし、**production human由来確認の1箇所だけ**を、fixture由来・request/Golddigest・封印pack・正負native controlの確認へ置き換える開発用adapter。元schema読取・全数値判定・slot/時間/repair状態機械・採点を変えない。差分とadapter hashを事前manifestへ記録し、両armで同一に固定する。人間確認済みという虚偽metadataや元60の流用を拒否する。これはskillの改善対象ではなく、新しい独立fixtureを評価するための共通custody層として実験前に固定する。
+- 最初の独立ラダーは同じ対応済みrect_prismの位置/単位/角度解釈を段階化した5課題、最終封印5課題。寸法・seed・goldは固定プログラムが新しく生成しprivateへ保存、親にはID/commitment/制御合否だけ出す。公称値は合成課題として設計したものと明示し、実測やユーザー提供値を装わない。
+- H2用の新しい40枠を別scopeで使い、旧H0残4は使わない。説明文差分はmodelingの1段落だけとし、CLI/判定/policy/カードの数値条件は両arm同一。新holdout封印を先に作り、元版5回の較正で2/5か3/5の最初のラダー課題を選ぶ。全て天井/床なら利得を捏造せず、比較ゲート未成立と報告する。
+
+## 独立fixture初回制御の停止・データ隔離
+
+- `skill-20261028-01`を新seedで封印（dev5/holdout5、元60不使用、モデル0）。`bg_54`の無課金native制御はdev最初の3件の正負が合格し、次の正例が不合格で停止した。機械診断ではnative編集は成功、元のvolume/holesと全境界判定が不合格。正例にモデル出力を使っていないため、これはスキル成績ではなく入力どおりのnative作成を確認する前提条件の問題。
+- 診断でsub-check IDを項目名とみなして表示したが、一部の項目名にGold由来の数値が埋め込まれていた。生Gold/原60/holdout本文を開いてはいないものの、この部分的露出を隠さず記録する。数値はここに引用しない。**dataset01全体をlive較正・比較・最終確認から隔離**し、public `quarantine.json`へ記録。課金0のため比較結果への混入はない。private資料は削除・書換えしない。
+- 以後の診断は固定されたpredicateカテゴリと真偽/statusだけを出し、動的sub-check名を出さない。候補説明文は診断前のまま変更していない。backend修正後、同じ事前ラダー生成規則・新seedでdataset02を作り直す。簡単な形に変更したり、観測したGold値へ合わせたりしない。
+- SolidWorks公式CreateCircleByRadius資料は、AddToDBがUIのinferencing/自動関係/grid snappingを避けると明記する。`sw_m1_build.Builder.begin/end`で自作SketchManagerのAddToDBをTrue/Falseに戻す共通処理を追加し、numeric座標の非対話作成を切り分ける。設定の読戻しとCOM異常時隔離を行い、他文書やアプリ設定は変更しない。参照：https://help.solidworks.com/2026/english/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.ISketchManager~CreateCircleByRadius.html
+- これは比較開始前のnative精度の前提修正であって、skill改善の利得とは扱わない。両armには同じ修正済みbackendを固定し、旧H0成績と新backend成績を混ぜない。まず隔離datasetの問題となった制御を機械だけで再確認し、その後fresh dataset02全体の正負native制御と公開開発smokeを通す。H2のモデル呼出しはまだ0。
+
+- 切分け再開の前に、失敗したnative制御のlock所有者PID45196不在と排他open成功、SW53084/34.4.0/文書0を確認した。lockを`session.lock.stale-20261028-h2-controls01`へrename保存し、隔離済みdataset01の機械専用再現制御だけを別出力へ実行する。live/calibration/holdout評価には使わず、診断出力は真偽と固定statusだけに限定する。
+
+## AddToDB切分け成功・fresh制御へ
+
+- `bg_55`は53.07秒、モデル0で終了。隔離済み制御の正例はgeometry/editability/verificationの全てTrue、誤仕様はgeometry/verification False・editability Trueとなった。座標の非対話作成でこの再現は解消した。ただし内部の自動補正機構のどれが働いたかまでは断定しない。
+- 元の生成規則・候補文を保った新seed `skill-20261028-02`を生成・封印し、全10件×正負のnative制御を`bg_56`で開始。dataset01の隔離は解除しない。並行して外側H2ランナーを実装中で、H2のモデル呼出しは0。
+- 生成前の事前条件を明文化：cache比較は初回受理生成だけ、最大10ペア内の整合5組、追加を無限に続けない。同一request/runtime_data hashと共通cwdを照合する。条件未成立時は元版維持であり、形状の合格線を動かさない。
+
+## Handoff：H2比較実装・無課金検証中
+
+- H0は`41aec01`までpush済み、初回選択18/18合格。旧pool36/40のまま。H2のlive/model課金呼出しは0。
+- fresh `skill-20261028-02`のdev5＋holdout5について、正負20制御が全てPASS（`bg_56`、420.81秒）。seal SHAは`de7b26e3f4363136317d9e3a36b10cc87775818ee36fc289867528853c2c8adc`、公開証拠は`reports/sw-h2/skill-20261028-02/native-controls-public.json`。private Gold/seed/CADは開示・Git追加しない。
+- AddToDB共通修正後の既存H0 smoke06はPASS。mock2、real CAD2、誤仕様拒否、R1=1、完全capture8、live0、episode60.516秒（tool wall62.65秒）。元H0/v3のファイル・policy・採点は変えていない。
+- 追加中のファイル：`tools/sw_h2_fixtures.py`、`sw_h2_runtime.py`、`sw_h2.py`、`test_sw_h2.py`、`skills/cad-harness-v4/modeling-h2-r1.md`。既存の変更は共通native `tools/sw_m1_build.py`と計画/このメモだけ。dataset01は公開quarantineを付けて保持し、live対象へ戻さない。
+- 外側ランナーは正直なfixture入場（元run_driverのhuman入場Ifだけを隔離ASTへ置換）、共通source/skill A+B/入力/native結果hash、SW PID/revision/実体hash、共通cwd、独立40枠、5回較正、A/B交互、初回cache整合5ペア、最大10ペア、新holdout5全通過を扱う。A完了/B未完了の再開でAを再生成しない。生エラー/Gold由来項目名はpublicへ出さない。
+- 進行中：固定FreeCAD 1.1.4で全`test_sw*.py`を実行するSDK子PID68992（Evalの`h2UnitSDKResult`）、H2自身のmock-model＋real SW/FreeCAD smokeは`bg_58`。どちらもモデル0。結果確認前にgreen/成功としない。
+- 次の一手：Evalで`print(await h2UnitSDKResult)`をbarrierとして受領し、`bg_58`の自動結果を受領する。問題があれば最小修正と該当検証。両方成立後、sourceをcommit/pushし、`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py freeze --experiment skill-20261028-02`、続けて同じCLIの`run`を実行。source凍結後の編集はしない。quota55でASK、60で停止、SW無応答時は終了/再起動しない。
+
+## H2無課金通し確認・凍結前結果
+
+- 固定FreeCAD 1.1.4 SDKで`test_sw*.py`全40テストがPASS（既存23＋追加17、3.025秒、skipなし）。判定境界、旧予算/隔離/再import、fixture入場拒否、pending課金保持、片側再開、40枠跨ぎ、cache不明/不整合の除外と全費用保持を検証した。unitの架空25予約はテスト内の模擬poolであり、実モデル呼出しではない。
+- `bg_58`のH2自身のmock＋real CAD通しもPASS。`fixture/confirmed=false`を保持したまま入場し、改善文B bundle・共通cwd・実SW/FreeCAD・誤仕様拒否・元R1=1・完全capture8を確認。mock2、real CAD2、live0、episode36.390秒（tool37.96秒）。根拠は`reports/sw-h2/skill-20261028-02/preflight-smoke.json`。
+- 生成前のquota公開値は13%（snapshot `omp-usage-1793126906348-7d=13`、2026-10-27T18:48:26.348Z）。各生成の直前と実行中にも既存guardが再確認する。55%/60%は緩めない。
+- 次はこの実装と公開の無課金証拠だけをh2/swへcommit/pushし、live用manifestを一度作成して較正を開始する。課題・正解・raw・CADはprivate、元60は再利用しない。以降、共通sourceを変えず、gate不成立なら元版維持として記録する。

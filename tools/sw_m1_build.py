@@ -74,11 +74,22 @@ class Builder:
                 return feature,m[6:9]
         raise RuntimeError('offset_plane_world_position_mismatch')
 
+    def _direct_geometry(self,enabled):
+        # Our SketchManager only: prevent UI inference/snapping from moving
+        # numeric API geometry. Reset before leaving the owned sketch.
+        try:
+            self.sm.AddToDB=enabled
+            if bool(self.sm.AddToDB)!=enabled:raise RuntimeError('owned_sketch_direct_mode_unverified')
+        except self.s.pc.com_error:
+            self.s.uncertain=True
+            raise
+
     def begin(self,axis,offset):
         plane,n=self.plane(axis,offset)
         self.call(self.doc,'ClearSelection2',True)
         if not self.call(plane,'Select2',False,0):raise RuntimeError('sketch_plane_selection')
         self.call(self.sm,'InsertSketch',True)
+        self._direct_geometry(True)
         sketch=self.sm.ActiveSketch
         self.transform=sketch.ModelToSketchTransform
         self.normal=n
@@ -107,6 +118,7 @@ class Builder:
 
     def end(self):
         normal=self.normal
+        self._direct_geometry(False)
         self.call(self.sm,'InsertSketch',True)
         feature=self.call(self.doc,'FeatureByPositionReverse',0)
         if feature is None or self.call(feature,'GetTypeName2')!='ProfileFeature':

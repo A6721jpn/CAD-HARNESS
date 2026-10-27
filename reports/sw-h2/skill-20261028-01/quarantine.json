@@ -1,0 +1,9 @@
+{
+  "experiment": "skill-20261028-01",
+  "eligible_for_live_calibration_comparison_or_holdout": false,
+  "live_model_calls": 0,
+  "reason": "A developer-control diagnostic sub-check label embedded numeric expected-data components; do not reuse this dataset for a blind experiment",
+  "scope": "new synthetic development control label only; original60 and pilot gold not opened",
+  "actions": ["Keep all private evidence sealed and unchanged", "Do not propagate the label values", "Use static predicate categories only in subsequent diagnostics", "Fix native numeric-creation behavior with model-free controls", "Generate a fresh independent seeded dataset before live evaluation"],
+  "candidate_text_changed_after_diagnostic": false
+}

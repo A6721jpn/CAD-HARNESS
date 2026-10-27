@@ -1,0 +1,16 @@
+{
+  "experiment": "skill-20261028-01",
+  "development_ids": [
+    "H2D1",
+    "H2D2",
+    "H2D3",
+    "H2D4",
+    "H2D5"
+  ],
+  "sealed_holdout_count": 5,
+  "seed_commitment": "b2be51db9cb89d9f75b3fdc8f6c094ff61560abd87367cf7502bde7e95a72888",
+  "seal_sha256": "60cce0bc646bf48920b6a9ebebdfa9487da1ebcba0b7abc31041a079903b63df",
+  "factory_sha256": "9d4e98ea4dcc6cce5a2c0fb996ae40114c01c5b90635b1eb6015ca6cbea3210b",
+  "original60_reused": false,
+  "live_model_calls": 0
+}
