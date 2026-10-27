@@ -1,0 +1,6164 @@
+{
+  "paid_model_calls": 0,
+  "out": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-resume-20261028-03",
+  "started_at": "2026-10-27T17:11:41.318752+00:00",
+  "status": "PASS",
+  "source_sha256": {
+    "tools/sw_m0.py": "cc24886da22451989c4d8c136868910b5bc5135d3fddeb5361ba4421cdef8570",
+    "tools/sw_m0_probe.py": "a2b0abee5e84f7795c6cede7e383229b257efa2e322d2570f855beb71256baea",
+    "tools/cad_spec.py": "03341cbb08453c501cb4dbc8f303b64a565e85b27f1a5c682df7dc5bf64b22c2",
+    "tools/cad_spec_probe.py": "48b00816d7ed0e3a99427f2066590b1980205675015f84a51e2064016be1beb3",
+    "design/cad-harness-mvp/eval-v1/P1.json": "63dce87e64609ed56fb6a8594c27ef74ed2d772666d02fb9408c0578a3cd2488",
+    "design/harness2-sw-m0/positive.json": "76ffaa0bc27750979d99b60c3911a42498faa2bff26ddde264ba67b9902060f9",
+    "design/harness2-sw-m0/wrong-depth.json": "08aa8f2cfcf7d95abccf8e9c0c9119d691b26604ab06dc0d13300f17f346f0cb"
+  },
+  "com_exit": 0,
+  "judge_exit": 0,
+  "neutral_checks": {
+    "status": "PASS",
+    "freecad_version": [
+      "1",
+      "1",
+      "4",
+      "20260928 (Git shallow)",
+      "Unknown",
+      "2026/09/28 13:46:34",
+      "(HEAD detached at 4fd3bf320)",
+      "4fd3bf320d9566a27e60069fc8387448aaa3a094"
+    ],
+    "occt_version": "7.8.1",
+    "paid_model_calls": 0,
+    "gold_sha256": "63dce87e64609ed56fb6a8594c27ef74ed2d772666d02fb9408c0578a3cd2488",
+    "unchanged_P1_linear_mm": 0.01,
+    "additional_USER_linear_mm": 0.005,
+    "analytic_volume_mm3": 22239.955682586937,
+    "analytic_reference_delta_mm3": 6.427362677641213e-07,
+    "stages": {
+      "before_reopen": {
+        "unchanged_v4_geometry": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 22239.955602331283,
+            "area_mm2": 5364.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 22239.955602331283,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                15.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "additional_USER_0_005": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 22239.955602331283,
+            "area_mm2": 5364.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 22239.955602331283,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                15.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "analytic_expected_volume_mm3": 22239.955682586937,
+        "analytic_volume_error_mm3": -8.025565330171958e-05,
+        "surface_types": {
+          "Plane": 11,
+          "Cylinder": 4
+        },
+        "step_sha256": "db3fcfe7a6221b719b1cd8df3a1faa8f919d70325f9ce7f3611c543e891f4234",
+        "seconds": 0.12503109988756478
+      },
+      "reopened": {
+        "unchanged_v4_geometry": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 22239.955602331283,
+            "area_mm2": 5364.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 22239.955602331283,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                15.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "additional_USER_0_005": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 22239.955602331283,
+            "area_mm2": 5364.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 22239.955602331283,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                15.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "analytic_expected_volume_mm3": 22239.955682586937,
+        "analytic_volume_error_mm3": -8.025565330171958e-05,
+        "surface_types": {
+          "Plane": 11,
+          "Cylinder": 4
+        },
+        "step_sha256": "6864106b9943ae547ad780d1eac476a6889ff911cee41cae6847f6f67f7e826f",
+        "seconds": 0.11632259981706738
+      },
+      "edited": {
+        "unchanged_v4_geometry": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 21.000000000000004
+            },
+            "volume_mm3": 23439.95560117579,
+            "area_mm2": 5504.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 21,
+              "actual": 21.000000000000004,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 23439.955682586937,
+                "relative": 0.01,
+                "upper_exclusive": 23700,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 23439.95560117579,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                16,
+                16
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                16.0,
+                16.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                16,
+                21
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                16,
+                21
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                16,
+                21
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                16,
+                21
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                21,
+                21
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                21.0,
+                21.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "additional_USER_0_005": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 21.000000000000004
+            },
+            "volume_mm3": 23439.95560117579,
+            "area_mm2": 5504.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 21,
+              "actual": 21.000000000000004,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 23439.955682586937,
+                "relative": 0.01,
+                "upper_exclusive": 23700,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 23439.95560117579,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                16,
+                16
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                16.0,
+                16.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                16,
+                21
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                16,
+                21
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                16,
+                21
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                16,
+                21
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                16.0,
+                21.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 18
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  18.000000000000004
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  18.000000000000004,
+                  21.000000000000004
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                21,
+                21
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                21.0,
+                21.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "analytic_expected_volume_mm3": 23439.955682586937,
+        "analytic_volume_error_mm3": -8.141114813042805e-05,
+        "surface_types": {
+          "Plane": 11,
+          "Cylinder": 4
+        },
+        "step_sha256": "d7b483212b930b8571aeab0de0a27a1bb509b654a22be81ba43f62cf1f969f55",
+        "seconds": 0.12264459999278188
+      },
+      "restored": {
+        "unchanged_v4_geometry": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 22239.955602331283,
+            "area_mm2": 5364.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 22239.955602331283,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                15.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "additional_USER_0_005": {
+          "passed": true,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 22239.955602331283,
+            "area_mm2": 5364.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": true,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": true,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 22239.955602331283,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                15.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                -9.999999999999998,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                10.000000000000002,
+                10.000000000000002,
+                -7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                -7.5,
+                -7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": [
+                -9.999999999999998,
+                10.000000000000002,
+                7.5,
+                7.5,
+                15.0,
+                20.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "analytic_expected_volume_mm3": 22239.955682586937,
+        "analytic_volume_error_mm3": -8.025565330171958e-05,
+        "surface_types": {
+          "Plane": 11,
+          "Cylinder": 4
+        },
+        "step_sha256": "93cd6910cf4b8de7a70b442a2c2c3c8bf194d60bbeb721bb82a42f3711447c3b",
+        "seconds": 0.11160350008867681
+      },
+      "negative": {
+        "unchanged_v4_geometry": {
+          "passed": false,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 21939.95560117579,
+            "area_mm2": 5434.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": false,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": false,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 21939.95560117579,
+              "passed": false,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "additional_USER_0_005": {
+          "passed": false,
+          "measurements": {
+            "bound_box_mm": {
+              "x_min": -20.000009742622726,
+              "x_max": 20.000009742622723,
+              "y_min": -15.000009742622726,
+              "y_max": 15.000009742622726,
+              "z_min": 0.0,
+              "z_max": 20.0
+            },
+            "volume_mm3": 21939.95560117579,
+            "area_mm2": 5434.637100758142,
+            "face_count": 15,
+            "solid_count": 1,
+            "is_valid": true,
+            "offset_mm": [
+              -1.7763568394002505e-15,
+              0.0,
+              0.0
+            ],
+            "holes": [],
+            "steps": [],
+            "finish_surfaces": [
+              {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              }
+            ]
+          },
+          "predicates": {
+            "valid_solid": true,
+            "bbox": true,
+            "volume": false,
+            "holes": true,
+            "steps": true,
+            "sections": true,
+            "pockets": false,
+            "finish": true
+          },
+          "checks": [
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.solid_count",
+              "expected": 1,
+              "actual": 1,
+              "passed": true
+            },
+            {
+              "predicate": "valid_solid",
+              "sub_check_id": "shape.valid",
+              "expected": true,
+              "actual": true,
+              "passed": true
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_min",
+              "expected": -20,
+              "actual": -20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.x_max",
+              "expected": 20,
+              "actual": 20.000009742622723,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_min",
+              "expected": -15,
+              "actual": -15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.y_max",
+              "expected": 15,
+              "actual": 15.000009742622726,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_min",
+              "expected": 0,
+              "actual": 0.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "bbox",
+              "sub_check_id": "bbox.z_max",
+              "expected": 20,
+              "actual": 20.0,
+              "passed": true,
+              "tolerance": 0.005
+            },
+            {
+              "predicate": "volume",
+              "sub_check_id": "volume.target",
+              "expected": {
+                "target_mm3": 22239.9556819442,
+                "relative": 0.01,
+                "upper_exclusive": 22500,
+                "formula": "legacy GOAL_VOLUME, run02/run04/run05 quoted measurement"
+              },
+              "actual": 21939.95560117579,
+              "passed": false,
+              "tolerance": 0.01
+            },
+            {
+              "predicate": "holes",
+              "sub_check_id": "holes.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "steps",
+              "sub_check_id": "steps.count",
+              "expected": 0,
+              "actual": 0,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.bounds",
+              "expected": [
+                -20,
+                20,
+                -15,
+                15,
+                10,
+                10
+              ],
+              "actual": [
+                -20.0,
+                20.0,
+                -15.0,
+                15.0,
+                10.0,
+                10.0
+              ],
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.0",
+              "expected": [
+                [
+                  -20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.1",
+              "expected": [
+                [
+                  20,
+                  -15,
+                  10
+                ],
+                [
+                  20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.2",
+              "expected": [
+                [
+                  20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "sections",
+              "sub_check_id": "sections.0.side.3",
+              "expected": [
+                [
+                  -20,
+                  15,
+                  10
+                ],
+                [
+                  -20,
+                  -15,
+                  10
+                ]
+              ],
+              "actual": null,
+              "passed": true
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.floor",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                15
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.0",
+              "expected": [
+                -10,
+                -10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.1",
+              "expected": [
+                10,
+                10,
+                -7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.2",
+              "expected": [
+                -10,
+                10,
+                -7.5,
+                -7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.wall.3",
+              "expected": [
+                -10,
+                10,
+                7.5,
+                7.5,
+                15,
+                20
+              ],
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "pockets",
+              "sub_check_id": "pockets.0.sharp",
+              "expected": true,
+              "actual": null,
+              "passed": false
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.unsupported_surfaces",
+              "expected": [],
+              "actual": [],
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.0",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": -17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  -17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  -0.0,
+                  1.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.0,
+                  -17.0,
+                  -15.000009742622726,
+                  15.000009742622726,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.1",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  0,
+                  1,
+                  0
+                ],
+                "center_normal": 17,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  17.0,
+                  0.0,
+                  17.0
+                ],
+                "axis": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  17.0,
+                  20.0,
+                  -15.000009742622725,
+                  15.000009742622725,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.2",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": -12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  -12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  -15.0,
+                  -12.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.fillet.3",
+              "expected": {
+                "radius": 3,
+                "axis": [
+                  1,
+                  0,
+                  0
+                ],
+                "center_normal": 12,
+                "center_z": 17
+              },
+              "actual": {
+                "center": [
+                  1.7763568394002505e-15,
+                  12.0,
+                  17.0
+                ],
+                "axis": [
+                  1.0,
+                  -0.0,
+                  -0.0
+                ],
+                "radius": 2.999999999999999,
+                "bounds": [
+                  -20.000009742622723,
+                  20.000009742622723,
+                  12.0,
+                  15.0,
+                  17.0,
+                  20.0
+                ],
+                "inside": false
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.kind",
+              "expected": "fillet",
+              "actual": {
+                "cylinders": 4,
+                "oblique_planes": 0
+              },
+              "passed": true
+            },
+            {
+              "predicate": "finish",
+              "sub_check_id": "finish.top_bounds",
+              "expected": [
+                -17,
+                17,
+                -12,
+                12,
+                20,
+                20
+              ],
+              "actual": [
+                -17.0,
+                17.0,
+                -12.0,
+                12.0,
+                20.0,
+                20.0
+              ],
+              "passed": true
+            }
+          ]
+        },
+        "analytic_expected_volume_mm3": 22239.955682586937,
+        "analytic_volume_error_mm3": -300.00008141114813,
+        "surface_types": {
+          "Plane": 11,
+          "Cylinder": 4
+        },
+        "step_sha256": "0258402a0e6d860923d0b91c8421a3007ffeec3251c084663a86967de7c97aaf",
+        "seconds": 0.08712160005234182
+      }
+    },
+    "neutral_roundtrip": {
+      "native_passed": true,
+      "step_passed": true,
+      "native_fcstd_sha256": "58beef2b438969be070dc8daae0c0e05344c2c5139970eab35d1f38e5bb9fbfb",
+      "step_sha256": "41f9ff36bfa99756b4fa83f7b2f03dc03739a14d97af8c959d8707a0347d5ee0",
+      "comparison": {
+        "passed": true,
+        "bounds_within_mm": 0.005,
+        "volume_relative": 3.271570206471424e-16,
+        "symmetric_difference_mm3": 0.0,
+        "maximum_surface_deviation_mm": null,
+        "method": "bbox, volume and exact BRep boolean difference; NOT certified maximum deviation"
+      }
+    },
+    "native_reopen_comparison": {
+      "passed": true,
+      "bounds_within_mm": 0.005,
+      "volume_relative": 0.0,
+      "symmetric_difference_mm3": 0.0,
+      "maximum_surface_deviation_mm": null,
+      "method": "bbox, volume and exact BRep boolean difference; NOT certified maximum deviation"
+    },
+    "restore_comparison": {
+      "passed": true,
+      "bounds_within_mm": 0.005,
+      "volume_relative": 0.0,
+      "symmetric_difference_mm3": 0.0,
+      "maximum_surface_deviation_mm": null,
+      "method": "bbox, volume and exact BRep boolean difference; NOT certified maximum deviation"
+    },
+    "edit_change": {
+      "height_delta_mm": 1.0000000000000036,
+      "expected_height_delta_mm": 1,
+      "volume_delta_mm3": 1199.9999988445052,
+      "expected_volume_delta_mm3": 1200
+    },
+    "SW_mass_cross_check": {
+      "reopened": {
+        "role": "secondary_only",
+        "SW_volume_mm3": 22240.007028142638,
+        "FreeCAD_volume_mm3": 22239.955602331283,
+        "difference_mm3": 0.05142581135442015
+      },
+      "edited": {
+        "role": "secondary_only",
+        "SW_volume_mm3": 23440.002202834905,
+        "FreeCAD_volume_mm3": 23439.95560117579,
+        "difference_mm3": 0.046601659116277006
+      },
+      "restored": {
+        "role": "secondary_only",
+        "SW_volume_mm3": 22240.007028142638,
+        "FreeCAD_volume_mm3": 22239.955602331283,
+        "difference_mm3": 0.05142581135442015
+      }
+    },
+    "G2_risk": {
+      "status": "UNVERIFIED",
+      "required_for_this_box_card": false,
+      "reason": "Existing v4 C6 full-domain certificate supports nonrational polynomial patches, not analytic/rational circular fillets. Constant-R plane/cylinder transition is G1, not G2.",
+      "actual_cylindrical_radii_mm": [
+        2.999999999999999,
+        2.999999999999999,
+        2.999999999999999,
+        2.999999999999999
+      ],
+      "positive_G2_control": "NOT_RUN; required before broader SolidWorks H0/G2 claim",
+      "unchanged_certifier_sha256": "9526e344ec4447479c898b9ea370e15e223192b9345145300803d5358d3d93a1"
+    },
+    "negative_control_rejected_by_same_gold": true,
+    "editability_ok": true,
+    "seconds": 1.309289600001648
+  },
+  "finished_at": "2026-10-27T17:11:50.994466+00:00",
+  "total_seconds": 9.675759800011292,
+  "manual_recovery_required": false
+}

@@ -1,4 +1,4 @@
-"""H0 development calls only: append-only, durable, fail-closed cap=40."""
+"""H0 durable call pools: each <=40, original development pool never reset."""
 import json
 import os
 from pathlib import Path
@@ -11,19 +11,24 @@ SCOPE='harness2-solidworks-H0-development40-20261026'
 
 
 class Pool:
-    def __init__(self,root):
+    def __init__(self,root,*,scope=SCOPE):
+        if not isinstance(scope,str) or not scope or len(scope)>160:raise Stop('H0_pool_invalid_scope')
+        self.scope=scope
         self.root=Path(root);self.root.mkdir(parents=True,exist_ok=True)
         self.path=self.root/'calls.jsonl';self.lock=None;self.state={};self.sequence=0
 
     def __enter__(self):
         self.lock=(self.root/'pool.lock').open('x',encoding='utf-8')
-        self.lock.write(SCOPE);self.lock.flush();os.fsync(self.lock.fileno())
-        if self.path.exists():
-            for raw in self.path.read_text(encoding='utf-8').splitlines():
-                row=json.loads(raw)
-                if row['scope']!=SCOPE or row['sequence']!=self.sequence+1:raise Stop('H0_pool_corrupt')
-                self.apply(row);self.sequence+=1
-        return self
+        self.lock.write(self.scope);self.lock.flush();os.fsync(self.lock.fileno())
+        try:
+            if self.path.exists():
+                for raw in self.path.read_text(encoding='utf-8').splitlines():
+                    row=json.loads(raw)
+                    if row['scope']!=self.scope or row['sequence']!=self.sequence+1:raise Stop('H0_pool_corrupt')
+                    self.apply(row);self.sequence+=1
+            return self
+        except BaseException:
+            self.__exit__();raise
 
     def apply(self,row):
         key=row['attempt']
@@ -42,7 +47,7 @@ class Pool:
     def remaining(self):return CAP-self.used
 
     def append(self,event,attempt):
-        row=dict(scope=SCOPE,sequence=self.sequence+1,event=event,attempt=attempt,at=ledger.utc())
+        row=dict(scope=self.scope,sequence=self.sequence+1,event=event,attempt=attempt,at=ledger.utc())
         # Validate transition first without changing the accepted state on an IO error.
         before=dict(self.state)
         try:self.apply(row)
@@ -61,7 +66,7 @@ class Pool:
         self.append('verified_rejected' if rejected else 'charged',key)
 
     def summary(self):
-        return dict(scope=SCOPE,cap=CAP,conservative_reserved_calls=self.used,
+        return dict(scope=self.scope,cap=CAP,conservative_reserved_calls=self.used,
             accepted_or_failed_calls=sum(s=='charged' for s in self.state.values()),
             pending_or_unknown_calls=sum(s=='pending' for s in self.state.values()),
             verified_overload_rejections=sum(s=='verified_rejected' for s in self.state.values()),

@@ -1,0 +1,69 @@
+{
+  "scope": "H0-zero-cost-resume-prelive-snapshot",
+  "status": "RECOVERED_NATIVE_PREFLIGHT_PASS",
+  "new_live_model_calls_at_snapshot": 0,
+  "original_reserved_calls_at_snapshot": 18,
+  "original_remaining_at_snapshot": 22,
+  "first_m0_failure": {
+    "run": "m0-resume-20261028-01",
+    "status": "FAIL",
+    "seconds": 29.149958200054243,
+    "SW_revision": "34.4.0",
+    "SW_pid": 28800,
+    "last_COM_method": "InsertSketch",
+    "hresult": -2147023174,
+    "SLDWORKS_process_count_after_failure": 0,
+    "saved_positive_STEP_partial_checks": "PASS only; not full M0",
+    "negative_built": false
+  },
+  "second_m0_failure": {
+    "run": "m0-resume-20261028-02",
+    "status": "FAIL",
+    "seconds": 14.676695100031793,
+    "SW_pid": 25504,
+    "last_COM_method": "InsertSketch after CreateCornerRectangle",
+    "hresult": -2147023174,
+    "COM_state_unknown": true
+  },
+  "related_Windows_event": {
+    "application": "ViewServerV6.exe",
+    "version": "18.0.0.749",
+    "exception": "0xc0000005",
+    "offset": "0x20380",
+    "report_id": "e5ed3340-5e45-42e8-bcc8-5e964dffaff4",
+    "root_cause": null,
+    "root_cause_missing_reason": "Rendering suppression is a validated mitigation, not proof of which GPU/virtual-display/SP4/ViewServer component is defective"
+  },
+  "recovery": {
+    "authorization": "USER 2026-10-28 01:31 JST: start only when SLDWORKS absent; never terminate or restart running SW",
+    "direct_start_pid": 8536,
+    "direct_start_ready": false,
+    "direct_start_last_surface": "registry-loading splash",
+    "running_SW_terminated_or_restarted_by_agent": false,
+    "old_locks_preserved_by_rename": ["session.lock.stale-20261027", "session.lock.stale-20261028-012610", "session.lock.stale-20261028-020029"],
+    "validated_mitigation": "Only owned IModelView.EnableGraphicsUpdate=False, with readback; no global graphics/registry/driver change",
+    "final_verified_SW_pid": 53084,
+    "final_verified_SW_revision": "34.4.0"
+  },
+  "native_controls": {
+    "render_isolation": {"run": "m0-render-off-20261028-01", "status": "PASS", "tool_wall_seconds": 14.51},
+    "production_M0": {"run": "m0-resume-20261028-03", "status": "PASS", "seconds": 9.675759800011292, "manual_recovery_required": false},
+    "H0_smoke": {"run": "h0-smoke-05", "status": "PASS", "seconds": 63.60899999993853, "mock_responses": 2, "real_CAD_attempts": 2, "wrong_spec_rejected": true, "frozen_driver_repair_calls": 1, "complete_transport_streams": 8},
+    "initial_documents": 0,
+    "final_documents": 0,
+    "original_card_linear_mm": 0.01,
+    "additional_linear_mm": 0.005,
+    "judges_policy_cards_scoring_changed": false
+  },
+  "regressions": {
+    "host_passed": 17,
+    "host_seconds": 0.368,
+    "FreeCAD_native_passed": 6,
+    "FreeCAD_native_seconds": 4.156,
+    "independent_budget_pool_smoke": "PASS, synthetic reservation only",
+    "duplicate_selection_CLI": "REFUSED before input load"
+  },
+  "next": "Commit checkpoint, freshly prepare and run batch002 using original remaining22; compare skills only after H0 completion",
+  "batch002_prepared_or_run_at_snapshot": false,
+  "skill_comparison_run_at_snapshot": false
+}

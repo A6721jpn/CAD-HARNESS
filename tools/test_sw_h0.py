@@ -11,6 +11,7 @@ from tools.sw_h0_budget import Pool,BudgetJournal
 from tools.sw_h0_worker import admit
 from tools.cad_verify_guard import Stop
 from tools.sw_m1_inputs import PRIVATE
+from tools import sw_h0 as h0
 
 
 class H0SafetyTests(unittest.TestCase):
@@ -22,6 +23,43 @@ class H0SafetyTests(unittest.TestCase):
             with Pool(root) as pool:
                 self.assertEqual(pool.summary()['pending_or_unknown_calls'],40)
                 with self.assertRaises(Stop):pool.reserve('41')
+
+    def test_new_batch_cannot_reset_or_spend_original_pool(self):
+        PRIVATE.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=PRIVATE) as tmp:
+            root=Path(tmp);fresh_scope='harness2-solidworks-H0-batch40-synthetic'
+            with Pool(root/'development40') as original:
+                original.reserve('old-1');original.reserve('old-2')
+            with Pool(root/'batch-synthetic',scope=fresh_scope) as fresh:
+                for number in range(40):fresh.reserve(str(number))
+                with self.assertRaises(Stop):fresh.reserve('41')
+            with self.assertRaises(Stop):
+                with Pool(root/'batch-synthetic'):pass
+            with Pool(root/'batch-synthetic',scope=fresh_scope) as fresh:
+                self.assertEqual(fresh.used,40)
+                self.assertEqual(fresh.remaining,0)
+            with Pool(root/'development40') as original:
+                self.assertEqual(original.used,2)
+                self.assertEqual(original.remaining,38)
+
+    def test_new_batch_manifest_cannot_retarget_shared_pool(self):
+        runtime.PRIVATE.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=runtime.PRIVATE) as tmp:
+            root=Path(tmp);name,scope=runtime.budget_identity(root.name,True)
+            manifest=dict(schema='harness2.solidworks.H0.freeze.v2',run=root.name,
+                scope='H0-batch40',charged_call_cap=40,selected=[23,24],
+                budget_pool=name,budget_scope=scope,
+                generator=dict(model=runtime.freezing.MODEL,thinking=runtime.freezing.THINKING))
+            def save():
+                (root/'manifest.json').write_text(json.dumps(manifest),encoding='utf-8')
+                (root/'SHA256.json').write_text(json.dumps(dict(
+                    manifest_sha256=ledger.file_sha(root/'manifest.json'))),encoding='utf-8')
+            save()
+            _,admitted=h0.load_manifest(root.name)
+            self.assertEqual(admitted['selected'],[23,24])
+            manifest['budget_pool']='development40'
+            save()
+            with self.assertRaises(Stop):h0.load_manifest(root.name)
 
     def test_only_verified_no_output_overload_releases_reservation(self):
         with tempfile.TemporaryDirectory(dir=PRIVATE) as tmp:

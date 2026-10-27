@@ -1,0 +1,1386 @@
+{"event": "call_started", "at": "2026-10-27T17:11:41.508638+00:00", "method": "RevisionNumber"}
+{"event": "call_finished", "at": "2026-10-27T17:11:41.509637+00:00", "method": "RevisionNumber", "seconds": 0.0005532999057322741}
+{"event": "call_started", "at": "2026-10-27T17:11:41.509637+00:00", "method": "GetProcessID"}
+{"event": "call_finished", "at": "2026-10-27T17:11:41.510141+00:00", "method": "GetProcessID", "seconds": 0.00032899994403123856}
+{"event": "call_started", "at": "2026-10-27T17:11:41.510141+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:41.510644+00:00", "method": "GetDocumentCount", "seconds": 0.00031429994851350784}
+{"event": "call_started", "at": "2026-10-27T17:11:41.510644+00:00", "method": "GetUserPreferenceStringValue"}
+{"event": "call_finished", "at": "2026-10-27T17:11:41.511160+00:00", "method": "GetUserPreferenceStringValue", "seconds": 0.0003309999592602253}
+{"event": "call_started", "at": "2026-10-27T17:11:41.529929+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:41.530432+00:00", "method": "GetDocumentCount", "seconds": 0.0005222999025136232}
+{"event": "call_started", "at": "2026-10-27T17:11:41.530432+00:00", "method": "NewDocument"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.075542+00:00", "method": "NewDocument", "seconds": 0.5447554001584649}
+{"event": "call_started", "at": "2026-10-27T17:11:42.075542+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.075542+00:00", "method": "GetTitle", "seconds": 0.00045330007560551167}
+{"event": "call_started", "at": "2026-10-27T17:11:42.075542+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.075542+00:00", "method": "GetDocumentCount", "seconds": 0.00023179990239441395}
+{"event": "call_started", "at": "2026-10-27T17:11:42.075542+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.076549+00:00", "method": "GetTitle", "seconds": 0.00021169986575841904}
+{"event": "call_started", "at": "2026-10-27T17:11:42.076549+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.076549+00:00", "method": "GetTitle", "seconds": 0.00031199981458485126}
+{"event": "owned_view_refresh_disabled", "at": "2026-10-27T17:11:42.077550+00:00"}
+{"event": "call_started", "at": "2026-10-27T17:11:42.077550+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.078550+00:00", "method": "FirstFeature", "seconds": 0.0011134999804198742}
+{"event": "call_started", "at": "2026-10-27T17:11:42.078550+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.078550+00:00", "method": "GetTypeName2", "seconds": 0.0007625999860465527}
+{"event": "call_started", "at": "2026-10-27T17:11:42.080056+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.080648+00:00", "method": "GetNextFeature", "seconds": 0.0009941000025719404}
+{"event": "call_started", "at": "2026-10-27T17:11:42.080648+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.081657+00:00", "method": "GetTypeName2", "seconds": 0.0004727998748421669}
+{"event": "call_started", "at": "2026-10-27T17:11:42.081657+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.082163+00:00", "method": "GetNextFeature", "seconds": 0.0007440999615937471}
+{"event": "call_started", "at": "2026-10-27T17:11:42.082163+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.082163+00:00", "method": "GetTypeName2", "seconds": 0.0003437001723796129}
+{"event": "call_started", "at": "2026-10-27T17:11:42.082163+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.083677+00:00", "method": "GetNextFeature", "seconds": 0.0007462999783456326}
+{"event": "call_started", "at": "2026-10-27T17:11:42.083677+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.083677+00:00", "method": "GetTypeName2", "seconds": 0.00040520005859434605}
+{"event": "call_started", "at": "2026-10-27T17:11:42.083677+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.084683+00:00", "method": "GetNextFeature", "seconds": 0.0007020998746156693}
+{"event": "call_started", "at": "2026-10-27T17:11:42.084683+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.084683+00:00", "method": "GetTypeName2", "seconds": 0.00045529985800385475}
+{"event": "call_started", "at": "2026-10-27T17:11:42.084683+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.086188+00:00", "method": "GetNextFeature", "seconds": 0.0008062999695539474}
+{"event": "call_started", "at": "2026-10-27T17:11:42.086188+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.086188+00:00", "method": "GetTypeName2", "seconds": 0.00040529994294047356}
+{"event": "call_started", "at": "2026-10-27T17:11:42.086188+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.087194+00:00", "method": "GetNextFeature", "seconds": 0.0005887998268008232}
+{"event": "call_started", "at": "2026-10-27T17:11:42.087699+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.087699+00:00", "method": "GetTypeName2", "seconds": 0.0004088000860065222}
+{"event": "call_started", "at": "2026-10-27T17:11:42.087699+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.088706+00:00", "method": "GetNextFeature", "seconds": 0.0012608999386429787}
+{"event": "call_started", "at": "2026-10-27T17:11:42.088706+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.090909+00:00", "method": "GetTypeName2", "seconds": 0.0016399999149143696}
+{"event": "call_started", "at": "2026-10-27T17:11:42.090909+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.093431+00:00", "method": "GetNextFeature", "seconds": 0.002341599902138114}
+{"event": "call_started", "at": "2026-10-27T17:11:42.093937+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.095446+00:00", "method": "GetTypeName2", "seconds": 0.0015050999354571104}
+{"event": "call_started", "at": "2026-10-27T17:11:42.095446+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.096960+00:00", "method": "GetNextFeature", "seconds": 0.0012100001331418753}
+{"event": "call_started", "at": "2026-10-27T17:11:42.096960+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.097970+00:00", "method": "GetTypeName2", "seconds": 0.001226500142365694}
+{"event": "call_started", "at": "2026-10-27T17:11:42.097970+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.099714+00:00", "method": "GetNextFeature", "seconds": 0.0010732999071478844}
+{"event": "call_started", "at": "2026-10-27T17:11:42.099714+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.100229+00:00", "method": "GetTypeName2", "seconds": 0.0007843999192118645}
+{"event": "call_started", "at": "2026-10-27T17:11:42.100229+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.100809+00:00", "method": "GetNextFeature", "seconds": 0.0011979001574218273}
+{"event": "call_started", "at": "2026-10-27T17:11:42.100809+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.102323+00:00", "method": "GetTypeName2", "seconds": 0.00048699998296797276}
+{"event": "call_started", "at": "2026-10-27T17:11:42.102323+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.103366+00:00", "method": "GetNextFeature", "seconds": 0.0009293998591601849}
+{"event": "call_started", "at": "2026-10-27T17:11:42.103366+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.104371+00:00", "method": "GetTypeName2", "seconds": 0.0007570998277515173}
+{"event": "call_started", "at": "2026-10-27T17:11:42.104371+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.105880+00:00", "method": "GetNextFeature", "seconds": 0.0013667000457644463}
+{"event": "call_started", "at": "2026-10-27T17:11:42.105880+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.105880+00:00", "method": "GetTypeName2", "seconds": 0.0004507999401539564}
+{"event": "call_started", "at": "2026-10-27T17:11:42.105880+00:00", "method": "GetSpecificFeature2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.107881+00:00", "method": "GetSpecificFeature2", "seconds": 0.0011938000097870827}
+{"event": "call_started", "at": "2026-10-27T17:11:42.108880+00:00", "method": "Select2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.110952+00:00", "method": "Select2", "seconds": 0.003390599973499775}
+{"event": "call_started", "at": "2026-10-27T17:11:42.112971+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.122939+00:00", "method": "InsertSketch", "seconds": 0.009368699975311756}
+{"event": "call_started", "at": "2026-10-27T17:11:42.122939+00:00", "method": "CreateCornerRectangle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.581370+00:00", "method": "CreateCornerRectangle", "seconds": 0.4584695000667125}
+{"event": "call_started", "at": "2026-10-27T17:11:42.581370+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.649716+00:00", "method": "InsertSketch", "seconds": 0.06814619991928339}
+{"event": "call_started", "at": "2026-10-27T17:11:42.650226+00:00", "method": "FeatureExtrusion3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.751042+00:00", "method": "FeatureExtrusion3", "seconds": 0.10092520015314221}
+{"event": "call_started", "at": "2026-10-27T17:11:42.789827+00:00", "method": "ClearSelection2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.791827+00:00", "method": "ClearSelection2", "seconds": 0.0022048999089747667}
+{"event": "call_started", "at": "2026-10-27T17:11:42.791827+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.794329+00:00", "method": "GetBodies2", "seconds": 0.0020286000799387693}
+{"event": "call_started", "at": "2026-10-27T17:11:42.794329+00:00", "method": "GetFaces"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.795845+00:00", "method": "GetFaces", "seconds": 0.0014859999064356089}
+{"event": "call_started", "at": "2026-10-27T17:11:42.795845+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.797067+00:00", "method": "GetSurface", "seconds": 0.0008129999041557312}
+{"event": "call_started", "at": "2026-10-27T17:11:42.797067+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.797067+00:00", "method": "IsPlane", "seconds": 0.00037160003557801247}
+{"event": "call_started", "at": "2026-10-27T17:11:42.797067+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.797067+00:00", "method": "GetSurface", "seconds": 0.0005963000003248453}
+{"event": "call_started", "at": "2026-10-27T17:11:42.798581+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.798581+00:00", "method": "IsPlane", "seconds": 0.0003603000659495592}
+{"event": "call_started", "at": "2026-10-27T17:11:42.799096+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.799096+00:00", "method": "GetSurface", "seconds": 0.0005226999055594206}
+{"event": "call_started", "at": "2026-10-27T17:11:42.799096+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.800102+00:00", "method": "IsPlane", "seconds": 0.00031269993633031845}
+{"event": "call_started", "at": "2026-10-27T17:11:42.800102+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.800607+00:00", "method": "GetSurface", "seconds": 0.0004913001321256161}
+{"event": "call_started", "at": "2026-10-27T17:11:42.800607+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.800607+00:00", "method": "IsPlane", "seconds": 0.00025580008514225483}
+{"event": "call_started", "at": "2026-10-27T17:11:42.800607+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.800607+00:00", "method": "GetSurface", "seconds": 0.0004675001837313175}
+{"event": "call_started", "at": "2026-10-27T17:11:42.800607+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.802151+00:00", "method": "IsPlane", "seconds": 0.0003158000763505697}
+{"event": "call_started", "at": "2026-10-27T17:11:42.802151+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.802665+00:00", "method": "GetSurface", "seconds": 0.0005257001612335443}
+{"event": "call_started", "at": "2026-10-27T17:11:42.802665+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.802665+00:00", "method": "IsPlane", "seconds": 0.00032160012051463127}
+{"event": "call_started", "at": "2026-10-27T17:11:42.804178+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:42.808694+00:00", "method": "Select4", "seconds": 0.004671699833124876}
+{"event": "call_started", "at": "2026-10-27T17:11:42.808694+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.327763+00:00", "method": "InsertSketch", "seconds": 0.5196146999951452}
+{"event": "call_started", "at": "2026-10-27T17:11:43.329783+00:00", "method": "GetMathUtility"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.330352+00:00", "method": "GetMathUtility", "seconds": 0.0005517001263797283}
+{"event": "call_started", "at": "2026-10-27T17:11:43.330352+00:00", "method": "CreatePoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.330352+00:00", "method": "CreatePoint", "seconds": 0.0004361998289823532}
+{"event": "call_started", "at": "2026-10-27T17:11:43.330352+00:00", "method": "MultiplyTransform"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.331357+00:00", "method": "MultiplyTransform", "seconds": 0.0005375000182539225}
+{"event": "call_started", "at": "2026-10-27T17:11:43.331861+00:00", "method": "CreatePoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.331861+00:00", "method": "CreatePoint", "seconds": 0.0003837000112980604}
+{"event": "call_started", "at": "2026-10-27T17:11:43.331861+00:00", "method": "MultiplyTransform"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.331861+00:00", "method": "MultiplyTransform", "seconds": 0.0004563999827951193}
+{"event": "call_started", "at": "2026-10-27T17:11:43.333365+00:00", "method": "CreateCornerRectangle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.666076+00:00", "method": "CreateCornerRectangle", "seconds": 0.3328682000283152}
+{"event": "call_started", "at": "2026-10-27T17:11:43.667077+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.748989+00:00", "method": "InsertSketch", "seconds": 0.0821925001218915}
+{"event": "call_started", "at": "2026-10-27T17:11:43.748989+00:00", "method": "FeatureCut4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.814585+00:00", "method": "FeatureCut4", "seconds": 0.06554120010696352}
+{"event": "call_started", "at": "2026-10-27T17:11:43.847982+00:00", "method": "ClearSelection2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.851998+00:00", "method": "ClearSelection2", "seconds": 0.003447500057518482}
+{"event": "call_started", "at": "2026-10-27T17:11:43.851998+00:00", "method": "CreateSelectData"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.853503+00:00", "method": "CreateSelectData", "seconds": 0.000629400135949254}
+{"event": "call_started", "at": "2026-10-27T17:11:43.853503+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.854014+00:00", "method": "GetBodies2", "seconds": 0.0006565998774021864}
+{"event": "call_started", "at": "2026-10-27T17:11:43.854014+00:00", "method": "GetEdges"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.859644+00:00", "method": "GetEdges", "seconds": 0.005753000034019351}
+{"event": "call_started", "at": "2026-10-27T17:11:43.859644+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.861150+00:00", "method": "GetStartVertex", "seconds": 0.0005991000216454268}
+{"event": "call_started", "at": "2026-10-27T17:11:43.861150+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.861150+00:00", "method": "GetEndVertex", "seconds": 0.0005650001112371683}
+{"event": "call_started", "at": "2026-10-27T17:11:43.861150+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.861150+00:00", "method": "GetPoint", "seconds": 0.00023090001195669174}
+{"event": "call_started", "at": "2026-10-27T17:11:43.861150+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.862153+00:00", "method": "GetPoint", "seconds": 0.0002229998353868723}
+{"event": "call_started", "at": "2026-10-27T17:11:43.862153+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.862153+00:00", "method": "GetStartVertex", "seconds": 0.0004436001181602478}
+{"event": "call_started", "at": "2026-10-27T17:11:43.862153+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.862153+00:00", "method": "GetEndVertex", "seconds": 0.0004390000831335783}
+{"event": "call_started", "at": "2026-10-27T17:11:43.862153+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.863656+00:00", "method": "GetPoint", "seconds": 0.00031049991957843304}
+{"event": "call_started", "at": "2026-10-27T17:11:43.863656+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.863656+00:00", "method": "GetPoint", "seconds": 0.0002514999359846115}
+{"event": "call_started", "at": "2026-10-27T17:11:43.863656+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.864236+00:00", "method": "GetStartVertex", "seconds": 0.00046900007873773575}
+{"event": "call_started", "at": "2026-10-27T17:11:43.864236+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.864236+00:00", "method": "GetEndVertex", "seconds": 0.0004875999875366688}
+{"event": "call_started", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetPoint", "seconds": 0.00029070000164210796}
+{"event": "call_started", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetPoint", "seconds": 0.0002693000715225935}
+{"event": "call_started", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetStartVertex", "seconds": 0.00043189991265535355}
+{"event": "call_started", "at": "2026-10-27T17:11:43.865241+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.866744+00:00", "method": "GetEndVertex", "seconds": 0.0004634000360965729}
+{"event": "call_started", "at": "2026-10-27T17:11:43.866744+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.867332+00:00", "method": "GetPoint", "seconds": 0.00024800002574920654}
+{"event": "call_started", "at": "2026-10-27T17:11:43.867332+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.867332+00:00", "method": "GetPoint", "seconds": 0.00022329995408654213}
+{"event": "call_started", "at": "2026-10-27T17:11:43.867332+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.867869+00:00", "method": "GetStartVertex", "seconds": 0.0005601998418569565}
+{"event": "call_started", "at": "2026-10-27T17:11:43.867869+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.867869+00:00", "method": "GetEndVertex", "seconds": 0.00044350000098347664}
+{"event": "call_started", "at": "2026-10-27T17:11:43.867869+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.867869+00:00", "method": "GetPoint", "seconds": 0.00031349994242191315}
+{"event": "call_started", "at": "2026-10-27T17:11:43.867869+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.869387+00:00", "method": "GetPoint", "seconds": 0.00023710005916655064}
+{"event": "call_started", "at": "2026-10-27T17:11:43.869387+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.869387+00:00", "method": "Select4", "seconds": 0.0008893997874110937}
+{"event": "call_started", "at": "2026-10-27T17:11:43.869387+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.870390+00:00", "method": "GetStartVertex", "seconds": 0.0004243000876158476}
+{"event": "call_started", "at": "2026-10-27T17:11:43.870390+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.870893+00:00", "method": "GetEndVertex", "seconds": 0.00046980008482933044}
+{"event": "call_started", "at": "2026-10-27T17:11:43.870893+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.870893+00:00", "method": "GetPoint", "seconds": 0.0002841001842170954}
+{"event": "call_started", "at": "2026-10-27T17:11:43.870893+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.871897+00:00", "method": "GetPoint", "seconds": 0.0002677999436855316}
+{"event": "call_started", "at": "2026-10-27T17:11:43.871897+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.872399+00:00", "method": "Select4", "seconds": 0.00103859999217093}
+{"event": "call_started", "at": "2026-10-27T17:11:43.872399+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.873098+00:00", "method": "GetStartVertex", "seconds": 0.000687899999320507}
+{"event": "call_started", "at": "2026-10-27T17:11:43.873098+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.874102+00:00", "method": "GetEndVertex", "seconds": 0.0005002000834792852}
+{"event": "call_started", "at": "2026-10-27T17:11:43.874102+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.874605+00:00", "method": "GetPoint", "seconds": 0.0003192001022398472}
+{"event": "call_started", "at": "2026-10-27T17:11:43.874605+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.874605+00:00", "method": "GetPoint", "seconds": 0.0002833001781255007}
+{"event": "call_started", "at": "2026-10-27T17:11:43.874605+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.875145+00:00", "method": "Select4", "seconds": 0.001175799872726202}
+{"event": "call_started", "at": "2026-10-27T17:11:43.875145+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.876710+00:00", "method": "GetStartVertex", "seconds": 0.0006277000065892935}
+{"event": "call_started", "at": "2026-10-27T17:11:43.876710+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.877220+00:00", "method": "GetEndVertex", "seconds": 0.0005530999042093754}
+{"event": "call_started", "at": "2026-10-27T17:11:43.877220+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.877786+00:00", "method": "GetPoint", "seconds": 0.00033069984056055546}
+{"event": "call_started", "at": "2026-10-27T17:11:43.877786+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.877786+00:00", "method": "GetPoint", "seconds": 0.0002506000455468893}
+{"event": "call_started", "at": "2026-10-27T17:11:43.877786+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.878789+00:00", "method": "Select4", "seconds": 0.001175600104033947}
+{"event": "call_started", "at": "2026-10-27T17:11:43.878789+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.878789+00:00", "method": "GetStartVertex", "seconds": 0.0005922999698668718}
+{"event": "call_started", "at": "2026-10-27T17:11:43.878789+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.880293+00:00", "method": "GetEndVertex", "seconds": 0.0005579998251050711}
+{"event": "call_started", "at": "2026-10-27T17:11:43.880293+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.880293+00:00", "method": "GetPoint", "seconds": 0.0003083001356571913}
+{"event": "call_started", "at": "2026-10-27T17:11:43.880293+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.881301+00:00", "method": "GetPoint", "seconds": 0.0003215000033378601}
+{"event": "call_started", "at": "2026-10-27T17:11:43.881301+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.881301+00:00", "method": "GetStartVertex", "seconds": 0.0005411000456660986}
+{"event": "call_started", "at": "2026-10-27T17:11:43.881301+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.882298+00:00", "method": "GetEndVertex", "seconds": 0.00047149998135864735}
+{"event": "call_started", "at": "2026-10-27T17:11:43.882298+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.882298+00:00", "method": "GetPoint", "seconds": 0.00027750013396143913}
+{"event": "call_started", "at": "2026-10-27T17:11:43.882298+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.883298+00:00", "method": "GetPoint", "seconds": 0.0003478999715298414}
+{"event": "call_started", "at": "2026-10-27T17:11:43.883298+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.883803+00:00", "method": "GetStartVertex", "seconds": 0.0005437999498099089}
+{"event": "call_started", "at": "2026-10-27T17:11:43.883803+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.884306+00:00", "method": "GetEndVertex", "seconds": 0.00045499997213482857}
+{"event": "call_started", "at": "2026-10-27T17:11:43.884306+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.884943+00:00", "method": "GetPoint", "seconds": 0.0002904001157730818}
+{"event": "call_started", "at": "2026-10-27T17:11:43.884943+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.884943+00:00", "method": "GetPoint", "seconds": 0.0003144999500364065}
+{"event": "call_started", "at": "2026-10-27T17:11:43.884943+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.884943+00:00", "method": "GetStartVertex", "seconds": 0.0005784998647868633}
+{"event": "call_started", "at": "2026-10-27T17:11:43.884943+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.885947+00:00", "method": "GetEndVertex", "seconds": 0.0004931001458317041}
+{"event": "call_started", "at": "2026-10-27T17:11:43.886451+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.886451+00:00", "method": "GetPoint", "seconds": 0.0003005999606102705}
+{"event": "call_started", "at": "2026-10-27T17:11:43.886451+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.886451+00:00", "method": "GetPoint", "seconds": 0.0003174000885337591}
+{"event": "call_started", "at": "2026-10-27T17:11:43.886451+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.888114+00:00", "method": "GetStartVertex", "seconds": 0.001476899953559041}
+{"event": "call_started", "at": "2026-10-27T17:11:43.888114+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.889121+00:00", "method": "GetEndVertex", "seconds": 0.0008493999484926462}
+{"event": "call_started", "at": "2026-10-27T17:11:43.889121+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.890332+00:00", "method": "GetPoint", "seconds": 0.0003674000035971403}
+{"event": "call_started", "at": "2026-10-27T17:11:43.890332+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.890332+00:00", "method": "GetPoint", "seconds": 0.0003013000823557377}
+{"event": "call_started", "at": "2026-10-27T17:11:43.890332+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.891331+00:00", "method": "GetStartVertex", "seconds": 0.0006120000034570694}
+{"event": "call_started", "at": "2026-10-27T17:11:43.891331+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.891331+00:00", "method": "GetEndVertex", "seconds": 0.000578699866309762}
+{"event": "call_started", "at": "2026-10-27T17:11:43.891331+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.891331+00:00", "method": "GetPoint", "seconds": 0.00034740008413791656}
+{"event": "call_started", "at": "2026-10-27T17:11:43.891331+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.892692+00:00", "method": "GetPoint", "seconds": 0.00030230008997023106}
+{"event": "call_started", "at": "2026-10-27T17:11:43.892692+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.892692+00:00", "method": "GetStartVertex", "seconds": 0.0006371999625116587}
+{"event": "call_started", "at": "2026-10-27T17:11:43.892692+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.893691+00:00", "method": "GetEndVertex", "seconds": 0.0004453998990356922}
+{"event": "call_started", "at": "2026-10-27T17:11:43.893691+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.893691+00:00", "method": "GetPoint", "seconds": 0.0003123998176306486}
+{"event": "call_started", "at": "2026-10-27T17:11:43.893691+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.894693+00:00", "method": "GetPoint", "seconds": 0.0002845998387783766}
+{"event": "call_started", "at": "2026-10-27T17:11:43.894693+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.895197+00:00", "method": "GetStartVertex", "seconds": 0.0006257998757064342}
+{"event": "call_started", "at": "2026-10-27T17:11:43.895197+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.896202+00:00", "method": "GetEndVertex", "seconds": 0.0006159001495689154}
+{"event": "call_started", "at": "2026-10-27T17:11:43.896202+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.896202+00:00", "method": "GetPoint", "seconds": 0.00037400005385279655}
+{"event": "call_started", "at": "2026-10-27T17:11:43.896202+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.897202+00:00", "method": "GetPoint", "seconds": 0.0002861001994460821}
+{"event": "call_started", "at": "2026-10-27T17:11:43.897202+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.897202+00:00", "method": "GetStartVertex", "seconds": 0.0004602998960763216}
+{"event": "call_started", "at": "2026-10-27T17:11:43.897202+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.898202+00:00", "method": "GetEndVertex", "seconds": 0.0004600000102072954}
+{"event": "call_started", "at": "2026-10-27T17:11:43.898202+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.898705+00:00", "method": "GetPoint", "seconds": 0.00028939987532794476}
+{"event": "call_started", "at": "2026-10-27T17:11:43.898705+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.898705+00:00", "method": "GetPoint", "seconds": 0.00024209986440837383}
+{"event": "call_started", "at": "2026-10-27T17:11:43.898705+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.898705+00:00", "method": "GetStartVertex", "seconds": 0.00041690003126859665}
+{"event": "call_started", "at": "2026-10-27T17:11:43.898705+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.899709+00:00", "method": "GetEndVertex", "seconds": 0.0005437000654637814}
+{"event": "call_started", "at": "2026-10-27T17:11:43.899709+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.900212+00:00", "method": "GetPoint", "seconds": 0.0002975999377667904}
+{"event": "call_started", "at": "2026-10-27T17:11:43.900212+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.900212+00:00", "method": "GetPoint", "seconds": 0.0002841001842170954}
+{"event": "call_started", "at": "2026-10-27T17:11:43.900212+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetStartVertex", "seconds": 0.00046500004827976227}
+{"event": "call_started", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetEndVertex", "seconds": 0.00046190014109015465}
+{"event": "call_started", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetPoint", "seconds": 0.0003263000398874283}
+{"event": "call_started", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetPoint", "seconds": 0.00024889991618692875}
+{"event": "call_started", "at": "2026-10-27T17:11:43.901217+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.902721+00:00", "method": "GetStartVertex", "seconds": 0.0008831999730318785}
+{"event": "call_started", "at": "2026-10-27T17:11:43.902721+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.903726+00:00", "method": "GetEndVertex", "seconds": 0.0006376998499035835}
+{"event": "call_started", "at": "2026-10-27T17:11:43.904230+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.904230+00:00", "method": "GetPoint", "seconds": 0.0004075998440384865}
+{"event": "call_started", "at": "2026-10-27T17:11:43.904230+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.905235+00:00", "method": "GetPoint", "seconds": 0.0004448997788131237}
+{"event": "call_started", "at": "2026-10-27T17:11:43.905235+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetStartVertex", "seconds": 0.0006737997755408287}
+{"event": "call_started", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetEndVertex", "seconds": 0.0004978000652045012}
+{"event": "call_started", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetPoint", "seconds": 0.0002623000182211399}
+{"event": "call_started", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetPoint", "seconds": 0.00024880003184080124}
+{"event": "call_started", "at": "2026-10-27T17:11:43.905739+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.907326+00:00", "method": "GetStartVertex", "seconds": 0.00044979993253946304}
+{"event": "call_started", "at": "2026-10-27T17:11:43.907326+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.907874+00:00", "method": "GetEndVertex", "seconds": 0.0004024999216198921}
+{"event": "call_started", "at": "2026-10-27T17:11:43.907874+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.908418+00:00", "method": "GetPoint", "seconds": 0.00036530010402202606}
+{"event": "call_started", "at": "2026-10-27T17:11:43.908418+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.908418+00:00", "method": "GetPoint", "seconds": 0.0002770000137388706}
+{"event": "call_started", "at": "2026-10-27T17:11:43.908962+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.908962+00:00", "method": "GetStartVertex", "seconds": 0.0005146998446434736}
+{"event": "call_started", "at": "2026-10-27T17:11:43.908962+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.908962+00:00", "method": "GetEndVertex", "seconds": 0.0004338000435382128}
+{"event": "call_started", "at": "2026-10-27T17:11:43.909966+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.909966+00:00", "method": "GetPoint", "seconds": 0.0002753001172095537}
+{"event": "call_started", "at": "2026-10-27T17:11:43.909966+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.910469+00:00", "method": "GetPoint", "seconds": 0.00025020004250109196}
+{"event": "call_started", "at": "2026-10-27T17:11:43.910469+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.910469+00:00", "method": "GetStartVertex", "seconds": 0.0004509000573307276}
+{"event": "call_started", "at": "2026-10-27T17:11:43.910469+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.911471+00:00", "method": "GetEndVertex", "seconds": 0.0004086000844836235}
+{"event": "call_started", "at": "2026-10-27T17:11:43.911471+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.911471+00:00", "method": "GetPoint", "seconds": 0.00025359983555972576}
+{"event": "call_started", "at": "2026-10-27T17:11:43.911471+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.912033+00:00", "method": "GetPoint", "seconds": 0.00031429994851350784}
+{"event": "call_started", "at": "2026-10-27T17:11:43.914332+00:00", "method": "FeatureFillet3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:43.966476+00:00", "method": "FeatureFillet3", "seconds": 0.05220310017466545}
+{"event": "call_started", "at": "2026-10-27T17:11:44.000208+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.001230+00:00", "method": "EditRebuild3", "seconds": 0.00082250009290874}
+{"event": "call_started", "at": "2026-10-27T17:11:44.001230+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.001230+00:00", "method": "GetDocumentCount", "seconds": 0.0002126998733729124}
+{"event": "call_started", "at": "2026-10-27T17:11:44.001230+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.001739+00:00", "method": "GetTitle", "seconds": 0.00015980005264282227}
+{"event": "call_started", "at": "2026-10-27T17:11:44.001739+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.002301+00:00", "method": "GetTitle", "seconds": 0.0002796000335365534}
+{"event": "call_started", "at": "2026-10-27T17:11:44.002301+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.002301+00:00", "method": "GetDocumentCount", "seconds": 0.00016460008919239044}
+{"event": "call_started", "at": "2026-10-27T17:11:44.002301+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.002301+00:00", "method": "GetTitle", "seconds": 0.00016109994612634182}
+{"event": "call_started", "at": "2026-10-27T17:11:44.002810+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.002810+00:00", "method": "GetTitle", "seconds": 0.0002413000911474228}
+{"event": "call_started", "at": "2026-10-27T17:11:44.002810+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.002810+00:00", "method": "FirstFeature", "seconds": 0.0003157001920044422}
+{"event": "call_started", "at": "2026-10-27T17:11:44.002810+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.002810+00:00", "method": "GetTypeName2", "seconds": 0.00025260006077587605}
+{"event": "call_started", "at": "2026-10-27T17:11:44.002810+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.004320+00:00", "method": "GetNextFeature", "seconds": 0.0004447000101208687}
+{"event": "call_started", "at": "2026-10-27T17:11:44.004320+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.004320+00:00", "method": "GetTypeName2", "seconds": 0.0002804999239742756}
+{"event": "call_started", "at": "2026-10-27T17:11:44.004320+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.005326+00:00", "method": "GetNextFeature", "seconds": 0.000591800082474947}
+{"event": "call_started", "at": "2026-10-27T17:11:44.005326+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.006326+00:00", "method": "GetTypeName2", "seconds": 0.0002748998813331127}
+{"event": "call_started", "at": "2026-10-27T17:11:44.006326+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.006326+00:00", "method": "GetNextFeature", "seconds": 0.0004450001288205385}
+{"event": "call_started", "at": "2026-10-27T17:11:44.006326+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.006326+00:00", "method": "GetTypeName2", "seconds": 0.00021860003471374512}
+{"event": "call_started", "at": "2026-10-27T17:11:44.006326+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.007325+00:00", "method": "GetNextFeature", "seconds": 0.0003720999229699373}
+{"event": "call_started", "at": "2026-10-27T17:11:44.007325+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.007325+00:00", "method": "GetTypeName2", "seconds": 0.00023690005764365196}
+{"event": "call_started", "at": "2026-10-27T17:11:44.007325+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.008453+00:00", "method": "GetNextFeature", "seconds": 0.00039209984242916107}
+{"event": "call_started", "at": "2026-10-27T17:11:44.008453+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.009017+00:00", "method": "GetTypeName2", "seconds": 0.00023210002109408379}
+{"event": "call_started", "at": "2026-10-27T17:11:44.009017+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.009017+00:00", "method": "GetNextFeature", "seconds": 0.00038700015284121037}
+{"event": "call_started", "at": "2026-10-27T17:11:44.009528+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.009528+00:00", "method": "GetTypeName2", "seconds": 0.00023159990087151527}
+{"event": "call_started", "at": "2026-10-27T17:11:44.009528+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.009528+00:00", "method": "GetNextFeature", "seconds": 0.00039549986831843853}
+{"event": "call_started", "at": "2026-10-27T17:11:44.010533+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.011037+00:00", "method": "GetTypeName2", "seconds": 0.0005500998813658953}
+{"event": "call_started", "at": "2026-10-27T17:11:44.011037+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.011037+00:00", "method": "GetNextFeature", "seconds": 0.0003845000173896551}
+{"event": "call_started", "at": "2026-10-27T17:11:44.011037+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.011037+00:00", "method": "GetTypeName2", "seconds": 0.00020999996922910213}
+{"event": "call_started", "at": "2026-10-27T17:11:44.011037+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.012043+00:00", "method": "GetNextFeature", "seconds": 0.0003912998363375664}
+{"event": "call_started", "at": "2026-10-27T17:11:44.012546+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.012546+00:00", "method": "GetTypeName2", "seconds": 0.00026040012016892433}
+{"event": "call_started", "at": "2026-10-27T17:11:44.012546+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.013062+00:00", "method": "GetNextFeature", "seconds": 0.00036610011011362076}
+{"event": "call_started", "at": "2026-10-27T17:11:44.013062+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.013062+00:00", "method": "GetTypeName2", "seconds": 0.0001862999051809311}
+{"event": "call_started", "at": "2026-10-27T17:11:44.013062+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.013062+00:00", "method": "GetNextFeature", "seconds": 0.0003559999167919159}
+{"event": "call_started", "at": "2026-10-27T17:11:44.014066+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.014066+00:00", "method": "GetTypeName2", "seconds": 0.00023000012151896954}
+{"event": "call_started", "at": "2026-10-27T17:11:44.014066+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.014569+00:00", "method": "GetNextFeature", "seconds": 0.0003733998164534569}
+{"event": "call_started", "at": "2026-10-27T17:11:44.014569+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.014569+00:00", "method": "GetTypeName2", "seconds": 0.00021239998750388622}
+{"event": "call_started", "at": "2026-10-27T17:11:44.014569+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetNextFeature", "seconds": 0.00036479998379945755}
+{"event": "call_started", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetTypeName2", "seconds": 0.00021780002862215042}
+{"event": "call_started", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetNextFeature", "seconds": 0.000345699954777956}
+{"event": "call_started", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetTypeName2", "seconds": 0.00020280014723539352}
+{"event": "call_started", "at": "2026-10-27T17:11:44.015573+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetNextFeature", "seconds": 0.0004010000266134739}
+{"event": "call_started", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetTypeName2", "seconds": 0.0002055000513792038}
+{"event": "call_started", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetNextFeature", "seconds": 0.0003657999914139509}
+{"event": "call_started", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetTypeName2", "seconds": 0.00020350003615021706}
+{"event": "call_started", "at": "2026-10-27T17:11:44.017092+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.018602+00:00", "method": "GetNextFeature", "seconds": 0.0003706000279635191}
+{"event": "call_started", "at": "2026-10-27T17:11:44.018602+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.018602+00:00", "method": "GetTypeName2", "seconds": 0.00021920003928244114}
+{"event": "call_started", "at": "2026-10-27T17:11:44.018602+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.018602+00:00", "method": "GetNextFeature", "seconds": 0.00032139988616108894}
+{"event": "call_started", "at": "2026-10-27T17:11:44.019606+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.019606+00:00", "method": "GetTypeName2", "seconds": 0.0002264000941067934}
+{"event": "call_started", "at": "2026-10-27T17:11:44.020109+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.020109+00:00", "method": "GetNextFeature", "seconds": 0.0003437001723796129}
+{"event": "call_started", "at": "2026-10-27T17:11:44.020109+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetTypeName2", "seconds": 0.00024780002422630787}
+{"event": "call_started", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetNextFeature", "seconds": 0.0004288000054657459}
+{"event": "call_started", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetTypeName2", "seconds": 0.0002172000240534544}
+{"event": "call_started", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.020628+00:00", "method": "GetNextFeature", "seconds": 0.00036070006899535656}
+{"event": "call_started", "at": "2026-10-27T17:11:44.022177+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.022177+00:00", "method": "GetTypeName2", "seconds": 0.00024560000747442245}
+{"event": "call_started", "at": "2026-10-27T17:11:44.022177+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.022693+00:00", "method": "GetNextFeature", "seconds": 0.0002578999847173691}
+{"event": "call_started", "at": "2026-10-27T17:11:44.022693+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.022693+00:00", "method": "Parameter", "seconds": 0.0004713998641818762}
+{"event": "call_started", "at": "2026-10-27T17:11:44.022693+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.022693+00:00", "method": "Parameter", "seconds": 0.00035170000046491623}
+{"event": "call_started", "at": "2026-10-27T17:11:44.022693+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.024241+00:00", "method": "Parameter", "seconds": 0.0003869000356644392}
+{"event": "call_started", "at": "2026-10-27T17:11:44.024241+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.025249+00:00", "method": "GetBodies2", "seconds": 0.0005948999896645546}
+{"event": "call_started", "at": "2026-10-27T17:11:44.025249+00:00", "method": "GetMassProperties"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.026248+00:00", "method": "GetMassProperties", "seconds": 0.0012737999204546213}
+{"event": "call_started", "at": "2026-10-27T17:11:44.027757+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.027757+00:00", "method": "GetDocumentCount", "seconds": 0.00022950000129640102}
+{"event": "call_started", "at": "2026-10-27T17:11:44.027757+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.027757+00:00", "method": "GetTitle", "seconds": 0.00016870000399649143}
+{"event": "call_started", "at": "2026-10-27T17:11:44.028755+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.029258+00:00", "method": "GetTitle", "seconds": 0.0003087997902184725}
+{"event": "call_started", "at": "2026-10-27T17:11:44.030263+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.227398+00:00", "method": "SaveAs", "seconds": 0.19714919989928603}
+{"event": "call_started", "at": "2026-10-27T17:11:44.227398+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.227923+00:00", "method": "GetTitle", "seconds": 0.0002452000044286251}
+{"event": "call_started", "at": "2026-10-27T17:11:44.227923+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.227923+00:00", "method": "GetDocumentCount", "seconds": 0.0002446998842060566}
+{"event": "call_started", "at": "2026-10-27T17:11:44.227923+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.227923+00:00", "method": "GetTitle", "seconds": 0.00020130001939833164}
+{"event": "call_started", "at": "2026-10-27T17:11:44.228926+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.229431+00:00", "method": "GetTitle", "seconds": 0.00040389993228018284}
+{"event": "call_started", "at": "2026-10-27T17:11:44.230481+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.296902+00:00", "method": "SaveAs", "seconds": 0.06695510004647076}
+{"event": "call_started", "at": "2026-10-27T17:11:44.296902+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.296902+00:00", "method": "GetTitle", "seconds": 0.00021789991296827793}
+{"event": "call_started", "at": "2026-10-27T17:11:44.298406+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.298406+00:00", "method": "GetDocumentCount", "seconds": 0.0002625000197440386}
+{"event": "call_started", "at": "2026-10-27T17:11:44.298406+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.298921+00:00", "method": "GetTitle", "seconds": 0.00019720010459423065}
+{"event": "call_started", "at": "2026-10-27T17:11:44.298921+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.298921+00:00", "method": "GetTitle", "seconds": 0.0003318998496979475}
+{"event": "call_started", "at": "2026-10-27T17:11:44.298921+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.370992+00:00", "method": "CloseDoc", "seconds": 0.07160580018535256}
+{"event": "call_started", "at": "2026-10-27T17:11:44.372018+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.372018+00:00", "method": "GetDocumentCount", "seconds": 0.000386600149795413}
+{"event": "call_started", "at": "2026-10-27T17:11:44.372018+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.372018+00:00", "method": "GetDocumentCount", "seconds": 0.0002117000985890627}
+{"event": "call_started", "at": "2026-10-27T17:11:44.373025+00:00", "method": "OpenDoc6"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.935974+00:00", "method": "OpenDoc6", "seconds": 0.563681400148198}
+{"event": "call_started", "at": "2026-10-27T17:11:44.935974+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.936981+00:00", "method": "GetTitle", "seconds": 0.0004289001226425171}
+{"event": "call_started", "at": "2026-10-27T17:11:44.936981+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.937484+00:00", "method": "GetDocumentCount", "seconds": 0.0002957999240607023}
+{"event": "call_started", "at": "2026-10-27T17:11:44.937484+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.937484+00:00", "method": "GetTitle", "seconds": 0.00023320014588534832}
+{"event": "call_started", "at": "2026-10-27T17:11:44.937484+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.938490+00:00", "method": "GetTitle", "seconds": 0.00046510016545653343}
+{"event": "owned_view_refresh_disabled", "at": "2026-10-27T17:11:44.939067+00:00"}
+{"event": "call_started", "at": "2026-10-27T17:11:44.939067+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.940073+00:00", "method": "EditRebuild3", "seconds": 0.0005200000014156103}
+{"event": "call_started", "at": "2026-10-27T17:11:44.940073+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.940073+00:00", "method": "GetDocumentCount", "seconds": 0.0002570999786257744}
+{"event": "call_started", "at": "2026-10-27T17:11:44.940073+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.940073+00:00", "method": "GetTitle", "seconds": 0.0002576000988483429}
+{"event": "call_started", "at": "2026-10-27T17:11:44.940073+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:44.941579+00:00", "method": "GetTitle", "seconds": 0.00033490010537207127}
+{"event": "call_started", "at": "2026-10-27T17:11:44.943158+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.014570+00:00", "method": "SaveAs", "seconds": 0.07106920005753636}
+{"event": "call_started", "at": "2026-10-27T17:11:45.014570+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.015095+00:00", "method": "GetTitle", "seconds": 0.0002715999726206064}
+{"event": "call_started", "at": "2026-10-27T17:11:45.015095+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.015606+00:00", "method": "GetDocumentCount", "seconds": 0.00026999996043741703}
+{"event": "call_started", "at": "2026-10-27T17:11:45.015606+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.015606+00:00", "method": "GetTitle", "seconds": 0.0002492999192327261}
+{"event": "call_started", "at": "2026-10-27T17:11:45.016135+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.016647+00:00", "method": "GetTitle", "seconds": 0.0004211999475955963}
+{"event": "call_started", "at": "2026-10-27T17:11:45.016647+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.017171+00:00", "method": "FirstFeature", "seconds": 0.0005959998816251755}
+{"event": "call_started", "at": "2026-10-27T17:11:45.017689+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.017689+00:00", "method": "GetTypeName2", "seconds": 0.0003545999061316252}
+{"event": "call_started", "at": "2026-10-27T17:11:45.017689+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.018728+00:00", "method": "GetNextFeature", "seconds": 0.0005772998556494713}
+{"event": "call_started", "at": "2026-10-27T17:11:45.018728+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.019237+00:00", "method": "GetTypeName2", "seconds": 0.0003222001250833273}
+{"event": "call_started", "at": "2026-10-27T17:11:45.019237+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.019237+00:00", "method": "GetNextFeature", "seconds": 0.000534099992364645}
+{"event": "call_started", "at": "2026-10-27T17:11:45.019237+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.019237+00:00", "method": "GetTypeName2", "seconds": 0.0003233000170439482}
+{"event": "call_started", "at": "2026-10-27T17:11:45.019237+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.021332+00:00", "method": "GetNextFeature", "seconds": 0.0007359001319855452}
+{"event": "call_started", "at": "2026-10-27T17:11:45.021332+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.021332+00:00", "method": "GetTypeName2", "seconds": 0.00040009990334510803}
+{"event": "call_started", "at": "2026-10-27T17:11:45.021332+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.022843+00:00", "method": "GetNextFeature", "seconds": 0.0008064999710768461}
+{"event": "call_started", "at": "2026-10-27T17:11:45.022843+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.022843+00:00", "method": "GetTypeName2", "seconds": 0.00034120003692805767}
+{"event": "call_started", "at": "2026-10-27T17:11:45.022843+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.023848+00:00", "method": "GetNextFeature", "seconds": 0.0005669998936355114}
+{"event": "call_started", "at": "2026-10-27T17:11:45.023848+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.023848+00:00", "method": "GetTypeName2", "seconds": 0.0002677999436855316}
+{"event": "call_started", "at": "2026-10-27T17:11:45.023848+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.024992+00:00", "method": "GetNextFeature", "seconds": 0.0005234000273048878}
+{"event": "call_started", "at": "2026-10-27T17:11:45.024992+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.025993+00:00", "method": "GetTypeName2", "seconds": 0.00033909990452229977}
+{"event": "call_started", "at": "2026-10-27T17:11:45.025993+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.026498+00:00", "method": "GetNextFeature", "seconds": 0.0005427999421954155}
+{"event": "call_started", "at": "2026-10-27T17:11:45.026498+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.026498+00:00", "method": "GetTypeName2", "seconds": 0.00030540022999048233}
+{"event": "call_started", "at": "2026-10-27T17:11:45.026498+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.027502+00:00", "method": "GetNextFeature", "seconds": 0.0006863998714834452}
+{"event": "call_started", "at": "2026-10-27T17:11:45.027502+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.028503+00:00", "method": "GetTypeName2", "seconds": 0.00033030007034540176}
+{"event": "call_started", "at": "2026-10-27T17:11:45.028503+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.028503+00:00", "method": "GetNextFeature", "seconds": 0.000519599998369813}
+{"event": "call_started", "at": "2026-10-27T17:11:45.029503+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.029503+00:00", "method": "GetTypeName2", "seconds": 0.0002959000412374735}
+{"event": "call_started", "at": "2026-10-27T17:11:45.029503+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.029503+00:00", "method": "GetNextFeature", "seconds": 0.0005524000152945518}
+{"event": "call_started", "at": "2026-10-27T17:11:45.029503+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.031059+00:00", "method": "GetTypeName2", "seconds": 0.000367600005120039}
+{"event": "call_started", "at": "2026-10-27T17:11:45.031059+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.031059+00:00", "method": "GetNextFeature", "seconds": 0.0005532999057322741}
+{"event": "call_started", "at": "2026-10-27T17:11:45.031948+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.031948+00:00", "method": "GetTypeName2", "seconds": 0.0003223998937755823}
+{"event": "call_started", "at": "2026-10-27T17:11:45.031948+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.031948+00:00", "method": "GetNextFeature", "seconds": 0.0005498998798429966}
+{"event": "call_started", "at": "2026-10-27T17:11:45.031948+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.033465+00:00", "method": "GetTypeName2", "seconds": 0.0003456000704318285}
+{"event": "call_started", "at": "2026-10-27T17:11:45.033465+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.033977+00:00", "method": "GetNextFeature", "seconds": 0.0005787000991404057}
+{"event": "call_started", "at": "2026-10-27T17:11:45.033977+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.033977+00:00", "method": "GetTypeName2", "seconds": 0.00033030007034540176}
+{"event": "call_started", "at": "2026-10-27T17:11:45.033977+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.033977+00:00", "method": "GetNextFeature", "seconds": 0.0005860999226570129}
+{"event": "call_started", "at": "2026-10-27T17:11:45.033977+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.035985+00:00", "method": "GetTypeName2", "seconds": 0.0003160999622195959}
+{"event": "call_started", "at": "2026-10-27T17:11:45.035985+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.036525+00:00", "method": "GetNextFeature", "seconds": 0.000605700071901083}
+{"event": "call_started", "at": "2026-10-27T17:11:45.037046+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.037046+00:00", "method": "GetTypeName2", "seconds": 0.00032570003531873226}
+{"event": "call_started", "at": "2026-10-27T17:11:45.037046+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.038177+00:00", "method": "GetNextFeature", "seconds": 0.0010055999737232924}
+{"event": "call_started", "at": "2026-10-27T17:11:45.038707+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.038707+00:00", "method": "GetTypeName2", "seconds": 0.0003370000049471855}
+{"event": "call_started", "at": "2026-10-27T17:11:45.038707+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.039744+00:00", "method": "GetNextFeature", "seconds": 0.0005667998921126127}
+{"event": "call_started", "at": "2026-10-27T17:11:45.039744+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.040262+00:00", "method": "GetTypeName2", "seconds": 0.00029779993928968906}
+{"event": "call_started", "at": "2026-10-27T17:11:45.040262+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.040780+00:00", "method": "GetNextFeature", "seconds": 0.0005753999575972557}
+{"event": "call_started", "at": "2026-10-27T17:11:45.041290+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.041290+00:00", "method": "GetTypeName2", "seconds": 0.0002924001310020685}
+{"event": "call_started", "at": "2026-10-27T17:11:45.041290+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.041810+00:00", "method": "GetNextFeature", "seconds": 0.00055720005184412}
+{"event": "call_started", "at": "2026-10-27T17:11:45.042331+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.042331+00:00", "method": "GetTypeName2", "seconds": 0.0003720000386238098}
+{"event": "call_started", "at": "2026-10-27T17:11:45.042331+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.043370+00:00", "method": "GetNextFeature", "seconds": 0.0005558000411838293}
+{"event": "call_started", "at": "2026-10-27T17:11:45.043370+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.043892+00:00", "method": "GetTypeName2", "seconds": 0.0003596001770347357}
+{"event": "call_started", "at": "2026-10-27T17:11:45.043892+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.044414+00:00", "method": "GetNextFeature", "seconds": 0.0006977000739425421}
+{"event": "call_started", "at": "2026-10-27T17:11:45.044938+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.045458+00:00", "method": "GetTypeName2", "seconds": 0.0004517999477684498}
+{"event": "call_started", "at": "2026-10-27T17:11:45.045458+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.045982+00:00", "method": "GetNextFeature", "seconds": 0.0003980000037699938}
+{"event": "call_started", "at": "2026-10-27T17:11:45.045982+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.046508+00:00", "method": "Parameter", "seconds": 0.0007107998244464397}
+{"event": "call_started", "at": "2026-10-27T17:11:45.047021+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.047537+00:00", "method": "Parameter", "seconds": 0.0006124998908489943}
+{"event": "call_started", "at": "2026-10-27T17:11:45.048060+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.048580+00:00", "method": "Parameter", "seconds": 0.00046350015327334404}
+{"event": "call_started", "at": "2026-10-27T17:11:45.048580+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.049617+00:00", "method": "GetBodies2", "seconds": 0.0008831999730318785}
+{"event": "call_started", "at": "2026-10-27T17:11:45.049617+00:00", "method": "GetMassProperties"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.050657+00:00", "method": "GetMassProperties", "seconds": 0.0008767000399529934}
+{"event": "call_started", "at": "2026-10-27T17:11:45.050657+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.051170+00:00", "method": "GetDocumentCount", "seconds": 0.00029170000925660133}
+{"event": "call_started", "at": "2026-10-27T17:11:45.051170+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.051684+00:00", "method": "GetTitle", "seconds": 0.00028229993768036366}
+{"event": "call_started", "at": "2026-10-27T17:11:45.052201+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.052201+00:00", "method": "GetTitle", "seconds": 0.0003858997952193022}
+{"event": "call_started", "at": "2026-10-27T17:11:45.052716+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.120784+00:00", "method": "CloseDoc", "seconds": 0.06900910008698702}
+{"event": "call_started", "at": "2026-10-27T17:11:45.121792+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.122791+00:00", "method": "GetDocumentCount", "seconds": 0.00040040002204477787}
+{"event": "call_started", "at": "2026-10-27T17:11:45.122791+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.124297+00:00", "method": "GetDocumentCount", "seconds": 0.00041999993845820427}
+{"event": "call_started", "at": "2026-10-27T17:11:45.124883+00:00", "method": "OpenDoc6"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.738182+00:00", "method": "OpenDoc6", "seconds": 0.6135515000205487}
+{"event": "call_started", "at": "2026-10-27T17:11:45.738182+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.738182+00:00", "method": "GetTitle", "seconds": 0.0006071999669075012}
+{"event": "call_started", "at": "2026-10-27T17:11:45.738182+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.738182+00:00", "method": "GetDocumentCount", "seconds": 0.0002623999025672674}
+{"event": "call_started", "at": "2026-10-27T17:11:45.738182+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.739695+00:00", "method": "GetTitle", "seconds": 0.0002033999189734459}
+{"event": "call_started", "at": "2026-10-27T17:11:45.739695+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.740267+00:00", "method": "GetTitle", "seconds": 0.0003106000367552042}
+{"event": "owned_view_refresh_disabled", "at": "2026-10-27T17:11:45.740267+00:00"}
+{"event": "call_started", "at": "2026-10-27T17:11:45.740267+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.741273+00:00", "method": "Parameter", "seconds": 0.0005318000912666321}
+{"event": "call_started", "at": "2026-10-27T17:11:45.741777+00:00", "method": "SetSystemValue3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.742783+00:00", "method": "SetSystemValue3", "seconds": 0.0011578998528420925}
+{"event": "call_started", "at": "2026-10-27T17:11:45.742783+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.744783+00:00", "method": "EditRebuild3", "seconds": 0.0020268000662326813}
+{"event": "call_started", "at": "2026-10-27T17:11:45.744783+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.744783+00:00", "method": "GetDocumentCount", "seconds": 0.0003597999457269907}
+{"event": "call_started", "at": "2026-10-27T17:11:45.744783+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.745785+00:00", "method": "GetTitle", "seconds": 0.0006249998696148396}
+{"event": "call_started", "at": "2026-10-27T17:11:45.746786+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.746786+00:00", "method": "GetTitle", "seconds": 0.00040440005250275135}
+{"event": "call_started", "at": "2026-10-27T17:11:45.747809+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.867332+00:00", "method": "SaveAs", "seconds": 0.11899819993413985}
+{"event": "call_started", "at": "2026-10-27T17:11:45.867332+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.867844+00:00", "method": "GetTitle", "seconds": 0.00022779987193644047}
+{"event": "call_started", "at": "2026-10-27T17:11:45.867844+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.868357+00:00", "method": "GetDocumentCount", "seconds": 0.0001993998885154724}
+{"event": "call_started", "at": "2026-10-27T17:11:45.868357+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.868357+00:00", "method": "GetTitle", "seconds": 0.00020450004376471043}
+{"event": "call_started", "at": "2026-10-27T17:11:45.868876+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.868876+00:00", "method": "GetTitle", "seconds": 0.00031260005198419094}
+{"event": "call_started", "at": "2026-10-27T17:11:45.869384+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.869384+00:00", "method": "FirstFeature", "seconds": 0.0004425998777151108}
+{"event": "call_started", "at": "2026-10-27T17:11:45.869900+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.869900+00:00", "method": "GetTypeName2", "seconds": 0.00023740017786622047}
+{"event": "call_started", "at": "2026-10-27T17:11:45.869900+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.870416+00:00", "method": "GetNextFeature", "seconds": 0.00047099986113607883}
+{"event": "call_started", "at": "2026-10-27T17:11:45.870924+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.870924+00:00", "method": "GetTypeName2", "seconds": 0.0003046998754143715}
+{"event": "call_started", "at": "2026-10-27T17:11:45.870924+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.871436+00:00", "method": "GetNextFeature", "seconds": 0.0006343000568449497}
+{"event": "call_started", "at": "2026-10-27T17:11:45.871957+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.872477+00:00", "method": "GetTypeName2", "seconds": 0.0002592999953776598}
+{"event": "call_started", "at": "2026-10-27T17:11:45.872477+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.872477+00:00", "method": "GetNextFeature", "seconds": 0.0004655001685023308}
+{"event": "call_started", "at": "2026-10-27T17:11:45.872996+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.872996+00:00", "method": "GetTypeName2", "seconds": 0.0002989999484270811}
+{"event": "call_started", "at": "2026-10-27T17:11:45.872996+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.873514+00:00", "method": "GetNextFeature", "seconds": 0.00044400012120604515}
+{"event": "call_started", "at": "2026-10-27T17:11:45.874025+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.874540+00:00", "method": "GetTypeName2", "seconds": 0.0003152999561280012}
+{"event": "call_started", "at": "2026-10-27T17:11:45.874540+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.875071+00:00", "method": "GetNextFeature", "seconds": 0.0005639998707920313}
+{"event": "call_started", "at": "2026-10-27T17:11:45.875071+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.875071+00:00", "method": "GetTypeName2", "seconds": 0.00037340004928410053}
+{"event": "call_started", "at": "2026-10-27T17:11:45.875071+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.876077+00:00", "method": "GetNextFeature", "seconds": 0.0004555999767035246}
+{"event": "call_started", "at": "2026-10-27T17:11:45.876077+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.876581+00:00", "method": "GetTypeName2", "seconds": 0.00022270018234848976}
+{"event": "call_started", "at": "2026-10-27T17:11:45.876581+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.877097+00:00", "method": "GetNextFeature", "seconds": 0.000395399983972311}
+{"event": "call_started", "at": "2026-10-27T17:11:45.877097+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.877097+00:00", "method": "GetTypeName2", "seconds": 0.00020899996161460876}
+{"event": "call_started", "at": "2026-10-27T17:11:45.877097+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.877611+00:00", "method": "GetNextFeature", "seconds": 0.00035310001112520695}
+{"event": "call_started", "at": "2026-10-27T17:11:45.878129+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.878129+00:00", "method": "GetTypeName2", "seconds": 0.0002071999479085207}
+{"event": "call_started", "at": "2026-10-27T17:11:45.878129+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.878644+00:00", "method": "GetNextFeature", "seconds": 0.00037429993972182274}
+{"event": "call_started", "at": "2026-10-27T17:11:45.878644+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.879162+00:00", "method": "GetTypeName2", "seconds": 0.00023739994503557682}
+{"event": "call_started", "at": "2026-10-27T17:11:45.879162+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.879162+00:00", "method": "GetNextFeature", "seconds": 0.00038790004327893257}
+{"event": "call_started", "at": "2026-10-27T17:11:45.879678+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.879678+00:00", "method": "GetTypeName2", "seconds": 0.00020690006203949451}
+{"event": "call_started", "at": "2026-10-27T17:11:45.879678+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.880194+00:00", "method": "GetNextFeature", "seconds": 0.0003706000279635191}
+{"event": "call_started", "at": "2026-10-27T17:11:45.880194+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.880713+00:00", "method": "GetTypeName2", "seconds": 0.00021520000882446766}
+{"event": "call_started", "at": "2026-10-27T17:11:45.880713+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.880713+00:00", "method": "GetNextFeature", "seconds": 0.00038330000825226307}
+{"event": "call_started", "at": "2026-10-27T17:11:45.881228+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.881228+00:00", "method": "GetTypeName2", "seconds": 0.00020800018683075905}
+{"event": "call_started", "at": "2026-10-27T17:11:45.881228+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.881737+00:00", "method": "GetNextFeature", "seconds": 0.00040289992466568947}
+{"event": "call_started", "at": "2026-10-27T17:11:45.882248+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.882248+00:00", "method": "GetTypeName2", "seconds": 0.00037729996256530285}
+{"event": "call_started", "at": "2026-10-27T17:11:45.882248+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.882917+00:00", "method": "GetNextFeature", "seconds": 0.0004243999719619751}
+{"event": "call_started", "at": "2026-10-27T17:11:45.882917+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.883429+00:00", "method": "GetTypeName2", "seconds": 0.0002522000577300787}
+{"event": "call_started", "at": "2026-10-27T17:11:45.883429+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.883429+00:00", "method": "GetNextFeature", "seconds": 0.00041089998558163643}
+{"event": "call_started", "at": "2026-10-27T17:11:45.883429+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.884434+00:00", "method": "GetTypeName2", "seconds": 0.0002817001659423113}
+{"event": "call_started", "at": "2026-10-27T17:11:45.884434+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.884937+00:00", "method": "GetNextFeature", "seconds": 0.0003855000250041485}
+{"event": "call_started", "at": "2026-10-27T17:11:45.884937+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.884937+00:00", "method": "GetTypeName2", "seconds": 0.00022450019605457783}
+{"event": "call_started", "at": "2026-10-27T17:11:45.884937+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.884937+00:00", "method": "GetNextFeature", "seconds": 0.0003370000049471855}
+{"event": "call_started", "at": "2026-10-27T17:11:45.885942+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.885942+00:00", "method": "GetTypeName2", "seconds": 0.0002305000089108944}
+{"event": "call_started", "at": "2026-10-27T17:11:45.885942+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.886445+00:00", "method": "GetNextFeature", "seconds": 0.0003798000980168581}
+{"event": "call_started", "at": "2026-10-27T17:11:45.886445+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.886445+00:00", "method": "GetTypeName2", "seconds": 0.00020859995856881142}
+{"event": "call_started", "at": "2026-10-27T17:11:45.886445+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.886445+00:00", "method": "GetNextFeature", "seconds": 0.0003690999001264572}
+{"event": "call_started", "at": "2026-10-27T17:11:45.887450+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.887450+00:00", "method": "GetTypeName2", "seconds": 0.0002506999298930168}
+{"event": "call_started", "at": "2026-10-27T17:11:45.887957+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.887957+00:00", "method": "GetNextFeature", "seconds": 0.0003602001816034317}
+{"event": "call_started", "at": "2026-10-27T17:11:45.887957+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.887957+00:00", "method": "GetTypeName2", "seconds": 0.00020869984291493893}
+{"event": "call_started", "at": "2026-10-27T17:11:45.887957+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.888962+00:00", "method": "GetNextFeature", "seconds": 0.00039270007982850075}
+{"event": "call_started", "at": "2026-10-27T17:11:45.888962+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.889465+00:00", "method": "GetTypeName2", "seconds": 0.00026270002126693726}
+{"event": "call_started", "at": "2026-10-27T17:11:45.889465+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.889465+00:00", "method": "GetNextFeature", "seconds": 0.00021580001339316368}
+{"event": "call_started", "at": "2026-10-27T17:11:45.889990+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.889990+00:00", "method": "Parameter", "seconds": 0.0003923999611288309}
+{"event": "call_started", "at": "2026-10-27T17:11:45.890499+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.891021+00:00", "method": "Parameter", "seconds": 0.00044970004819333553}
+{"event": "call_started", "at": "2026-10-27T17:11:45.891021+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.891536+00:00", "method": "Parameter", "seconds": 0.0004333001561462879}
+{"event": "call_started", "at": "2026-10-27T17:11:45.891536+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.892576+00:00", "method": "GetBodies2", "seconds": 0.0007678000256419182}
+{"event": "call_started", "at": "2026-10-27T17:11:45.892576+00:00", "method": "GetMassProperties"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.893599+00:00", "method": "GetMassProperties", "seconds": 0.0008038000669330359}
+{"event": "call_started", "at": "2026-10-27T17:11:45.893599+00:00", "method": "SetSystemValue3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.894604+00:00", "method": "SetSystemValue3", "seconds": 0.0008904999122023582}
+{"event": "call_started", "at": "2026-10-27T17:11:45.894604+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.894604+00:00", "method": "EditRebuild3", "seconds": 0.00029419991187751293}
+{"event": "call_started", "at": "2026-10-27T17:11:45.894604+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.895108+00:00", "method": "GetDocumentCount", "seconds": 0.0001730998046696186}
+{"event": "call_started", "at": "2026-10-27T17:11:45.895108+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.895108+00:00", "method": "GetTitle", "seconds": 0.00014650006778538227}
+{"event": "call_started", "at": "2026-10-27T17:11:45.895108+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:45.895108+00:00", "method": "GetTitle", "seconds": 0.0002951999194920063}
+{"event": "call_started", "at": "2026-10-27T17:11:45.896113+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.007090+00:00", "method": "SaveAs", "seconds": 0.11051030014641583}
+{"event": "call_started", "at": "2026-10-27T17:11:46.007696+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.007696+00:00", "method": "GetTitle", "seconds": 0.00026560015976428986}
+{"event": "call_started", "at": "2026-10-27T17:11:46.008208+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.008208+00:00", "method": "GetDocumentCount", "seconds": 0.00023830006830394268}
+{"event": "call_started", "at": "2026-10-27T17:11:46.008208+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.008728+00:00", "method": "GetTitle", "seconds": 0.00020280014723539352}
+{"event": "call_started", "at": "2026-10-27T17:11:46.009247+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.009247+00:00", "method": "GetTitle", "seconds": 0.0003222001250833273}
+{"event": "call_started", "at": "2026-10-27T17:11:46.009247+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.009766+00:00", "method": "FirstFeature", "seconds": 0.0004241000860929489}
+{"event": "call_started", "at": "2026-10-27T17:11:46.010283+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.010283+00:00", "method": "GetTypeName2", "seconds": 0.0002770000137388706}
+{"event": "call_started", "at": "2026-10-27T17:11:46.010283+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.010798+00:00", "method": "GetNextFeature", "seconds": 0.0005145000759512186}
+{"event": "call_started", "at": "2026-10-27T17:11:46.011323+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.011323+00:00", "method": "GetTypeName2", "seconds": 0.00023659993894398212}
+{"event": "call_started", "at": "2026-10-27T17:11:46.011323+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.011843+00:00", "method": "GetNextFeature", "seconds": 0.00038860016502439976}
+{"event": "call_started", "at": "2026-10-27T17:11:46.011843+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.012363+00:00", "method": "GetTypeName2", "seconds": 0.0002400998491793871}
+{"event": "call_started", "at": "2026-10-27T17:11:46.012363+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.012874+00:00", "method": "GetNextFeature", "seconds": 0.0004314000252634287}
+{"event": "call_started", "at": "2026-10-27T17:11:46.012874+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.013387+00:00", "method": "GetTypeName2", "seconds": 0.00025749998167157173}
+{"event": "call_started", "at": "2026-10-27T17:11:46.013387+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.013387+00:00", "method": "GetNextFeature", "seconds": 0.0004102000966668129}
+{"event": "call_started", "at": "2026-10-27T17:11:46.013387+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.013387+00:00", "method": "GetTypeName2", "seconds": 0.00025320006534457207}
+{"event": "call_started", "at": "2026-10-27T17:11:46.013387+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.014391+00:00", "method": "GetNextFeature", "seconds": 0.00040380004793405533}
+{"event": "call_started", "at": "2026-10-27T17:11:46.014391+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.014391+00:00", "method": "GetTypeName2", "seconds": 0.00023589981719851494}
+{"event": "call_started", "at": "2026-10-27T17:11:46.014391+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.014391+00:00", "method": "GetNextFeature", "seconds": 0.00037390016950666904}
+{"event": "call_started", "at": "2026-10-27T17:11:46.014391+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.015896+00:00", "method": "GetTypeName2", "seconds": 0.00021970015950500965}
+{"event": "call_started", "at": "2026-10-27T17:11:46.015896+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.015896+00:00", "method": "GetNextFeature", "seconds": 0.0004743000026792288}
+{"event": "call_started", "at": "2026-10-27T17:11:46.016536+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.016536+00:00", "method": "GetTypeName2", "seconds": 0.00026030000299215317}
+{"event": "call_started", "at": "2026-10-27T17:11:46.016536+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.017046+00:00", "method": "GetNextFeature", "seconds": 0.0003662002272903919}
+{"event": "call_started", "at": "2026-10-27T17:11:46.017558+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.017558+00:00", "method": "GetTypeName2", "seconds": 0.00023090001195669174}
+{"event": "call_started", "at": "2026-10-27T17:11:46.017558+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.017558+00:00", "method": "GetNextFeature", "seconds": 0.00040829996578395367}
+{"event": "call_started", "at": "2026-10-27T17:11:46.017558+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.018562+00:00", "method": "GetTypeName2", "seconds": 0.0002444998826831579}
+{"event": "call_started", "at": "2026-10-27T17:11:46.018562+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.019065+00:00", "method": "GetNextFeature", "seconds": 0.00040989997796714306}
+{"event": "call_started", "at": "2026-10-27T17:11:46.019065+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.019574+00:00", "method": "GetTypeName2", "seconds": 0.0002638001460582018}
+{"event": "call_started", "at": "2026-10-27T17:11:46.019574+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.019574+00:00", "method": "GetNextFeature", "seconds": 0.00039909989573061466}
+{"event": "call_started", "at": "2026-10-27T17:11:46.020083+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.020083+00:00", "method": "GetTypeName2", "seconds": 0.00025240005925297737}
+{"event": "call_started", "at": "2026-10-27T17:11:46.020083+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.020597+00:00", "method": "GetNextFeature", "seconds": 0.0004251999780535698}
+{"event": "call_started", "at": "2026-10-27T17:11:46.021118+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.021118+00:00", "method": "GetTypeName2", "seconds": 0.00026500015519559383}
+{"event": "call_started", "at": "2026-10-27T17:11:46.021118+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.021638+00:00", "method": "GetNextFeature", "seconds": 0.00036990013904869556}
+{"event": "call_started", "at": "2026-10-27T17:11:46.021638+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.022154+00:00", "method": "GetTypeName2", "seconds": 0.00022980011999607086}
+{"event": "call_started", "at": "2026-10-27T17:11:46.022154+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.022668+00:00", "method": "GetNextFeature", "seconds": 0.00038899993523955345}
+{"event": "call_started", "at": "2026-10-27T17:11:46.022668+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.023332+00:00", "method": "GetTypeName2", "seconds": 0.0002707000821828842}
+{"event": "call_started", "at": "2026-10-27T17:11:46.023332+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.023863+00:00", "method": "GetNextFeature", "seconds": 0.0005379000212997198}
+{"event": "call_started", "at": "2026-10-27T17:11:46.023863+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.024423+00:00", "method": "GetTypeName2", "seconds": 0.00028540007770061493}
+{"event": "call_started", "at": "2026-10-27T17:11:46.024423+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.024933+00:00", "method": "GetNextFeature", "seconds": 0.0004540998488664627}
+{"event": "call_started", "at": "2026-10-27T17:11:46.024933+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.025462+00:00", "method": "GetTypeName2", "seconds": 0.00027680001221597195}
+{"event": "call_started", "at": "2026-10-27T17:11:46.025462+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.025972+00:00", "method": "GetNextFeature", "seconds": 0.0005252999253571033}
+{"event": "call_started", "at": "2026-10-27T17:11:46.025972+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.026486+00:00", "method": "GetTypeName2", "seconds": 0.00030640000477433205}
+{"event": "call_started", "at": "2026-10-27T17:11:46.026486+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.027004+00:00", "method": "GetNextFeature", "seconds": 0.0004998999647796154}
+{"event": "call_started", "at": "2026-10-27T17:11:46.027004+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.027519+00:00", "method": "GetTypeName2", "seconds": 0.00028300005942583084}
+{"event": "call_started", "at": "2026-10-27T17:11:46.027519+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.028031+00:00", "method": "GetNextFeature", "seconds": 0.0005504998844116926}
+{"event": "call_started", "at": "2026-10-27T17:11:46.028554+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.028554+00:00", "method": "GetTypeName2", "seconds": 0.00031589996069669724}
+{"event": "call_started", "at": "2026-10-27T17:11:46.028554+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.029064+00:00", "method": "GetNextFeature", "seconds": 0.0005338999908417463}
+{"event": "call_started", "at": "2026-10-27T17:11:46.029577+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.030105+00:00", "method": "GetTypeName2", "seconds": 0.00036399997770786285}
+{"event": "call_started", "at": "2026-10-27T17:11:46.030105+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.030626+00:00", "method": "GetNextFeature", "seconds": 0.0005747999530285597}
+{"event": "call_started", "at": "2026-10-27T17:11:46.031164+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.031164+00:00", "method": "GetTypeName2", "seconds": 0.00037080002948641777}
+{"event": "call_started", "at": "2026-10-27T17:11:46.031164+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.031681+00:00", "method": "GetNextFeature", "seconds": 0.00033900002017617226}
+{"event": "call_started", "at": "2026-10-27T17:11:46.031681+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.032203+00:00", "method": "Parameter", "seconds": 0.0005504000000655651}
+{"event": "call_started", "at": "2026-10-27T17:11:46.032724+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.032724+00:00", "method": "Parameter", "seconds": 0.0005545997992157936}
+{"event": "call_started", "at": "2026-10-27T17:11:46.032724+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.034238+00:00", "method": "Parameter", "seconds": 0.0006224000826478004}
+{"event": "call_started", "at": "2026-10-27T17:11:46.034238+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.035277+00:00", "method": "GetBodies2", "seconds": 0.0007380000315606594}
+{"event": "call_started", "at": "2026-10-27T17:11:46.035277+00:00", "method": "GetMassProperties"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.036285+00:00", "method": "GetMassProperties", "seconds": 0.0009888000786304474}
+{"event": "call_started", "at": "2026-10-27T17:11:46.036285+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.036789+00:00", "method": "GetDocumentCount", "seconds": 0.0002799001522362232}
+{"event": "call_started", "at": "2026-10-27T17:11:46.036789+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.036789+00:00", "method": "GetTitle", "seconds": 0.00021549989469349384}
+{"event": "call_started", "at": "2026-10-27T17:11:46.037302+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.037302+00:00", "method": "GetTitle", "seconds": 0.00040140002965927124}
+{"event": "call_started", "at": "2026-10-27T17:11:46.037302+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.104569+00:00", "method": "CloseDoc", "seconds": 0.0668870999943465}
+{"event": "call_started", "at": "2026-10-27T17:11:46.105577+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.105577+00:00", "method": "GetDocumentCount", "seconds": 0.00044970004819333553}
+{"event": "call_started", "at": "2026-10-27T17:11:46.106578+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.106578+00:00", "method": "GetDocumentCount", "seconds": 0.0002547998446971178}
+{"event": "call_started", "at": "2026-10-27T17:11:46.106578+00:00", "method": "NewDocument"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.769164+00:00", "method": "NewDocument", "seconds": 0.6623543999157846}
+{"event": "call_started", "at": "2026-10-27T17:11:46.769164+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.769164+00:00", "method": "GetTitle", "seconds": 0.00045759999193251133}
+{"event": "call_started", "at": "2026-10-27T17:11:46.769164+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.769164+00:00", "method": "GetDocumentCount", "seconds": 0.0002359000500291586}
+{"event": "call_started", "at": "2026-10-27T17:11:46.769164+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.770686+00:00", "method": "GetTitle", "seconds": 0.00022950000129640102}
+{"event": "call_started", "at": "2026-10-27T17:11:46.771268+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.771268+00:00", "method": "GetTitle", "seconds": 0.00032219989225268364}
+{"event": "owned_view_refresh_disabled", "at": "2026-10-27T17:11:46.772334+00:00"}
+{"event": "call_started", "at": "2026-10-27T17:11:46.772334+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.772844+00:00", "method": "FirstFeature", "seconds": 0.0005051000043749809}
+{"event": "call_started", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetTypeName2", "seconds": 0.0002607000060379505}
+{"event": "call_started", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetNextFeature", "seconds": 0.00045759999193251133}
+{"event": "call_started", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetTypeName2", "seconds": 0.00026730005629360676}
+{"event": "call_started", "at": "2026-10-27T17:11:46.772844+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.774355+00:00", "method": "GetNextFeature", "seconds": 0.0004420999903231859}
+{"event": "call_started", "at": "2026-10-27T17:11:46.774355+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.774355+00:00", "method": "GetTypeName2", "seconds": 0.000264299800619483}
+{"event": "call_started", "at": "2026-10-27T17:11:46.774355+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.775125+00:00", "method": "GetNextFeature", "seconds": 0.00044350000098347664}
+{"event": "call_started", "at": "2026-10-27T17:11:46.775125+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.775125+00:00", "method": "GetTypeName2", "seconds": 0.00026999996043741703}
+{"event": "call_started", "at": "2026-10-27T17:11:46.775125+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetNextFeature", "seconds": 0.0005105999298393726}
+{"event": "call_started", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetTypeName2", "seconds": 0.0002525998279452324}
+{"event": "call_started", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetNextFeature", "seconds": 0.0004284000024199486}
+{"event": "call_started", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetTypeName2", "seconds": 0.00026439991779625416}
+{"event": "call_started", "at": "2026-10-27T17:11:46.776130+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.777689+00:00", "method": "GetNextFeature", "seconds": 0.0004062999505549669}
+{"event": "call_started", "at": "2026-10-27T17:11:46.777689+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.777689+00:00", "method": "GetTypeName2", "seconds": 0.00023110001347959042}
+{"event": "call_started", "at": "2026-10-27T17:11:46.777689+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.777689+00:00", "method": "GetNextFeature", "seconds": 0.0004726999904960394}
+{"event": "call_started", "at": "2026-10-27T17:11:46.778699+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.779203+00:00", "method": "GetTypeName2", "seconds": 0.0008491999469697475}
+{"event": "call_started", "at": "2026-10-27T17:11:46.779203+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.780208+00:00", "method": "GetNextFeature", "seconds": 0.0007927999831736088}
+{"event": "call_started", "at": "2026-10-27T17:11:46.780714+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.780714+00:00", "method": "GetTypeName2", "seconds": 0.0002762000076472759}
+{"event": "call_started", "at": "2026-10-27T17:11:46.780714+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.781230+00:00", "method": "GetNextFeature", "seconds": 0.0005395999178290367}
+{"event": "call_started", "at": "2026-10-27T17:11:46.781230+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.781900+00:00", "method": "GetTypeName2", "seconds": 0.00027459999546408653}
+{"event": "call_started", "at": "2026-10-27T17:11:46.781900+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.781900+00:00", "method": "GetNextFeature", "seconds": 0.0004005997907370329}
+{"event": "call_started", "at": "2026-10-27T17:11:46.782476+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.782476+00:00", "method": "GetTypeName2", "seconds": 0.0002701999619603157}
+{"event": "call_started", "at": "2026-10-27T17:11:46.782476+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.782476+00:00", "method": "GetNextFeature", "seconds": 0.00047859991900622845}
+{"event": "call_started", "at": "2026-10-27T17:11:46.782476+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.783487+00:00", "method": "GetTypeName2", "seconds": 0.00025949999690055847}
+{"event": "call_started", "at": "2026-10-27T17:11:46.783487+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.783993+00:00", "method": "GetNextFeature", "seconds": 0.0004322999157011509}
+{"event": "call_started", "at": "2026-10-27T17:11:46.783993+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.783993+00:00", "method": "GetTypeName2", "seconds": 0.00020940019749104977}
+{"event": "call_started", "at": "2026-10-27T17:11:46.783993+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.783993+00:00", "method": "GetNextFeature", "seconds": 0.00046469992958009243}
+{"event": "call_started", "at": "2026-10-27T17:11:46.783993+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.784997+00:00", "method": "GetTypeName2", "seconds": 0.00024480000138282776}
+{"event": "call_started", "at": "2026-10-27T17:11:46.784997+00:00", "method": "GetSpecificFeature2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.785519+00:00", "method": "GetSpecificFeature2", "seconds": 0.0005727000534534454}
+{"event": "call_started", "at": "2026-10-27T17:11:46.786033+00:00", "method": "Select2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.787549+00:00", "method": "Select2", "seconds": 0.0020914000924676657}
+{"event": "call_started", "at": "2026-10-27T17:11:46.788557+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:46.798180+00:00", "method": "InsertSketch", "seconds": 0.009097900008782744}
+{"event": "call_started", "at": "2026-10-27T17:11:46.798180+00:00", "method": "CreateCornerRectangle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.254148+00:00", "method": "CreateCornerRectangle", "seconds": 0.456537599908188}
+{"event": "call_started", "at": "2026-10-27T17:11:47.255857+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.323906+00:00", "method": "InsertSketch", "seconds": 0.06847400008700788}
+{"event": "call_started", "at": "2026-10-27T17:11:47.323906+00:00", "method": "FeatureExtrusion3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.379934+00:00", "method": "FeatureExtrusion3", "seconds": 0.05602599983103573}
+{"event": "call_started", "at": "2026-10-27T17:11:47.413729+00:00", "method": "ClearSelection2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.416730+00:00", "method": "ClearSelection2", "seconds": 0.0029643999878317118}
+{"event": "call_started", "at": "2026-10-27T17:11:47.416730+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.416730+00:00", "method": "GetBodies2", "seconds": 0.001322499942034483}
+{"event": "call_started", "at": "2026-10-27T17:11:47.418305+00:00", "method": "GetFaces"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.419335+00:00", "method": "GetFaces", "seconds": 0.0014688000082969666}
+{"event": "call_started", "at": "2026-10-27T17:11:47.419852+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.420859+00:00", "method": "GetSurface", "seconds": 0.0007888998370617628}
+{"event": "call_started", "at": "2026-10-27T17:11:47.420859+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.421366+00:00", "method": "IsPlane", "seconds": 0.0008926000446081161}
+{"event": "call_started", "at": "2026-10-27T17:11:47.421882+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.422399+00:00", "method": "GetSurface", "seconds": 0.0007824001368135214}
+{"event": "call_started", "at": "2026-10-27T17:11:47.422916+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.422916+00:00", "method": "IsPlane", "seconds": 0.00036170007660984993}
+{"event": "call_started", "at": "2026-10-27T17:11:47.423430+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.424438+00:00", "method": "GetSurface", "seconds": 0.0008851999882608652}
+{"event": "call_started", "at": "2026-10-27T17:11:47.424438+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.424438+00:00", "method": "IsPlane", "seconds": 0.00032650004141032696}
+{"event": "call_started", "at": "2026-10-27T17:11:47.424438+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.425438+00:00", "method": "GetSurface", "seconds": 0.0005256999284029007}
+{"event": "call_started", "at": "2026-10-27T17:11:47.425438+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.425438+00:00", "method": "IsPlane", "seconds": 0.00026819994673132896}
+{"event": "call_started", "at": "2026-10-27T17:11:47.425438+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.426438+00:00", "method": "GetSurface", "seconds": 0.0005091000348329544}
+{"event": "call_started", "at": "2026-10-27T17:11:47.426438+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.426438+00:00", "method": "IsPlane", "seconds": 0.00027149985544383526}
+{"event": "call_started", "at": "2026-10-27T17:11:47.427438+00:00", "method": "GetSurface"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.427438+00:00", "method": "GetSurface", "seconds": 0.0005171000957489014}
+{"event": "call_started", "at": "2026-10-27T17:11:47.427438+00:00", "method": "IsPlane"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.427438+00:00", "method": "IsPlane", "seconds": 0.00026190001517534256}
+{"event": "call_started", "at": "2026-10-27T17:11:47.428438+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.433480+00:00", "method": "Select4", "seconds": 0.00500190001912415}
+{"event": "call_started", "at": "2026-10-27T17:11:47.433480+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.956693+00:00", "method": "InsertSketch", "seconds": 0.522912299958989}
+{"event": "call_started", "at": "2026-10-27T17:11:47.958298+00:00", "method": "GetMathUtility"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.958298+00:00", "method": "GetMathUtility", "seconds": 0.0003887999337166548}
+{"event": "call_started", "at": "2026-10-27T17:11:47.958857+00:00", "method": "CreatePoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.958857+00:00", "method": "CreatePoint", "seconds": 0.0004547999706119299}
+{"event": "call_started", "at": "2026-10-27T17:11:47.958857+00:00", "method": "MultiplyTransform"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.958857+00:00", "method": "MultiplyTransform", "seconds": 0.0004915001336485147}
+{"event": "call_started", "at": "2026-10-27T17:11:47.958857+00:00", "method": "CreatePoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.960368+00:00", "method": "CreatePoint", "seconds": 0.00033900002017617226}
+{"event": "call_started", "at": "2026-10-27T17:11:47.960368+00:00", "method": "MultiplyTransform"}
+{"event": "call_finished", "at": "2026-10-27T17:11:47.960881+00:00", "method": "MultiplyTransform", "seconds": 0.00042699999175965786}
+{"event": "call_started", "at": "2026-10-27T17:11:47.961886+00:00", "method": "CreateCornerRectangle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.304691+00:00", "method": "CreateCornerRectangle", "seconds": 0.34279450005851686}
+{"event": "call_started", "at": "2026-10-27T17:11:48.304691+00:00", "method": "InsertSketch"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.393069+00:00", "method": "InsertSketch", "seconds": 0.08772390009835362}
+{"event": "call_started", "at": "2026-10-27T17:11:48.393069+00:00", "method": "FeatureCut4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.461643+00:00", "method": "FeatureCut4", "seconds": 0.06949090003035963}
+{"event": "call_started", "at": "2026-10-27T17:11:48.502615+00:00", "method": "ClearSelection2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.505734+00:00", "method": "ClearSelection2", "seconds": 0.0036934998352080584}
+{"event": "call_started", "at": "2026-10-27T17:11:48.507256+00:00", "method": "CreateSelectData"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.507256+00:00", "method": "CreateSelectData", "seconds": 0.0005725000519305468}
+{"event": "call_started", "at": "2026-10-27T17:11:48.508262+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.508767+00:00", "method": "GetBodies2", "seconds": 0.0006017000414431095}
+{"event": "call_started", "at": "2026-10-27T17:11:48.508767+00:00", "method": "GetEdges"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.514882+00:00", "method": "GetEdges", "seconds": 0.005850499961525202}
+{"event": "call_started", "at": "2026-10-27T17:11:48.514882+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.515889+00:00", "method": "GetStartVertex", "seconds": 0.0007999998051673174}
+{"event": "call_started", "at": "2026-10-27T17:11:48.515889+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.516393+00:00", "method": "GetEndVertex", "seconds": 0.0006788000464439392}
+{"event": "call_started", "at": "2026-10-27T17:11:48.516393+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.516899+00:00", "method": "GetPoint", "seconds": 0.0003738000523298979}
+{"event": "call_started", "at": "2026-10-27T17:11:48.516899+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.516899+00:00", "method": "GetPoint", "seconds": 0.00035610003396868706}
+{"event": "call_started", "at": "2026-10-27T17:11:48.516899+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.517910+00:00", "method": "GetStartVertex", "seconds": 0.000575000187382102}
+{"event": "call_started", "at": "2026-10-27T17:11:48.517910+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.518416+00:00", "method": "GetEndVertex", "seconds": 0.0006229998543858528}
+{"event": "call_started", "at": "2026-10-27T17:11:48.518992+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.519508+00:00", "method": "GetPoint", "seconds": 0.0003301000688225031}
+{"event": "call_started", "at": "2026-10-27T17:11:48.519508+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.519508+00:00", "method": "GetPoint", "seconds": 0.0003512999974191189}
+{"event": "call_started", "at": "2026-10-27T17:11:48.519508+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.520095+00:00", "method": "GetStartVertex", "seconds": 0.0006062998436391354}
+{"event": "call_started", "at": "2026-10-27T17:11:48.520095+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.520607+00:00", "method": "GetEndVertex", "seconds": 0.0006342001724988222}
+{"event": "call_started", "at": "2026-10-27T17:11:48.520607+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.521615+00:00", "method": "GetPoint", "seconds": 0.0003605000674724579}
+{"event": "call_started", "at": "2026-10-27T17:11:48.521615+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.521615+00:00", "method": "GetPoint", "seconds": 0.00033199996687471867}
+{"event": "call_started", "at": "2026-10-27T17:11:48.521615+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.522617+00:00", "method": "GetStartVertex", "seconds": 0.0005568999331444502}
+{"event": "call_started", "at": "2026-10-27T17:11:48.522617+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.522617+00:00", "method": "GetEndVertex", "seconds": 0.0004978999495506287}
+{"event": "call_started", "at": "2026-10-27T17:11:48.523618+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.523618+00:00", "method": "GetPoint", "seconds": 0.0002731001004576683}
+{"event": "call_started", "at": "2026-10-27T17:11:48.523618+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.523618+00:00", "method": "GetPoint", "seconds": 0.00024979980662465096}
+{"event": "call_started", "at": "2026-10-27T17:11:48.523618+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.524616+00:00", "method": "GetStartVertex", "seconds": 0.000499499961733818}
+{"event": "call_started", "at": "2026-10-27T17:11:48.524616+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.525123+00:00", "method": "GetEndVertex", "seconds": 0.0005357998888939619}
+{"event": "call_started", "at": "2026-10-27T17:11:48.525123+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.525123+00:00", "method": "GetPoint", "seconds": 0.0003830001223832369}
+{"event": "call_started", "at": "2026-10-27T17:11:48.525123+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.525123+00:00", "method": "GetPoint", "seconds": 0.00022549997083842754}
+{"event": "call_started", "at": "2026-10-27T17:11:48.525123+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.527141+00:00", "method": "Select4", "seconds": 0.0010621999390423298}
+{"event": "call_started", "at": "2026-10-27T17:11:48.527141+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.527648+00:00", "method": "GetStartVertex", "seconds": 0.0010704000014811754}
+{"event": "call_started", "at": "2026-10-27T17:11:48.527648+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.528656+00:00", "method": "GetEndVertex", "seconds": 0.0005730001721531153}
+{"event": "call_started", "at": "2026-10-27T17:11:48.528656+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.529163+00:00", "method": "GetPoint", "seconds": 0.0003287999425083399}
+{"event": "call_started", "at": "2026-10-27T17:11:48.529163+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.529678+00:00", "method": "GetPoint", "seconds": 0.000286799855530262}
+{"event": "call_started", "at": "2026-10-27T17:11:48.529678+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.530262+00:00", "method": "Select4", "seconds": 0.0013035000301897526}
+{"event": "call_started", "at": "2026-10-27T17:11:48.530262+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.531270+00:00", "method": "GetStartVertex", "seconds": 0.0007084000390022993}
+{"event": "call_started", "at": "2026-10-27T17:11:48.531270+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.531270+00:00", "method": "GetEndVertex", "seconds": 0.0005079000256955624}
+{"event": "call_started", "at": "2026-10-27T17:11:48.531270+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.532779+00:00", "method": "GetPoint", "seconds": 0.0003116999287158251}
+{"event": "call_started", "at": "2026-10-27T17:11:48.532779+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.532779+00:00", "method": "GetPoint", "seconds": 0.0002476999070495367}
+{"event": "call_started", "at": "2026-10-27T17:11:48.532779+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.534296+00:00", "method": "Select4", "seconds": 0.0012846000026911497}
+{"event": "call_started", "at": "2026-10-27T17:11:48.534296+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.534296+00:00", "method": "GetStartVertex", "seconds": 0.000629400135949254}
+{"event": "call_started", "at": "2026-10-27T17:11:48.534296+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.535303+00:00", "method": "GetEndVertex", "seconds": 0.0005761000793427229}
+{"event": "call_started", "at": "2026-10-27T17:11:48.535303+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.535303+00:00", "method": "GetPoint", "seconds": 0.0003200001083314419}
+{"event": "call_started", "at": "2026-10-27T17:11:48.535303+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.536311+00:00", "method": "GetPoint", "seconds": 0.00032020010985434055}
+{"event": "call_started", "at": "2026-10-27T17:11:48.536311+00:00", "method": "Select4"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.537330+00:00", "method": "Select4", "seconds": 0.0010865000076591969}
+{"event": "call_started", "at": "2026-10-27T17:11:48.537330+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.537330+00:00", "method": "GetStartVertex", "seconds": 0.0006317999213933945}
+{"event": "call_started", "at": "2026-10-27T17:11:48.537330+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.538847+00:00", "method": "GetEndVertex", "seconds": 0.0005141999572515488}
+{"event": "call_started", "at": "2026-10-27T17:11:48.538847+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.539416+00:00", "method": "GetPoint", "seconds": 0.0003269999288022518}
+{"event": "call_started", "at": "2026-10-27T17:11:48.539416+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.539416+00:00", "method": "GetPoint", "seconds": 0.00024720001965761185}
+{"event": "call_started", "at": "2026-10-27T17:11:48.539416+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.539926+00:00", "method": "GetStartVertex", "seconds": 0.00045059993863105774}
+{"event": "call_started", "at": "2026-10-27T17:11:48.539926+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.540437+00:00", "method": "GetEndVertex", "seconds": 0.0005014999769628048}
+{"event": "call_started", "at": "2026-10-27T17:11:48.540437+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.540437+00:00", "method": "GetPoint", "seconds": 0.00028879987075924873}
+{"event": "call_started", "at": "2026-10-27T17:11:48.540437+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.541443+00:00", "method": "GetPoint", "seconds": 0.0003082999028265476}
+{"event": "call_started", "at": "2026-10-27T17:11:48.541443+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.541443+00:00", "method": "GetStartVertex", "seconds": 0.00048390007577836514}
+{"event": "call_started", "at": "2026-10-27T17:11:48.541443+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.542443+00:00", "method": "GetEndVertex", "seconds": 0.0007027999963611364}
+{"event": "call_started", "at": "2026-10-27T17:11:48.542443+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.543445+00:00", "method": "GetPoint", "seconds": 0.0003404999151825905}
+{"event": "call_started", "at": "2026-10-27T17:11:48.543445+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.543445+00:00", "method": "GetPoint", "seconds": 0.0006013999227434397}
+{"event": "call_started", "at": "2026-10-27T17:11:48.543445+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.544652+00:00", "method": "GetStartVertex", "seconds": 0.0006242000963538885}
+{"event": "call_started", "at": "2026-10-27T17:11:48.544652+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.545167+00:00", "method": "GetEndVertex", "seconds": 0.0004918999038636684}
+{"event": "call_started", "at": "2026-10-27T17:11:48.545167+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.545167+00:00", "method": "GetPoint", "seconds": 0.00032579991966485977}
+{"event": "call_started", "at": "2026-10-27T17:11:48.545167+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.545167+00:00", "method": "GetPoint", "seconds": 0.00026290002278983593}
+{"event": "call_started", "at": "2026-10-27T17:11:48.545167+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.546172+00:00", "method": "GetStartVertex", "seconds": 0.0005395999178290367}
+{"event": "call_started", "at": "2026-10-27T17:11:48.546675+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.546675+00:00", "method": "GetEndVertex", "seconds": 0.0005030999891459942}
+{"event": "call_started", "at": "2026-10-27T17:11:48.546675+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.547679+00:00", "method": "GetPoint", "seconds": 0.0002850999590009451}
+{"event": "call_started", "at": "2026-10-27T17:11:48.547679+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.547679+00:00", "method": "GetPoint", "seconds": 0.00025120005011558533}
+{"event": "call_started", "at": "2026-10-27T17:11:48.547679+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.547679+00:00", "method": "GetStartVertex", "seconds": 0.00045779999345541}
+{"event": "call_started", "at": "2026-10-27T17:11:48.547679+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.548680+00:00", "method": "GetEndVertex", "seconds": 0.0004662000574171543}
+{"event": "call_started", "at": "2026-10-27T17:11:48.549183+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.549183+00:00", "method": "GetPoint", "seconds": 0.00027590012177824974}
+{"event": "call_started", "at": "2026-10-27T17:11:48.549183+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.549183+00:00", "method": "GetPoint", "seconds": 0.0002808000426739454}
+{"event": "call_started", "at": "2026-10-27T17:11:48.549183+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.550188+00:00", "method": "GetStartVertex", "seconds": 0.0006504999473690987}
+{"event": "call_started", "at": "2026-10-27T17:11:48.550188+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.550691+00:00", "method": "GetEndVertex", "seconds": 0.0005432998295873404}
+{"event": "call_started", "at": "2026-10-27T17:11:48.550691+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.551697+00:00", "method": "GetPoint", "seconds": 0.0002816000487655401}
+{"event": "call_started", "at": "2026-10-27T17:11:48.551697+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.551697+00:00", "method": "GetPoint", "seconds": 0.00023070001043379307}
+{"event": "call_started", "at": "2026-10-27T17:11:48.551697+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.551697+00:00", "method": "GetStartVertex", "seconds": 0.0004891999997198582}
+{"event": "call_started", "at": "2026-10-27T17:11:48.551697+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.552697+00:00", "method": "GetEndVertex", "seconds": 0.0004366000648587942}
+{"event": "call_started", "at": "2026-10-27T17:11:48.552697+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.553200+00:00", "method": "GetPoint", "seconds": 0.00023779994808137417}
+{"event": "call_started", "at": "2026-10-27T17:11:48.553200+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.553200+00:00", "method": "GetPoint", "seconds": 0.00020560016855597496}
+{"event": "call_started", "at": "2026-10-27T17:11:48.553200+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.553200+00:00", "method": "GetStartVertex", "seconds": 0.0003670998848974705}
+{"event": "call_started", "at": "2026-10-27T17:11:48.553200+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.554202+00:00", "method": "GetEndVertex", "seconds": 0.00046500004827976227}
+{"event": "call_started", "at": "2026-10-27T17:11:48.554202+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.554202+00:00", "method": "GetPoint", "seconds": 0.0002609000075608492}
+{"event": "call_started", "at": "2026-10-27T17:11:48.554202+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.554202+00:00", "method": "GetPoint", "seconds": 0.0001993998885154724}
+{"event": "call_started", "at": "2026-10-27T17:11:48.554202+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.555206+00:00", "method": "GetStartVertex", "seconds": 0.00035649980418384075}
+{"event": "call_started", "at": "2026-10-27T17:11:48.555206+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.555206+00:00", "method": "GetEndVertex", "seconds": 0.0004946999251842499}
+{"event": "call_started", "at": "2026-10-27T17:11:48.555206+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.556207+00:00", "method": "GetPoint", "seconds": 0.00022329995408654213}
+{"event": "call_started", "at": "2026-10-27T17:11:48.556207+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.556207+00:00", "method": "GetPoint", "seconds": 0.00022670021280646324}
+{"event": "call_started", "at": "2026-10-27T17:11:48.556207+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetStartVertex", "seconds": 0.00037320004776120186}
+{"event": "call_started", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetEndVertex", "seconds": 0.00037700007669627666}
+{"event": "call_started", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetPoint", "seconds": 0.0002318001352250576}
+{"event": "call_started", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetPoint", "seconds": 0.00020819995552301407}
+{"event": "call_started", "at": "2026-10-27T17:11:48.556710+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.558214+00:00", "method": "GetStartVertex", "seconds": 0.0005777000915259123}
+{"event": "call_started", "at": "2026-10-27T17:11:48.558214+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.558884+00:00", "method": "GetEndVertex", "seconds": 0.00044950004667043686}
+{"event": "call_started", "at": "2026-10-27T17:11:48.558884+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.559394+00:00", "method": "GetPoint", "seconds": 0.00025349995121359825}
+{"event": "call_started", "at": "2026-10-27T17:11:48.559394+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.559394+00:00", "method": "GetPoint", "seconds": 0.00023619993589818478}
+{"event": "call_started", "at": "2026-10-27T17:11:48.559394+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.559949+00:00", "method": "GetStartVertex", "seconds": 0.0004095998592674732}
+{"event": "call_started", "at": "2026-10-27T17:11:48.559949+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.560461+00:00", "method": "GetEndVertex", "seconds": 0.00036889989860355854}
+{"event": "call_started", "at": "2026-10-27T17:11:48.560461+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.560461+00:00", "method": "GetPoint", "seconds": 0.0002218999434262514}
+{"event": "call_started", "at": "2026-10-27T17:11:48.560461+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.561023+00:00", "method": "GetPoint", "seconds": 0.00024359999224543571}
+{"event": "call_started", "at": "2026-10-27T17:11:48.561023+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetStartVertex", "seconds": 0.00036619999445974827}
+{"event": "call_started", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetEndVertex", "seconds": 0.0003698000218719244}
+{"event": "call_started", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetPoint", "seconds": 0.00020780018530786037}
+{"event": "call_started", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetPoint", "seconds": 0.00019209994934499264}
+{"event": "call_started", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetStartVertex", "seconds": 0.0003486999776214361}
+{"event": "call_started", "at": "2026-10-27T17:11:48.561532+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.563068+00:00", "method": "GetEndVertex", "seconds": 0.0004594998899847269}
+{"event": "call_started", "at": "2026-10-27T17:11:48.563068+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.563068+00:00", "method": "GetPoint", "seconds": 0.00030729989521205425}
+{"event": "call_started", "at": "2026-10-27T17:11:48.563068+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.563068+00:00", "method": "GetPoint", "seconds": 0.0002500000409781933}
+{"event": "call_started", "at": "2026-10-27T17:11:48.563068+00:00", "method": "GetStartVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.564072+00:00", "method": "GetStartVertex", "seconds": 0.00044199987314641476}
+{"event": "call_started", "at": "2026-10-27T17:11:48.564072+00:00", "method": "GetEndVertex"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.564575+00:00", "method": "GetEndVertex", "seconds": 0.00039279996417462826}
+{"event": "call_started", "at": "2026-10-27T17:11:48.564575+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.564575+00:00", "method": "GetPoint", "seconds": 0.0002359000500291586}
+{"event": "call_started", "at": "2026-10-27T17:11:48.564575+00:00", "method": "GetPoint"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.564575+00:00", "method": "GetPoint", "seconds": 0.0002812999300658703}
+{"event": "call_started", "at": "2026-10-27T17:11:48.567088+00:00", "method": "FeatureFillet3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.625558+00:00", "method": "FeatureFillet3", "seconds": 0.0578403000254184}
+{"event": "call_started", "at": "2026-10-27T17:11:48.665042+00:00", "method": "EditRebuild3"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.666042+00:00", "method": "EditRebuild3", "seconds": 0.0006047000642865896}
+{"event": "call_started", "at": "2026-10-27T17:11:48.666042+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.666042+00:00", "method": "GetDocumentCount", "seconds": 0.0001962999813258648}
+{"event": "call_started", "at": "2026-10-27T17:11:48.666042+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.666042+00:00", "method": "GetTitle", "seconds": 0.0001835001166909933}
+{"event": "call_started", "at": "2026-10-27T17:11:48.667547+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.668068+00:00", "method": "GetTitle", "seconds": 0.00041859992779791355}
+{"event": "call_started", "at": "2026-10-27T17:11:48.668068+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.668068+00:00", "method": "GetDocumentCount", "seconds": 0.00024870014749467373}
+{"event": "call_started", "at": "2026-10-27T17:11:48.668588+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.668588+00:00", "method": "GetTitle", "seconds": 0.0002188999205827713}
+{"event": "call_started", "at": "2026-10-27T17:11:48.668588+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.669403+00:00", "method": "GetTitle", "seconds": 0.0003364000003784895}
+{"event": "call_started", "at": "2026-10-27T17:11:48.669403+00:00", "method": "FirstFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.669403+00:00", "method": "FirstFeature", "seconds": 0.00040360004641115665}
+{"event": "call_started", "at": "2026-10-27T17:11:48.669403+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.669403+00:00", "method": "GetTypeName2", "seconds": 0.0002957000397145748}
+{"event": "call_started", "at": "2026-10-27T17:11:48.669403+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.670924+00:00", "method": "GetNextFeature", "seconds": 0.000507500022649765}
+{"event": "call_started", "at": "2026-10-27T17:11:48.670924+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.670924+00:00", "method": "GetTypeName2", "seconds": 0.00026290002278983593}
+{"event": "call_started", "at": "2026-10-27T17:11:48.670924+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.671931+00:00", "method": "GetNextFeature", "seconds": 0.0006665999535471201}
+{"event": "call_started", "at": "2026-10-27T17:11:48.671931+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.671931+00:00", "method": "GetTypeName2", "seconds": 0.00029360014013946056}
+{"event": "call_started", "at": "2026-10-27T17:11:48.671931+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.671931+00:00", "method": "GetNextFeature", "seconds": 0.0004388000816106796}
+{"event": "call_started", "at": "2026-10-27T17:11:48.673437+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.673437+00:00", "method": "GetTypeName2", "seconds": 0.00026519992388784885}
+{"event": "call_started", "at": "2026-10-27T17:11:48.673437+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.673955+00:00", "method": "GetNextFeature", "seconds": 0.00043869996443390846}
+{"event": "call_started", "at": "2026-10-27T17:11:48.674541+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.674541+00:00", "method": "GetTypeName2", "seconds": 0.00033660000190138817}
+{"event": "call_started", "at": "2026-10-27T17:11:48.674541+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.675054+00:00", "method": "GetNextFeature", "seconds": 0.0007074000313878059}
+{"event": "call_started", "at": "2026-10-27T17:11:48.675054+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.676059+00:00", "method": "GetTypeName2", "seconds": 0.00026539992541074753}
+{"event": "call_started", "at": "2026-10-27T17:11:48.676059+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.676562+00:00", "method": "GetNextFeature", "seconds": 0.0004496998153626919}
+{"event": "call_started", "at": "2026-10-27T17:11:48.676562+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.676562+00:00", "method": "GetTypeName2", "seconds": 0.0002625000197440386}
+{"event": "call_started", "at": "2026-10-27T17:11:48.676562+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.677567+00:00", "method": "GetNextFeature", "seconds": 0.0004167999140918255}
+{"event": "call_started", "at": "2026-10-27T17:11:48.677567+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.678071+00:00", "method": "GetTypeName2", "seconds": 0.0002500000409781933}
+{"event": "call_started", "at": "2026-10-27T17:11:48.678071+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.678071+00:00", "method": "GetNextFeature", "seconds": 0.0004354999400675297}
+{"event": "call_started", "at": "2026-10-27T17:11:48.678071+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.679075+00:00", "method": "GetTypeName2", "seconds": 0.000238100066781044}
+{"event": "call_started", "at": "2026-10-27T17:11:48.679075+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.679578+00:00", "method": "GetNextFeature", "seconds": 0.0004135000053793192}
+{"event": "call_started", "at": "2026-10-27T17:11:48.679578+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.679578+00:00", "method": "GetTypeName2", "seconds": 0.00019910000264644623}
+{"event": "call_started", "at": "2026-10-27T17:11:48.679578+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.679578+00:00", "method": "GetNextFeature", "seconds": 0.0003521000035107136}
+{"event": "call_started", "at": "2026-10-27T17:11:48.680581+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.680581+00:00", "method": "GetTypeName2", "seconds": 0.00025969999842345715}
+{"event": "call_started", "at": "2026-10-27T17:11:48.680581+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.680581+00:00", "method": "GetNextFeature", "seconds": 0.00038819992914795876}
+{"event": "call_started", "at": "2026-10-27T17:11:48.680581+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.681582+00:00", "method": "GetTypeName2", "seconds": 0.00021690013818442822}
+{"event": "call_started", "at": "2026-10-27T17:11:48.681582+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.681582+00:00", "method": "GetNextFeature", "seconds": 0.0003746000584214926}
+{"event": "call_started", "at": "2026-10-27T17:11:48.681582+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.681582+00:00", "method": "GetTypeName2", "seconds": 0.0002251998521387577}
+{"event": "call_started", "at": "2026-10-27T17:11:48.681582+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.683590+00:00", "method": "GetNextFeature", "seconds": 0.001030599931254983}
+{"event": "call_started", "at": "2026-10-27T17:11:48.683590+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.684167+00:00", "method": "GetTypeName2", "seconds": 0.0005868000444024801}
+{"event": "call_started", "at": "2026-10-27T17:11:48.684167+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.684678+00:00", "method": "GetNextFeature", "seconds": 0.0004343001637607813}
+{"event": "call_started", "at": "2026-10-27T17:11:48.684678+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.684678+00:00", "method": "GetTypeName2", "seconds": 0.00023770006373524666}
+{"event": "call_started", "at": "2026-10-27T17:11:48.684678+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.686197+00:00", "method": "GetNextFeature", "seconds": 0.0008255001157522202}
+{"event": "call_started", "at": "2026-10-27T17:11:48.686197+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.686197+00:00", "method": "GetTypeName2", "seconds": 0.0002856999635696411}
+{"event": "call_started", "at": "2026-10-27T17:11:48.686197+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.686197+00:00", "method": "GetNextFeature", "seconds": 0.0004650999326258898}
+{"event": "call_started", "at": "2026-10-27T17:11:48.686197+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.687712+00:00", "method": "GetTypeName2", "seconds": 0.0003249999135732651}
+{"event": "call_started", "at": "2026-10-27T17:11:48.687712+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.688723+00:00", "method": "GetNextFeature", "seconds": 0.0010245000012218952}
+{"event": "call_started", "at": "2026-10-27T17:11:48.688723+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.689720+00:00", "method": "GetTypeName2", "seconds": 0.0005685999058187008}
+{"event": "call_started", "at": "2026-10-27T17:11:48.689720+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.689720+00:00", "method": "GetNextFeature", "seconds": 0.0005044999998062849}
+{"event": "call_started", "at": "2026-10-27T17:11:48.690721+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.690721+00:00", "method": "GetTypeName2", "seconds": 0.0002500999253243208}
+{"event": "call_started", "at": "2026-10-27T17:11:48.690721+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.690721+00:00", "method": "GetNextFeature", "seconds": 0.000434699933975935}
+{"event": "call_started", "at": "2026-10-27T17:11:48.691719+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.691719+00:00", "method": "GetTypeName2", "seconds": 0.0002516000531613827}
+{"event": "call_started", "at": "2026-10-27T17:11:48.691719+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.691719+00:00", "method": "GetNextFeature", "seconds": 0.00042619998566806316}
+{"event": "call_started", "at": "2026-10-27T17:11:48.692719+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.692719+00:00", "method": "GetTypeName2", "seconds": 0.00022600009106099606}
+{"event": "call_started", "at": "2026-10-27T17:11:48.692719+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.692719+00:00", "method": "GetNextFeature", "seconds": 0.00045119994319975376}
+{"event": "call_started", "at": "2026-10-27T17:11:48.693717+00:00", "method": "GetTypeName2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.693717+00:00", "method": "GetTypeName2", "seconds": 0.0002726998645812273}
+{"event": "call_started", "at": "2026-10-27T17:11:48.693717+00:00", "method": "GetNextFeature"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.694222+00:00", "method": "GetNextFeature", "seconds": 0.00028149993158876896}
+{"event": "call_started", "at": "2026-10-27T17:11:48.694222+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.694738+00:00", "method": "Parameter", "seconds": 0.00047140009701251984}
+{"event": "call_started", "at": "2026-10-27T17:11:48.694738+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.695320+00:00", "method": "Parameter", "seconds": 0.000354900024831295}
+{"event": "call_started", "at": "2026-10-27T17:11:48.695320+00:00", "method": "Parameter"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.695320+00:00", "method": "Parameter", "seconds": 0.0003758000675588846}
+{"event": "call_started", "at": "2026-10-27T17:11:48.695320+00:00", "method": "GetBodies2"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.696323+00:00", "method": "GetBodies2", "seconds": 0.00048019993118941784}
+{"event": "call_started", "at": "2026-10-27T17:11:48.696323+00:00", "method": "GetMassProperties"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.697324+00:00", "method": "GetMassProperties", "seconds": 0.0006939000450074673}
+{"event": "call_started", "at": "2026-10-27T17:11:48.699534+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.700039+00:00", "method": "GetDocumentCount", "seconds": 0.00031849998049438}
+{"event": "call_started", "at": "2026-10-27T17:11:48.700039+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.700039+00:00", "method": "GetTitle", "seconds": 0.00021909992210566998}
+{"event": "call_started", "at": "2026-10-27T17:11:48.700039+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.701046+00:00", "method": "GetTitle", "seconds": 0.0003700000233948231}
+{"event": "call_started", "at": "2026-10-27T17:11:48.702044+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.896899+00:00", "method": "SaveAs", "seconds": 0.19456650014035404}
+{"event": "call_started", "at": "2026-10-27T17:11:48.896899+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.896899+00:00", "method": "GetTitle", "seconds": 0.00027290009893476963}
+{"event": "call_started", "at": "2026-10-27T17:11:48.897904+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.897904+00:00", "method": "GetDocumentCount", "seconds": 0.00022019981406629086}
+{"event": "call_started", "at": "2026-10-27T17:11:48.897904+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.897904+00:00", "method": "GetTitle", "seconds": 0.00018660002388060093}
+{"event": "call_started", "at": "2026-10-27T17:11:48.897904+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.898903+00:00", "method": "GetTitle", "seconds": 0.0003090000245720148}
+{"event": "call_started", "at": "2026-10-27T17:11:48.899919+00:00", "method": "SaveAs"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.969401+00:00", "method": "SaveAs", "seconds": 0.06964539992623031}
+{"event": "call_started", "at": "2026-10-27T17:11:48.969904+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.969904+00:00", "method": "GetTitle", "seconds": 0.0002405000850558281}
+{"event": "call_started", "at": "2026-10-27T17:11:48.970412+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.970412+00:00", "method": "GetDocumentCount", "seconds": 0.00023080012761056423}
+{"event": "call_started", "at": "2026-10-27T17:11:48.970412+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.970412+00:00", "method": "GetTitle", "seconds": 0.00016899988986551762}
+{"event": "call_started", "at": "2026-10-27T17:11:48.971434+00:00", "method": "GetTitle"}
+{"event": "call_finished", "at": "2026-10-27T17:11:48.971434+00:00", "method": "GetTitle", "seconds": 0.00038379989564418793}
+{"event": "call_started", "at": "2026-10-27T17:11:48.971434+00:00", "method": "CloseDoc"}
+{"event": "call_finished", "at": "2026-10-27T17:11:49.040694+00:00", "method": "CloseDoc", "seconds": 0.06904589990153909}
+{"event": "call_started", "at": "2026-10-27T17:11:49.040694+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:49.040694+00:00", "method": "GetDocumentCount", "seconds": 0.0002691000699996948}
+{"event": "call_started", "at": "2026-10-27T17:11:49.040694+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-27T17:11:49.040694+00:00", "method": "GetDocumentCount", "seconds": 0.0002541998401284218}

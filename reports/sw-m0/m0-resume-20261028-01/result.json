@@ -1,0 +1,21 @@
+{
+  "paid_model_calls": 0,
+  "out": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m0-resume-20261028-01",
+  "started_at": "2026-10-27T16:26:10.444915+00:00",
+  "status": "FAIL",
+  "source_sha256": {
+    "tools/sw_m0.py": "d3c4faca5dbd85090013e606f40e6f8ad577a21f956f0e192eb1e28dd8ba1170",
+    "tools/sw_m0_probe.py": "a2b0abee5e84f7795c6cede7e383229b257efa2e322d2570f855beb71256baea",
+    "tools/cad_spec.py": "03341cbb08453c501cb4dbc8f303b64a565e85b27f1a5c682df7dc5bf64b22c2",
+    "tools/cad_spec_probe.py": "48b00816d7ed0e3a99427f2066590b1980205675015f84a51e2064016be1beb3",
+    "design/cad-harness-mvp/eval-v1/P1.json": "63dce87e64609ed56fb6a8594c27ef74ed2d772666d02fb9408c0578a3cd2488",
+    "design/harness2-sw-m0/positive.json": "76ffaa0bc27750979d99b60c3911a42498faa2bff26ddde264ba67b9902060f9",
+    "design/harness2-sw-m0/wrong-depth.json": "08aa8f2cfcf7d95abccf8e9c0c9119d691b26604ab06dc0d13300f17f346f0cb"
+  },
+  "com_exit": 1,
+  "error_type": "RuntimeError",
+  "error": "COM_stage_failed:(-2147023174, 'RPC サーバーを利用できません。', None, None)",
+  "finished_at": "2026-10-27T16:26:39.595045+00:00",
+  "total_seconds": 29.149958200054243,
+  "manual_recovery_required": true
+}

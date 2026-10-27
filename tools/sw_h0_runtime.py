@@ -15,6 +15,7 @@ from tools import cad_verify_v4_live as live,cad_verify_v4_agent as agent
 from tools import cad_verify_v4_freeze as freezing,cad_verify_v4_ledger as ledger,cad_spec
 from tools import sw_m0 as base,sw_m1_inputs as inputs,sw_h0_cad as cad
 from tools.cad_verify_guard import Stop,quota_snapshot
+from tools.sw_h0_budget import SCOPE as DEVELOPMENT_SCOPE
 
 PRIVATE=inputs.PRIVATE/'h0'
 PUBLIC=base.ROOT/'reports/sw-h0'
@@ -59,9 +60,23 @@ def original_inputs():
     return entries,bound
 
 
-def freeze(run):
+def selection(sequences=None):
+    selected=list(SELECTED) if sequences is None else list(sequences)
+    if not selected or selected!=[n for n in SELECTED if n in selected]:
+        raise Stop('H0_subset_order_or_scope')
+    return selected
+
+
+def budget_identity(run,new_batch=False):
+    if re.fullmatch(r'[A-Za-z0-9_-]{1,96}',run) is None:raise Stop('H0_run_name')
+    return ('batch-'+run,'harness2-solidworks-H0-batch40-'+run) if new_batch else ('development40',DEVELOPMENT_SCOPE)
+
+
+def freeze(run,*,new_batch=False,sequences=None):
+    selected=selection(sequences);pool_name,pool_scope=budget_identity(run,new_batch)
     out=inputs.private_path(PRIVATE/run);out.mkdir(parents=True,exist_ok=False)
     entries,bound=original_inputs()
+    for entry in entries:entry['selected']=entry['sequence'] in selected
     policy_sha=freezing._policy(base.ROOT,base.ROOT/'design/cad-harness-verify-v4/policy.json')
     files=freezing.bindings(base.ROOT);files['H0_PLAN.md']=ledger.file_sha(base.ROOT/'H0_PLAN.md')
     generator=dict(model=freezing.MODEL,thinking=freezing.THINKING,**freezing._executable('omp'))
@@ -70,19 +85,19 @@ def freeze(run):
     if host['hostname']!=freezing.REQUIRED_HOST:raise Stop('H0_wrong_host')
     skill=agent.bundle(base.ROOT)
     ledger.write_json(out/'inputs-private.json',entries)
-    manifest=dict(schema='harness2.solidworks.H0.freeze.v1',scope='H0-development40',run=run,
-        charged_call_cap=40,selected=list(SELECTED),policy_sha256=policy_sha,files=files,
+    manifest=dict(schema='harness2.solidworks.H0.freeze.v2',scope='H0-batch40' if new_batch else 'H0-development40',run=run,
+        charged_call_cap=40,selected=selected,budget_pool=pool_name,budget_scope=pool_scope,policy_sha256=policy_sha,files=files,
         input_files=bound,inputs_packet_sha256=ledger.file_sha(out/'inputs-private.json'),
         cohort_sha256=inputs.COHORT_SHA,skill_sha256=ledger.sha(skill),
         generator_config_sha256=ledger.sha(json.dumps(MODEL_CONFIG,sort_keys=True).encode()),
         generator=generator,host=host,quota_snapshot='C:/dev/v4-ops/quota.json',
-        authorization='USER 2026-10-26 23:15 JST H0 development 40; 23:20 standing batches <=50; H0 remains 40',
+        authorization='USER 2026-10-26 H0 development40; USER 2026-10-28 01:18/01:30 independent Codex batches <=50; each pool conservatively cap40',
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')})
     ledger.write_json(out/'manifest.json',manifest)
     ledger.write_json(out/'SHA256.json',dict(manifest_sha256=ledger.file_sha(out/'manifest.json')))
     pub=PUBLIC/run;pub.mkdir(parents=True,exist_ok=False)
-    public={k:manifest[k] for k in ('schema','scope','run','charged_call_cap','selected','policy_sha256','cohort_sha256','skill_sha256')}
+    public={k:manifest[k] for k in ('schema','scope','run','charged_call_cap','selected','budget_pool','budget_scope','policy_sha256','cohort_sha256','skill_sha256')}
     public.update(manifest_sha256=ledger.file_sha(out/'manifest.json'),source_sha256=files,
         generator={k:generator[k] for k in ('model','thinking','version','sha256')},
         generator_access={k:MODEL_CONFIG[k] for k in ('enabledProviders','disabledProviders','enabledModels')},

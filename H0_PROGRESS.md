@@ -81,3 +81,72 @@
 
 - WIP/未ロックの停止checkpoint `17ada38`を`origin/h2/sw`へpush成功（remote `7d049b2..17ada38`）。非公開gold・raw出力・`__pycache__`は含めていない。この停止記録の追記も同branchへ保存する。
 - 最終状態：**STOPPED、SW応答とハーネス文書状態のユーザー確認待ち**。002未固定・未実行、40枠の保守計上18・残22、55%ASK/60%停止は不変。公開コード修正の単体回帰21件は合格したが、無課金SW smokeは300.094秒で停止しており、再開許可や成功証明の代わりにはしない。稼働中jobなし。SW終了・再起動・保護branch/tag変更なし。新しい手順・生成は始めず待機する。
+
+## 2026-10-28 再開許可・更新後SWの再確認
+
+- 監督01:25 JSTの指示で再開。監督報告では10/27 00:42 JSTのGPU TDR後に旧SWが無応答となり、ユーザー操作で10/28 00:21 JSTに強制終了、仮想画面を導入、SW更新後01:20 JSTに起動された。親エージェントはSWを終了・再起動していない。監督の読み取り確認はPID28800、Responding=True、Revision34.4.0（旧34.3.0）、文書0。TDRと旧timeoutの因果は未確定。
+- 保存lockの内容は`H0-unit-mock-smoke`で、前回smoke04由来。監督が旧所有者不在と新SWの空セッションを確認し、明示的にrenameを指示したため、`reports/sw-m0/session.lock.stale-20261027`へ削除せず退避する。その後は既存のattach-only/文書0ゲートを再度通して無課金M0確認を行う。
+- 新規許可：課金バッチの起動失敗はCodexサブスク内・各50回以下で原因修正と再試行可。dev40終了後も新しい50回以下の別枠へ続行可。まず002は既存共有残22以内。55%ASK/60%停止、SW無応答停止・終了再起動禁止、gold機械参照のみ、元カード0.01mmと追加0.005mm判定・policy・採点は不変。同時稼働Codexは2以下に抑える。
+- 次の順序は無課金M0→無課金smoke05→両方成功後だけ新規002固定・実行。失敗は保存し、SW無応答以外なら自分で調査・修正・再確認する。まだ追加のモデル生成なし。
+- ダッシュボード専用agentへ更新を依頼したが、専用toolが再び「指定されたモデル・effortではありません。」と拒否した。別モデルへの変更や代替公開は行わず、このメモを原本として継続する。AGENTS共通inventoryは検出0・走査エラー0。
+
+## 再開M0の障害調査・01:31の追加許可
+
+- `m0-resume-20261028-01`は29.150秒でFAIL。SW34.4.0/PID28800へattachし、正例の作成・保存・再オープン・寸法変更復元までは記録されたが、負例の新規スケッチで`CreateCornerRectangle`が4.216秒かかった直後、`InsertSketch`でRPC unavailable（HRESULT -2147023174）。COM状態不明を記録し、所有lockを残して終了した。M0全体合格ではない。以降の読取確認でSLDWORKSプロセス数0。親がSWを終了するAPIやkillを使った事実はない。
+- 保存済み正例STEPだけをオフラインの既存FreeCAD1.1.4判定へ渡した結果、保存前・再読込・復元の3形状は元0.01mmと追加0.005mmで合格、再読込/復元の差分体積0。これは部分確認のみで、未作成の負例やH0 smokeを代替しない。証拠`m0-resume-20261028-01/partial-neutral-result.json`。
+- Windows ApplicationログはViewServerV6.exe18.0.0.749自身でアクセス違反0xc0000005、offset0x20380、01:26:42 JST、report ID `e5ed3340-5e45-42e8-bcc8-5e964dffaff4`を記録。SLDWORKS本体の一致する1000/1001記録は未発見。監督報告では新規TDRなし。GPU・仮想画面・新SP4.0・ViewServerのどれが根本原因かは、この時間相関だけでは確定しない。判定コードの変更や許容差緩和で回避しない。
+- 01:30の委任に従い、安全な選択を自分で決める。現時点の選択は元のハーネスのまま再検証し、同じ障害が再現した場合だけ原因を切り分ける。H0終了後はスキル記述だけの改善を元版と交互に各5回比較する準備へ進む。封印goldから改善内容を作らない。
+- 01:31の新規許可：SWがクラッシュ等で**存在しない時だけ**自分で起動可。稼働中SWの終了・再起動は引き続き禁止。上記調査を先に保存したので、プロセス不在を起動コマンド内でも確認してから、登録済みSLDWORKS.exeを通常起動する。PID14540（今回lock所有者）は既に存在しない。新lockの排他アクセスを確認してから`session.lock.stale-20261028-012610`へrenameする。追加ライブ生成0、既存40枠は18計上/22残のまま。
+
+## 許可後の起動結果・安全な継続先
+
+- 新lockはPID14540不在に加え、FileShare.Noneの排他open成功を確認後、`session.lock.stale-20261028-012610`へrenameした。旧`session.lock.stale-20261027`も保持。どちらも削除していない。
+- 起動直前にもSLDWORKS不在を確認する条件付きコマンドで、COM登録のLocalServer32にあるSLDWORKS.exeを起動。新PID8536。90秒の読取専用COM準備確認はcom_errorで未成立。OSはResponding=Trueだが、Orcaの実画面は「レジストリのロード中…」のsplashのみで、操作可能な本体や別ダイアログは見つかっていない。起動完了とは扱わず、M0再投入・smoke05・002生成はまだ行わない。
+- インストール済み公式ショートカットは直のexeではなくCATSTART→SWXDesktopLauncher（3DEXPERIENCE環境）だった。直接起動との環境差が今回の起動待ちに関係する可能性があるが未確定。新PIDが既に存在するため、終了・kill・二重起動・再起動で回避しない。次に起動可能な不在状態では公式ショートカット経路を選ぶ。
+- 現在は新たな課金なし。基準を変えない既存判定で正例の保存STEP部分を確認できたが、M0全体・H0実動作成立の条件は満たしていない。SWを不要とする予算管理と、H0後のスキル記述のみ交互各5回比較の準備を先に進める。COM投入は起動完了を確認できるまで行わない。
+
+## 無課金で進めた実装と検証
+
+- 追加バッチは委任の範囲内でも既存と同じ40上限に決定（50以下）。`sw_h0_budget.Pool`に独立scopeを追加し、元development40はそのまま保持。新scopeで40予約後の41件目拒否、別scopeで再openした場合の拒否と正常なlock解放、旧poolの残高不変を確認した。
+- `sw_h0_runtime.freeze`/`sw_h0.py`はmanifest v2にpool名・scope・元順序の選択を束縛。通常prepareは従来dev40、`--new-batch`は新しい40枠。`--sequences`は当初18題内の元順序だけ。CLIの重複指定23,23は原本読取前に拒否（exit2）。manifestの新batchを既存dev40へ付け替えてSHAを再作成しても拒否する回帰を追加した。コードは新claim前の変更であり、実行中の固定版を変更していない。
+- 最新ホスト17テストPASS（0.351秒）、SDK実形状6テストPASS（4.156秒）、計23。新しいテスト中の合成manifestを書き換えるfixture helperでexclusive-createエラーが1回あり、fixtureの明示的なtamper操作へ直して17件すべて合格。実判定・閾値の変更はない。
+- 実動作の予算smokeは実モデル0。元poolを前後に読み取り、18計上/22残が不変であることを確認。別の一時poolで合成40予約・41拒否。証拠`reports/sw-h0/budget-resume-20261028.json`。一時poolは削除済みで、本当の課金予約ではない。元private資料のGit除外も確認した。
+- H0後の計画を`H2_SKILL_PLAN.md`に保存。元方針の新課題・30–70%難易度・交互各5回・新しい封印ホールドアウトを維持し、original60を改善に使わない。説明文以外は同一に固定する。採用差・cache整合幅・新規最終題数は、委任に基づく事前の安全側の設計値として区別し、実測と表示しない。比較生成・新課題作成は未実施。
+
+## Handoff — 10/28、SW起動待ち以外の到達可能作業を保存
+
+- SW PID8536は最後の実画面確認でもsplashのみ、読取専用COMはMK_E_UNAVAILABLE（-2147221021）。稼働中を終了・kill・再起動しない規則のため、公式ランチャーへ強制切替していない。ハーネスPython/課金生成の実行jobなし。Orcaは画面読取用に起動しただけで、他のCAD・文書を操作していない。
+- 001は保持。002未固定・未実行、smoke05未実行、H0有効成績は未成立。今回ライブ生成0、元pool18計上/22残。利用率55%ASK/60%停止・古いsnapshot停止は変更なし。源gold・原要求・raw生成は開いておらず、Gitへも含めない。
+- 変更ファイル：`tools/sw_h0_budget.py`、`tools/sw_h0_runtime.py`、`tools/sw_h0.py`、`tools/test_sw_h0.py`、`H0_PLAN.md`、`H0_PROGRESS.md`、`H0_SUMMARY.md`、`H2_SKILL_PLAN.md`、公開resume/budget証拠、公開独立M0の`m0-resume-20261028-01/`、rename保存lock2本。元M0/M1/v4実装・カード・policy・skill本文・共用SDK/ACL/registry設定は変更なし。
+- 残件順序：①起動中SWを終了せず、起動完了が得られるか確認。現在の起動待ちを安全に解消できない場合は稼働中SWの終了禁止が阻害条件。プロセスが自然に不在になった場合だけ、公式`SOLIDWORKS Design.lnk`経路から起動可。②COM準備・文書0確認後、M0を新規出力で再実行③成功後smoke05④成功後002固定・実行（旧残22）⑤必要な残題だけ新規独立40枠で継続⑥H0集計⑦新しい独立データで説明文のみ各5回比較。
+- 正確な次のCADコマンド（**COM準備後だけ**）：cwd=`C:/dev/CAD-HARNESS-sw`で `C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_m0.py --out reports/sw-m0/m0-resume-20261028-02`。その後 `.../python.exe -B tools/sw_h0.py smoke --run h0-smoke-05`。両方成功後だけ `.../python.exe -B tools/sw_h0.py prepare --run h0-20261027-002` → `.../python.exe -B tools/sw_h0.py run --run h0-20261027-002`。生成中にsourceやplanを直さない。
+- 保護refの保存前ゲートは不変：herdr/v4・v4-freecad-final=`5f96e2f…`、tag=`0f545110…`、h2/mvp=`3ac25c8…`。現在branch=h2/sw。ここまでをWIP/未ロックcheckpointとしてcommit・pushする。停止理由と先へ進む条件は公開resume JSONと要約にも記録済み。
+
+## 起動状態変化：M0再実行中
+
+- 保存直前の安全ゲートでCOM取得の状態が変化。readiness用の一時コードがCOM method/propertyの違いでTypeErrorになったため、既存Session.callと同様にcallableを区別して読み直したところ、**PID25504、Revision34.4.0、文書0、COM ready**を確認した。PID8536の準備成功とは扱わず、新しい取得先を記録する。親は最初の8536以降にSWの起動・終了・再起動コマンドを実行していない。
+- OSの読取ではPID25504にSP4.0の主画面、別PID53084に空タイトルがあった。別PIDの出現経路は親から未確認で、これを終了したり文書を操作したりしていない。ハーネスは取得済みのappと自作文書だけに限定する。
+- COM文書0を確認後、無変更のM0を新しい出力`m0-resume-20261028-02`で**bg_47**として開始済み。重複起動せず完了通知を待つ。モデル呼出し0。成功後だけsmoke05へ進む。前節のPID8536起動待ちによる停止予定はこの状態変化により保留し、作業を継続する。
+
+## 同じAPI境界での再発・描画経路の切分け
+
+- `bg_47`のM0-02もFAIL、14.677秒。PID25504/34.4.0へ文書0でattachし、今回は最初の箱の`CreateCornerRectangle`が7.018秒の後、直後の`InsertSketch`がRPC unavailableとなった。負例や寸法復元だけが原因ではない。同じbulk rectangle APIの境界で再発したため、呼出し直後の描画・marshalling・SP4.0連携を区別する必要がある。新たなSW/ViewServer一致Application eventはこの回の検索では得られておらず、原因確定はしない。
+- 主画面PID25504は消失し、残っていたPID53084は後の正しいFlagAsMethodでの読取でCOM ready、34.4.0、文書0を確認した。親はこのPIDの起動・終了を行っていない。既存の稼働プロセスをそのまま使い、再起動しない。
+- 切分けの次の一条件は**自作モデルのIModelView.EnableGraphicsUpdateだけFalse**。元のfixture・CreateCornerRectangle・native編集復元・負例・中立判定をそのまま実行する独立診断`tools/sw_m0_render_probe.py`を追加した。公式APIのview-refresh制御であり、registry・アプリ全体・ドライバ設定は変更しない。各自作文書のviewだけを変更し、viewが閉じられるまでの範囲。設定値の読戻しを必須とし、未知状態なら所有lockを保持する。参照：https://help.solidworks.com/2020/english/api/sldworksapi/solidworks.interop.sldworks~solidworks.interop.sldworks.imodelview~enablegraphicsupdate.html
+- M0-02のlock所有者PID29476は不在、排他open成功を確認した。先にこの理由を保存し、`session.lock.stale-20261028-020029`へrenameした後、COM文書0確認済みの既存appで無課金描画分離M0を実行する。これが通っても元の判定を緩めたものとはしない。さらにAPIや描画条件を同時に変えない。
+
+## 描画分離M0成功・共通処理へ最小反映
+
+- `bg_49`はPASS（ツール壁時計14.51秒）。PID53084/34.4.0、文書0→0、COM状態既知。元の全M0 native保存再読込・寸法変更復元・誤仕様対照と、無変更のFreeCAD1.1.4/OCCT7.8.1判定が全合格。元カード0.01mmと追加0.005mmもそのまま。実モデル0。
+- これは自作viewの描画停止を有効な回避候補として実証したもので、GPUドライバ・仮想画面・SP4.0・ViewServerのうち1つを根本原因と確定したものではない。以前の2失敗と今回の成功はSW PIDが異なることも残す。
+- 共通の`sw_m0.Session.adopt`へ同じowned-view設定と読戻しを最小反映した。M1/H0もこの採用処理を使うため、別の回避経路やspec特例は作らない。view設定中のCOM例外は状態不明として隔離し、追加呼出しをしない。geometry・fixture・gold・中立判定は未変更。
+- 診断専用toolsの重複実装は切替後に除去し、成功時の正確なソースbytesを`reports/sw-m0/m0-render-off-20261028-01/render-probe-source.py`へ証拠として移動保存した（元tools位置・旧base hashで実行した歴史資料であり、現位置から直接再実行するCLIではない）。
+- 共通処理へ反映した標準M0を`m0-resume-20261028-03`で **bg_50** として実行中。重複起動しない。成功後は同じ共通処理を使うsmoke05を実行し、native/API回避の有無を同じ合格条件で確認する。002固定・課金生成はまだ行っていない。最新観測quotaは10%（observed `2026-10-27T17:09:04.360Z`）、許可には送信前の新しいguard確認が必要。
+
+## 002直前：両方PASS・次は固定と実行
+
+- `bg_50`の標準M0はPASS、program total9.6757598秒。`bg_51`のH0 smoke05もPASS、63.609秒。mock2応答・実CAD2試行、誤仕様拒否、既存R1修復1、完全capture8。旧300秒切れはこの通し実行では再発していない。いずれも実モデル0。各文書を閉じ、SW PID53084/34.4.0を終了・再起動せず保持した。
+- 共通view修正後のホスト17テストも全PASS（0.368秒）。既存SDK6 PASS（4.156秒）と合わせ23件。これらと無課金予算smokeを根拠に、002を固定して実行する条件を満たした。追加live生成はまだ0、18計上/22残。
+- M0_SUMMARYとH0_SUMMARYを最新成功状態へ更新し、public resume JSONをprelive snapshotへ変更。H0_PLANに更新後34.4.0/owned-view制御・両確認の証拠を記載した。source bindingがtools全Pythonを含むことを確認し、`sw_m0.py`の変更も次のmanifestへ含まれる。
+- dashboard-builderへmajor milestone更新を依頼したが、専用toolのmodel/effort不一致で再び保存不能。モデル変更・代替公開はしていない。ダッシュボード不調は課金や安全ゲートを変える理由にしない。
+- **現在動作中jobなし。次の実コマンド**はcheckpoint commit後、`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h0.py prepare --run h0-20261027-002`、成功後同じvenvの`... run --run h0-20261027-002`（cwd SW worktree）。freeze後はH0_PLAN・tools・skill・policyを変更せず、H0_PROGRESSなど非凍結の進捗だけを追記する。55%ASK/60%停止・gold非公開・単一生成childを守る。

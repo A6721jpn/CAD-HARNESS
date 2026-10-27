@@ -61,8 +61,10 @@ def load_manifest(run):
     manifest=ledger.read_json(out/'manifest.json')
     expected=ledger.read_json(out/'SHA256.json')['manifest_sha256']
     if ledger.file_sha(out/'manifest.json')!=expected:raise Stop('H0_manifest_binding')
-    if (manifest['schema']!='harness2.solidworks.H0.freeze.v1' or manifest['run']!=run
-            or manifest['charged_call_cap']!=40 or manifest['selected']!=list(runtime.SELECTED)
+    if (manifest['schema']!='harness2.solidworks.H0.freeze.v2' or manifest['run']!=run
+            or manifest['charged_call_cap']!=40 or manifest['scope'] not in ('H0-development40','H0-batch40')
+            or (manifest['budget_pool'],manifest['budget_scope'])!=runtime.budget_identity(run,manifest['scope']=='H0-batch40')
+            or manifest['selected']!=runtime.selection(manifest['selected'])
             or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING):
         raise Stop('H0_authorization_binding')
     manifest['manifest_sha256']=expected
@@ -75,24 +77,24 @@ def run(run):
     entries=ledger.read_json(out/'inputs-private.json')
     rows=[];stopped=None;t=time.monotonic();accounting=None
     lock=base.OUTPUTS/'session.lock';locked=False;unsafe=False
-    with Pool(runtime.PRIVATE/'development40') as pool:
+    with Pool(runtime.PRIVATE/manifest['budget_pool'],scope=manifest['budget_scope']) as pool:
         with BudgetJournal(out/'ledger.jsonl',run,'H0_development',pool=pool) as journal:
             prior_reserved=pool.used
             guard=runtime.Guard(manifest,pool,journal)
             try:
                 guard.check()
-                with lock.open('x') as file:json.dump({'run':run,'scope':'H0-development40'},file)
+                with lock.open('x') as file:json.dump({'run':run,'scope':manifest['scope']},file)
                 locked=True
                 ledger.write_json(out/'CLAIM.json',dict(manifest_sha256=manifest['manifest_sha256'],
-                    scope='H0-development40',at=ledger.utc(),cap=40))
+                    scope=manifest['scope'],budget_pool=manifest['budget_pool'],at=ledger.utc(),cap=40))
                 health=out/'healthcheck';health.mkdir()
                 job=health/'worker-job.json';ledger.write_json(job,dict(out=str(health),healthcheck=True))
                 code,_,_=cad.child([str(base.SW_PYTHON),'-B',str(ROOT/'tools/sw_h0_worker.py'),str(job)],health,'health',30,SW=True)
                 if code:raise Stop('STOP_SW_unavailable_or_documents_open')
                 journal.append('run_started',manifest_sha256=manifest['manifest_sha256'],
-                    evidence_mode='live',selected=list(runtime.SELECTED),call_cap=40)
+                    evidence_mode='live',selected=manifest['selected'],budget_pool=manifest['budget_pool'],call_cap=40)
                 for entry in entries:
-                    if entry['sequence'] not in runtime.SELECTED:continue
+                    if entry['sequence'] not in manifest['selected']:continue
                     guard.before_run(entry['max_calls'])
                     row,reason,_=execute(entry,out/('episode-%03d'%entry['sequence']),manifest,journal,pool)
                     rows.append(row)
@@ -120,8 +122,8 @@ def run(run):
     if costs['conservative_reserved_calls']!=accounting['conservative_reserved_calls']-prior_reserved:
         raise Stop('H0_cost_journal_binding')
     recoveries=sum(e.get('observed_overload_recoveries',0) for e in ledger.rows(out/'ledger.jsonl'))
-    summary=dict(scope='H0-development40',status='STOPPED' if stopped else 'COMPLETE',
-        selected=len(runtime.SELECTED),attempted=len(rows),completed=sum(r['completed'] for r in rows),
+    summary=dict(scope=manifest['scope'],budget_pool=manifest['budget_pool'],status='STOPPED' if stopped else 'COMPLETE',
+        selected=len(manifest['selected']),attempted=len(rows),completed=sum(r['completed'] for r in rows),
         passed=sum(r['passed'] is True for r in rows),not_run=sum(not r['completed'] for r in complete),
         wall_s=time.monotonic()-t,stopped_reason=public.safe_code(stopped),
         manifest_sha256=manifest['manifest_sha256'],accounting=accounting,
@@ -207,11 +209,15 @@ def smoke(run):
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('action',choices=('prepare','run','smoke'));p.add_argument('--run',required=True)
+    p.add_argument('--new-batch',action='store_true',help='Use a new independent <=40-call pool; never reset development40')
+    p.add_argument('--sequences',nargs='+',type=int,help='Original H0 subset in original order; freeze before calls')
     args=p.parse_args()
     if re.fullmatch(r'[A-Za-z0-9_-]{1,96}',args.run) is None:raise ValueError('H0_run_name')
+    if args.action!='prepare' and (args.new_batch or args.sequences is not None):p.error('batch selection is prepare-only')
     if args.action=='prepare':
-        manifest=runtime.freeze(args.run)
-        print(json.dumps(dict(status='PREPARED',selected=len(runtime.SELECTED),cap=40,live_model_calls=0,
+        manifest=runtime.freeze(args.run,new_batch=args.new_batch,sequences=args.sequences)
+        print(json.dumps(dict(status='PREPARED',selected=len(manifest['selected']),cap=40,
+            budget_pool=manifest['budget_pool'],live_model_calls=0,
             model=manifest['generator']['model'],thinking=manifest['generator']['thinking'])));return 0
     return run(args.run) if args.action=='run' else smoke(args.run)
 

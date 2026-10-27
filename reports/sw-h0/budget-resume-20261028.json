@@ -1,0 +1,37 @@
+{
+  "scope": "zero_live_budget_smoke",
+  "live_model_calls": 0,
+  "original_pool": {
+    "scope": "harness2-solidworks-H0-development40-20261026",
+    "cap": 40,
+    "conservative_reserved_calls": 18,
+    "accepted_or_failed_calls": 18,
+    "pending_or_unknown_calls": 0,
+    "verified_overload_rejections": 0,
+    "remaining": 22,
+    "billing_missing_reason": "invoice_not_provided"
+  },
+  "synthetic_new_pool": {
+    "scope": "harness2-solidworks-H0-batch40-synthetic-budget-readiness",
+    "cap": 40,
+    "conservative_reserved_calls": 40,
+    "accepted_or_failed_calls": 0,
+    "pending_or_unknown_calls": 40,
+    "verified_overload_rejections": 0,
+    "remaining": 0,
+    "billing_missing_reason": "invoice_not_provided"
+  },
+  "synthetic_call_41_refused": true,
+  "original_pool_not_reset": true,
+  "max_batch_cap": 40,
+  "original_pool_after": {
+    "scope": "harness2-solidworks-H0-development40-20261026",
+    "cap": 40,
+    "conservative_reserved_calls": 18,
+    "accepted_or_failed_calls": 18,
+    "pending_or_unknown_calls": 0,
+    "verified_overload_rejections": 0,
+    "remaining": 22,
+    "billing_missing_reason": "invoice_not_provided"
+  }
+}
