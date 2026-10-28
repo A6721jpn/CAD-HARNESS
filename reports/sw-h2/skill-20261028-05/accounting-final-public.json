@@ -1,0 +1,90 @@
+{
+  "experiment": "skill-20261028-05",
+  "at": "2026-10-28T02:27:08.694018+00:00",
+  "source_manifest_sha256": "0938ca64b11e56b57cf459226cb7caab83e16e1da89f707ddc1236afc8a33d65",
+  "continuation_manifest_sha256": "6481edfccc77cc64758c8e20badf6132a339fce1deac48c514042eb63d278de7",
+  "retained_prefix_trials": 20,
+  "batches": [
+    {
+      "phase": "calibration",
+      "index": 1,
+      "scope": "harness2-solidworks-H2-skill-20261028-05-calibration-01",
+      "cap": 40,
+      "conservative_reserved_calls": 20,
+      "accepted_or_failed_calls": 20,
+      "pending_or_unknown_calls": 0,
+      "verified_overload_rejections": 0,
+      "remaining": 20,
+      "billing_missing_reason": "invoice_not_provided"
+    },
+    {
+      "phase": "comparison",
+      "index": 1,
+      "scope": "harness2-solidworks-H2-skill-20261028-05-comparison-01",
+      "cap": 40,
+      "conservative_reserved_calls": 20,
+      "accepted_or_failed_calls": 20,
+      "pending_or_unknown_calls": 0,
+      "verified_overload_rejections": 0,
+      "remaining": 20,
+      "billing_missing_reason": "invoice_not_provided"
+    }
+  ],
+  "total_conservative_reserved_calls": 40,
+  "pending_or_unknown_calls": 0,
+  "physical_model_attempts": 40,
+  "CAD_attempts": 36,
+  "max_observed_quota_percent": 18,
+  "episodes_with_result": 40,
+  "initial_user_packets_verified": 40,
+  "initial_user_packets_unverified": 0,
+  "counter_semantics": {
+    "input_tokens": "OMP uncached input",
+    "cached_input_tokens": "OMP cache read",
+    "cache_write_input_tokens": "OMP cache write"
+  },
+  "tokens": {
+    "input_tokens": {
+      "total": null,
+      "known_subtotal": 122344,
+      "expected": 40,
+      "known": 36,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "cached_input_tokens": {
+      "total": null,
+      "known_subtotal": 36096,
+      "expected": 40,
+      "known": 36,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "cache_write_input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 40,
+      "known": 36,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "output_tokens": {
+      "total": null,
+      "known_subtotal": 415757,
+      "expected": 40,
+      "known": 36,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 40,
+      "known": 0,
+      "missing": 40,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice"
+}

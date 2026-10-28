@@ -309,3 +309,20 @@
 
 - `bg_69`完了：**実SW＋実FreeCADの注入timeout smoke PASS、58.47秒、モデル0回**。正常SW保存/閉鎖・同一SW/文書0を確認し、fresh SDKだけのtimeout例外を維持して`H2_closed_SW_neutral_timeout`へ分類。失敗をPASSにせずproduction時間値も変更なし。公開`neutral-timeout-recovery-smoke.json`。scratch専用lockは正常終了時に解放した。現在jobなし。
 - 次コマンドは上記source/20部分結果/evidenceの明示path commit/push。その後`freeze-continuation --experiment skill-20261028-05`を実行し、証明が通った新manifestだけで`run-continuation`を起動する。新規生成は比較分だけ、元20件は読取継承する。
+
+## Handoff：Epoch05比較を新継続ロックで実行中
+
+- 回復source＋20件の保存結果/部分会計/49テスト/実timeout smokeは**`b25f134`**でh2/swへcommit/push済み。
+- `freeze-continuation`成功（モデル0回、2026-10-28T00:24:19Z）。新v4 manifest SHA **`6481edfccc77cc64758c8e20badf6132a339fce1deac48c514042eb63d278de7`**、旧v3 SHA **`0938ca64b11e56b57cf459226cb7caab83e16e1da89f707ddc1236afc8a33d65`**。20件のprefix labelと最後のCH2D4R5 failed certificateを固定。policy/model/skills/host/binaries/判定/時間の不変比較も通過した。
+- **現在`bg_70`**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py run-continuation --experiment skill-20261028-05`。元20件は再生成しない。初eligibleはH2D4（3/5）、A1B1から交互比較、最初のcache差<=1ppの5組を使用、最大10組。候補段落は初めの封印から同一。元60題は使わない。
+- 残り：自動job結果受領→private `h2-skill-20261028-05/publish-final-accounting.py`（controller停止後だけ、公開`accounting-final-public.json`へ新規出力）→比較/採用/fresh holdoutの固定gate結果を記録→public結果＋メモをcommit/push。既存`accounting-public.json`や旧trial/stream/ledgerは上書きしない。Source/候補/計画は以後変更せず、stdout進捗をpollしない。55%ASK/60%停止・実SW無応答時停止を優先。
+
+## H2完了：Epoch05、候補不採用・元skill維持
+
+- `bg_70`正常完了（controller 7324.24秒）。元20較正は保存物だけで継承し再生成/再採点なし。最後のCH2D4R5はFalseを保持。A/BはA1B1…A10B10を全20回実行し、事前cache条件を満たす最初の5組が成立。除外組は1/5/6/7/8、費用も結果も削除しない。
+- 一致5組の合格は**A=4/5、B=5/5**。平均model callはA/Bとも1.0、平均active秒はA=347.5032、B=329.5968。採用に必要な「+2件」には届かず、`pass_gain_below_two`で**不採用**。元skillを維持。fresh sealed holdoutは規定の事前gate不成立により**not_run（0件、0 call）**。N=5の統計的確認とは主張しない。
+- 公開`result.json`はcomplete/adopted=false。episode active合計14044.456秒は元20＋比較20の合計で、controllerの経過時間とは区別する。model=`openai-codex/gpt-6.1-sol`/xhigh、判定/policy/cards/時間/技能候補は凍結値のまま。
+- 最終会計`accounting-final-public.json`：本epoch **40 model attempts/40保守計上/36 CAD attempts**、較正20/40＋比較20/40の独立pool、pending/unknown=0、exact overload=0、最大quota18%。実初回user packet確認40/40、不一致/未確認0。tokenは36/40だけ既知で総計null、価格も根拠未提供のためnullとし推計しない。旧部分会計/全ledger/full stream/生成物は上書きなし。
+- 完了後のread-only COM確認：**SW PID53084、34.4.0、ready=true、文書0**。実行中SWの終了/再起動なし。`final-sw-readiness.json`に記録。非応答jobやcontrollerの残件なし。回復実装は49テストPASS＋実SW/実SDKの0モデルtimeout smoke PASSで確認済み。
+- H0の18/18完了後、独立dev/封印holdout・skill段落だけの交互比較・固定採用gateまで終了。元60題/Goldを改善に再利用せず、封印値/seed/raw/STEPはmachine-only・Git外のまま。今回の候補の利得不足は不採用の結果として保持し、新候補や追加実験を事後に開始しない。
+- 最後の操作：新しい公開manifest/20比較row/cache判定/最終result/会計/SW確認と本メモをh2/swへ明示path commit/pushし、短く報告して待機する。未解決の実行blockerなし。今後の候補改訂は別の事前登録とfresh sealed cohortが必要。

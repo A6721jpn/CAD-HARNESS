@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-28T02:28:44.763Z",
+  "scope": "read-only COM readiness after experiment completion",
+  "ready": true,
+  "pid": 53084,
+  "revision": "34.4.0",
+  "documents": 0,
+  "live_model_calls": 0
+}

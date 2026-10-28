@@ -1,0 +1,51 @@
+{
+  "sequence": 4,
+  "group": "geometry",
+  "route": "spec",
+  "selected": true,
+  "completed": true,
+  "passed": false,
+  "geometry": null,
+  "editability": null,
+  "reimport": null,
+  "q_score": null,
+  "critical_invention": false,
+  "model_calls": 1,
+  "cad_attempts": 1,
+  "parse_repairs": 0,
+  "repair_calls": 0,
+  "wall_s": 419.7180000001099,
+  "active_s": 419.7180000001099,
+  "failure_class": "candidate_rejected",
+  "episode_timeout": true,
+  "timeout_certificate": {
+    "SW_completion_sha256": "32ec2cfaa7d5d9041985969a4d88524a0a2409092c7abfac3744883e6b3db15e",
+    "SW_identity_unchanged": true,
+    "document_closed": true,
+    "failed_component": "owned_neutral_SDK_worker",
+    "scored_pass": false
+  },
+  "initial_usage": {
+    "input_uncached_tokens": 939,
+    "cache_read_tokens": 3456,
+    "cache_write_tokens": 0
+  },
+  "initial_payload_sha256": "308c83fc19b90e4897e5d81e8e55803c9e8209cf2b8c533d282f65eb4ce041bc",
+  "initial_cwd": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m1-private\\h0\\h2-skill-20261028-05\\generator-cwd",
+  "initial_model_input_verified": true,
+  "label": "P06A",
+  "case": "H2D4",
+  "variant": "A",
+  "phase": "comparison",
+  "experiment_manifest_sha256": "6481edfccc77cc64758c8e20badf6132a339fce1deac48c514042eb63d278de7",
+  "manifest_sha256": "1f3784f0e5a5f84ccdefa945276e6f28a4cd5f016edb6a33abc6145f2fac9d2c",
+  "ledger_sha256": "5a1108e0a22fb92e9e298e9088220cf727d99e1b87c5024be43018810b71cb7b",
+  "stopped": false,
+  "tokens": {
+    "input_tokens": 939,
+    "cached_input_tokens": 3456,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 14807,
+    "reasoning_output_tokens": null
+  }
+}

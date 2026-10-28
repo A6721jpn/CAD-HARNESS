@@ -1,0 +1,65 @@
+{
+  "schema": "harness2.solidworks.skill.result.v1",
+  "experiment": "skill-20261028-05",
+  "at": "2026-10-28T02:26:32.949117+00:00",
+  "experiment_manifest_sha256": "6481edfccc77cc64758c8e20badf6132a339fce1deac48c514042eb63d278de7",
+  "status": "complete",
+  "reason": "pass_gain_below_two",
+  "adopted": false,
+  "calibration": [
+    {
+      "case": "H2D1",
+      "passed": 5,
+      "n": 5
+    },
+    {
+      "case": "H2D2",
+      "passed": 5,
+      "n": 5
+    },
+    {
+      "case": "H2D3",
+      "passed": 4,
+      "n": 5
+    },
+    {
+      "case": "H2D4",
+      "passed": 3,
+      "n": 5
+    }
+  ],
+  "pair_count": 10,
+  "matched_pairs": 5,
+  "excluded_pair_indices": [
+    1,
+    5,
+    6,
+    7,
+    8
+  ],
+  "comparison": {
+    "eligible": false,
+    "reason": "pass_gain_below_two",
+    "A_passed": 4,
+    "B_passed": 5,
+    "matched_pairs": 5,
+    "metrics": {
+      "model_calls": {
+        "A_mean": 1.0,
+        "B_mean": 1.0
+      },
+      "active_s": {
+        "A_mean": 347.5031999999657,
+        "B_mean": 329.59680000008086
+      }
+    }
+  },
+  "final_holdout_passed": 0,
+  "final_holdout_n": 0,
+  "total_reserved_model_calls": 40,
+  "wall_s": 14044.456000000006,
+  "active_s": 14044.456000000006,
+  "statistical_confirmation": false,
+  "model": "openai-codex/gpt-6.1-sol",
+  "thinking": "xhigh"
+}
