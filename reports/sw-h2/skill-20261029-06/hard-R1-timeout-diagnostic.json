@@ -1,0 +1,47 @@
+{
+  "scope": "zero-model forced repair of harder development fixture",
+  "driver_message_is": {
+    "H0_neutral_worker_timeout": true,
+    "STOP_SW_nonresponse_no_restart": false,
+    "H0_CAD_backend_stopped": false,
+    "H0_CAD_deadline_exhausted": false,
+    "H0_frozen_file_changed": false
+  },
+  "native": [
+    {
+      "attempt": "a1-mvp1",
+      "status": "PASS",
+      "stop": false,
+      "COM_state_unknown": false,
+      "final_documents": 0,
+      "pid": 53084,
+      "revision": "34.4.0"
+    },
+    {
+      "attempt": "a2-mvp1",
+      "status": "PASS",
+      "stop": false,
+      "COM_state_unknown": false,
+      "final_documents": 0,
+      "pid": 53084,
+      "revision": "34.4.0"
+    }
+  ],
+  "attempt_counts": {
+    "model": {
+      "attempt_started": 2,
+      "attempt_finished": 2
+    },
+    "cad": {
+      "attempt_started": 2,
+      "attempt_finished": 2
+    }
+  },
+  "original_repair_CAD_seconds": 90,
+  "original_reimport_seconds": 90,
+  "time_limits_changed": false,
+  "timeout_promoted_to_pass": false,
+  "physical_CAD_attempts_from_journal": 2,
+  "driver_completed_CAD_records": 1,
+  "live_model_calls": 0
+}

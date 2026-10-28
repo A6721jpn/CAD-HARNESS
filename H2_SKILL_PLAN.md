@@ -92,3 +92,9 @@
 - 交互A1B1…、初回accepted usageのcache差<=1pp、最初の一致5組/最大10組、+2合格/重大発明非増加/call・active平均非悪化、fresh5全PASSの採用条件は一切変えない。予算/55%使用量停止を理由に条件を緩めない。採用gateと残予算の両方を通る場合だけ、次の事前登録済みの一手として封印holdoutへ進む。新epoch/新候補の事後追加をこの40枠へ混ぜない。
 - SWは**PID53084のROT monikerだけ**へbindし、PIDを最初に検証する。既定ProgIDへのfallbackは廃止し、PID10800へbind/文書操作/設定/終了を行わない。稼働SWはいずれも終了/再起動しない。これは両arm共通の所有権対策であり、モデルの介入や機能/採点変更として扱わない。
 - 新20正負native controls・pin/合計capのfocused regression・0モデル実SW/FreeCAD R1 smokeを通してからsource/skill/入力/host/2実体/実行手順を固定する。55%で止めて報告、60%停止、欠損/古いquotaも停止。Codexは親＋逐次generatorの最大2。封印値/seed/生応答/CADは機械参照だけ、LLM/Gitへ出さない。
+
+### Epoch06無課金検証の補足（最初のlive前）
+
+- 新bankの20正負native controlは全PASS。難しいdev1での強制誤仕様→R1 smokeは、SW両作成が正常閉鎖した後、元のrepair CAD90秒内のSDK検証でtimeoutした。**このsmokeはFAILのまま保存**し、R1の時間・判定・カードは変えない。liveでも同じ時間切れは従来どおり不合格になる。
+- 機構の不具合と固定時間枠の難しさを分けるため、追加のモデル0検証を実施した。同じ封印dev1のH2 blind正仕様MVPはPASS（114.953秒、実CAD1/capture4）。既存の独立public開発fixture G6で誤仕様拒否→元R1復旧もPASS（44.093秒、実CAD2/capture8）。G6を較正/比較/holdoutへ混ぜず、改善効果とは扱わない。
+- これで通常経路、独立したR1機構、hard R1の時間切れ保存をそれぞれ確認した。難しいR1の失敗を隠してsmoke成功と総称しない。dataset/候補文/採用/cache条件/最大call/time/数値許容差は事前登録から変更していない。最初のlive前にこの補足と全成功/失敗receiptもcommitし、共通sourceを固定する。

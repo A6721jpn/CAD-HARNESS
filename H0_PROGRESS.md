@@ -339,3 +339,14 @@
 - quota実測：**6%**、snapshot `omp-usage-1793209975076-7d=6`、observed 2026-10-28T17:52:55.076Z、guard decision allow。後の各modelでも新しいsnapshotを検証する。Codexは親＋逐次generatorの最大2。
 - dashboard-builderは今回も専用storeから「指定されたモデル・effortではありません。」で読取/保存不能。モデル変更や代替公開はせず、dashboard未変更。このメモに事実を記録して本作業を継続する。
 - 次の一手：`bg_71`の自動結果を受領→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261029-06`（モデル0・実SW/FreeCAD R1）→source/evidenceを明示path commit/push→同CLI `freeze --experiment skill-20261029-06`→`run --experiment skill-20261029-06`。control/smoke成功前にliveへ進まない。結果/会計は新epochの公開ファイルへ保存し、旧epoch結果は触らない。
+
+- 事前登録/source/seal/54テストは**`8041a81`**でh2/swへcommit/push済み（live0）。`bg_71`は**20/20正負native controls PASS、2015.79秒、実モデル0**で正常終了した。実測identityはSW53084/34.4.0/文書0・実体SHA従来一致。各controlもこのPIDのworkerで作成し、別SWへのfallbackなし。
+- **現在`bg_72`**：`tools/sw_h2.py smoke --experiment skill-20261029-06`。mock応答だけで実SW/FreeCADへ誤仕様→元R1復旧を通し、captureと元のslot/time/privacyを確認中。成功前にliveは起動しない。
+- 終了後の会計コマンドも準備済み：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261029-06/publish-accounting.py`。controller停止後だけ単一epoch poolと全live ledgerを突合し、較正/比較/最終合計<=40とpendingを公開する。新しい公開`accounting-public.json`へ保存し、sealed値/生応答は表示しない。
+
+- `bg_72`の強制R1 smokeは**FAILのまま保存**（156.50秒、model0）。誤仕様は拒否され、2回目のSW作成/保存/閉鎖もPASS/COM unknown=false/文書0/同PID53084だったが、元のR1 CAD90秒枠のSDK判定で`H0_neutral_worker_timeout`。元v3のrepair CAD90秒/reimport90秒を確認した。SW非応答・source変更ではない。driverの完成CAD recordは1、ledger上の実CAD開始/終了は2であることも別診断へ保存した。上限延長や失敗の成功化をしない。
+- **現在`bg_73`**：同じ封印dev1の正仕様だけをH2 blind経路のMVPで検証し、続けて既存の独立public開発fixture G6で誤仕様→R1成功を検証する（どちらもmock、実モデル0）。原60やsealed holdoutを使わない。難しい形が固定90秒R1で落ちることと、通常生成/修復機構自体の不具合を分ける。失敗したhard R1 proofは上書きしない。以後のliveでも同じtimeoutなら不合格としてそのまま採点する。
+
+- `bg_73`正常完了（160.11秒）。**H2 blind MVP PASS、114.953秒、mock1/実CAD1/capture4**。独立G6の誤仕様拒否→**元R1復旧もPASS、44.093秒、mock2/実CAD2/capture8**。両方とも実モデル0、元時間枠/採点を維持。G6は独立public fixtureであり、較正/比較/holdoutへ混ぜない。
+- 強制hard R1のFAIL・SDK timeout診断と、今回のMVP/独立R1の成功をそれぞれ別receiptへ保存した。`H2_SKILL_PLAN.md`へ最初のlive前の検証補足を追記し、hard R1が通ったと偽らず凍結する。コードは54テスト時から変更せず、補足は文書/証拠だけ。
+- **現在jobなし。** 次はpublic証拠＋補足メモをcommit/push→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py freeze --experiment skill-20261029-06`→同CLI `run --experiment skill-20261029-06`。single epoch poolの合計40上限、55%停止報告、PID53084のみを維持。全失敗/費用も保存し、実行中はsource/候補/計画を編集しない。
