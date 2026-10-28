@@ -1,0 +1,11 @@
+{
+  "scope": "public episode classification only; no Gold/model/CAD opened",
+  "episodes": 17,
+  "passed": 7,
+  "failed": 10,
+  "certified_closed_SW_neutral_timeouts": 10,
+  "other_failures": 0,
+  "geometry_of_timed_out_candidates": "not_certified; preserved_as_failed",
+  "scoring_or_time_limit_changes": false,
+  "live_model_calls": 0
+}

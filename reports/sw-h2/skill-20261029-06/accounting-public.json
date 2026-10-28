@@ -1,0 +1,87 @@
+{
+  "experiment": "skill-20261029-06",
+  "at": "2026-10-28T20:30:50.526084+00:00",
+  "experiment_manifest_sha256": "f9059adee6be459ed159a1c548d0450f7855ecd20b5fcb4ef06e20a410e040a3",
+  "epoch_total_cap": 40,
+  "budget": {
+    "scope": "harness2-solidworks-H2-skill-20261029-06-epoch-01",
+    "cap": 40,
+    "conservative_reserved_calls": 17,
+    "accepted_or_failed_calls": 17,
+    "pending_or_unknown_calls": 0,
+    "verified_overload_rejections": 0,
+    "remaining": 23,
+    "billing_missing_reason": "invoice_not_provided"
+  },
+  "total_conservative_reserved_calls": 17,
+  "pending_or_unknown_calls": 0,
+  "physical_model_attempts": 17,
+  "CAD_attempts": 17,
+  "max_observed_quota_percent": 6,
+  "episodes_with_result": 17,
+  "initial_user_packets_verified": 17,
+  "initial_user_packets_unverified": 0,
+  "phases": {
+    "calibration": {
+      "episodes": 5,
+      "calls": 5
+    },
+    "comparison": {
+      "episodes": 12,
+      "calls": 12
+    },
+    "final": {
+      "episodes": 0,
+      "calls": 0
+    }
+  },
+  "counter_semantics": {
+    "input_tokens": "OMP uncached input",
+    "cached_input_tokens": "OMP cache read",
+    "cache_write_input_tokens": "OMP cache write"
+  },
+  "tokens": {
+    "input_tokens": {
+      "total": 70539,
+      "known_subtotal": 70539,
+      "expected": 17,
+      "known": 17,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "cached_input_tokens": {
+      "total": 4224,
+      "known_subtotal": 4224,
+      "expected": 17,
+      "known": 17,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "cache_write_input_tokens": {
+      "total": 0,
+      "known_subtotal": 0,
+      "expected": 17,
+      "known": 17,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "output_tokens": {
+      "total": 214623,
+      "known_subtotal": 214623,
+      "expected": 17,
+      "known": 17,
+      "missing": 0,
+      "missing_reason": null
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 17,
+      "known": 0,
+      "missing": 17,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice"
+}

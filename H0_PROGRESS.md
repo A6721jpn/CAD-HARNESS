@@ -350,3 +350,21 @@
 - `bg_73`正常完了（160.11秒）。**H2 blind MVP PASS、114.953秒、mock1/実CAD1/capture4**。独立G6の誤仕様拒否→**元R1復旧もPASS、44.093秒、mock2/実CAD2/capture8**。両方とも実モデル0、元時間枠/採点を維持。G6は独立public fixtureであり、較正/比較/holdoutへ混ぜない。
 - 強制hard R1のFAIL・SDK timeout診断と、今回のMVP/独立R1の成功をそれぞれ別receiptへ保存した。`H2_SKILL_PLAN.md`へ最初のlive前の検証補足を追記し、hard R1が通ったと偽らず凍結する。コードは54テスト時から変更せず、補足は文書/証拠だけ。
 - **現在jobなし。** 次はpublic証拠＋補足メモをcommit/push→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py freeze --experiment skill-20261029-06`→同CLI `run --experiment skill-20261029-06`。single epoch poolの合計40上限、55%停止報告、PID53084のみを維持。全失敗/費用も保存し、実行中はsource/候補/計画を編集しない。
+
+## Handoff：Epoch06凍結live実行中
+
+- 全成功/失敗preflight証拠と最初のlive前の補足は**`cc77e49`**でh2/swへcommit/push済み。強制hard R1のFAILも含め保存した。54テスト時からコード変更なし。
+- freeze完了：2026-10-28T18:35:34.539282Z、manifest SHA **`f9059adee6be459ed159a1c548d0450f7855ecd20b5fcb4ef06e20a410e040a3`**。PID53084/34.4.0/文書0、同じSW実体・omp18.11.2・Sol/xhigh・A/B skill SHAを固定。protocolに`epoch_call_cap=40`を明記し、全phaseが単一poolを使用する。
+- **現在jobは`bg_74`のみ**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py run --experiment skill-20261029-06`。source/候補/計画は以後編集しない。初めの2/5・3/5候補だけを採り、同じA/B交互/一致5組/最大10組/採用条件を使う。採用gateと予算が両方通ればfresh5確認へ自動で続く。次の完全単位が40枠へ入らなければ不成立で元skill維持。新poolを増やさない。
+- 53084以外のSWへbindしない。10800を含め稼働SWを終了/再起動しない。Codexは親＋逐次generatorの最大2、55%で停止報告（60%も停止）、欠損/古いquotaも停止。進捗logのpollやGold/seed/raw/CADの親への展開はしない。
+- **job終了後の次コマンド**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261029-06/publish-accounting.py`。その後、公開結果/会計とread-onlyの53084文書0確認を保存→元skill維持/採用判定を記録→public結果/メモを明示path commit/push。既存epoch会計・結果は変更しない。dashboardは専用tool不一致のため今回3回とも未更新、代替モデルや公開設定変更はしていない。
+
+## Epoch06完了：難度gate成立・文章候補は不採用
+
+- `bg_74`正常完了、controller **6847.03秒**。事前順の最初H2D1で元Aが**2/5（40%）**となり、30–70%の目標と固定gateを満たした。残りdev4件へ都合よく入れ替えない。元60や旧epoch課題は再使用していない。
+- A1B1…A6B6の12比較を実行し、cache差<=1ppを満たす最初の5組が成立。除外pairは3だけ。固定5組では**A2/5、B2/5**、平均callは各1.0、平均active秒はA407.9342/B406.0778。利得0で必要+2未達、`pass_gain_below_two`により**不採用・元skill維持**。最終封印holdoutは規定どおりnot_run、0件/0 call。N5の統計的確証とは主張しない。
+- 最終会計：**model17/40（較正5＋比較12）・実CAD17・pending/unknown0・overload免除0・残23**。最大観測quota **6%**。単一epoch poolの予約と全live ledgerの合算が一致し、実初回user packetも17/17確認・不一致/未確認0。入力70539/cache-read4224/出力214623 tokenは記録値、reasoning内訳と価格は未提供のためnullを維持。未使用23枠を新claimへ移さない。
+- `failure-summary.json`は公開rowだけを機械集計：全17件のうちPASS7/FAIL10、FAIL10件は全てclosed-SW neutral SDK timeout、他のfailure0。SW作成/閉鎖を確認できても時間内に形状の最終証明が終わらなかったものは、形状正解と断定せず**従来どおりFAIL**。判定・時間枠を変えず、再生成/再採点はしていない。
+- 完了後read-only確認：**PID53084、34.4.0、文書0、同実体SHA**。`final-sw-readiness.json`へ保存。10800へbind/操作せず、両SWの終了/再起動なし。現在job/controllerなし、55%停止条件に到達していない。
+- 成果は`reports/sw-h2/skill-20261029-06/`のfrozen manifest/result/accounting/全17row/failure summary/検証receipt。本epochのepisode active合計6839.17秒とcontroller経過時間は区別する。封印値・seed・raw・CADはGit外で維持。
+- 次の事前登録済み手順は「比較が採用gateを満たす場合のfresh5確認」だけで、今回は条件不成立。新候補/追加pair/別epochは本登録にないため、残23回を使った事後比較は行わない。合格ライン・policy・カード0.01 mm・全体0.005 mm・採点・比較/採用条件は不変。結果をh2/swへcommit/pushして本epochを終了する。

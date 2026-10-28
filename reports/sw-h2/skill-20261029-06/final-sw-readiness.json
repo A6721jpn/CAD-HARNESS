@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-28T20:30:51.003690+00:00",
+  "scope": "read-only PID53084 ROT identity after epoch06",
+  "pid": 53084,
+  "revision": "34.4.0",
+  "documents": 0,
+  "executable": "C:\\Program Files\\Dassault Systemes\\SOLIDWORKS 3DEXPERIENCE R2026x\\SOLIDWORKS\\sldworks.exe",
+  "sha256": "ecd4ba94513f72f027025647acc45a45fc58babdb026da9caefcb5a574fe98e0",
+  "live_model_calls": 0
+}
