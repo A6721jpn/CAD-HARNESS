@@ -76,3 +76,10 @@
 - `skill-20261028-05`を新seed・新dev5/holdout5で作る。公開の合成設計値は(19,7°),(21,11°),(23,13°),(25,17°),(29,19°)。半径範囲を30–40 mmとして、最大29穴・最大直径でも円周上の穴が重ならない範囲を保つ。これらは新しい合成fixtureの入力設定で、ユーザー実物の値や実測値ではない。既存64穴/rect_prism/非貫通pocket/through holesの内側であり、新feature/family/schema/APIを加えない。
 - 候補B・v3 blind transport・cache単位/整合幅・モデル・call/時間枠・許容差・判定/採点は変更しない。前epochの課題やholdoutを使い回さず、同じ候補文でdifficulty gateだけを独立に再較正する。B出力/holdoutの結果を見て設定を調整しない。
 - 新しい20正負native制御・SDK回帰・mock/real CAD smokeの通過後だけ共通sourceを再固定して課金を開始する。native制御自体が元の時間/判定条件を通らなければ、難度ゲート用の不正解とせず未実装/機械前提不成立として扱い、barを緩めない。
+
+## Epoch05継続：closed-SW neutral timeoutの区別とprefix固定
+
+- 20較正済みの合否は5/5,5/5,4/5,3/5。最後は`H0_neutral_worker_timeout`であり、保存されたSW completionはPASS/stop=false/COM unknown=false/文書0。現SWも同一PID/revision/実体で文書0を確認した。FreeCADのfresh再importは元の残時間でtimeoutしたため、**最後は不合格のまま**。geometry/許容差/採点/time枠を変更して成功扱いにしない。
+- runtime v4では、正確にこのSDK timeoutコード・native正常終了/文書閉鎖・同一SWの文書0を全確認したときだけ、SW非応答と区別したepisode時間切れとして失敗を記録し次へ進める。例外・raw・費用は保持する。SW非応答、COM unknown、quota、source変更、他のchecker errorはこの例外に含めず従来どおり停止する。
+- `freeze-continuation`は旧v3 manifest/20結果/各入力packet/ledger/完全stream/native completionをhash固定する。旧結果を再生成・再採点・上書きしない。contiguousな完全5回ブロックと、最後だけの閉鎖済みSDK timeout失敗を要求する。parser/skill/model/policy/schema/判定/native/binary/host/時間・call枠は旧版と一致必須、変更可なのはH2の継続/停止分類コード・そのtests・この計画だけ。
+- 継続manifestとclaimは新規ファイル。元manifest/結果/予約は保持し、`run-continuation`は検証済みの20件を読むだけで、最初の有効3/5課題から元のA/B順序へ進む。比較と最終holdoutは新しい各40枠scopeを使い、既存calibrationの残枠を移さない。B・採用条件・cache条件は不変。

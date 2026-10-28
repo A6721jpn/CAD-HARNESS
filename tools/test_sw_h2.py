@@ -150,6 +150,42 @@ class CustodyGates(unittest.TestCase):
                 self.assertFalse(native.user_packet_matches(stdout,payload))
 
 
+class NeutralTimeoutSafety(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory(dir=PRIVATE);self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name);self.identity=dict(pid=123,revision='independent',documents=0)
+        self.com=dict(status='PASS',stop=False,COM_state_unknown=False,final_documents=0,pid=123,revision='independent')
+        self.path=self.root/'com-result.json';self.path.write_text(json.dumps(self.com))
+        self.ready=patch.object(native,'solidworks_identity',return_value=self.identity)
+        self.ready.start();self.addCleanup(self.ready.stop)
+
+    def test_unknown_open_or_different_native_state_cannot_certify_timeout(self):
+        for change in (dict(stop=True),dict(COM_state_unknown=True),dict(final_documents=1),
+                dict(final_documents=False),dict(pid=456),dict(status='FAIL')):
+            self.path.write_text(json.dumps(dict(self.com,**change)))
+            self.assertIsNone(native.neutral_timeout_certificate(self.root,self.identity))
+        self.path.write_text(json.dumps(self.com))
+        with patch.object(native,'solidworks_identity',return_value=dict(self.identity,documents=1)):
+            self.assertIsNone(native.neutral_timeout_certificate(self.root,self.identity))
+
+    def test_closed_native_sdk_timeout_remains_exception_but_is_not_SW_nonresponse(self):
+        transport=native.Transport.__new__(native.Transport);transport.manifest=dict(solidworks=self.identity)
+        argv=['python','cad','--out-dir',str(self.root)]
+        with patch.object(native._TRANSPORT_BASE,'_invoke',side_effect=Stop('H0_neutral_worker_timeout')):
+            with self.assertRaisesRegex(Stop,'H0_neutral_worker_timeout'):transport._invoke(argv)
+        self.assertEqual(transport.fatal,'H2_closed_SW_neutral_timeout')
+        self.assertFalse(transport.manifest.get('_native_uncertain',False))
+        self.assertFalse(transport.manifest['_known_episode_timeout']['scored_pass'])
+
+    def test_other_failures_never_use_closed_document_as_a_bypass(self):
+        for reason in ('STOP_SW_nonresponse_no_restart','STOP_SW_state_unknown_no_restart','H0_frozen_file_changed'):
+            transport=native.Transport.__new__(native.Transport);transport.manifest=dict(solidworks=self.identity)
+            with patch.object(native._TRANSPORT_BASE,'_invoke',side_effect=Stop(reason)):
+                with self.assertRaises(Stop):transport._invoke(['python','cad','--out-dir',str(self.root)])
+            self.assertTrue(transport.manifest['_native_uncertain'])
+            self.assertNotIn('_known_episode_timeout',transport.manifest)
+
+
 class DurableSchedule(unittest.TestCase):
     def setUp(self):
         PRIVATE.mkdir(parents=True,exist_ok=True)
@@ -213,6 +249,32 @@ class DurableSchedule(unittest.TestCase):
         self.assertEqual(result['total_reserved_model_calls'],25)
         self.assertFalse(result['adopted']);self.assertEqual(result['final_holdout_n'],0)
         self.assertEqual(result['reason'],'five_matched_pairs_required')
+    def test_certified_old_failed_score_is_retained_and_cannot_be_promoted(self):
+        exp=self.experiment;trial=dict(label='CH2D1R1',case='H2D1',variant='A')
+        with Pool(runtime.PRIVATE/'resume-test-pool',scope='resume-unit') as pool:
+            row=self.fake_trial(trial,pool,1,'calibration')
+        path=runtime.PRIVATE/'h2-unit-CH2D1R1/trial-result.json'
+        row.update(passed=False,stopped=True);path.write_text(json.dumps(row))
+        old=exp.identity;exp.identity='new-manifest'
+        exp.shared['resume']=dict(safe_timeout_label=trial['label'],prefix={trial['label']:dict(
+            old_manifest_sha256=old,result_sha256=ledger.file_sha(path))})
+        recovered=exp.completed(trial)
+        self.assertFalse(recovered['passed']);self.assertTrue(recovered['stopped'])
+        row['passed']=True;path.write_text(json.dumps(row))
+        with self.assertRaises(Stop):exp.completed(trial)
+
+    def test_continuation_refuses_changed_judge_or_policy_before_reading_prefix(self):
+        exp=self.experiment;folder=runtime.PRIVATE/'h2-unit';folder.mkdir()
+        critical=('policy_sha256','generator','host','solidworks','runtime_files','OMP_PROFILE','generator_config_sha256',
+            'skill_sha256','fixture_admission','transport_adaptation','generation_cwd','protocol','development_ids','holdout_ids')
+        old={key:'unchanged' for key in critical}
+        old.update(schema='harness2.solidworks.skill.freeze.v3',experiment='unit',evidence_mode='live',input_files={},
+            files={'tools/sw_m1_judge.py':'original-judge'})
+        ledger.write_json(folder/'experiment-manifest.json',old)
+        ledger.write_json(folder/'experiment-SHA256.json',dict(manifest_sha256=ledger.file_sha(folder/'experiment-manifest.json')))
+        for changed in (dict(files={'tools/sw_m1_judge.py':'changed-judge'}),dict(policy_sha256='changed-policy')):
+            with self.assertRaises(Stop):native.continuation_prefix('unit',[],{},dict(old,**changed))
+
 
 
 if __name__=='__main__':unittest.main()

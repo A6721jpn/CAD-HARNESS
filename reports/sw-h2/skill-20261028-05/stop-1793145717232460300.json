@@ -1,0 +1,6 @@
+{
+  "status": "STOPPED",
+  "at": "2026-10-28T00:01:57.232460+00:00",
+  "reason": "STOP_SW_state_unknown_no_restart",
+  "manual_SW_recovery_required": true
+}

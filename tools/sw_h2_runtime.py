@@ -181,8 +181,15 @@ class Transport(_TRANSPORT_BASE):
                     self.fatal=self.guard.stop_reason='H2_model_prompt_envelope_mismatch'
                     raise Stop(self.fatal)
             return completed
-        except BaseException:
-            if not model:self.manifest['_native_uncertain']=True
+        except BaseException as exc:
+            if not model:
+                proof=None
+                if isinstance(exc,Stop) and str(exc)=='H0_neutral_worker_timeout':
+                    proof=neutral_timeout_certificate(Path(argv[argv.index('--out-dir')+1]),self.manifest['solidworks'])
+                if proof:
+                    self.manifest['_known_episode_timeout']=proof
+                    self.fatal='H2_closed_SW_neutral_timeout'
+                else:self.manifest['_native_uncertain']=True
             raise
 
 
@@ -233,7 +240,83 @@ print(json.dumps(data))
     return identity
 
 
-def prepare(experiment,*,smoke=False):
+def neutral_timeout_certificate(out,identity):
+    """A killed SDK client is not an unresponsive shared COM server."""
+    try:
+        path=private_path(Path(out)/'com-result.json');com=ledger.read_json(path)
+        if (com.get('status')!='PASS' or com.get('stop') is not False
+                or com.get('COM_state_unknown') is not False or type(com.get('final_documents')) is not int or com['final_documents']!=0
+                or (com.get('pid'),com.get('revision'))!=(identity['pid'],identity['revision'])):return None
+        if solidworks_identity()!=identity:return None
+        return dict(SW_completion_sha256=ledger.file_sha(path),SW_identity_unchanged=True,
+            document_closed=True,failed_component='owned_neutral_SDK_worker',scored_pass=False)
+    except (OSError,ValueError,KeyError,subprocess.SubprocessError):return None
+
+
+def continuation_prefix(experiment,entries,bound,new_manifest):
+    """Admit a complete old calibration prefix, including its failed timeout."""
+    out=fixtures.folder(experiment);path=out/'experiment-manifest.json';old=ledger.read_json(path)
+    old_sha=ledger.file_sha(path)
+    if (old_sha!=ledger.read_json(out/'experiment-SHA256.json')['manifest_sha256']
+            or old['schema']!='harness2.solidworks.skill.freeze.v3' or old.get('evidence_mode')!='live'
+            or old.get('experiment')!=experiment or old['input_files']!=bound):raise Stop('H2_continuation_old_manifest')
+    allowed={'tools/sw_h2.py','tools/sw_h2_runtime.py','tools/test_sw_h2.py','H2_SKILL_PLAN.md'}
+    if set(old['files'])!=set(new_manifest['files']) or any(old['files'][k]!=v for k,v in new_manifest['files'].items() if k not in allowed):
+        raise Stop('H2_continuation_critical_source_changed')
+    critical=('policy_sha256','generator','host','solidworks','runtime_files','OMP_PROFILE','generator_config_sha256',
+        'skill_sha256','fixture_admission','transport_adaptation','generation_cwd','protocol','development_ids','holdout_ids')
+    if any(canonical(old[k])!=canonical(new_manifest[k]) for k in critical):raise Stop('H2_continuation_contract_changed')
+    expected={e['case']:e for e in entries};prefix={};rows=[];missing=False
+    bindings={str(p):ledger.file_sha(p) for p in (path,out/'experiment-SHA256.json')}
+    for case in old['development_ids']:
+        for repeat in range(1,6):
+            label='C'+case+'R'+str(repeat);trial=private_path(runtime.PRIVATE/('h2-'+experiment+'-'+label))
+            saved=trial/'trial-result.json'
+            if not saved.exists():missing=True;continue
+            if missing:raise Stop('H2_continuation_noncontiguous_prefix')
+            row=ledger.read_json(saved);own=ledger.read_json(trial/'manifest.json')
+            expected_entry=copy.deepcopy(expected[case]);expected_entry['id']=label
+            packet=ledger.read_json(trial/'inputs-private.json')
+            if (row.get('experiment_manifest_sha256')!=old_sha or row.get('label')!=label or row.get('case')!=case
+                    or row.get('variant')!='A' or row.get('phase')!='calibration' or type(row.get('passed')) is not bool
+                    or row.get('initial_model_input_verified') is not True
+                    or ledger.file_sha(trial/'manifest.json')!=row['manifest_sha256']
+                    or ledger.read_json(trial/'SHA256.json')['manifest_sha256']!=row['manifest_sha256']
+                    or ledger.file_sha(trial/'ledger.jsonl')!=row['ledger_sha256']
+                    or own['files']!=old['files'] or own['generator']!=old['generator']
+                    or own['skill_sha256']!=old['skill_sha256']['A']
+                    or canonical(packet)!=canonical([expected_entry])
+                    or ledger.file_sha(trial/'inputs-private.json')!=own['inputs_packet_sha256']):
+                raise Stop('H2_continuation_saved_trial_binding')
+            events=list(ledger.rows(trial/'ledger.jsonl'))
+            starts={e['attempt_id'] for e in events if e['event']=='attempt_started' and e.get('operation')=='model'}
+            ends={e['attempt_id'] for e in events if e['event']=='attempt_finished' and e.get('operation')=='model'}
+            if starts!=ends or ledger.summarize(trial/'ledger.jsonl')['conservative_reserved_calls']!=row['model_calls']:
+                raise Stop('H2_continuation_pending_call')
+            for p in (saved,trial/'manifest.json',trial/'SHA256.json',trial/'inputs-private.json',trial/'ledger.jsonl'):
+                bindings[str(p)]=ledger.file_sha(p)
+            for event in events:
+                for stream in (event.get('streams') or {}).values():
+                    p=private_path(stream['path'])
+                    if not p.is_relative_to(trial) or ledger.file_sha(p)!=stream['sha256']:raise Stop('H2_continuation_stream_changed')
+                    bindings[str(p)]=stream['sha256']
+            prefix[label]=dict(result_sha256=ledger.file_sha(saved),ledger_sha256=row['ledger_sha256'],old_manifest_sha256=old_sha)
+            rows.append(row)
+    if not rows or len(rows)%5 or [r['label'] for r in rows if r.get('stopped')]!=[rows[-1]['label']] or rows[-1]['passed']:
+        raise Stop('H2_continuation_terminal_timeout_required')
+    label=rows[-1]['label'];trial=runtime.PRIVATE/('h2-'+experiment+'-'+label)
+    driver=trial/'episode/reports/cad-run/request-mvp1';report_path=driver/'driver-run.json';report=ledger.read_json(report_path)
+    if report.get('message_code')!='H0_neutral_worker_timeout' or report.get('cad_attempts') not in (1,2):
+        raise Stop('H2_continuation_not_neutral_timeout')
+    native_out=driver/('a%d-mvp1'%report['cad_attempts'])
+    proof=neutral_timeout_certificate(native_out,new_manifest['solidworks'])
+    if not proof:raise Stop('H2_continuation_SW_not_certified_closed')
+    for p in (report_path,native_out/'com-result.json'):bindings[str(p)]=ledger.file_sha(p)
+    return dict(source_manifest_sha256=old_sha,prefix=prefix,safe_timeout_label=label,
+        neutral_timeout_certificate=proof,bound_input_files=bindings)
+
+
+def prepare(experiment,*,smoke=False,continuation=False):
     out,entries,bound=context(experiment)
     policy=freezing._policy(ROOT,ROOT/'design/cad-harness-verify-v4/policy.json')
     files=freezing.bindings(ROOT);files['H2_SKILL_PLAN.md']=ledger.file_sha(ROOT/'H2_SKILL_PLAN.md')
@@ -249,9 +332,9 @@ def prepare(experiment,*,smoke=False):
                 raise Stop('H2_native_control_SW_instance_changed')
     _,adaptation=adapted_tree(Path(agent.v3.__file__).read_text(encoding='utf-8'))
     work=private_path(out/'generator-cwd');work.mkdir(exist_ok=True)
-    prefix='preflight' if smoke else 'experiment'
+    prefix='continuation' if continuation else 'preflight' if smoke else 'experiment'
     path=out/(prefix+'-manifest.json')
-    manifest=dict(schema='harness2.solidworks.skill.freeze.v3',experiment=experiment,prepared_at=ledger.utc(),
+    manifest=dict(schema='harness2.solidworks.skill.freeze.v4',experiment=experiment,prepared_at=ledger.utc(),
         policy_sha256=policy,files=files,input_files=bound,generator=generator,host=host,solidworks=solidworks,
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')},
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),generator_config_sha256=ledger.sha(canonical(runtime.MODEL_CONFIG)),
@@ -267,21 +350,30 @@ def prepare(experiment,*,smoke=False):
             required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,max_calls_per_episode=3),
         authorization='UNIT_MOCK_NO_LIVE_AUTHORIZATION' if smoke else
             'USER 2026-10-28 01:18/01:30: autonomous skill-text-only independent Codex batches <=50; conservatively cap40')
+    if continuation:
+        resume=continuation_prefix(experiment,entries,bound,manifest)
+        manifest['resume']=resume;manifest['input_files'].update(resume['bound_input_files'])
     ledger.write_json(path,manifest)
     digest=ledger.file_sha(path);ledger.write_json(out/(prefix+'-SHA256.json'),{'manifest_sha256':digest})
     public={k:manifest[k] for k in ('schema','experiment','prepared_at','policy_sha256','skill_sha256','fixture_admission','transport_adaptation','protocol','development_ids','holdout_ids','solidworks','evidence_mode')}
     public.update(manifest_sha256=digest,source_sha256=files,generator={k:generator[k] for k in ('model','thinking','version','sha256')},live_model_calls=0)
+    if continuation:public['resume']={k:manifest['resume'][k] for k in ('source_manifest_sha256','safe_timeout_label')}
+    if continuation:public['resume']['prefix_labels']=list(manifest['resume']['prefix'])
     ledger.write_json(fixtures.PUBLIC/experiment/(prefix+'-manifest-public.json'),public)
     return public
 
 
-def load(experiment):
+def load(experiment,*,continuation=False):
     out,entries,bound=context(experiment)
-    path=out/'experiment-manifest.json';manifest=ledger.read_json(path)
-    if ledger.file_sha(path)!=ledger.read_json(out/'experiment-SHA256.json')['manifest_sha256']:raise Stop('H2_experiment_manifest_changed')
-    if (manifest['schema']!='harness2.solidworks.skill.freeze.v3' or manifest['experiment']!=experiment
-            or manifest['input_files']!=bound or manifest['skill_sha256']!={a:ledger.sha(b) for a,b in bundles().items()}
-            or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING):raise Stop('H2_experiment_binding')
+    prefix='continuation' if continuation else 'experiment'
+    path=out/(prefix+'-manifest.json');manifest=ledger.read_json(path)
+    if ledger.file_sha(path)!=ledger.read_json(out/(prefix+'-SHA256.json'))['manifest_sha256']:raise Stop('H2_experiment_manifest_changed')
+    expected_bound=bound|((manifest.get('resume') or {}).get('bound_input_files') or {})
+    if (manifest['schema']!='harness2.solidworks.skill.freeze.v4' or manifest['experiment']!=experiment
+            or manifest['input_files']!=expected_bound or manifest['skill_sha256']!={a:ledger.sha(b) for a,b in bundles().items()}
+            or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING
+            or continuation!=bool(manifest.get('resume'))):raise Stop('H2_experiment_binding')
+    if any(ledger.file_sha(p)!=digest for p,digest in expected_bound.items()):raise Stop('H2_continuation_input_changed')
     current=freezing.bindings(ROOT);current['H2_SKILL_PLAN.md']=ledger.file_sha(ROOT/'H2_SKILL_PLAN.md')
     if manifest['files']!=current:raise Stop('H2_experiment_source_changed')
     if manifest.get('evidence_mode')!='live':raise Stop('H2_live_requires_frozen_manifest')

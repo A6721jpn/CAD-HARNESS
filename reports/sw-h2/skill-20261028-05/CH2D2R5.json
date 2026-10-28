@@ -1,0 +1,43 @@
+{
+  "sequence": 2,
+  "group": "geometry",
+  "route": "spec",
+  "selected": true,
+  "completed": true,
+  "passed": true,
+  "geometry": true,
+  "editability": true,
+  "reimport": true,
+  "q_score": null,
+  "critical_invention": false,
+  "model_calls": 1,
+  "cad_attempts": 1,
+  "parse_repairs": 0,
+  "repair_calls": 0,
+  "wall_s": 316.4220000000205,
+  "active_s": 316.4220000000205,
+  "failure_class": null,
+  "initial_usage": {
+    "input_uncached_tokens": 4395,
+    "cache_read_tokens": 0,
+    "cache_write_tokens": 0
+  },
+  "initial_payload_sha256": "914e3f554fb6c0f381c6d5e42a884f55c8b006214babdcd7965c3a7a31098d61",
+  "initial_cwd": "C:\\dev\\CAD-HARNESS-sw\\reports\\sw-m0\\m1-private\\h0\\h2-skill-20261028-05\\generator-cwd",
+  "initial_model_input_verified": true,
+  "label": "CH2D2R5",
+  "case": "H2D2",
+  "variant": "A",
+  "phase": "calibration",
+  "experiment_manifest_sha256": "0938ca64b11e56b57cf459226cb7caab83e16e1da89f707ddc1236afc8a33d65",
+  "manifest_sha256": "fb094363ac39eca48a8c1a48a8c67da0409d784ce24ac7bd6597efb392e551d1",
+  "ledger_sha256": "f0452234d683bcc26666e1e44de216f45662d599e36a050fb1d5547207325329",
+  "stopped": false,
+  "tokens": {
+    "input_tokens": 4395,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 12266,
+    "reasoning_output_tokens": null
+  }
+}

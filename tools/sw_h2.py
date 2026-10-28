@@ -72,10 +72,10 @@ def pending_trials(plan,completed):
 
 
 class Experiment:
-    def __init__(self,experiment):
-        self.name=experiment;self.out,self.shared,self.entries=native.load(experiment)
+    def __init__(self,experiment,*,continuation=False):
+        self.name=experiment;self.out,self.shared,self.entries=native.load(experiment,continuation=continuation)
         self.pub=fixtures.PUBLIC/experiment;self.by_case={e['case']:e for e in self.entries}
-        self.identity=ledger.file_sha(self.out/'experiment-manifest.json')
+        self.identity=ledger.file_sha(self.shared['context_manifest'])
         self.native_uncertain=False
 
     def check_quota(self):
@@ -87,11 +87,17 @@ class Experiment:
         path=runtime.PRIVATE/('h2-'+self.name+'-'+trial['label'])/'trial-result.json'
         if not path.exists():return None
         result=ledger.read_json(path)
-        if (result['experiment_manifest_sha256']!=self.identity or result['label']!=trial['label']
-                or result['case']!=trial['case'] or result['variant']!=trial['variant']):raise Stop('H2_saved_trial_binding')
+        prefix=(self.shared.get('resume') or {}).get('prefix',{}).get(trial['label'])
+        expected_identity=prefix['old_manifest_sha256'] if prefix else self.identity
+        if (result['experiment_manifest_sha256']!=expected_identity or result['label']!=trial['label']
+                or result['case']!=trial['case'] or result['variant']!=trial['variant']
+                or prefix and ledger.file_sha(path)!=prefix['result_sha256']):raise Stop('H2_saved_trial_binding')
         trial_dir=path.parent
         if ledger.file_sha(trial_dir/'ledger.jsonl')!=result['ledger_sha256']:raise Stop('H2_saved_ledger_changed')
-        if result.get('stopped'):raise Stop('H2_saved_trial_stopped')
+        if result.get('stopped'):
+            resume=self.shared.get('resume') or {}
+            if not prefix or trial['label']!=resume.get('safe_timeout_label') or result['passed'] is not False:
+                raise Stop('H2_saved_trial_stopped')
         return result
 
     def pool_name(self,phase,index):return 'h2-'+self.name+'-'+phase+'-pool-%02d'%index
@@ -140,6 +146,11 @@ class Experiment:
                 row,stopped,_=native.isolated_execute(self.name,entry,out/'episode',manifest,journal,pool)
         finally:
             self.native_uncertain|=bool(manifest.get('_native_uncertain'))
+        timeout_proof=manifest.get('_known_episode_timeout')
+        if stopped=='H2_closed_SW_neutral_timeout' and timeout_proof:
+            if row['passed'] is not False:raise Stop('H2_timeout_cannot_pass')
+            stopped=None
+            row.update(episode_timeout=True,timeout_certificate=timeout_proof,failure_class='neutral_worker_timeout')
         if stopped:ledger.write_json(out/'stop-private.json',dict(reason=stopped))
         events=list(ledger.rows(out/'ledger.jsonl'))
         measurements=native.initial_measurement(events,out/'episode')
@@ -207,8 +218,8 @@ class Experiment:
         return report
 
 
-def run(experiment):
-    experiment=Experiment(experiment)
+def run(experiment,*,continuation=False):
+    experiment=Experiment(experiment,continuation=continuation)
     lock=base.OUTPUTS/'session.lock';own=experiment.out/'controller.lock';unsafe=False
     with own.open('x') as file:
         file.write(json.dumps({'pid':os.getpid(),'scope':'H2-skill-text-only'}));file.flush();os.fsync(file.fileno())
@@ -289,12 +300,13 @@ def smoke(experiment):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=('freeze','run','smoke'));parser.add_argument('--experiment',required=True)
+    parser.add_argument('action',choices=('freeze','run','smoke','freeze-continuation','run-continuation'));parser.add_argument('--experiment',required=True)
     args=parser.parse_args()
     try:
-        if args.action=='freeze':print(json.dumps(native.prepare(args.experiment)),flush=True)
+        if args.action in ('freeze','freeze-continuation'):
+            print(json.dumps(native.prepare(args.experiment,continuation=args.action=='freeze-continuation')),flush=True)
         elif args.action=='smoke':smoke(args.experiment)
-        else:run(args.experiment)
+        else:run(args.experiment,continuation=args.action=='run-continuation')
     except Exception as exc:
         # No arbitrary native/Gold exception text is printed.
         reason=str(exc) if isinstance(exc,Stop) and str(exc) in PUBLIC_STOPS else 'H2_action_stopped'

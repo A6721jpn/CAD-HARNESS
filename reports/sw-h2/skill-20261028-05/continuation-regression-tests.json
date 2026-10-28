@@ -1,0 +1,16 @@
+{
+  "scope": "Closed-SW neutral timeout classification and unchanged saved-score continuation",
+  "runner": "FreeCAD 1.1.4 pinned Python SDK",
+  "environment": {
+    "CAD_SW_M0_NATIVE": "1"
+  },
+  "tests": 49,
+  "new_h2_tests": 26,
+  "existing_tests": 23,
+  "result": "PASS",
+  "skipped": 0,
+  "live_model_calls": 0,
+  "solidworks_calls": 0,
+  "command": "import sys,unittest;sys.path[:0]=['C:/dev/CAD-HARNESS-sw','C:/dev/CAD/.tools/freecad/FreeCAD_1.1.4-Windows-x86_64-py311/bin'];suite=unittest.defaultTestLoader.discover('tools',pattern='test_sw*.py');result=unittest.TextTestRunner(verbosity=2).run(suite);raise SystemExit(not result.wasSuccessful())",
+  "stderr_sha256": "368d2efb79f95a2d29508d14de1acfb3293e9feba586ab5b5dd5d77f01d7efb7"
+}

@@ -285,3 +285,27 @@
 - `bg_67`でepoch05のmock/real CAD smokeを実行中。元repair CAD枠内で誤仕様拒否→R1復旧も確認してからsourceをcommit/push・freeze・runする。比較生成はまだ開始していない。
 
 - `bg_67`の元repair枠smokeはPASS。mock2/実CAD2、誤仕様拒否、元R1=1、完全capture8、実モデル0、episode123.781秒（tool126.39秒）。Sourceとpublic証拠をcommit/pushし、同じv3 runtimeと候補文でepoch05をfreeze・runする。直前quotaは18%（2026-10-27T22:08:14.623Z）。
+
+## Handoff：Epoch05実較正を実行中
+
+- sourceと新bankの20正負制御・44テスト・R1 smokeの公開証拠は`ec6394c`でh2/swへcommit/push済み。runtime/候補文/元判定は前epochのまま。旧epoch04結果の保存commitは`73595db`。
+- epoch05 freeze v3は2026-10-27T22:09:34.292918Z作成、manifest SHA `0938ca64b11e56b57cf459226cb7caab83e16e1da89f707ddc1236afc8a33d65`。新fixture sealは`63871ef830fb0aa43daa51acc48beb9b802f5f90505fd78924d10170a5628c73`。A/B skill SHAは従来どおりで変更なし。
+- **現在の実生成jobは`bg_68`のみ**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py run --experiment skill-20261028-05`。別generator/runは起動しない。code/skill/計画は編集しない。実user packet照合とquota/call guardを各callに適用し、較正が2/5か3/5になった最初の課題でのみA/Bへ進む。
+- 最後の公開quotaは18%。55%ASK/60%停止、各pool40、max2、稼働SWの終了/再起動禁止、Gold machine-onlyは不変。source frozen後の追加はprivate会計publisherとこのメモだけ。
+- **job終了後の正確な次コマンド**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261028-05/publish-accounting.py`。未実行。controller終了後だけlive pool/ledger/初回packet確認件数を突合し、Goldを読まない。
+- 次は自動結果を受領（pollしない）→会計→public結果/採用gateを確認→h2/swへ結果commit/push。B/比較/holdoutの成立を推測しない。timeout/機械停止やcache除外の費用も消さない。quota/実SW無応答の安全停止は優先する。
+
+- H2停止 {"status": "STOPPED", "at": "2026-10-28T00:01:57.232460+00:00", "reason": "STOP_SW_state_unknown_no_restart", "manual_SW_recovery_required": true}
+
+## Handoff：Epoch05 closed-SW neutral timeout継続の検証中
+
+- `bg_68`は20較正後に停止（6738.57秒）。保存合否はH2D1=5/5、D2=5/5、D3=4/5、D4=3/5。最後のD4R5は不合格のまま。model20/40・pending0・CAD18・初回実input確認20/20・最大quota18%を公開会計へ保存した。B/比較/holdoutはまだnot_run。
+- 原因の機械確認：最後の`driver-run.json`は`H0_neutral_worker_timeout`。SW completionはPASS/stop=false/COM unknown=false/文書0、fresh再importのstage artifactあり。実SWも同じ53084/34.4.0で応答/文書0を確認した。したがってSWを終了/再起動せず、controller60948不在＋lock排他open成功後、`session.lock.stale-20261028-h2-epoch05-neutral-timeout`へrename保存した。bar/time枠を緩めて判定し直さない。
+- 未commit実装：H2 runtime v4は、正確なneutral SDK timeout＋正常SW閉鎖＋同一SW/文書0を確認したときだけ、失敗scoreを保持してepisode timeoutとして次へ進む。SW非応答/COM unknown/source変更/quota/他checker errorは回復対象外。元v4/H0/Native API/判定/時間/call枠は編集していない。
+- `freeze-continuation`/`run-continuation`を追加。旧manifest・20結果・各input/ledger/full stream/native completionをhash固定し、連続した完全5回ブロックと最後だけの認証済みtimeout失敗を要求。再生成/再採点/旧結果上書きなし。critical code/model/skill/policy/schema/host/binary等が変わっていれば拒否。元A/B順へD4から進み、比較は独立40枠を使う。
+- SDK全`test_sw*.py`は**49/49 PASS、skip0、3.184秒**。SDK timeoutとSW unknownの区別、policy/judge変更拒否、保持failed scoreの改竄拒否を追加。Eval `h2RecoveryUnitSDKObserved`。実保存prefixの機械replayでも20件・5/5,5/5,4/5,3/5・最後Falseの保持とSW closed証明を確認（モデル0、公開`continuation-prefix-smoke.json`）。Source変更はH2 runtime/CLI/test＋計画/メモだけ。
+- **現在のjobは`bg_69`のみ**。private `neutral-timeout-smoke.py`が正例を実SWで正常保存/閉鎖してから、テスト専用fresh SDK timeout=.001秒だけを注入する。稼働SWをkillせず、実SDK timeout例外が維持され失敗のままSW非応答と区別されることを確認する。productionの時間値は変更しない。モデル0。結果前に成功としない。
+- 次の一手：`bg_69`の自動結果を受領→source/20部分結果/停止会計/新proofをh2/swへcommit/push→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py freeze-continuation --experiment skill-20261028-05`→同CLI `run-continuation`。20生成物は呼び直さない。prefix certificateが通らなければ迂回しない。55%ASK/60%停止、max2、Gold machine-onlyは不変。
+
+- `bg_69`完了：**実SW＋実FreeCADの注入timeout smoke PASS、58.47秒、モデル0回**。正常SW保存/閉鎖・同一SW/文書0を確認し、fresh SDKだけのtimeout例外を維持して`H2_closed_SW_neutral_timeout`へ分類。失敗をPASSにせずproduction時間値も変更なし。公開`neutral-timeout-recovery-smoke.json`。scratch専用lockは正常終了時に解放した。現在jobなし。
+- 次コマンドは上記source/20部分結果/evidenceの明示path commit/push。その後`freeze-continuation --experiment skill-20261028-05`を実行し、証明が通った新manifestだけで`run-continuation`を起動する。新規生成は比較分だけ、元20件は読取継承する。

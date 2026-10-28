@@ -1,0 +1,19 @@
+{
+  "retained_trials": 20,
+  "passes_by_case": {
+    "H2D1": 5,
+    "H2D2": 5,
+    "H2D3": 4,
+    "H2D4": 3
+  },
+  "last_score_remains_failed": true,
+  "safe_timeout_certificate": {
+    "SW_completion_sha256": "13167e8dfd9f5b291d57cd65d9cf913b54fd01f8c09dd80f01e16746aeb0b693",
+    "SW_identity_unchanged": true,
+    "document_closed": true,
+    "failed_component": "owned_neutral_SDK_worker",
+    "scored_pass": false
+  },
+  "native_still_closed": true,
+  "live_model_calls": 0
+}

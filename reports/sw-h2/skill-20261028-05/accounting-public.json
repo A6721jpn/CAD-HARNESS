@@ -1,0 +1,76 @@
+{
+  "experiment": "skill-20261028-05",
+  "at": "2026-10-28T00:04:19.802127+00:00",
+  "experiment_manifest_sha256": "0938ca64b11e56b57cf459226cb7caab83e16e1da89f707ddc1236afc8a33d65",
+  "batches": [
+    {
+      "phase": "calibration",
+      "index": 1,
+      "scope": "harness2-solidworks-H2-skill-20261028-05-calibration-01",
+      "cap": 40,
+      "conservative_reserved_calls": 20,
+      "accepted_or_failed_calls": 20,
+      "pending_or_unknown_calls": 0,
+      "verified_overload_rejections": 0,
+      "remaining": 20,
+      "billing_missing_reason": "invoice_not_provided"
+    }
+  ],
+  "total_conservative_reserved_calls": 20,
+  "pending_or_unknown_calls": 0,
+  "physical_model_attempts": 20,
+  "CAD_attempts": 18,
+  "max_observed_quota_percent": 18,
+  "episodes_with_result": 20,
+  "initial_user_packets_verified": 20,
+  "initial_user_packets_unverified": 0,
+  "counter_semantics": {
+    "input_tokens": "OMP uncached input",
+    "cached_input_tokens": "OMP cache read",
+    "cache_write_input_tokens": "OMP cache write"
+  },
+  "tokens": {
+    "input_tokens": {
+      "total": null,
+      "known_subtotal": 58344,
+      "expected": 20,
+      "known": 18,
+      "missing": 2,
+      "missing_reason": "missing_contributions"
+    },
+    "cached_input_tokens": {
+      "total": null,
+      "known_subtotal": 20736,
+      "expected": 20,
+      "known": 18,
+      "missing": 2,
+      "missing_reason": "missing_contributions"
+    },
+    "cache_write_input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 20,
+      "known": 18,
+      "missing": 2,
+      "missing_reason": "missing_contributions"
+    },
+    "output_tokens": {
+      "total": null,
+      "known_subtotal": 216364,
+      "expected": 20,
+      "known": 18,
+      "missing": 2,
+      "missing_reason": "missing_contributions"
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 20,
+      "known": 0,
+      "missing": 20,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice"
+}

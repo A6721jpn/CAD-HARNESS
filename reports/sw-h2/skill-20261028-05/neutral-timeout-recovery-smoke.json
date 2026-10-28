@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "evidence_mode": "injected_fresh_SDK_timeout_with_real_SW_and_FreeCAD",
+  "live_model_calls": 0,
+  "real_SW_candidate_builds": 1,
+  "only_test_fresh_timeout_s": 0.001,
+  "production_time_limits_changed": false,
+  "original_timeout_exception_retained": true,
+  "timeout_not_promoted_to_pass": true,
+  "SW_closed_and_unchanged": true,
+  "classified_fatal_code": "H2_closed_SW_neutral_timeout"
+}
