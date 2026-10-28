@@ -383,3 +383,10 @@
 - **現在jobは`bg_79`のみ**：funding残23/旧17の確認→新dataset作成→新backendで20正負native controlsを実行中。Native source/factoryは以後変更しない。SW53084だけ、10800を含む稼働SWの終了/再起動なし。まだepoch07の実モデル0。Codexは最大2。dashboard-builderは専用storeのmodel/effort不一致で未更新、代替モデルなし。
 - **次の正確なコマンド**：`bg_79`の自動完了結果を受領→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261029-07`→source/診断/prereg/全証拠を明示path commit/push→同CLI `freeze --experiment skill-20261029-07`→`run --experiment skill-20261029-07`。新manifestはv5でsource/予算順も固定。55%停止報告/60%停止を維持し、native無応答時は止めて報告。
 - live終了後の会計scriptも準備済み：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261029-07/publish-accounting.py`。旧17を再計上せず各poolの追加分と新live ledgerだけを突合する。旧epoch06会計を上書きしない。
+
+- 以上の診断/判定同等高速化/59テスト/単一r2候補/予算保全/新封印/事前登録は**`d9f048d`**でh2/swへcommit/push済み（epoch07 live0）。上の「未commit」はこの保存で解消した。`bg_79`のcontrol結果とその後のR1 smokeはまだ受領前で、成功とは記録しない。次は自動結果→同じ`smoke --experiment skill-20261029-07`。sourceを途中変更しない。
+
+- `bg_79`完了：新backendの**20/20正負native controls PASS、1437.06秒、実モデル0**。開始時の旧17/残23も確認した。native source/factoryは`d9f048d`のまま。**現在`bg_80`**でepoch07 blind mock→誤仕様拒否→元R1復旧を実SW/FreeCADで実行中。成功前に課金へ進まない。次は自動結果→public controls/smokeとメモをcommit/push→`freeze`→`run`、experimentは全て`skill-20261029-07`。
+
+- `bg_80`完了：**hard dev1のblind R1 smoke PASS、126.484秒（tool128.60秒）、mock2/実CAD2/capture8、実モデル0**。誤仕様拒否→元R1=1で復旧、parse修復0。原90秒CAD/90秒再import枠・判定・closed-stdin/盲検inputを維持した。epoch06のhard R1失敗を上書きせず、新しい独立課題で成功を確認した。これでepoch07の課金前検証は完了。
+- 現在jobなし。次はpublic controls/preflightと本メモを明示path commit/push→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py freeze --experiment skill-20261029-07`→同CLI `run --experiment skill-20261029-07`。初回のcarryは旧scope17予約を保った残23、必要時だけ新40。freeze以後はsource/候補/計画を変更しない。

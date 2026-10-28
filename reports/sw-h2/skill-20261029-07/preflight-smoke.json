@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "evidence_mode": "unit_mock_with_real_SW_and_FreeCAD",
+  "live_model_calls": 0,
+  "mock_responses": 2,
+  "real_CAD_attempts": 2,
+  "wrong_spec_rejected": true,
+  "original_driver_repair_calls": 1,
+  "fixture_provenance": "fixture",
+  "source_admission_only": true,
+  "seconds": 126.48399999993853,
+  "captured_streams": 8
+}
