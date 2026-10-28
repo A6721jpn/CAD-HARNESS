@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "id": "H2D1",
+      "control": "positive",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D1",
+      "control": "negative",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D2",
+      "control": "positive",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D2",
+      "control": "negative",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D3",
+      "control": "positive",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D3",
+      "control": "negative",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D4",
+      "control": "positive",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D4",
+      "control": "negative",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D5",
+      "control": "positive",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    },
+    {
+      "id": "H2D5",
+      "control": "negative",
+      "same_geometry_decision": true,
+      "same_whole_boundary_decision": true,
+      "passed": true
+    }
+  ],
+  "seconds": 119.09971789992414,
+  "original_results_changed": false,
+  "live_model_calls": 0,
+  "SW_operations": 0,
+  "thresholds_or_scoring_changed": false,
+  "scope": "ten independent developer controls; saved full-refinement baseline versus decision-only proof"
+}

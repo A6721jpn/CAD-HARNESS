@@ -1,0 +1,518 @@
+{
+  "scope": "saved_timing_metadata_only_no_rescore",
+  "at": "2026-10-28T21:52:05.246885+00:00",
+  "summary": {
+    "failed": {
+      "episodes": 10,
+      "model_seconds": 3300.467000000179,
+      "CAD_seconds": 888.2960000003222,
+      "SW_seconds": 126.17100339988247,
+      "completed_primary_seconds": 372.5326104995329,
+      "completed_primary_count": 5,
+      "timeout_stages": {
+        "fresh_reimport": 5,
+        "primary_verification": 5
+      }
+    },
+    "passed": {
+      "episodes": 7,
+      "model_seconds": 1737.0789999996778,
+      "CAD_seconds": 891.3900000003632,
+      "SW_seconds": 87.26736260042526,
+      "completed_primary_seconds": 545.1319282003678,
+      "completed_primary_count": 7,
+      "timeout_stages": {}
+    }
+  },
+  "episodes": [
+    {
+      "label": "CH2D1R1",
+      "phase": "calibration",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 333.6720000000205,
+      "CAD_seconds": 85.46900000004098,
+      "episode_seconds": 420.3900000001304,
+      "stages": [
+        {
+          "SW_seconds": 13.516742599895224,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 70.21106050000526,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "fresh_reimport"
+        }
+      ]
+    },
+    {
+      "label": "CH2D1R2",
+      "phase": "calibration",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 310.71899999980815,
+      "CAD_seconds": 108.40599999995902,
+      "episode_seconds": 420.3900000001304,
+      "stages": [
+        {
+          "SW_seconds": 12.474772199988365,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 75.78375349985436,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "fresh_reimport"
+        }
+      ]
+    },
+    {
+      "label": "CH2D1R3",
+      "phase": "calibration",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 302.4379999998491,
+      "CAD_seconds": 112.09400000004098,
+      "episode_seconds": 415.9220000000205,
+      "stages": [
+        {
+          "SW_seconds": 12.491430000169203,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 70.5218919001054,
+          "fresh_completed": true,
+          "fresh_seconds": 28.41716039995663,
+          "timeout_stage": null
+        }
+      ]
+    },
+    {
+      "label": "CH2D1R4",
+      "phase": "calibration",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 129.40599999995902,
+      "CAD_seconds": 128.6720000000205,
+      "episode_seconds": 259.4069999998901,
+      "stages": [
+        {
+          "SW_seconds": 12.2993628999684,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 78.35880320006981,
+          "fresh_completed": true,
+          "fresh_seconds": 37.226155099924654,
+          "timeout_stage": null
+        }
+      ]
+    },
+    {
+      "label": "CH2D1R5",
+      "phase": "calibration",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 305.3120000001509,
+      "CAD_seconds": 113.8430000001099,
+      "episode_seconds": 420.39099999982864,
+      "stages": [
+        {
+          "SW_seconds": 12.48075499990955,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 78.6953496998176,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "fresh_reimport"
+        }
+      ]
+    },
+    {
+      "label": "P01A",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 342.6400000001304,
+      "CAD_seconds": 76.04700000002049,
+      "episode_seconds": 419.9220000000205,
+      "stages": [
+        {
+          "SW_seconds": 12.621686200145632,
+          "SW_closed": true,
+          "primary_completed": false,
+          "primary_seconds": null,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "primary_verification"
+        }
+      ]
+    },
+    {
+      "label": "P01B",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 289.8279999999795,
+      "CAD_seconds": 129.28100000019185,
+      "episode_seconds": 420.375,
+      "stages": [
+        {
+          "SW_seconds": 12.49304910004139,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 78.6857117000036,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "fresh_reimport"
+        }
+      ]
+    },
+    {
+      "label": "P02A",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 355.4529999999795,
+      "CAD_seconds": 63.03099999995902,
+      "episode_seconds": 419.780999999959,
+      "stages": [
+        {
+          "SW_seconds": 12.541965999873355,
+          "SW_closed": true,
+          "primary_completed": false,
+          "primary_seconds": null,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "primary_verification"
+        }
+      ]
+    },
+    {
+      "label": "P02B",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 347.625,
+      "CAD_seconds": 71.04700000002049,
+      "episode_seconds": 419.9370000001509,
+      "stages": [
+        {
+          "SW_seconds": 12.492866900051013,
+          "SW_closed": true,
+          "primary_completed": false,
+          "primary_seconds": null,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "primary_verification"
+        }
+      ]
+    },
+    {
+      "label": "P03A",
+      "phase": "comparison",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 274.8599999998696,
+      "CAD_seconds": 136.03099999995902,
+      "episode_seconds": 412.2349999998696,
+      "stages": [
+        {
+          "SW_seconds": 12.510256000095978,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 82.25553740002215,
+          "fresh_completed": true,
+          "fresh_seconds": 40.59478409984149,
+          "timeout_stage": null
+        }
+      ]
+    },
+    {
+      "label": "P03B",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 316.98400000017136,
+      "CAD_seconds": 102.14099999982864,
+      "episode_seconds": 420.375,
+      "stages": [
+        {
+          "SW_seconds": 12.58051409991458,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 69.15673509985209,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "fresh_reimport"
+        }
+      ]
+    },
+    {
+      "label": "P04A",
+      "phase": "comparison",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 258.8279999999795,
+      "CAD_seconds": 137.40600000019185,
+      "episode_seconds": 397.56199999991804,
+      "stages": [
+        {
+          "SW_seconds": 12.498470700113103,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 82.84605410019867,
+          "fresh_completed": true,
+          "fresh_seconds": 41.39680149988271,
+          "timeout_stage": null
+        }
+      ]
+    },
+    {
+      "label": "P04B",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 344.7650000001304,
+      "CAD_seconds": 74.01500000013039,
+      "episode_seconds": 420.030999999959,
+      "stages": [
+        {
+          "SW_seconds": 12.522320799995214,
+          "SW_closed": true,
+          "primary_completed": false,
+          "primary_seconds": null,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "primary_verification"
+        }
+      ]
+    },
+    {
+      "label": "P05A",
+      "phase": "comparison",
+      "passed": false,
+      "episode_timeout": true,
+      "model_seconds": 353.46899999980815,
+      "CAD_seconds": 65.01600000006147,
+      "episode_seconds": 419.75,
+      "stages": [
+        {
+          "SW_seconds": 12.446330500068143,
+          "SW_closed": true,
+          "primary_completed": false,
+          "primary_seconds": null,
+          "fresh_completed": false,
+          "fresh_seconds": null,
+          "timeout_stage": "primary_verification"
+        }
+      ]
+    },
+    {
+      "label": "P05B",
+      "phase": "comparison",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 252.2029999999795,
+      "CAD_seconds": 116.5,
+      "episode_seconds": 370.0150000001304,
+      "stages": [
+        {
+          "SW_seconds": 12.478660200024024,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 72.36747099994682,
+          "fresh_completed": true,
+          "fresh_seconds": 30.974788499996066,
+          "timeout_stage": null
+        }
+      ]
+    },
+    {
+      "label": "P06A",
+      "phase": "comparison",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 251.7970000000205,
+      "CAD_seconds": 129.5470000000205,
+      "episode_seconds": 382.655999999959,
+      "stages": [
+        {
+          "SW_seconds": 12.394308000104502,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 78.88629509997554,
+          "fresh_completed": true,
+          "fresh_seconds": 37.3991744001396,
+          "timeout_stage": null
+        }
+      ]
+    },
+    {
+      "label": "P06B",
+      "phase": "comparison",
+      "passed": true,
+      "episode_timeout": false,
+      "model_seconds": 267.5470000000205,
+      "CAD_seconds": 131.14000000013039,
+      "episode_seconds": 400.030999999959,
+      "stages": [
+        {
+          "SW_seconds": 12.594874799950048,
+          "SW_closed": true,
+          "primary_completed": true,
+          "primary_seconds": 79.89587550004944,
+          "fresh_completed": true,
+          "fresh_seconds": 37.97317659994587,
+          "timeout_stage": null
+        }
+      ]
+    }
+  ],
+  "SW_API_time": [
+    {
+      "method": "InsertSketch",
+      "calls": 986,
+      "seconds": 69.4344100994058
+    },
+    {
+      "method": "FeatureCut4",
+      "calls": 476,
+      "seconds": 30.2400917976629
+    },
+    {
+      "method": "OpenDoc6",
+      "calls": 34,
+      "seconds": 14.90347560076043
+    },
+    {
+      "method": "SaveAs",
+      "calls": 85,
+      "seconds": 13.792049900395796
+    },
+    {
+      "method": "CreateCornerRectangle",
+      "calls": 34,
+      "seconds": 7.483985800296068
+    },
+    {
+      "method": "NewDocument",
+      "calls": 17,
+      "seconds": 6.2325193004217
+    },
+    {
+      "method": "GetNextFeature",
+      "calls": 10438,
+      "seconds": 4.501669701654464
+    },
+    {
+      "method": "CloseDoc",
+      "calls": 51,
+      "seconds": 3.3988374995533377
+    },
+    {
+      "method": "GetTypeName2",
+      "calls": 11951,
+      "seconds": 3.202826583990827
+    },
+    {
+      "method": "ClearSelection2",
+      "calls": 1020,
+      "seconds": 3.1072205037344247
+    },
+    {
+      "method": "Select2",
+      "calls": 1020,
+      "seconds": 2.5129853026010096
+    },
+    {
+      "method": "CreateCircleByRadius",
+      "calls": 459,
+      "seconds": 1.228650599019602
+    },
+    {
+      "method": "GetSpecificFeature2",
+      "calls": 2567,
+      "seconds": 1.1357110065873712
+    },
+    {
+      "method": "InsertRefPlane",
+      "calls": 34,
+      "seconds": 0.937890499830246
+    },
+    {
+      "method": "FeatureExtrusion3",
+      "calls": 17,
+      "seconds": 0.695580700179562
+    },
+    {
+      "method": "GetTitle",
+      "calls": 2516,
+      "seconds": 0.6496044965460896
+    },
+    {
+      "method": "FeatureByPositionReverse",
+      "calls": 527,
+      "seconds": 0.6238998949993402
+    },
+    {
+      "method": "GetDocumentCount",
+      "calls": 1309,
+      "seconds": 0.3726743939332664
+    },
+    {
+      "method": "MultiplyTransform",
+      "calls": 527,
+      "seconds": 0.2472061023581773
+    },
+    {
+      "method": "CreatePoint",
+      "calls": 527,
+      "seconds": 0.20758719858713448
+    },
+    {
+      "method": "FirstFeature",
+      "calls": 527,
+      "seconds": 0.20263090264052153
+    },
+    {
+      "method": "SetSystemValue3",
+      "calls": 34,
+      "seconds": 0.0527445999905467
+    },
+    {
+      "method": "EditRebuild3",
+      "calls": 68,
+      "seconds": 0.03857290023006499
+    },
+    {
+      "method": "GetBodies2",
+      "calls": 17,
+      "seconds": 0.02876570005901158
+    },
+    {
+      "method": "Parameter",
+      "calls": 17,
+      "seconds": 0.008508000057190657
+    },
+    {
+      "method": "RevisionNumber",
+      "calls": 17,
+      "seconds": 0.007449400378391147
+    },
+    {
+      "method": "GetMathUtility",
+      "calls": 17,
+      "seconds": 0.006906700320541859
+    },
+    {
+      "method": "GetUserPreferenceStringValue",
+      "calls": 17,
+      "seconds": 0.00500150048173964
+    },
+    {
+      "method": "GetProcessID",
+      "calls": 17,
+      "seconds": 0.003634699387475848
+    }
+  ],
+  "live_model_calls": 0,
+  "original_results_changed": false
+}

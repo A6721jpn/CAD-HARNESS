@@ -1,0 +1,9 @@
+{
+  "scope": "machine-only structure comparison; no dimensions or raw outputs disclosed",
+  "timed_out_candidates": 10,
+  "same_declared_feature_counts": 10,
+  "different_feature_counts": 0,
+  "geometry_correctness_not_inferred": true,
+  "live_model_calls": 0,
+  "original_results_changed": false
+}

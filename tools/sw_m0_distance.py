@@ -12,7 +12,7 @@ v4 native closest-point witnesses); failures are UNVERIFIED, never PASS.
 import math
 
 
-def boundary_distance(a,b,target=.005,refinements=8):
+def boundary_distance(a,b,target=.005,refinements=8,*,decision_only=False):
     import FreeCAD as App
     import Part
     result={'status':'UNVERIFIED','maximum_mm':target,'lower_mm':0.,'upper_mm':None,
@@ -82,6 +82,10 @@ def boundary_distance(a,b,target=.005,refinements=8):
         if state is True:hi=mid;upper=hi+guard
         elif state is False:lo=mid
         else:break
+        # Later refinements can tighten this already valid bound, not revoke it.
+        # Keep the full numeric enclosure by default; callers needing only the
+        # unchanged threshold decision may stop once outward rounding is safe.
+        if decision_only and math.nextafter(upper,math.inf)<=target:break
     result.update(status='PASS',upper_mm=math.nextafter(upper,math.inf),
                   reason='both_entire_boundaries_contained_in_guarded_offset_shells')
     # Keep outward rounding inside the admitted target.

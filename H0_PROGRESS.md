@@ -368,3 +368,18 @@
 - 完了後read-only確認：**PID53084、34.4.0、文書0、同実体SHA**。`final-sw-readiness.json`へ保存。10800へbind/操作せず、両SWの終了/再起動なし。現在job/controllerなし、55%停止条件に到達していない。
 - 成果は`reports/sw-h2/skill-20261029-06/`のfrozen manifest/result/accounting/全17row/failure summary/検証receipt。本epochのepisode active合計6839.17秒とcontroller経過時間は区別する。封印値・seed・raw・CADはGit外で維持。
 - 次の事前登録済み手順は「比較が採用gateを満たす場合のfresh5確認」だけで、今回は条件不成立。新候補/追加pair/別epochは本登録にないため、残23回を使った事後比較は行わない。合格ライン・policy・カード0.01 mm・全体0.005 mm・採点・比較/採用条件は不変。結果をh2/swへcommit/pushして本epochを終了する。
+
+## Handoff：Epoch07準備・課金0のtimeout原因調査と高速化
+
+- 次段階の夜間委任を受領。まず旧epoch06の保存timing/構造だけを機械集計し、旧合否は再生成/再採点/上書きしていない。失敗10件のmodel合計3300.467秒（平均330.047）、SW合計126.171秒（平均12.617）。timeoutはprimary5件/fresh再import5件。候補のfeature数/種類は10件とも元の宣言と一致し、余分な加工を増やした証拠なし。ただしtimeout形状の正解は断定しない。
+- `timeout-timing-diagnosis.json`/`timeout-complexity-diagnosis.json`は旧epoch06公開結果へ追記した新しい診断のみ。元17row/result/accountingと封印値は変更なし。SW待ちではなく、長いAI応答後に残時間で中立検証を完了できないことが原因と判明した。
+- 課金0/SW操作0のコピーprofile：primary68.758＋fresh26.649秒、境界距離証明92.641秒/OCCT cut85.943秒が大半。`sw_m0_distance.boundary_distance`に`decision_only`を追加し、M1だけ使用。既存の双方向全境界包含・native guard・FAIL witnessを保ち、外向き丸めでも閾値内となる有効PASS証明後の追加細分化だけを止める。既定M0は従来の細かい数値上限を維持する。M1の上限値はより粗くても保守的な証明であり、0.005/原0.01/timer/採点は変更なし。
+- 最適化profileはprimary45.470＋fresh18.363秒、同じ全判定/編集/再import成功。これは1ケースの実測で全題速度保証ではない。独立dev正負10件も旧保存判定と新geometry/whole-boundary判定が全一致（119.84秒）。初回等価性scriptのSDK import初期化漏れは課金/判定前に修正し、失敗captureはprivate保存。Gold/spec/STEP/model本文は親へ表示していない。
+- SDK全`test_sw*.py`は**59/59 PASS、skip0、4.963秒**。near-boundary0.0049/0.0051とsmall-shift/void/guard、carry優先・prefix改竄停止・別pool pending迂回拒否・fallback中断再開でA再生成なし等を確認した。LSP reference lookupはserverなしだったため、既存callerを限定読取して更新。format/lint等の余計な処理なし。
+- 未commitの恒久source：`tools/sw_m0_distance.py`、`sw_m1_distance.py`、`sw_h2_fixtures.py`（control sourceへ距離依存を追加）、`sw_h2.py`、`sw_h2_runtime.py`、`test_sw_m0_remaining_native.py`、`test_sw_h2.py`、新`skills/cad-harness-v4/modeling-h2-r2.md`。文書は本メモと`H2_SKILL_PLAN.md`。public診断/profile/等価性/59test receiptあり。ACL/ownership/registry/描画設定の変更なし。
+- r2は1案のみ。共通datum/単位/初点と円周step回転の再利用、精度維持、compact数値JSONで計算時間の短縮を狙う。元A・その他skill/contract/policy/cards/schema/採点・cache/採用条件・モデル・時間/修復枠は固定。高速化をA/B共通backendとして扱い、epoch06との差を文章効果にしない。
+- 予算実装：epoch06 poolの既消費17のprefix bytes/SHAをfreezeし、**残23を先に使う**。次の完全単位が入らない時だけ新40へ進む。最大作業量は従来手順どおり75較正＋60比較＋15最終＝150 logical calls（計画上限）。必要時だけ最大4個の新40枠を使え、余り/未使用枠を消費目標にしない。全既存poolのpending/unknown・prefix変更を毎unit確認し、unitのpool indexを保存して途中Aを再生成しない。各pool40上限と追加合算150を機械的に守る。
+- 新dataset **`skill-20261029-07`**を事前登録後にdev5/holdout5へ新seed封印。seal **`cb53561f18ae8dc6768d9c349854f73f9e7ef40d413befd109da648b369e26f7`**、factory **`d852f00024156f0effb471a67ae1e121b913234475b6547064bff12e21fda645`**。27/29/31/33/35穴の既存ラダー、原60/旧課題を新model試験へ再利用しない。
+- **現在jobは`bg_79`のみ**：funding残23/旧17の確認→新dataset作成→新backendで20正負native controlsを実行中。Native source/factoryは以後変更しない。SW53084だけ、10800を含む稼働SWの終了/再起動なし。まだepoch07の実モデル0。Codexは最大2。dashboard-builderは専用storeのmodel/effort不一致で未更新、代替モデルなし。
+- **次の正確なコマンド**：`bg_79`の自動完了結果を受領→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261029-07`→source/診断/prereg/全証拠を明示path commit/push→同CLI `freeze --experiment skill-20261029-07`→`run --experiment skill-20261029-07`。新manifestはv5でsource/予算順も固定。55%停止報告/60%停止を維持し、native無応答時は止めて報告。
+- live終了後の会計scriptも準備済み：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261029-07/publish-accounting.py`。旧17を再計上せず各poolの追加分と新live ledgerだけを突合する。旧epoch06会計を上書きしない。

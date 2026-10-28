@@ -98,3 +98,14 @@
 - 新bankの20正負native controlは全PASS。難しいdev1での強制誤仕様→R1 smokeは、SW両作成が正常閉鎖した後、元のrepair CAD90秒内のSDK検証でtimeoutした。**このsmokeはFAILのまま保存**し、R1の時間・判定・カードは変えない。liveでも同じ時間切れは従来どおり不合格になる。
 - 機構の不具合と固定時間枠の難しさを分けるため、追加のモデル0検証を実施した。同じ封印dev1のH2 blind正仕様MVPはPASS（114.953秒、実CAD1/capture4）。既存の独立public開発fixture G6で誤仕様拒否→元R1復旧もPASS（44.093秒、実CAD2/capture8）。G6を較正/比較/holdoutへ混ぜず、改善効果とは扱わない。
 - これで通常経路、独立したR1機構、hard R1の時間切れ保存をそれぞれ確認した。難しいR1の失敗を隠してsmoke成功と総称しない。dataset/候補文/採用/cache条件/最大call/time/数値許容差は事前登録から変更していない。最初のlive前にこの補足と全成功/失敗receiptもcommitし、共通sourceを固定する。
+
+## Epoch07事前登録：時間切れの分解・判定同等の高速化・文章候補r2
+
+- 夜間監督の次段階委任に基づく。epoch06の10不合格は保存物だけで分解し、再生成/再採点/旧結果変更をしない。平均model応答330.047秒、SW12.617秒。5件はprimary検証、5件はfresh再importで時間切れ。SW操作待ちより、長いmodel応答後に必要な中立検証が残時間へ収まらないことが原因だった。
+- 独立native controlのコピーをprofileしたところ、primary68.758秒＋fresh26.649秒のうち92.641秒が全体境界距離の証明だった。SW操作・モデル0で、OCCT cutが主要costと確認した。判定の証明後に上限をさらに細かくする処理だけを省く`decision_only`をM1側へ適用する。0.005 mm全体境界・native guard・双方向offset包含・FAIL witness・0.01 mm原判定・timerは一切変えない。既存M0 APIの既定は従来の細かい上限を維持する。fast時の証明上限値はより粗くても依然全境界の保守的な上限であり、判定用閾値以内を外向き丸めで証明してからだけ停止する。
+- 同じコピーのprimary45.470秒＋fresh18.363秒、全ての判定/編集/再import成功は同じだった（単一profile測定で全題の速度保証とはしない）。別の独立dev正負10件も旧保存判定と新判定が全一致。0.0049/0.0051 mmの境界付近を含むSDK回帰を追加し59/59 PASS。新しいdev/holdoutの正負20native controlsも、最初のlive前に実施する。高速化はA/B共通backendとして固定し、epoch06との差を文章r2の利得にしない。
+- `skill-20261029-07`は新seedのdev5/holdout5を先に封印する。既存27/29/31/33/35穴、開始角7/11/13/17/19°、半径30–40 mmの独立ラダーを使う。これは合成設計値。元60/旧dev/旧holdoutをmodel試験へ使い回さない。再較正で最初の2/5・3/5候補だけを選ぶ。全て床/天井ならdifficulty gate未成立で元版維持。
+- 候補は**`modeling-h2-r2.md`の1案だけ**。共通datum/単位計算を一度にまとめ、等間隔円周では初点と共通回転を再利用し、精度を保って直接compact JSONを出す1段落を使う。新Gold/出力で文章を編集しない。元版Aは従来の原文、Bだけr2。その他のskill/contract/schema、モデルSol/xhigh、policy、カード、採点、call/時間枠、cache差<=1pp・初回acceptedの測定法・最初の一致5組/最大10pair・+2合格/重大発明非増加/callとactive平均非悪化・fresh5全PASSを維持する。
+- 予算は**epoch06の既消費17を保持した残23を先に使い**、次の完全単位が収まらない時だけ新しい40枠へ進む。各poolは40以下、旧prefixのbytes/SHA/開始予約17をfreezeし、全既存poolのunknown/pending・prefix変更を確認してから進む。旧残高のresetや未確定回避はしない。各unitの保存先poolを固定し、A保存後の中断でもAを再生成しない。
+- 既存手順の最大は較正75＋比較60＋最終15＝**150 logical calls**（実測でなく最悪側計画）。原上限3/episodeと固定試行数を保つ。残23から完全単位を収めるため、必要時だけ最大4個の新40枠を順に開始できるようfreezeし、合算の追加予約は150を超えない。余りや未使用poolを消費目標にせず、条件成立/不成立の時点で終了する。新poolを使う前にも既存全poolのpendingを確認する。厳密overload免除/600秒同一再送は従来どおり。
+- SWは53084のPID monikerだけを使い、10800を含む稼働SWの終了/再起動をしない。55%使用量で停止報告、60%停止、欠損/古いsnapshotも停止。Codexは親＋逐次generatorの最大2。入力/Gold/seed/raw/CADはmachine-onlyのまま。新source/skill/全入力/host/実体/予算順をfreeze v5へ固定してからliveを開始する。

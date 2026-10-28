@@ -13,7 +13,7 @@ from tools.sw_m0_distance import boundary_distance
 def whole_distance(a,b,target=.005,refinements=8):
     import Part
     from tools import cad_verify_v4_s3_judges as j
-    result=boundary_distance(a,b,target,refinements)
+    result=boundary_distance(a,b,target,refinements,decision_only=True)
     if result['status']!='UNVERIFIED':return result
     if result.get('reason')!='no_whole_boundary_upper_certificate_at_target':return result
     if not a.Faces or len(a.Faces)!=len(b.Faces):return result

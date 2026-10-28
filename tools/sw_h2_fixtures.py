@@ -28,7 +28,7 @@ PUBLIC=ROOT/'reports/sw-h2'
 LEVELS=((27,7),(29,11),(31,13),(33,17),(35,19))
 RADIUS_MM=(30,40)
 CONTROL_SOURCES=('tools/sw_m0.py','tools/sw_m1_build.py','tools/sw_m1_judge.py',
-    'tools/sw_m1_distance.py','tools/sw_h0_cad.py','tools/sw_h0_worker.py','tools/sw_h0_verify.py',
+    'tools/sw_m0_distance.py','tools/sw_m1_distance.py','tools/sw_h0_cad.py','tools/sw_h0_worker.py','tools/sw_h0_verify.py',
     'tools/cad_spec.py','tools/cad_spec_probe.py','tools/cad_verify_probe.py','tools/cad_verify_v3_probe.py',
     'tools/sw_h2_fixtures.py','design/cad-harness-verify-v3/gold-schema.json',
     'design/cad-harness-mvp/build-schema.json','design/cad-harness-verify-v4/policy.json')

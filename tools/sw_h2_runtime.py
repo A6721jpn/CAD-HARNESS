@@ -13,9 +13,10 @@ from tools import cad_verify_v4_agent as agent,cad_verify_v4_freeze as freezing
 from tools import cad_verify_v4_ledger as ledger,sw_m0 as base
 from tools.cad_verify_guard import Stop
 from tools.sw_m1_inputs import private_path
+from tools.sw_h0_budget import Pool
 
 ROOT=base.ROOT
-CANDIDATE='modeling-h2-r1.md'
+CANDIDATE='modeling-h2-r2.md'
 GATE='''if not preview and (gold["provenance"]["authority"] != "human" or gold["provenance"]["confirmed"] is not True):
     raise ValueError("eval_human_gold_required")'''
 REPLACEMENT='''if not preview:
@@ -317,6 +318,26 @@ def continuation_prefix(experiment,entries,bound,new_manifest):
         neutral_timeout_certificate=proof,bound_input_files=bindings)
 
 
+def funding_plan(experiment):
+    """Preserve epoch06's charged prefix; spend its 23 before fresh <=40 pools."""
+    if experiment!='skill-20261029-07':raise Stop('H2_epoch07_authorization_required')
+    name='h2-skill-20261029-06-epoch-pool-01'
+    scope='harness2-solidworks-H2-skill-20261029-06-epoch-01'
+    root=private_path(runtime.PRIVATE/name)
+    if not (root/'calls.jsonl').is_file():raise Stop('H2_carry_pool_missing')
+    with Pool(root,scope=scope) as pool:
+        if pool.used!=17 or pool.remaining!=23 or pool.summary()['pending_or_unknown_calls']:
+            raise Stop('H2_carry_pool_balance_changed')
+        prefix=pool.path.read_bytes()
+    pools=[dict(name=name,scope=scope,starting_reserved=17,prefix_bytes=len(prefix),prefix_sha256=ledger.sha(prefix))]
+    for index in range(1,5):
+        name='h2-'+experiment+'-epoch-pool-%02d'%index
+        if (runtime.PRIVATE/name/'calls.jsonl').exists():raise Stop('H2_new_pool_already_used')
+        pools.append(dict(name=name,scope='harness2-solidworks-H2-'+experiment+'-epoch-%02d'%index,starting_reserved=0))
+    return dict(pools=pools,initial_remaining=23,pool_cap=40,maximum_logical_calls=150,
+        new_pool_rule='only_when_the_next_complete_unit_cannot_fit_existing_settled_pools')
+
+
 def prepare(experiment,*,smoke=False,continuation=False):
     out,entries,bound=context(experiment)
     policy=freezing._policy(ROOT,ROOT/'design/cad-harness-verify-v4/policy.json')
@@ -335,7 +356,7 @@ def prepare(experiment,*,smoke=False,continuation=False):
     work=private_path(out/'generator-cwd');work.mkdir(exist_ok=True)
     prefix='continuation' if continuation else 'preflight' if smoke else 'experiment'
     path=out/(prefix+'-manifest.json')
-    manifest=dict(schema='harness2.solidworks.skill.freeze.v4',experiment=experiment,prepared_at=ledger.utc(),
+    manifest=dict(schema='harness2.solidworks.skill.freeze.v5',experiment=experiment,prepared_at=ledger.utc(),
         policy_sha256=policy,files=files,input_files=bound,generator=generator,host=host,solidworks=solidworks,
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')},
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),generator_config_sha256=ledger.sha(canonical(runtime.MODEL_CONFIG)),
@@ -345,18 +366,19 @@ def prepare(experiment,*,smoke=False,continuation=False):
         transport_adaptation=TRANSPORT_ADAPTATION,
         development_ids=[e['case'] for e in entries if e['role']=='development'],
         holdout_ids=[e['case'] for e in entries if e['role']=='holdout'],
+        funding=funding_plan(experiment),
         protocol=dict(calibration_per_case=5,baseline_pass_counts=[2,3],matched_pairs=5,max_pairs=10,
             cache_basis='initial_accepted_model_call',cache_max_difference_percentage_points=1,
             cache_fraction='cache_read_tokens/(input_uncached_tokens+cache_read_tokens+cache_write_tokens)',
-            required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,epoch_call_cap=40,max_calls_per_episode=3),
+            required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,epoch_call_cap=150,max_calls_per_episode=3),
         authorization='UNIT_MOCK_NO_LIVE_AUTHORIZATION' if smoke else
-            'USER 2026-10-29 02:45 JST: epoch06 total40 Codex calls; PID53084 only; stop at55 percent')
+            'USER overnight delegation: epoch07 carry remaining23 then new40 only as needed; unchanged gates; PID53084 only; stop55')
     if continuation:
         resume=continuation_prefix(experiment,entries,bound,manifest)
         manifest['resume']=resume;manifest['input_files'].update(resume['bound_input_files'])
     ledger.write_json(path,manifest)
     digest=ledger.file_sha(path);ledger.write_json(out/(prefix+'-SHA256.json'),{'manifest_sha256':digest})
-    public={k:manifest[k] for k in ('schema','experiment','prepared_at','policy_sha256','skill_sha256','fixture_admission','transport_adaptation','protocol','development_ids','holdout_ids','solidworks','evidence_mode')}
+    public={k:manifest[k] for k in ('schema','experiment','prepared_at','policy_sha256','skill_sha256','fixture_admission','transport_adaptation','protocol','funding','development_ids','holdout_ids','solidworks','evidence_mode')}
     public.update(manifest_sha256=digest,source_sha256=files,generator={k:generator[k] for k in ('model','thinking','version','sha256')},live_model_calls=0)
     if continuation:public['resume']={k:manifest['resume'][k] for k in ('source_manifest_sha256','safe_timeout_label')}
     if continuation:public['resume']['prefix_labels']=list(manifest['resume']['prefix'])
@@ -370,7 +392,7 @@ def load(experiment,*,continuation=False):
     path=out/(prefix+'-manifest.json');manifest=ledger.read_json(path)
     if ledger.file_sha(path)!=ledger.read_json(out/(prefix+'-SHA256.json'))['manifest_sha256']:raise Stop('H2_experiment_manifest_changed')
     expected_bound=bound|((manifest.get('resume') or {}).get('bound_input_files') or {})
-    if (manifest['schema']!='harness2.solidworks.skill.freeze.v4' or manifest['experiment']!=experiment
+    if (manifest['schema']!='harness2.solidworks.skill.freeze.v5' or manifest['experiment']!=experiment
             or manifest['input_files']!=expected_bound or manifest['skill_sha256']!={a:ledger.sha(b) for a,b in bundles().items()}
             or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING
             or continuation!=bool(manifest.get('resume'))):raise Stop('H2_experiment_binding')

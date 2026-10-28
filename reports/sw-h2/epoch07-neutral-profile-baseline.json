@@ -1,0 +1,210 @@
+{
+  "scope": "independent_native_control_copies_only",
+  "mode": "baseline",
+  "live_model_calls": 0,
+  "SW_operations": 0,
+  "primary_exit": 0,
+  "fresh_exit": 0,
+  "geometry": "PASS",
+  "whole_boundary": "PASS",
+  "native_edit": "PASS_ONE_PARAMETER_CHANGE_REBUILD_RESTORE",
+  "fresh_verified": true,
+  "primary_seconds": 68.7579456998501,
+  "fresh_seconds": 26.649489199975505,
+  "distance_source_sha256": "b0e1f23b42cc4dd07c06f944522b377d2eba3bafba08a9fb6f4b0380f21d65e5",
+  "hot_functions": [
+    {
+      "file": "sw_m1_distance.py",
+      "function": "whole_distance",
+      "primitive_calls": 3,
+      "calls": 3,
+      "own_s": 0.0013936,
+      "cumulative_s": 92.6723731
+    },
+    {
+      "file": "sw_m0_distance.py",
+      "function": "boundary_distance",
+      "primitive_calls": 3,
+      "calls": 3,
+      "own_s": 0.0459475,
+      "cumulative_s": 92.64108610000001
+    },
+    {
+      "file": "sw_m0_distance.py",
+      "function": "contained",
+      "primitive_calls": 12,
+      "calls": 12,
+      "own_s": 0.014131900000000001,
+      "cumulative_s": 91.4167573
+    },
+    {
+      "file": "~",
+      "function": "<method 'cut' of 'Part.Shape' objects>",
+      "primitive_calls": 76,
+      "calls": 76,
+      "own_s": 85.9430928,
+      "cumulative_s": 85.9430928
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "judge",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_s": 0.0107109,
+      "cumulative_s": 69.5287259
+    },
+    {
+      "file": "sw_h0_verify.py",
+      "function": "verify",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_s": 0.0001049,
+      "cumulative_s": 26.660415500000003
+    },
+    {
+      "file": "~",
+      "function": "<method 'makeOffsetShape' of 'Part.Shape' objects>",
+      "primitive_calls": 39,
+      "calls": 39,
+      "own_s": 4.8522463,
+      "cumulative_s": 4.8522463
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "original_geometry",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.0009759,
+      "cumulative_s": 1.9562306
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "measure_shape",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.051983100000000004,
+      "cumulative_s": 1.9552213
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "hole_checks",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.2592941,
+      "cumulative_s": 1.4433658
+    },
+    {
+      "file": "~",
+      "function": "<built-in method builtins.all>",
+      "primitive_calls": 25927,
+      "calls": 29536,
+      "own_s": 0.0054719,
+      "cumulative_s": 1.2356596
+    },
+    {
+      "file": "~",
+      "function": "<method 'distToShape' of 'Part.Shape' objects>",
+      "primitive_calls": 636,
+      "calls": 636,
+      "own_s": 1.0827796,
+      "cumulative_s": 1.0827796
+    },
+    {
+      "file": "~",
+      "function": "<method 'isInside' of 'Part.Shape' objects>",
+      "primitive_calls": 548,
+      "calls": 548,
+      "own_s": 0.9113535,
+      "cumulative_s": 0.9113535
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "<genexpr>",
+      "primitive_calls": 648,
+      "calls": 648,
+      "own_s": 0.0051887,
+      "cumulative_s": 0.9036005
+    },
+    {
+      "file": "<frozen importlib._bootstrap>",
+      "function": "_find_and_load",
+      "primitive_calls": 4,
+      "calls": 9,
+      "own_s": 0.0001033,
+      "cumulative_s": 0.7758813
+    },
+    {
+      "file": "<frozen importlib._bootstrap>",
+      "function": "_find_and_load_unlocked",
+      "primitive_calls": 4,
+      "calls": 9,
+      "own_s": 4.46e-05,
+      "cumulative_s": 0.7756711000000001
+    },
+    {
+      "file": "<frozen importlib._bootstrap>",
+      "function": "_call_with_frames_removed",
+      "primitive_calls": 9,
+      "calls": 24,
+      "own_s": 2.39e-05,
+      "cumulative_s": 0.771966
+    },
+    {
+      "file": "<frozen importlib._bootstrap>",
+      "function": "_load_unlocked",
+      "primitive_calls": 4,
+      "calls": 9,
+      "own_s": 4.33e-05,
+      "cumulative_s": 0.7700450000000001
+    },
+    {
+      "file": "<frozen importlib._bootstrap>",
+      "function": "module_from_spec",
+      "primitive_calls": 4,
+      "calls": 9,
+      "own_s": 2.71e-05,
+      "cumulative_s": 0.7412921
+    },
+    {
+      "file": "<frozen importlib._bootstrap_external>",
+      "function": "create_module",
+      "primitive_calls": 2,
+      "calls": 3,
+      "own_s": 1.3300000000000001e-05,
+      "cumulative_s": 0.7411679000000001
+    },
+    {
+      "file": "~",
+      "function": "<built-in method _imp.create_dynamic>",
+      "primitive_calls": 2,
+      "calls": 3,
+      "own_s": 0.5638771,
+      "cumulative_s": 0.7411512
+    },
+    {
+      "file": "~",
+      "function": "<method 'isValid' of 'Part.Shape' objects>",
+      "primitive_calls": 88,
+      "calls": 88,
+      "own_s": 0.6652102000000001,
+      "cumulative_s": 0.6652102000000001
+    },
+    {
+      "file": "~",
+      "function": "<method 'common' of 'Part.Shape' objects>",
+      "primitive_calls": 18,
+      "calls": 18,
+      "own_s": 0.6212695,
+      "cumulative_s": 0.6212695
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "independent_reference",
+      "primitive_calls": 2,
+      "calls": 2,
+      "own_s": 0.0021154,
+      "cumulative_s": 0.3090064
+    }
+  ],
+  "process_seconds": 96.83582039992325
+}

@@ -198,13 +198,15 @@ class DurableSchedule(unittest.TestCase):
         self.experiment.pub=self.root/'public';self.experiment.pub.mkdir()
         self.experiment.identity='test-commitment';self.experiment.native_uncertain=False
         self.experiment.shared=dict(development_ids=['H2D1'],holdout_ids=['H2H1'],solidworks={},generator=dict(model='unit',thinking='unit'))
+        self.experiment.shared['funding']=dict(maximum_logical_calls=40,pools=[
+            dict(name='h2-unit-epoch-pool-01',scope='harness2-solidworks-H2-unit-epoch-01',starting_reserved=0)])
         self.identity_patch=patch.object(native,'solidworks_identity',return_value={});self.identity_patch.start();self.addCleanup(self.identity_patch.stop)
 
     def test_insufficient_pair_budget_stops_without_spending_or_opening_another_pool(self):
         exp=self.experiment;old=runtime.PRIVATE/exp.pool_name()
         with Pool(old,scope=exp.pool_scope()) as pool:
             for i in range(35):pool.reserve(str(i));pool.settle(str(i))
-        with self.assertRaisesRegex(Stop,'H2_epoch_40_call_cap'):
+        with self.assertRaisesRegex(Stop,'H2_authorized_call_cap'):
             exp.unit('pair-01','comparison',h2.plan_trials('comparison','H2D1',1))
         self.assertFalse((exp.out/'unit-pair-01.json').exists())
         self.assertEqual(list(exp.pub.iterdir()),[])
@@ -257,7 +259,7 @@ class DurableSchedule(unittest.TestCase):
     def test_budget_across_calibration_and_pairs_ends_inconclusive_before_half_pair(self):
         exp=self.experiment;self.calls_per_trial=2;exp.trial=self.fake_trial
         result=exp.run()
-        self.assertEqual(result['reason'],'epoch_call_budget_exhausted')
+        self.assertEqual(result['reason'],'authorized_call_budget_exhausted')
         self.assertFalse(result['adopted']);self.assertEqual(result['final_holdout_n'],0)
         self.assertEqual(result['pair_count'],7);self.assertEqual(result['total_reserved_model_calls'],38)
         self.assertFalse((exp.out/'unit-pair-08.json').exists())
@@ -270,8 +272,56 @@ class DurableSchedule(unittest.TestCase):
         with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
             for i in range(26):pool.reserve(str(i));pool.settle(str(i))
         final=h2.plan_trials('final',['H2H'+str(i) for i in range(1,6)])
-        with self.assertRaisesRegex(Stop,'H2_epoch_40_call_cap'):exp.unit('final','final',final)
+        with self.assertRaisesRegex(Stop,'H2_authorized_call_cap'):exp.unit('final','final',final)
         self.assertEqual(list(exp.pub.iterdir()),[])
+
+    def carried_funding(self,used=17):
+        exp=self.experiment
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
+            for i in range(used):pool.reserve('prior-'+str(i));pool.settle('prior-'+str(i))
+            prefix=pool.path.read_bytes()
+        exp.shared['funding']['pools'][0].update(starting_reserved=used,prefix_bytes=len(prefix),prefix_sha256=ledger.sha(prefix))
+        exp.shared['funding']['pools'].append(dict(name='fallback-pool',scope='new40',starting_reserved=0))
+        exp.shared['funding']['maximum_logical_calls']=150
+        return prefix
+
+    def test_carry_is_spent_first_and_fallback_preserves_old_reservations(self):
+        exp=self.experiment;prefix=self.carried_funding();exp.trial=self.fake_trial
+        exp.unit('pair-01','comparison',h2.plan_trials('comparison','H2D1',1))
+        self.assertFalse((runtime.PRIVATE/exp.pool_name(2)).exists())
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
+            self.assertEqual(pool.used,19)
+            for i in range(17):pool.reserve('current-'+str(i));pool.settle('current-'+str(i))
+        exp.unit('pair-02','comparison',h2.plan_trials('comparison','H2D1',2))
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
+            self.assertEqual(pool.used,36);self.assertEqual(pool.path.read_bytes()[:len(prefix)],prefix)
+        with Pool(runtime.PRIVATE/exp.pool_name(2),scope=exp.pool_scope(2)) as pool:self.assertEqual(pool.used,2)
+
+    def test_unsettled_fallback_cannot_be_bypassed_by_available_carry(self):
+        exp=self.experiment;self.carried_funding()
+        with Pool(runtime.PRIVATE/exp.pool_name(2),scope=exp.pool_scope(2)) as pool:pool.reserve('unknown')
+        with self.assertRaisesRegex(Stop,'H2_unsettled_pool_call'):
+            exp.unit('pair-01','comparison',h2.plan_trials('comparison','H2D1',1))
+        self.assertEqual(list(exp.pub.iterdir()),[])
+
+    def test_changed_carried_prefix_stops_before_any_new_call(self):
+        exp=self.experiment;self.carried_funding()
+        path=runtime.PRIVATE/exp.pool_name()/'calls.jsonl';raw=path.read_bytes();path.write_bytes(raw.replace(b'prior-0',b'prior-X',1))
+        with self.assertRaisesRegex(Stop,'H2_carry_prefix_changed'):
+            exp.unit('pair-01','comparison',h2.plan_trials('comparison','H2D1',1))
+        self.assertFalse((runtime.PRIVATE/exp.pool_name(2)).exists())
+
+    def test_interrupted_fallback_pair_resumes_its_own_pool_without_regenerating_A(self):
+        exp=self.experiment;self.carried_funding(35);plan=h2.plan_trials('comparison','H2D1',1)
+        def interrupted(trial,*args):
+            if trial['variant']=='B':raise OSError('simulated-interruption')
+            return self.fake_trial(trial,*args)
+        exp.trial=interrupted
+        with self.assertRaises(OSError):exp.unit('pair-01','comparison',plan)
+        a=runtime.PRIVATE/'h2-unit-P01A/trial-result.json';before=ledger.file_sha(a)
+        exp.trial=self.fake_trial;exp.unit('pair-01','comparison',plan)
+        self.assertEqual(ledger.file_sha(a),before)
+        with Pool(runtime.PRIVATE/exp.pool_name(2),scope=exp.pool_scope(2)) as pool:self.assertEqual(pool.used,2)
     def test_certified_old_failed_score_is_retained_and_cannot_be_promoted(self):
         exp=self.experiment;trial=dict(label='CH2D1R1',case='H2D1',variant='A')
         with Pool(runtime.PRIVATE/'resume-test-pool',scope='resume-unit') as pool:

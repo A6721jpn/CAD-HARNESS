@@ -16,6 +16,7 @@ from tools import sw_h2_runtime as native,sw_h2_fixtures as fixtures,sw_h0_runti
 from tools import sw_h0_cad as cad,sw_m0 as base,cad_verify_v4_ledger as ledger,cad_spec
 from tools.sw_h0_budget import Pool,BudgetJournal
 from tools.cad_verify_guard import Stop,quota_snapshot
+from tools.sw_m1_inputs import private_path
 
 QUOTA_STOPS=frozenset(('quota_soft_stop','quota_hard_stop','quota_snapshot_missing_or_invalid',
     'quota_snapshot_invalid','quota_snapshot_invalid_time','quota_snapshot_future','quota_snapshot_stale'))
@@ -100,8 +101,24 @@ class Experiment:
                 raise Stop('H2_saved_trial_stopped')
         return result
 
-    def pool_name(self):return 'h2-'+self.name+'-epoch-pool-01'
-    def pool_scope(self):return 'harness2-solidworks-H2-'+self.name+'-epoch-01'
+    def pool_name(self,index=1):return self.shared['funding']['pools'][index-1]['name']
+    def pool_scope(self,index=1):return self.shared['funding']['pools'][index-1]['scope']
+
+    def _funding_used(self):
+        used=0
+        for item in self.shared['funding']['pools']:
+            root=private_path(runtime.PRIVATE/item['name']);path=root/'calls.jsonl'
+            if item.get('prefix_bytes'):
+                if not path.exists() or ledger.sha(path.read_bytes()[:item['prefix_bytes']])!=item['prefix_sha256']:
+                    raise Stop('H2_carry_prefix_changed')
+            if not path.exists():
+                if item['starting_reserved']:raise Stop('H2_carry_pool_missing')
+                continue
+            with Pool(root,scope=item['scope']) as pool:
+                if pool.summary()['pending_or_unknown_calls']:raise Stop('H2_unsettled_pool_call')
+                if pool.used<item['starting_reserved']:raise Stop('H2_carry_balance_reduced')
+                used+=pool.used-item['starting_reserved']
+        return used
 
     @contextmanager
     def unit_pool(self,key,phase,trials,completed):
@@ -110,24 +127,34 @@ class Experiment:
             yield None;return
         needed=3*len(pending)
         unit_path=self.out/('unit-'+key+'.json')
-        identity=dict(phase=phase,trials=trials,experiment_manifest_sha256=self.identity,pool_scope=self.pool_scope())
+        identity=dict(phase=phase,trials=trials,experiment_manifest_sha256=self.identity)
+        if self._funding_used()+needed>self.shared['funding']['maximum_logical_calls']:raise Stop('H2_authorized_call_cap')
         if unit_path.exists():
             plan=ledger.read_json(unit_path)
             if any(plan[k]!=v for k,v in identity.items()):raise Stop('H2_unit_plan_changed')
-        elif completed:raise Stop('H2_results_without_unit_plan')
-        with Pool(runtime.PRIVATE/self.pool_name(),scope=self.pool_scope()) as pool:
-            if pool.summary()['pending_or_unknown_calls']:raise Stop('H2_unsettled_pool_call')
-            if pool.remaining<needed:raise Stop('H2_epoch_40_call_cap')
-            if not unit_path.exists():
-                ledger.write_json(unit_path,dict(**identity,reserved_worst_case=needed,planned_at=ledger.utc()))
-            yield pool
+            index=plan['pool_index']
+            if type(index) is not int or not 1<=index<=len(self.shared['funding']['pools']):raise Stop('H2_unit_pool_identity')
+            if plan['pool_scope']!=self.pool_scope(index):raise Stop('H2_unit_pool_identity')
+            with Pool(runtime.PRIVATE/self.pool_name(index),scope=self.pool_scope(index)) as pool:
+                if pool.remaining<needed:raise Stop('H2_planned_unit_budget_lost')
+                yield pool
+            return
+        if completed:raise Stop('H2_results_without_unit_plan')
+        for index in range(1,len(self.shared['funding']['pools'])+1):
+            with Pool(runtime.PRIVATE/self.pool_name(index),scope=self.pool_scope(index)) as pool:
+                if pool.remaining<needed:continue
+                ledger.write_json(unit_path,dict(**identity,pool_index=index,pool_scope=pool.scope,
+                    reserved_worst_case=needed,planned_at=ledger.utc()))
+                yield pool
+                return
+        raise Stop('H2_authorized_call_cap')
 
     def trial(self,trial,pool,phase):
         self.check_quota()
         entry=self.by_case[trial['case']]
         if entry['role']!=('holdout' if phase=='final' else 'development'):raise Stop('H2_role_scope')
         out,manifest,entry=native.trial_manifest(self.name,self.shared,entry,trial['label'],trial['variant'],
-            self.pool_name(),self.pool_scope())
+            pool.root.name,pool.scope)
         try:
             with BudgetJournal(out/'ledger.jsonl',manifest['run'],'H2_'+phase,pool=pool) as journal:
                 guard=runtime.Guard(manifest,pool,journal);guard.before_run(entry['max_calls'])
@@ -192,8 +219,8 @@ class Experiment:
             adopted=all(r['passed'] is True for r in final)
             return self.finish('adopt_candidate' if adopted else 'fresh_holdout_failed',calibration,pairs,decision,final)
         except Stop as exc:
-            if str(exc)!='H2_epoch_40_call_cap':raise
-            return self.finish('epoch_call_budget_exhausted',calibration,pairs,decision,[])
+            if str(exc)!='H2_authorized_call_cap':raise
+            return self.finish('authorized_call_budget_exhausted',calibration,pairs,decision,[])
 
     def finish(self,reason,calibration,pairs,decision,final):
         trials=[ledger.read_json(p) for p in self.pub.glob('*.json') if p.name.startswith(('CH2D','P0','P10','FH2H'))]

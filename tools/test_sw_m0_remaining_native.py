@@ -41,6 +41,18 @@ class BoundaryRegressions(unittest.TestCase):
         self.assertEqual(result['status'],'FAIL',result)
         self.assertGreater(result['lower_mm'],1)
 
+    def test_decision_only_preserves_inside_and_outside_distance_threshold(self):
+        a=Part.makeBox(4,4,4)
+        for shift,expected in ((.001,'PASS'),(.0049,'PASS'),(.0051,'FAIL')):
+            b=a.copy();b.translate(App.Vector(shift,0,0))
+            for fast in (False,True):
+                with self.subTest(shift=shift,decision_only=fast):
+                    result=boundary_distance(a,b,.005,decision_only=fast)
+                    self.assertEqual(result['status'],expected,result)
+                    if expected=='PASS':
+                        self.assertGreaterEqual(result['upper_mm'],shift)
+                        self.assertLessEqual(result['upper_mm'],.005)
+
 
 if __name__=='__main__':
     unittest.main()

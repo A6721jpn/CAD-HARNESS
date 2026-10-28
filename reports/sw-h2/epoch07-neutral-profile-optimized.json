@@ -1,0 +1,210 @@
+{
+  "scope": "independent_native_control_copies_only",
+  "mode": "optimized",
+  "live_model_calls": 0,
+  "SW_operations": 0,
+  "primary_exit": 0,
+  "fresh_exit": 0,
+  "geometry": "PASS",
+  "whole_boundary": "PASS",
+  "native_edit": "PASS_ONE_PARAMETER_CHANGE_REBUILD_RESTORE",
+  "fresh_verified": true,
+  "primary_seconds": 45.47047910001129,
+  "fresh_seconds": 18.363124700030312,
+  "distance_source_sha256": "5b4f2c9bc2d263af12ecf073c7063a2ed3850858e26212ff47679117a6e80bb9",
+  "hot_functions": [
+    {
+      "file": "sw_m1_distance.py",
+      "function": "whole_distance",
+      "primitive_calls": 3,
+      "calls": 3,
+      "own_s": 0.0008958000000000001,
+      "cumulative_s": 61.0592071
+    },
+    {
+      "file": "sw_m0_distance.py",
+      "function": "boundary_distance",
+      "primitive_calls": 3,
+      "calls": 3,
+      "own_s": 0.0417323,
+      "cumulative_s": 61.039411
+    },
+    {
+      "file": "sw_m0_distance.py",
+      "function": "contained",
+      "primitive_calls": 6,
+      "calls": 6,
+      "own_s": 0.0084103,
+      "cumulative_s": 59.793295900000004
+    },
+    {
+      "file": "~",
+      "function": "<method 'cut' of 'Part.Shape' objects>",
+      "primitive_calls": 70,
+      "calls": 70,
+      "own_s": 56.638753300000005,
+      "cumulative_s": 56.638753300000005
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "judge",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_s": 0.0104703,
+      "cumulative_s": 45.5689377
+    },
+    {
+      "file": "sw_h0_verify.py",
+      "function": "verify",
+      "primitive_calls": 1,
+      "calls": 1,
+      "own_s": 0.0001485,
+      "cumulative_s": 18.3756889
+    },
+    {
+      "file": "~",
+      "function": "<method 'makeOffsetShape' of 'Part.Shape' objects>",
+      "primitive_calls": 24,
+      "calls": 24,
+      "own_s": 2.9005246000000002,
+      "cumulative_s": 2.9005246000000002
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "original_geometry",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.0010028,
+      "cumulative_s": 1.9768125
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "measure_shape",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.053885600000000006,
+      "cumulative_s": 1.9757744000000002
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "hole_checks",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.2648051,
+      "cumulative_s": 1.4563549
+    },
+    {
+      "file": "~",
+      "function": "<built-in method builtins.all>",
+      "primitive_calls": 25924,
+      "calls": 29533,
+      "own_s": 0.0054800000000000005,
+      "cumulative_s": 1.2474698000000002
+    },
+    {
+      "file": "~",
+      "function": "<method 'distToShape' of 'Part.Shape' objects>",
+      "primitive_calls": 636,
+      "calls": 636,
+      "own_s": 1.1116324,
+      "cumulative_s": 1.1116324
+    },
+    {
+      "file": "~",
+      "function": "<method 'isInside' of 'Part.Shape' objects>",
+      "primitive_calls": 548,
+      "calls": 548,
+      "own_s": 0.9143223,
+      "cumulative_s": 0.9143223
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "<genexpr>",
+      "primitive_calls": 648,
+      "calls": 648,
+      "own_s": 0.0064026000000000005,
+      "cumulative_s": 0.9076556
+    },
+    {
+      "file": "~",
+      "function": "<method 'isValid' of 'Part.Shape' objects>",
+      "primitive_calls": 64,
+      "calls": 64,
+      "own_s": 0.5338015,
+      "cumulative_s": 0.5338015
+    },
+    {
+      "file": "~",
+      "function": "<method 'common' of 'Part.Shape' objects>",
+      "primitive_calls": 12,
+      "calls": 12,
+      "own_s": 0.383506,
+      "cumulative_s": 0.383506
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "load_shape",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.0186395,
+      "cumulative_s": 0.29323520000000003
+    },
+    {
+      "file": "sw_m1_judge.py",
+      "function": "independent_reference",
+      "primitive_calls": 2,
+      "calls": 2,
+      "own_s": 0.0016506000000000001,
+      "cumulative_s": 0.2926374
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "<listcomp>",
+      "primitive_calls": 216,
+      "calls": 216,
+      "own_s": 0.2095651,
+      "cumulative_s": 0.26887320000000003
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "pocket_checks",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.000164,
+      "cumulative_s": 0.2687773
+    },
+    {
+      "file": "cad_verify_probe.py",
+      "function": "<genexpr>",
+      "primitive_calls": 52,
+      "calls": 52,
+      "own_s": 9.16e-05,
+      "cumulative_s": 0.2299863
+    },
+    {
+      "file": "cad_spec_probe.py",
+      "function": "covers_segment",
+      "primitive_calls": 48,
+      "calls": 48,
+      "own_s": 0.049735900000000006,
+      "cumulative_s": 0.2298947
+    },
+    {
+      "file": "~",
+      "function": "<method 'read' of 'Part.Shape' objects>",
+      "primitive_calls": 4,
+      "calls": 4,
+      "own_s": 0.1958599,
+      "cumulative_s": 0.1958599
+    },
+    {
+      "file": "cad_spec_probe.py",
+      "function": "<listcomp>",
+      "primitive_calls": 48,
+      "calls": 48,
+      "own_s": 0.126112,
+      "cumulative_s": 0.16981300000000002
+    }
+  ],
+  "process_seconds": 64.2661076001823
+}

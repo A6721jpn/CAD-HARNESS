@@ -1,0 +1,12 @@
+{
+  "scope": "Threshold-equivalent verification acceleration and preserved23-before-new40 funding",
+  "runner": "FreeCAD 1.1.4 pinned Python SDK",
+  "tests": 59,
+  "result": "PASS",
+  "skipped": 0,
+  "seconds": 4.963,
+  "live_model_calls": 0,
+  "solidworks_calls": 0,
+  "command": "import sys,unittest;sys.path[:0]=['C:/dev/CAD-HARNESS-sw','C:/dev/CAD/.tools/freecad/FreeCAD_1.1.4-Windows-x86_64-py311/bin'];suite=unittest.defaultTestLoader.discover('tools',pattern='test_sw*.py');result=unittest.TextTestRunner(verbosity=2).run(suite);raise SystemExit(not result.wasSuccessful())",
+  "stderr_sha256": "698fc6262418f428bbf0906aa506e5d307afb39af6deefa76c8868229d4e3b82"
+}
