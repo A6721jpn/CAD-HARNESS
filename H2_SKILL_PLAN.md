@@ -83,3 +83,12 @@
 - runtime v4では、正確にこのSDK timeoutコード・native正常終了/文書閉鎖・同一SWの文書0を全確認したときだけ、SW非応答と区別したepisode時間切れとして失敗を記録し次へ進める。例外・raw・費用は保持する。SW非応答、COM unknown、quota、source変更、他のchecker errorはこの例外に含めず従来どおり停止する。
 - `freeze-continuation`は旧v3 manifest/20結果/各入力packet/ledger/完全stream/native completionをhash固定する。旧結果を再生成・再採点・上書きしない。contiguousな完全5回ブロックと、最後だけの閉鎖済みSDK timeout失敗を要求する。parser/skill/model/policy/schema/判定/native/binary/host/時間・call枠は旧版と一致必須、変更可なのはH2の継続/停止分類コード・そのtests・この計画だけ。
 - 継続manifestとclaimは新規ファイル。元manifest/結果/予約は保持し、`run-continuation`は検証済みの20件を読むだけで、最初の有効3/5課題から元のA/B順序へ進む。比較と最終holdoutは新しい各40枠scopeを使い、既存calibrationの残枠を移さない。B・採用条件・cache条件は不変。
+
+## Epoch06事前登録：一段上の難度・epoch全体40回・PID固定
+
+- 10/29 02:45 JSTの委任により`skill-20261029-06`を実施する。epoch05は一致5組A4/5・B5/5で利得+1、候補不採用。元skillを維持した結果を変更せず、別seedのdev5/holdout5を新しく封印する。既存の候補Bの1段落だけを再使用し、新Goldや応答を見て文章を作り直さない。
+- 新しい合成ラダーの穴数/開始角は(27,7°),(29,11°),(31,13°),(33,17°),(35,19°)、半径30–40 mm。これは事前の難度設定であり、実測やユーザー実物の寸法ではない。既存rect_prism/64穴以内、同じ単位混在・relative datum・blind pocket/through holesとする。最悪35穴・半径30・直径5でも隣接穴が非重複となる。stock/直径/半径の規則・0.01 mmのカード・0.005 mm全体判定・policy/採点・episode時間/call上限は据え置く。元Aの30–70%は目標であり保証しない。元A5回で最初の2/5・3/5を選ぶ条件を維持する。
+- **今回の40回はepoch全体の合計上限**とする。本節は今回に限って従来のphase別40回rolloverに優先する。較正/比較/最終は同じdurable poolを共有し、予約前fsync・pending保持・既存の厳密overload免除だけを維持する。pool追加/旧epoch枠の流用はしない。次の完全単位（較正5回=最大15、pair=最大6、最終5回=最大15）の予算を確保できなければ、開始せずbudget不足のinconclusiveで元版を維持する。片側だけ/holdoutの一部だけを開始しない。
+- 交互A1B1…、初回accepted usageのcache差<=1pp、最初の一致5組/最大10組、+2合格/重大発明非増加/call・active平均非悪化、fresh5全PASSの採用条件は一切変えない。予算/55%使用量停止を理由に条件を緩めない。採用gateと残予算の両方を通る場合だけ、次の事前登録済みの一手として封印holdoutへ進む。新epoch/新候補の事後追加をこの40枠へ混ぜない。
+- SWは**PID53084のROT monikerだけ**へbindし、PIDを最初に検証する。既定ProgIDへのfallbackは廃止し、PID10800へbind/文書操作/設定/終了を行わない。稼働SWはいずれも終了/再起動しない。これは両arm共通の所有権対策であり、モデルの介入や機能/採点変更として扱わない。
+- 新20正負native controls・pin/合計capのfocused regression・0モデル実SW/FreeCAD R1 smokeを通してからsource/skill/入力/host/2実体/実行手順を固定する。55%で止めて報告、60%停止、欠損/古いquotaも停止。Codexは親＋逐次generatorの最大2。封印値/seed/生応答/CADは機械参照だけ、LLM/Gitへ出さない。

@@ -100,8 +100,8 @@ class Experiment:
                 raise Stop('H2_saved_trial_stopped')
         return result
 
-    def pool_name(self,phase,index):return 'h2-'+self.name+'-'+phase+'-pool-%02d'%index
-    def pool_scope(self,phase,index):return 'harness2-solidworks-H2-'+self.name+'-'+phase+'-%02d'%index
+    def pool_name(self):return 'h2-'+self.name+'-epoch-pool-01'
+    def pool_scope(self):return 'harness2-solidworks-H2-'+self.name+'-epoch-01'
 
     @contextmanager
     def unit_pool(self,key,phase,trials,completed):
@@ -110,34 +110,24 @@ class Experiment:
             yield None;return
         needed=3*len(pending)
         unit_path=self.out/('unit-'+key+'.json')
-        identity=dict(phase=phase,trials=trials,experiment_manifest_sha256=self.identity)
+        identity=dict(phase=phase,trials=trials,experiment_manifest_sha256=self.identity,pool_scope=self.pool_scope())
         if unit_path.exists():
             plan=ledger.read_json(unit_path)
             if any(plan[k]!=v for k,v in identity.items()):raise Stop('H2_unit_plan_changed')
-            index=plan['pool_index']
-            if type(index) is not int or index<1:raise Stop('H2_unit_pool_identity')
-            with Pool(runtime.PRIVATE/self.pool_name(phase,index),scope=self.pool_scope(phase,index)) as pool:
-                if pool.remaining<needed:raise Stop('H2_planned_unit_budget_lost')
-                if pool.summary()['pending_or_unknown_calls']:raise Stop('H2_unsettled_pool_call')
-                yield pool,index
-            return
-        if completed:raise Stop('H2_results_without_unit_plan')
-        index=1
-        while True:
-            with Pool(runtime.PRIVATE/self.pool_name(phase,index),scope=self.pool_scope(phase,index)) as pool:
-                if pool.summary()['pending_or_unknown_calls']:raise Stop('H2_unsettled_pool_call')
-                if pool.remaining>=needed:
-                    ledger.write_json(unit_path,dict(**identity,pool_index=index,reserved_worst_case=needed,planned_at=ledger.utc()))
-                    yield pool,index
-                    return
-            index+=1
+        elif completed:raise Stop('H2_results_without_unit_plan')
+        with Pool(runtime.PRIVATE/self.pool_name(),scope=self.pool_scope()) as pool:
+            if pool.summary()['pending_or_unknown_calls']:raise Stop('H2_unsettled_pool_call')
+            if pool.remaining<needed:raise Stop('H2_epoch_40_call_cap')
+            if not unit_path.exists():
+                ledger.write_json(unit_path,dict(**identity,reserved_worst_case=needed,planned_at=ledger.utc()))
+            yield pool
 
-    def trial(self,trial,pool,index,phase):
+    def trial(self,trial,pool,phase):
         self.check_quota()
         entry=self.by_case[trial['case']]
         if entry['role']!=('holdout' if phase=='final' else 'development'):raise Stop('H2_role_scope')
         out,manifest,entry=native.trial_manifest(self.name,self.shared,entry,trial['label'],trial['variant'],
-            self.pool_name(phase,index),self.pool_scope(phase,index))
+            self.pool_name(),self.pool_scope())
         try:
             with BudgetJournal(out/'ledger.jsonl',manifest['run'],'H2_'+phase,pool=pool) as journal:
                 guard=runtime.Guard(manifest,pool,journal);guard.before_run(entry['max_calls'])
@@ -176,32 +166,34 @@ class Experiment:
         with self.unit_pool(key,phase,trials,completed) as handle:
             if handle is not None and native.solidworks_identity()!=self.shared['solidworks']:raise Stop('H2_SW_runtime_changed')
             if handle is not None:
-                pool,index=handle
-                for trial in pending_trials(trials,completed):completed[trial['label']]=self.trial(trial,pool,index,phase)
+                for trial in pending_trials(trials,completed):completed[trial['label']]=self.trial(trial,handle,phase)
         return [completed[t['label']] for t in trials]
 
     def run(self):
-        selected=None;calibration=[]
-        for case in self.shared['development_ids']:
-            rows=self.unit('calibration-'+case,'calibration',plan_trials('calibration',case))
-            passed=sum(r['passed'] is True for r in rows);calibration.append(dict(case=case,passed=passed,n=5))
-            if passed in (2,3):selected=case;break
-        ledger.write_json(self.out/'calibration.json',dict(rows=calibration,selected=selected)) if not (self.out/'calibration.json').exists() else None
-        if selected is None:return self.finish('baseline_difficulty_gate_not_met',calibration,[],None,[])
-        matched=[];pairs=[]
-        for index in range(1,11):
-            a,b=self.unit('pair-%02d'%index,'comparison',plan_trials('comparison',selected,index))
-            if a['initial_payload_sha256'] is None or a['initial_payload_sha256']!=b['initial_payload_sha256']:
-                raise Stop('H2_pair_request_or_runtime_changed')
-            eligible,reason=cache_match(a,b)
-            pair=dict(index=index,A=a,B=b,cache_matched=eligible,excluded_reason=reason);pairs.append(pair)
-            if eligible:matched.append(pair)
-            if len(matched)==5:break
-        decision=compare(matched)
-        if not decision['eligible']:return self.finish(decision['reason'],calibration,pairs,decision,[])
-        final=self.unit('final','final',plan_trials('final',self.shared['holdout_ids']))
-        adopted=all(r['passed'] is True for r in final)
-        return self.finish('adopt_candidate' if adopted else 'fresh_holdout_failed',calibration,pairs,decision,final)
+        selected=None;calibration=[];matched=[];pairs=[];decision=None
+        try:
+            for case in self.shared['development_ids']:
+                rows=self.unit('calibration-'+case,'calibration',plan_trials('calibration',case))
+                passed=sum(r['passed'] is True for r in rows);calibration.append(dict(case=case,passed=passed,n=5))
+                if passed in (2,3):selected=case;break
+            ledger.write_json(self.out/'calibration.json',dict(rows=calibration,selected=selected)) if not (self.out/'calibration.json').exists() else None
+            if selected is None:return self.finish('baseline_difficulty_gate_not_met',calibration,[],None,[])
+            for index in range(1,11):
+                a,b=self.unit('pair-%02d'%index,'comparison',plan_trials('comparison',selected,index))
+                if a['initial_payload_sha256'] is None or a['initial_payload_sha256']!=b['initial_payload_sha256']:
+                    raise Stop('H2_pair_request_or_runtime_changed')
+                eligible,reason=cache_match(a,b)
+                pair=dict(index=index,A=a,B=b,cache_matched=eligible,excluded_reason=reason);pairs.append(pair)
+                if eligible:matched.append(pair)
+                if len(matched)==5:break
+            decision=compare(matched)
+            if not decision['eligible']:return self.finish(decision['reason'],calibration,pairs,decision,[])
+            final=self.unit('final','final',plan_trials('final',self.shared['holdout_ids']))
+            adopted=all(r['passed'] is True for r in final)
+            return self.finish('adopt_candidate' if adopted else 'fresh_holdout_failed',calibration,pairs,decision,final)
+        except Stop as exc:
+            if str(exc)!='H2_epoch_40_call_cap':raise
+            return self.finish('epoch_call_budget_exhausted',calibration,pairs,decision,[])
 
     def finish(self,reason,calibration,pairs,decision,final):
         trials=[ledger.read_json(p) for p in self.pub.glob('*.json') if p.name.startswith(('CH2D','P0','P10','FH2H'))]

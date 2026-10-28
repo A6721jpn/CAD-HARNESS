@@ -212,10 +212,11 @@ def solidworks_identity():
     # Existing ROT object only. Limited process query reads its executable path;
     # no ownership, ACL, user preferences, document or lifecycle changes.
     code=r'''
-import ctypes,ctypes.wintypes as W,hashlib,json,pythoncom
-from win32com.client.dynamic import Dispatch
+import ctypes,ctypes.wintypes as W,hashlib,json,pythoncom,sys
+sys.path.insert(0,sys.argv[1])
+from tools.sw_m0 import attach_existing
 pythoncom.CoInitialize()
-app=Dispatch(pythoncom.GetActiveObject('SldWorks.Application').QueryInterface(pythoncom.IID_IDispatch))
+app=attach_existing()
 data={}
 for key,name in (('pid','GetProcessID'),('revision','RevisionNumber'),('documents','GetDocumentCount')):
  app._FlagAsMethod(name);data[key]=getattr(app,name)()
@@ -233,7 +234,7 @@ try:
 finally:k.CloseHandle(handle)
 print(json.dumps(data))
 '''
-    result=subprocess.run([str(base.SW_PYTHON),'-B','-c',code],stdin=subprocess.DEVNULL,
+    result=subprocess.run([str(base.SW_PYTHON),'-B','-c',code,str(ROOT)],stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=20,check=True)
     identity=json.loads(result.stdout)
     if identity['documents']!=0:raise Stop('STOP_SW_existing_documents_no_document_touched')
@@ -347,9 +348,9 @@ def prepare(experiment,*,smoke=False,continuation=False):
         protocol=dict(calibration_per_case=5,baseline_pass_counts=[2,3],matched_pairs=5,max_pairs=10,
             cache_basis='initial_accepted_model_call',cache_max_difference_percentage_points=1,
             cache_fraction='cache_read_tokens/(input_uncached_tokens+cache_read_tokens+cache_write_tokens)',
-            required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,max_calls_per_episode=3),
+            required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,epoch_call_cap=40,max_calls_per_episode=3),
         authorization='UNIT_MOCK_NO_LIVE_AUTHORIZATION' if smoke else
-            'USER 2026-10-28 01:18/01:30: autonomous skill-text-only independent Codex batches <=50; conservatively cap40')
+            'USER 2026-10-29 02:45 JST: epoch06 total40 Codex calls; PID53084 only; stop at55 percent')
     if continuation:
         resume=continuation_prefix(experiment,entries,bound,manifest)
         manifest['resume']=resume;manifest['input_files'].update(resume['bound_input_files'])

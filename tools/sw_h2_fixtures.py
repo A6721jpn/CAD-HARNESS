@@ -25,7 +25,7 @@ from tools.cad_verify_guard import Stop
 PUBLIC=ROOT/'reports/sw-h2'
 # More work inside the existing 64-hole family after repeated baseline ceilings.
 # Synthetic design settings, not changed original cards or tolerances.
-LEVELS=((19,7),(21,11),(23,13),(25,17),(29,19))
+LEVELS=((27,7),(29,11),(31,13),(33,17),(35,19))
 RADIUS_MM=(30,40)
 CONTROL_SOURCES=('tools/sw_m0.py','tools/sw_m1_build.py','tools/sw_m1_judge.py',
     'tools/sw_m1_distance.py','tools/sw_h0_cad.py','tools/sw_h0_worker.py','tools/sw_h0_verify.py',

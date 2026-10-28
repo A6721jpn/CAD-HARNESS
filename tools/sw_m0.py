@@ -19,6 +19,7 @@ OUTPUTS = ROOT / 'reports' / 'sw-m0'
 FIXTURES = ROOT / 'design' / 'harness2-sw-m0'
 SW_PYTHON = Path('C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe')
 FC_BIN = Path('C:/dev/CAD/.tools/freecad/FreeCAD_1.1.4-Windows-x86_64-py311/bin')
+SW_PID = 53084
 
 
 def utc():
@@ -63,15 +64,31 @@ def read_spec(path):
     return s
 
 
+def attach_existing():
+    """Bind only the authorized PID moniker; never fall back to the default ROT."""
+    import pythoncom
+    from win32com.client.dynamic import Dispatch
+    rot = pythoncom.GetRunningObjectTable()
+    context = pythoncom.CreateBindCtx(0)
+    for moniker in rot.EnumRunning():
+        if moniker.GetDisplayName(context, None) != 'SolidWorks_PID_' + str(SW_PID):
+            continue
+        app = Dispatch(rot.GetObject(moniker).QueryInterface(pythoncom.IID_IDispatch))
+        app._FlagAsMethod('GetProcessID')
+        if app.GetProcessID() != SW_PID:
+            raise RuntimeError('STOP_authorized_SW_PID_mismatch')
+        return app
+    raise RuntimeError('STOP_authorized_SW_PID_not_registered')
+
+
 class Session:
     """All methods address handles created here, never an arbitrary ActiveDoc."""
     def __init__(self, out):
         import pythoncom
-        from win32com.client.dynamic import Dispatch
+        # COM apartment initialization precedes the PID-specific ROT bind.
         self.pc, self.out = pythoncom, out
         pythoncom.CoInitialize()
-        # GetActiveObject cannot start a new SolidWorks instance.
-        self.app = Dispatch(pythoncom.GetActiveObject('SldWorks.Application').QueryInterface(pythoncom.IID_IDispatch))
+        self.app = attach_existing()
         self.owned = None
         self.title = None
         self.uncertain = False

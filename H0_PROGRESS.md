@@ -326,3 +326,16 @@
 - 完了後のread-only COM確認：**SW PID53084、34.4.0、ready=true、文書0**。実行中SWの終了/再起動なし。`final-sw-readiness.json`に記録。非応答jobやcontrollerの残件なし。回復実装は49テストPASS＋実SW/実SDKの0モデルtimeout smoke PASSで確認済み。
 - H0の18/18完了後、独立dev/封印holdout・skill段落だけの交互比較・固定採用gateまで終了。元60題/Goldを改善に再利用せず、封印値/seed/raw/STEPはmachine-only・Git外のまま。今回の候補の利得不足は不採用の結果として保持し、新候補や追加実験を事後に開始しない。
 - 最後の操作：新しい公開manifest/20比較row/cache判定/最終result/会計/SW確認と本メモをh2/swへ明示path commit/pushし、短く報告して待機する。未解決の実行blockerなし。今後の候補改訂は別の事前登録とfresh sealed cohortが必要。
+
+## Handoff：Epoch06準備（10/29 02:45 JST承認）
+
+- 前epochは`4816bd1`でh2/swへcommit/push済み。今回もこのworktree/branchだけを使用し、元skill維持の既存判定は変更しない。
+- **PID10800をsolは起動していない**（前回終了以降はアプリ起動操作なし）。起動元は未確認。両SWを終了/再起動せず、10800へbind/文書操作/設定変更しない。ROTの登録名だけを列挙して`SolidWorks_PID_53084`の存在を確認した。新しい共通attachはこのmonikerだけをbindし、最初にPID一致を確認する。既定ProgIDへはfallbackしない。
+- `H2_SKILL_PLAN.md`にepoch06を事前登録。穴27/29/31/33/35の別seed dev5/holdout5、同じ候補段落B、既存の全採用/cache/判定/時間条件。公開設計値は新しい合成fixtureの難度で、実測値やユーザー実物の寸法ではない。元Aの3–7割合格を狙うが保証せず、最初の2/5・3/5を選ぶ条件を維持。
+- **今回の40回は較正＋比較＋最終の合計**。1つのdurable poolを全phaseで共有する実装に切替え、rolloverは廃止。次の完全な較正5回/比較pair/最終5回が元max3 callずつで収まらなければinconclusiveで元版維持。途中片側だけ開始/旧枠流用/unknown回避はしない。CLI/native判定・カード0.01/全体0.005・policy/採点は変更なし。
+- 新dataset `skill-20261029-06`のseal SHA **`8c05668996f945c45222e0b7d7bc23eee3c10de0282d200165fae39d0fc12a2d`**、factory **`e285cc3f80ef5234c4af57a5f9bdf77b6f2f585615ca453f942105a402044a97`**を公開hashで確認。Gold/seed/spec/STEPはmachine-onlyのprivate保存。原60は再利用しない。
+- **現在`bg_71`**：PID専用のread-only identity確認→新dataset封印→20正負native controlsを実行中。SW workerは自作文書だけ、実モデル呼出し0。controls中のnative source/factoryは以後変更しない。
+- SDK全`test_sw*.py`は**54/54 PASS、skip0、3.735秒**。PID10800をbindしない/53084不在でfallbackしない/PID不一致で文書を照会しない、phase合算38回時に次pairを開始しない、最終5件予算の不足で部分開始しないことを確認した。既存のquota55/60・unknown保持・41回目拒否・privacy・numeric testsも通過。公開`regression-tests.json`。
+- quota実測：**6%**、snapshot `omp-usage-1793209975076-7d=6`、observed 2026-10-28T17:52:55.076Z、guard decision allow。後の各modelでも新しいsnapshotを検証する。Codexは親＋逐次generatorの最大2。
+- dashboard-builderは今回も専用storeから「指定されたモデル・effortではありません。」で読取/保存不能。モデル変更や代替公開はせず、dashboard未変更。このメモに事実を記録して本作業を継続する。
+- 次の一手：`bg_71`の自動結果を受領→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py smoke --experiment skill-20261029-06`（モデル0・実SW/FreeCAD R1）→source/evidenceを明示path commit/push→同CLI `freeze --experiment skill-20261029-06`→`run --experiment skill-20261029-06`。control/smoke成功前にliveへ進まない。結果/会計は新epochの公開ファイルへ保存し、旧epoch結果は触らない。

@@ -200,28 +200,32 @@ class DurableSchedule(unittest.TestCase):
         self.experiment.shared=dict(development_ids=['H2D1'],holdout_ids=['H2H1'],solidworks={},generator=dict(model='unit',thinking='unit'))
         self.identity_patch=patch.object(native,'solidworks_identity',return_value={});self.identity_patch.start();self.addCleanup(self.identity_patch.stop)
 
-    def test_insufficient_pair_budget_rolls_to_new_pool_without_spending_old(self):
-        exp=self.experiment;phase='comparison';old=runtime.PRIVATE/exp.pool_name(phase,1)
-        with Pool(old,scope=exp.pool_scope(phase,1)) as pool:
+    def test_insufficient_pair_budget_stops_without_spending_or_opening_another_pool(self):
+        exp=self.experiment;old=runtime.PRIVATE/exp.pool_name()
+        with Pool(old,scope=exp.pool_scope()) as pool:
             for i in range(35):pool.reserve(str(i));pool.settle(str(i))
-        with exp.unit_pool('pair-01',phase,h2.plan_trials(phase,'H2D1',1),{}) as (pool,index):
-            self.assertEqual(index,2);self.assertEqual(pool.remaining,40)
-        with Pool(old,scope=exp.pool_scope(phase,1)) as pool:self.assertEqual(pool.used,35)
+        with self.assertRaisesRegex(Stop,'H2_epoch_40_call_cap'):
+            exp.unit('pair-01','comparison',h2.plan_trials('comparison','H2D1',1))
+        self.assertFalse((exp.out/'unit-pair-01.json').exists())
+        self.assertEqual(list(exp.pub.iterdir()),[])
+        with Pool(old,scope=exp.pool_scope()) as pool:self.assertEqual(pool.used,35)
 
     def test_pending_call_is_not_silently_reset_by_another_pool(self):
         exp=self.experiment;phase='comparison'
-        with Pool(runtime.PRIVATE/exp.pool_name(phase,1),scope=exp.pool_scope(phase,1)) as pool:pool.reserve('uncertain')
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:pool.reserve('uncertain')
         with self.assertRaises(Stop):
             with exp.unit_pool('pair-01',phase,h2.plan_trials(phase,'H2D1',1),{}):pass
-        self.assertFalse((runtime.PRIVATE/exp.pool_name(phase,2)).exists())
+        self.assertFalse((exp.out/'unit-pair-01.json').exists())
 
-    def fake_trial(self,trial,pool,index,phase):
+    def fake_trial(self,trial,pool,phase):
         label=trial['label'];out=runtime.PRIVATE/('h2-unit-'+label);out.mkdir()
         with BudgetJournal(out/'ledger.jsonl',label,phase,pool=pool) as journal:
-            fields=dict(operation='model',episode_id=label,attempt_id='one')
-            journal.append('attempt_started',**fields)
-            journal.append('attempt_finished',**fields,charged=True)
-        row=dict(sample(passed=label.endswith(('R1','R2'))),label=label,case=trial['case'],variant=trial['variant'],phase=phase,
+            for index in range(getattr(self,'calls_per_trial',1)):
+                fields=dict(operation='model',episode_id=label,attempt_id=str(index+1))
+                journal.append('attempt_started',**fields)
+                journal.append('attempt_finished',**fields,charged=True)
+        values=sample(passed=label.endswith(('R1','R2')));values['model_calls']=getattr(self,'calls_per_trial',1)
+        row=dict(values,label=label,case=trial['case'],variant=trial['variant'],phase=phase,
             experiment_manifest_sha256=self.experiment.identity,ledger_sha256=ledger.file_sha(out/'ledger.jsonl'),stopped=False,
             completed=True,wall_s=2.,cad_attempts=1,repair_calls=0,initial_usage=None,
             initial_payload_sha256=ledger.sha(trial['case'].encode()))
@@ -239,7 +243,7 @@ class DurableSchedule(unittest.TestCase):
         exp.trial=self.fake_trial
         rows=exp.unit('pair-01','comparison',plan)
         self.assertEqual([r['variant'] for r in rows],['A','B']);self.assertEqual(ledger.file_sha(a),before)
-        with Pool(runtime.PRIVATE/exp.pool_name('comparison',1),scope=exp.pool_scope('comparison',1)) as pool:
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
             self.assertEqual(pool.used,2)
 
     def test_cache_exclusions_still_charge_every_attempt_and_do_not_adopt(self):
@@ -249,10 +253,29 @@ class DurableSchedule(unittest.TestCase):
         self.assertEqual(result['total_reserved_model_calls'],25)
         self.assertFalse(result['adopted']);self.assertEqual(result['final_holdout_n'],0)
         self.assertEqual(result['reason'],'five_matched_pairs_required')
+
+    def test_budget_across_calibration_and_pairs_ends_inconclusive_before_half_pair(self):
+        exp=self.experiment;self.calls_per_trial=2;exp.trial=self.fake_trial
+        result=exp.run()
+        self.assertEqual(result['reason'],'epoch_call_budget_exhausted')
+        self.assertFalse(result['adopted']);self.assertEqual(result['final_holdout_n'],0)
+        self.assertEqual(result['pair_count'],7);self.assertEqual(result['total_reserved_model_calls'],38)
+        self.assertFalse((exp.out/'unit-pair-08.json').exists())
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
+            self.assertEqual(pool.used,38);self.assertEqual(pool.remaining,2)
+            self.assertEqual(pool.summary()['pending_or_unknown_calls'],0)
+
+    def test_full_final_block_is_not_started_on_a_partial_budget(self):
+        exp=self.experiment;exp.trial=self.fake_trial
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
+            for i in range(26):pool.reserve(str(i));pool.settle(str(i))
+        final=h2.plan_trials('final',['H2H'+str(i) for i in range(1,6)])
+        with self.assertRaisesRegex(Stop,'H2_epoch_40_call_cap'):exp.unit('final','final',final)
+        self.assertEqual(list(exp.pub.iterdir()),[])
     def test_certified_old_failed_score_is_retained_and_cannot_be_promoted(self):
         exp=self.experiment;trial=dict(label='CH2D1R1',case='H2D1',variant='A')
         with Pool(runtime.PRIVATE/'resume-test-pool',scope='resume-unit') as pool:
-            row=self.fake_trial(trial,pool,1,'calibration')
+            row=self.fake_trial(trial,pool,'calibration')
         path=runtime.PRIVATE/'h2-unit-CH2D1R1/trial-result.json'
         row.update(passed=False,stopped=True);path.write_text(json.dumps(row))
         old=exp.identity;exp.identity='new-manifest'
