@@ -1,0 +1,48 @@
+{
+  "schema": "sw-h2-rendering-recovery-checkpoint-v1",
+  "new_live_model_calls": 0,
+  "new_comparison_run_created": false,
+  "new_freeze": false,
+  "view_redraw_control": {
+    "run": "h2-recovery-20261030-visible-03",
+    "status": "PASS",
+    "seconds": 23.95840450003743,
+    "native_seconds": 22.956805600086227,
+    "final_documents": 0,
+    "COM_state_unknown": false,
+    "original_native_unchanged": true,
+    "negative_rejected": true,
+    "editability_ok": true,
+    "linear_mm": 0.01,
+    "additional_linear_mm": 0.005,
+    "source_sha256": "0d0f338eae36206e8993547e5114b48e1b1f045b4fe3affc23b4b513fac185aa"
+  },
+  "running_session": {
+    "pid": 61940,
+    "revision": "34.4.0",
+    "OS_responding": true,
+    "user_control": true,
+    "visible": true,
+    "documents": 0,
+    "NewDocument_failure": "owned_document_not_created_or_opened",
+    "NewPart_created": false,
+    "NewPart_final_documents": 0,
+    "COM_state_unknown": false,
+    "CommandInProgress": false,
+    "official_template_resolver_matches_existing_default": true
+  },
+  "persistent_view_server": {
+    "pid": 71496,
+    "start_UTC": "2026-10-29T17:52:00.1056165Z",
+    "OS_responding": true,
+    "reported_fault_UTC": "2026-10-29T20:03:57.3305486Z",
+    "exception": "c0000005",
+    "health_not_proven_by_OS_responding": true
+  },
+  "unreached_sketch_display_variant_rolled_back": true,
+  "no_shared_preferences_drivers_ACL_or_permissions_changed": true,
+  "no_running_SW_or_view_server_stopped": true,
+  "raw_helper_logs_and_private_payloads_not_exported": true,
+  "regression_receipt": "rendering-regressions.json",
+  "blocker": "Running SW cannot create a part; existing rule forbids quitting/restarting it; user recovery or a specific exception is required before native controls and any live model call."
+}

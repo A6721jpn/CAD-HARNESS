@@ -1,0 +1,12 @@
+{"event": "call_started", "at": "2026-10-29T22:07:51.486886+00:00", "method": "RevisionNumber"}
+{"event": "call_finished", "at": "2026-10-29T22:07:51.487886+00:00", "method": "RevisionNumber", "seconds": 0.0005379999056458473}
+{"event": "call_started", "at": "2026-10-29T22:07:51.487886+00:00", "method": "GetProcessID"}
+{"event": "call_finished", "at": "2026-10-29T22:07:51.488886+00:00", "method": "GetProcessID", "seconds": 0.0007187000010162592}
+{"event": "call_started", "at": "2026-10-29T22:07:51.488886+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-29T22:07:51.489621+00:00", "method": "GetDocumentCount", "seconds": 0.000595899997279048}
+{"event": "call_started", "at": "2026-10-29T22:07:51.489621+00:00", "method": "GetUserPreferenceStringValue"}
+{"event": "call_finished", "at": "2026-10-29T22:07:51.490124+00:00", "method": "GetUserPreferenceStringValue", "seconds": 0.000403400044888258}
+{"event": "call_started", "at": "2026-10-29T22:07:51.490124+00:00", "method": "NewPart"}
+{"event": "call_finished", "at": "2026-10-29T22:07:51.571909+00:00", "method": "NewPart", "seconds": 0.08154870010912418}
+{"event": "call_started", "at": "2026-10-29T22:07:51.571909+00:00", "method": "GetDocumentCount"}
+{"event": "call_finished", "at": "2026-10-29T22:07:51.572504+00:00", "method": "GetDocumentCount", "seconds": 0.0012204998638480902}

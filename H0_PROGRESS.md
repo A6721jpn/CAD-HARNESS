@@ -445,3 +445,29 @@
 - **必要な判断：** 今回承認されたsource例外はPID接続と独立run登録に限る。描画環境（Software OpenGL等の起動/描画条件、必要なら自分の文書のrefresh制御）の無課金診断・復旧まで範囲を広げるか、ユーザー側でSW環境を復旧するか。共有設定/driverを無断で変更せず、native sourceをこっそり差し替えたまま凍結hashを流用しない。
 - **残件順序：** 判断後にnative環境を復旧→元のM0とH0の0モデル確認→新R2 bankの独立正負control→同候補r2でsmoke→必要なsourceをcommitして新freeze→条件不変の独立run→新runの実会計公開→commit/push。stable nativeの成功前にモデルを呼ばない。
 - **再開時の最初の正確なcommand：** `powershell -NoProfile -Command 'Get-Process -Name sldworks -ErrorAction SilentlyContinue | Select-Object Id,Responding,SessionId'`。ここで出たrunning instanceを終了しない。新しい明示承認と実PIDの確認後だけ `env CAD_HARNESS_SW_PID=<実PID> C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_m0.py --out C:/dev/CAD-HARNESS-sw/reports/sw-m0/<未使用の新run名>`。PID57504は既に終了しているため再利用しない。
+
+## Handoff：native描画診断まで承認拡張、無課金の対照確認中
+
+- 上記停止の後、ユーザーはASKの **「描画処理の無課金診断・最小修正まで許可」** を選択した。これにより起動条件と自分の文書の描画処理を切り分けられる。共有設定/driver/ACL/権限は引き続き変更しない。基準/cards/採点/候補/timeout不変、nativeの正負対照成功までモデル0。
+- 接続・会計source8ファイルと失敗証拠は **d3a6e2aをorigin/h2/swへpush済み**。63 PASSはそのsourceの証拠であり、この後の描画変更を検証済みとはまだ言わない。
+- 最初の診断変数は`Session.adopt`の **所有viewだけ `EnableGraphicsUpdate=False`→True**。viewの取得・所有権guard・readback・COM不明時停止は保ち、形状生成API/judge/source以外の環境は変えない。起動直後のViewServer未初期化と描画抑制の関係は仮説であって確定原因ではない。
+- この小変更は未commitの診断状態。次はrunning SWなしを再確認して公式shortcutを1回だけ起動し、新しい実PIDを明示して元のpublic M0を実行する。成功するまで恒久fix・新freeze・liveとして扱わない。失敗すれば証拠を残し、この仮説の変更は戻す。稼働中に無応答となった場合は終了・再起動せず停止する。
+- 最新の診断起動：SW稼働0から公式shortcut1回、launcher25228 / 2026-10-29T21:47:44.6973969Z。新SW **PID42916、Responding=true、Session1**。`bg_7`で元public M0を `h2-recovery-20261030-visible-03` へ実行中（所有viewのrefresh有効化だけが対照変数）。SW process handleのexit観測つき、モデル0。結果未着の間は重複してCADを起動しない。
+- `bg_7`結果：**元M0全体PASS、24.92秒、native22.957秒、最後の文書0、original_native_unchanged=true、COM_state_unknown=false、SW42916は稼働継続**。FreeCAD1.1.4/OCCT7.8.1、従来P1 0.01mm＋追加0.005mmの判定に到達し、正・負、再open、寸法edit/restoreを通過。`EnableGraphicsUpdate=True`はこのpublic対照では有効だった。
+- ただし続くH0 public G6 `h2-recovery-20261030-visible-04` (`bg_8`) は別経路で**FAIL、12.922秒、CAD完了0**。owned view有効化だけでは不十分。Builderのdirect database modeでCreateCornerRectangleに11.112秒、その次のAddToDB=FalseでRPC unavailable。SW42916の消失、worker0、lock排他readを確認し、`session.lock.stale-20261030-native-42916`へrename保全。モデル0。M0成功をH0成功として扱わない。
+- 追加診断は`sw_m1_build.Builder._direct_geometry`の **所有SketchManagerに限った中間表示制御**。AddToDB=Trueの後にDisplayWhenAdded=False、sketch退出時は元の値へ戻してからAddToDB=False。座標、geometry API/順序、入力・採点は変えず、COM error時は従来通りunknownとして追加callをしない。根拠：[公式DisplayWhenAdded](https://help.solidworks.com/2019/English/api/sldworksapi/SOLIDWORKS.Interop.sldworks~SOLIDWORKS.Interop.sldworks.ISketchManager~DisplayWhenAdded.html)はAddToDBとの併用と後の復元を要求している。これも未検証の診断変更であり、成功前に恒久fix/新freezeへ進まない。
+
+## Handoff：10/30 native新規文書作成不能・running SW終了禁止の境界
+
+- **本節が最新。active jobなし、新規モデル0、新freeze/比較runなし。** native正負20件と新lockは未達。追加診断の許可はあるが、**running SolidWorksの終了・再起動は禁止のまま**なので下記instanceをこちらから終了しない。
+- 5回目もSW不在時だけ公式shortcut起動（launcher19720、2026-10-29T21:56:31.0849603Z）。新 **SW PID61940 /34.4.0 /Session1 /OS Responding=true、UserControl=true、Visible=true、文書0**。M0で成功した42916はH0試行中に消失しており、restart/killはしていない。
+- `h2-recovery-20261030-paired-05` (`bg_9`) はRPC crashではなく **NewDocumentがNone**、`owned_document_not_created_or_opened`で失敗。COM_state_unknown=false/stop=false、2.117秒。Builderに到達していないので、DisplayWhenAdded診断を有効/無効と判定できない。SW61940は稼働継続。
+- 同じrunning instanceで元のpublic M0 `h2-recovery-20261030-paired-06` (`bg_10`) も0.132秒で同じNewDocument=None。さらに独立の既定部品作成`NewPart` probeでもNone、文書0、COM_state_unknown=false、0.123秒。これらはモデル0/比較scoreではなく、native環境の診断のみ。
+- read-onlyで **CommandInProgress=false、template存在20945bytes、公式GetDocumentTemplateが既定templateと一致、TEMP/TMP存在、C:空き97440329728bytes** を確認。mainwindowはenabledで通常の空画面、blocking dialogは見つからなかった。Orcaを起動して別agentまで再開することは避け、対象SW windowだけをPrintWindowでread-only captureした（他window/pilot/Goldなし）。画像は`reports/sw-m0/h2-recovery-20261030-newpart-probe/app-window-readonly.png`。APIのnullを隠したり、別instanceへfallbackしていない。
+- **ViewServerV6 PID71496** は2026-10-29T17:52:00.1056165Zから継続存在し、20:03のc0000005報告と同じPID。OS Responding=trueだがそれだけで内部正常とは証明できない。現在のWER reporterは0。新61940起動後の一致Application1000/1001は検索時0。helperのInit Errorは0/count0で、heartbeat failures:noneのログもあるが、これだけでlicense/内部modeler/rendererの根本原因を断定しない。rawhelper logやaccount情報をGitに入れない。
+- **変更として維持するのは`sw_m0.Session.adopt`の所有view refresh=Trueだけ。** これは元M0の正負・reopen・edit/restore成功を実測済み。`sw_m1_build.py`のDisplayWhenAdded診断は実行前に止まったので**恒久fixとして採用せず、親の元byte列へ戻した**（tool tag FD21、機械的hash一致true）。仮説は未検証のまま記録する。再開後に試すならAddToDB=True後に所有SketchManagerの中間表示を止め、exit前に元表示値を復元する0モデル対照から行い、成功するまでsource allowlistに追加しない。
+- この最終sourceでSDK回帰 **63/63 PASS、skip0、5.195秒、exit0**。`rendering-regressions.json`にsource hashと証拠を保存。stdout内のunit実験25/38等は合成scheduler検証であり実会計ではない。native判定成功と回帰成功を同じ意味に扱わない。
+- 親manifestに対する正規`funding_plan`のread-only再確認で、**実pool32使用済み/残8、旧epoch07の15開始、追加上限135を再確認**。pendingを許したsnapshotではない。旧14保存結果/旧seed/親manifest/候補/計画/基準/policy/cards/採点/timeout不変。新R2 bankは未作成、R1 quarantineを迂回して使用していない。
+- 安全な証拠まとめは `reports/sw-h2/skill-20261030-07r1/rendering-recovery-checkpoint.json`。このfolderの新証拠はhost診断であり、quarantineしたR1の比較再利用ではない。zero-cost各smokeのsummary、public M0の正負証拠、stale lockを保全。probe/通常失敗が正常に解放したlockは重ねて作らない。SW/Viewerのkill/quit、共有設定/driver/ACL/権限変更はいずれも0。
+- **必要な次の判断：** ユーザー側で現SWの部品作成を復旧するか、今回の空のtask-owned SWと関連Viewerに限って「終了・再起動禁止」の例外を明示するか。Viewerは共有部品であり、他の3DEXPERIENCE作業への影響を確認できなければ勝手に終了しない。
+- **次の正確なcommandはread-onlyのみ：** `powershell -NoProfile -Command 'Get-Process -Name sldworks,ViewServerV6 -ErrorAction SilentlyContinue | Select-Object Id,Responding,SessionId,StartTime'`。61940は現在running、71496も存在する。許可なしで新instanceを重ねたり、これらを終了しない。判断後は0モデルnative復旧→元M0/H0/独立正負→必要なrenderer修正だけ検証→source commit/new freeze→同条件R2→実会計→pushの順。成功gate前の課金禁止、55%ASK/60%停止は不変。

@@ -1,0 +1,44 @@
+{
+  "native": {
+    "status": "FAIL",
+    "stop": false,
+    "COM_state_unknown": false,
+    "pid": 61940,
+    "revision": "34.4.0",
+    "seconds": 2.1170272000599653,
+    "error_type": "RuntimeError"
+  },
+  "RPC_server_unavailable": false,
+  "error_code": null,
+  "last_events": [
+    {
+      "event": "call_started",
+      "method": "GetUserPreferenceStringValue"
+    },
+    {
+      "event": "call_finished",
+      "method": "GetUserPreferenceStringValue",
+      "seconds": 0.00034719984978437424
+    },
+    {
+      "event": "call_started",
+      "method": "NewDocument"
+    },
+    {
+      "event": "call_finished",
+      "method": "NewDocument",
+      "seconds": 0.454084400087595
+    }
+  ],
+  "failure_sites": [
+    {
+      "file": "sw_h0_worker.py",
+      "line": 50
+    },
+    {
+      "file": "sw_m0.py",
+      "line": 152
+    }
+  ],
+  "live_model_calls": 0
+}

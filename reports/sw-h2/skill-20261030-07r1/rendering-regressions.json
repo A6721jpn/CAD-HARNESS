@@ -1,0 +1,28 @@
+{
+  "schema": "sw-h2-rendering-regression-checkpoint-v1",
+  "status": "PASS",
+  "tests": 63,
+  "skipped": 0,
+  "seconds": 5.195,
+  "exit_code": 0,
+  "actual_interpreter": "C:\\dev\\CAD\\.tools\\freecad\\FreeCAD_1.1.4-Windows-x86_64-py311\\bin\\python.exe",
+  "CAD_SW_M0_NATIVE": "1",
+  "live_model_calls": 0,
+  "synthetic_unit_stdout_not_billing": true,
+  "source_sha256": {
+    "tools/sw_m0.py": "0d0f338eae36206e8993547e5114b48e1b1f045b4fe3affc23b4b513fac185aa",
+    "tools/sw_h0.py": "84f3d27569a57abbb4c905edcff4c0538217e67fe3567cceeea0e0f0297736de",
+    "tools/sw_h0_runtime.py": "aad4d82ce7d862a7d159d62093b37b4dc66d64fd389455520770e3744bb71d09",
+    "tools/sw_h2.py": "f241e0effbebb5fe4ca4356ee53b6f7201b342f01655631a654beaa82b61c52e",
+    "tools/sw_h2_runtime.py": "fbdcf09f09265d24f73d4ae050fe1a02150168528b7ff01c0042b696ecd76dc9",
+    "tools/test_sw_m0.py": "7e6c3456cb857d253906deaba069a5c5bc97ae73b66fa0ba3db9a5ff235c7419",
+    "tools/test_sw_h0.py": "a4675022752e6c8f91a2c827b0092e88aaf7ec1a36b886992957e2597566515e",
+    "tools/test_sw_h2.py": "17b2d42f41e61e3272ef5ad8287caf6d65649d1ba7adfd39d1428cf4d6823c55"
+  },
+  "builder_restored_to_parent": true,
+  "initial_remaining": 8,
+  "parent_logical_calls_used": 15,
+  "maximum_additional_calls": 135,
+  "old_pool_used": 32,
+  "pending_calls_admitted": false
+}

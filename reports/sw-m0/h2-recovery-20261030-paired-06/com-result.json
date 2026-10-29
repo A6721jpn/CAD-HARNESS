@@ -1,0 +1,14 @@
+{
+  "status": "FAIL",
+  "paid_model_calls": 0,
+  "at": "2026-10-29T22:04:33.469334+00:00",
+  "solidworks_revision": "34.4.0",
+  "solidworks_pid": 61940,
+  "initial_documents": 0,
+  "template": "C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2026\\templates\\部品.prtdot",
+  "stages": {},
+  "error_type": "RuntimeError",
+  "error": "owned_document_not_created_or_opened",
+  "COM_state_unknown": false,
+  "seconds": 0.13183510000817478
+}

@@ -153,19 +153,18 @@ class Session:
         self.owned = doc
         self.title = self.call(doc, 'GetTitle')
         self.guard()
-        # SP4.0 control: do not render intermediate sketches in our own view.
-        # No application preference or other user's document is changed.
+        # Keep this owned view's normal redraw path; shared preferences stay intact.
         try:
             view = doc.ActiveView
             if view is None:
                 raise RuntimeError('owned_model_view_missing')
-            view.EnableGraphicsUpdate = False
-            if bool(view.EnableGraphicsUpdate):
-                raise RuntimeError('owned_view_refresh_disable_unverified')
+            view.EnableGraphicsUpdate = True
+            if not bool(view.EnableGraphicsUpdate):
+                raise RuntimeError('owned_view_refresh_enable_unverified')
         except self.pc.com_error:
             self.uncertain = True
             raise
-        self.events.write(json.dumps({'event': 'owned_view_refresh_disabled', 'at': utc()}) + '\n')
+        self.events.write(json.dumps({'event': 'owned_view_refresh_enabled', 'at': utc()}) + '\n')
         return doc
 
     def close(self):
