@@ -1,5 +1,6 @@
 """Consumer-visible M0 admission/safety boundaries; actual COM proof is separate."""
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -33,6 +34,8 @@ class AdmissionTests(unittest.TestCase):
 
 class PinnedAttachment(unittest.TestCase):
     def setUp(self):
+        self.environment=patch.dict(os.environ,{'CAD_HARNESS_SW_PID':'53084'})
+        self.environment.start();self.addCleanup(self.environment.stop)
         self.other=Mock();self.other.GetDisplayName.return_value='SolidWorks_PID_10800'
         self.target=Mock();self.target.GetDisplayName.return_value='SolidWorks_PID_53084'
         self.rot=Mock();self.rot.EnumRunning.side_effect=lambda:iter((self.other,self.target))
@@ -56,6 +59,19 @@ class PinnedAttachment(unittest.TestCase):
         self.app.GetProcessID.return_value=10800
         with self.assertRaisesRegex(RuntimeError,'PID_mismatch'):sw_m0.attach_existing()
         self.app.GetDocumentCount.assert_not_called()
+
+    def test_explicit_new_pid_binds_only_its_registered_instance(self):
+        self.target.GetDisplayName.return_value='SolidWorks_PID_70316'
+        self.app.GetProcessID.return_value=70316
+        with patch.dict(os.environ,{'CAD_HARNESS_SW_PID':'70316'}):
+            self.assertIs(sw_m0.attach_existing(),self.app)
+        self.rot.GetObject.assert_called_once_with(self.target)
+
+    def test_invalid_explicit_pid_never_binds_an_application(self):
+        for value in ('','0','-1','nan','53084x','١','4294967296'):
+            with self.subTest(value=value),patch.dict(os.environ,{'CAD_HARNESS_SW_PID':value}):
+                with self.assertRaisesRegex(RuntimeError,'invalid_authorized_SW_PID'):sw_m0.attach_existing()
+        self.rot.GetObject.assert_not_called()
 
 
 if __name__=='__main__':

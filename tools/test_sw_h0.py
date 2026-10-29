@@ -6,6 +6,7 @@ import json
 import os
 import socket
 from datetime import datetime,timezone
+from unittest.mock import patch
 from tools import sw_h0_runtime as runtime,cad_verify_v4_ledger as ledger
 from tools.sw_h0_budget import Pool,BudgetJournal
 from tools.sw_h0_worker import admit
@@ -106,6 +107,9 @@ class H0SafetyTests(unittest.TestCase):
                             with self.assertRaises(Stop):guard.before_run(1)
                             self.assertEqual(guard.stop_reason,reason)
                         else:guard.before_run(1)
+                    self.assertEqual(pool.used,0)
+                    with patch.dict(os.environ,{'CAD_HARNESS_SW_PID':'70316'}):
+                        with self.assertRaisesRegex(Stop,'H0_SW_selection_environment_changed'):guard.before_run(1)
                     self.assertEqual(pool.used,0)
                     packet.write_text('{}')
                     with self.assertRaises(Stop):guard.check()

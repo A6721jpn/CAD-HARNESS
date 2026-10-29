@@ -93,6 +93,7 @@ def freeze(run,*,new_batch=False,sequences=None):
         generator=generator,host=host,quota_snapshot='C:/dev/v4-ops/quota.json',
         authorization='USER 2026-10-26 H0 development40; USER 2026-10-28 01:18/01:30 independent Codex batches <=50; each pool conservatively cap40',
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),
+        CAD_HARNESS_SW_PID=os.environ.get('CAD_HARNESS_SW_PID'),
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')})
     ledger.write_json(out/'manifest.json',manifest)
     ledger.write_json(out/'SHA256.json',dict(manifest_sha256=ledger.file_sha(out/'manifest.json')))
@@ -116,6 +117,8 @@ class Guard:
         try:
             if socket.gethostname()!=self.manifest['host']['hostname']:raise Stop('H0_host_changed')
             if os.environ.get('OMP_PROFILE')!=self.manifest['OMP_PROFILE']:raise Stop('H0_generator_environment_changed')
+            if os.environ.get('CAD_HARNESS_SW_PID')!=self.manifest.get('CAD_HARNESS_SW_PID'):
+                raise Stop('H0_SW_selection_environment_changed')
             maps=[{str(base.ROOT/k):v for k,v in self.manifest['files'].items()},
                 self.manifest['input_files'],self.manifest['runtime_files'],
                 {self.manifest['generator']['omp']:self.manifest['generator']['sha256']}]

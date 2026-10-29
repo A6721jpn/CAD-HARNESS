@@ -318,27 +318,51 @@ def continuation_prefix(experiment,entries,bound,new_manifest):
         neutral_timeout_certificate=proof,bound_input_files=bindings)
 
 
-def funding_plan(experiment):
-    """Preserve epoch06's charged prefix; spend its 23 before fresh <=40 pools."""
-    if experiment!='skill-20261029-07':raise Stop('H2_epoch07_authorization_required')
-    name='h2-skill-20261029-06-epoch-pool-01'
-    scope='harness2-solidworks-H2-skill-20261029-06-epoch-01'
-    root=private_path(runtime.PRIVATE/name)
-    if not (root/'calls.jsonl').is_file():raise Stop('H2_carry_pool_missing')
-    with Pool(root,scope=scope) as pool:
-        if pool.used!=17 or pool.remaining!=23 or pool.summary()['pending_or_unknown_calls']:
-            raise Stop('H2_carry_pool_balance_changed')
-        prefix=pool.path.read_bytes()
-    pools=[dict(name=name,scope=scope,starting_reserved=17,prefix_bytes=len(prefix),prefix_sha256=ledger.sha(prefix))]
+def funding_plan(experiment,*,recovery_from=None):
+    """Snapshot real remaining balances; never reset an interrupted run's debt."""
+    fixtures.folder(experiment)
+    if not recovery_from or recovery_from==experiment:raise Stop('H2_explicit_recovery_parent_required')
+    parent_root=fixtures.folder(recovery_from);parent_path=parent_root/'experiment-manifest.json'
+    parent=ledger.read_json(parent_path);parent_sha=ledger.file_sha(parent_path)
+    if (parent_sha!=ledger.read_json(parent_root/'experiment-SHA256.json')['manifest_sha256']
+            or parent['experiment']!=recovery_from or parent['evidence_mode']!='live'):
+        raise Stop('H2_recovery_parent_binding')
+    operational={'tools/sw_m0.py','tools/sw_h0.py','tools/sw_h0_runtime.py','tools/sw_h2.py','tools/sw_h2_runtime.py',
+        'tools/test_sw_m0.py','tools/test_sw_h0.py','tools/test_sw_h2.py'}
+    if any(ledger.file_sha(ROOT/name)!=digest for name,digest in parent['files'].items() if name not in operational):
+        raise Stop('H2_recovery_critical_source_changed')
+    if parent['skill_sha256']!={arm:ledger.sha(body) for arm,body in bundles().items()}:
+        raise Stop('H2_recovery_skill_changed')
+    if any(ledger.file_sha(path)!=digest for path,digest in parent['input_files'].items()):
+        raise Stop('H2_recovery_sealed_input_changed')
+    pools=[];initial_remaining=0;parent_used=0
+    for item in parent['funding']['pools']:
+        root=private_path(runtime.PRIVATE/item['name']);path=root/'calls.jsonl'
+        if not path.exists():
+            if item['starting_reserved'] or (root/'pool.lock').exists():raise Stop('H2_recovery_pool_missing_or_locked')
+            continue
+        with Pool(root,scope=item['scope']) as pool:
+            if pool.summary()['pending_or_unknown_calls']:raise Stop('H2_unsettled_pool_call')
+            if pool.used<item['starting_reserved']:raise Stop('H2_carry_balance_reduced')
+            prefix=path.read_bytes()
+            if item.get('prefix_bytes') and ledger.sha(prefix[:item['prefix_bytes']])!=item['prefix_sha256']:
+                raise Stop('H2_carry_prefix_changed')
+            parent_used+=pool.used-item['starting_reserved'];initial_remaining+=pool.remaining
+            pools.append(dict(name=item['name'],scope=item['scope'],starting_reserved=pool.used,
+                prefix_bytes=len(prefix),prefix_sha256=ledger.sha(prefix)))
+    remaining_limit=parent['funding']['maximum_logical_calls']-parent_used
+    if remaining_limit<=0:raise Stop('H2_authorized_call_cap')
     for index in range(1,5):
         name='h2-'+experiment+'-epoch-pool-%02d'%index
-        if (runtime.PRIVATE/name/'calls.jsonl').exists():raise Stop('H2_new_pool_already_used')
+        if (runtime.PRIVATE/name).exists():raise Stop('H2_new_pool_already_used')
         pools.append(dict(name=name,scope='harness2-solidworks-H2-'+experiment+'-epoch-%02d'%index,starting_reserved=0))
-    return dict(pools=pools,initial_remaining=23,pool_cap=40,maximum_logical_calls=150,
+    return dict(pools=pools,initial_remaining=initial_remaining,pool_cap=40,maximum_logical_calls=remaining_limit,
+        recovery_parent=recovery_from,recovery_parent_sha256=parent_sha,parent_logical_calls_used=parent_used,
+        preserved_protocol=copy.deepcopy(parent['protocol']),
         new_pool_rule='only_when_the_next_complete_unit_cannot_fit_existing_settled_pools')
 
 
-def prepare(experiment,*,smoke=False,continuation=False):
+def prepare(experiment,*,smoke=False,continuation=False,recovery_from=None):
     out,entries,bound=context(experiment)
     policy=freezing._policy(ROOT,ROOT/'design/cad-harness-verify-v4/policy.json')
     files=freezing.bindings(ROOT);files['H2_SKILL_PLAN.md']=ledger.file_sha(ROOT/'H2_SKILL_PLAN.md')
@@ -354,25 +378,23 @@ def prepare(experiment,*,smoke=False,continuation=False):
                 raise Stop('H2_native_control_SW_instance_changed')
     _,adaptation=adapted_tree(Path(agent.v3.__file__).read_text(encoding='utf-8'))
     work=private_path(out/'generator-cwd');work.mkdir(exist_ok=True)
+    funding=funding_plan(experiment,recovery_from=recovery_from);protocol=funding.pop('preserved_protocol')
     prefix='continuation' if continuation else 'preflight' if smoke else 'experiment'
     path=out/(prefix+'-manifest.json')
-    manifest=dict(schema='harness2.solidworks.skill.freeze.v5',experiment=experiment,prepared_at=ledger.utc(),
+    manifest=dict(schema='harness2.solidworks.skill.freeze.v6',experiment=experiment,prepared_at=ledger.utc(),
         policy_sha256=policy,files=files,input_files=bound,generator=generator,host=host,solidworks=solidworks,
         runtime_files={str(p):ledger.file_sha(p) for p in (base.SW_PYTHON,base.FC_BIN/'python.exe')},
         OMP_PROFILE=os.environ.get('OMP_PROFILE'),generator_config_sha256=ledger.sha(canonical(runtime.MODEL_CONFIG)),
+        CAD_HARNESS_SW_PID=os.environ.get('CAD_HARNESS_SW_PID'),
         quota_snapshot='C:/dev/v4-ops/quota.json',generation_cwd=str(work),context_manifest=str(path),
         evidence_mode='unit_mock' if smoke else 'live',
         skill_sha256={arm:ledger.sha(value) for arm,value in bundles().items()},fixture_admission=adaptation,
         transport_adaptation=TRANSPORT_ADAPTATION,
         development_ids=[e['case'] for e in entries if e['role']=='development'],
         holdout_ids=[e['case'] for e in entries if e['role']=='holdout'],
-        funding=funding_plan(experiment),
-        protocol=dict(calibration_per_case=5,baseline_pass_counts=[2,3],matched_pairs=5,max_pairs=10,
-            cache_basis='initial_accepted_model_call',cache_max_difference_percentage_points=1,
-            cache_fraction='cache_read_tokens/(input_uncached_tokens+cache_read_tokens+cache_write_tokens)',
-            required_pass_gain=2,final_holdout_all_pass=True,pool_cap=40,epoch_call_cap=150,max_calls_per_episode=3),
+        funding=funding,protocol=protocol,
         authorization='UNIT_MOCK_NO_LIVE_AUTHORIZATION' if smoke else
-            'USER overnight delegation: epoch07 carry remaining23 then new40 only as needed; unchanged gates; PID53084 only; stop55')
+            'USER approved operational recovery exception: independent run; preserve all debt, gates, skill and limits; stop55')
     if continuation:
         resume=continuation_prefix(experiment,entries,bound,manifest)
         manifest['resume']=resume;manifest['input_files'].update(resume['bound_input_files'])
@@ -392,10 +414,12 @@ def load(experiment,*,continuation=False):
     path=out/(prefix+'-manifest.json');manifest=ledger.read_json(path)
     if ledger.file_sha(path)!=ledger.read_json(out/(prefix+'-SHA256.json'))['manifest_sha256']:raise Stop('H2_experiment_manifest_changed')
     expected_bound=bound|((manifest.get('resume') or {}).get('bound_input_files') or {})
-    if (manifest['schema']!='harness2.solidworks.skill.freeze.v5' or manifest['experiment']!=experiment
+    if (manifest['schema']!='harness2.solidworks.skill.freeze.v6' or manifest['experiment']!=experiment
             or manifest['input_files']!=expected_bound or manifest['skill_sha256']!={a:ledger.sha(b) for a,b in bundles().items()}
             or manifest['generator']['model']!=freezing.MODEL or manifest['generator']['thinking']!=freezing.THINKING
             or continuation!=bool(manifest.get('resume'))):raise Stop('H2_experiment_binding')
+    if manifest.get('CAD_HARNESS_SW_PID')!=os.environ.get('CAD_HARNESS_SW_PID'):
+        raise Stop('H2_SW_selection_environment_changed')
     if any(ledger.file_sha(p)!=digest for p,digest in expected_bound.items()):raise Stop('H2_continuation_input_changed')
     current=freezing.bindings(ROOT);current['H2_SKILL_PLAN.md']=ledger.file_sha(ROOT/'H2_SKILL_PLAN.md')
     if manifest['files']!=current:raise Stop('H2_experiment_source_changed')

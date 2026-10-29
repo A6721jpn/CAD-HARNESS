@@ -1,0 +1,12 @@
+{
+  "scope": "Explicit selected PID, conserved recovery balances and guarded configuration; no geometry/scoring changes",
+  "runner": "FreeCAD 1.1.4 pinned Python SDK",
+  "tests": 63,
+  "result": "PASS",
+  "skipped": 0,
+  "seconds": 3.683,
+  "live_model_calls": 0,
+  "solidworks_calls": 0,
+  "command": "import sys,unittest;sys.path[:0]=['C:/dev/CAD-HARNESS-sw','C:/dev/CAD/.tools/freecad/FreeCAD_1.1.4-Windows-x86_64-py311/bin'];suite=unittest.defaultTestLoader.discover('tools',pattern='test_sw*.py');result=unittest.TextTestRunner(verbosity=2).run(suite);raise SystemExit(not result.wasSuccessful())",
+  "stderr_sha256": "cafe20081ea79928eb62cd958a98f9db5dd4cf3058be1344857e08cee7568d46"
+}

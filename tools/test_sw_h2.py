@@ -322,6 +322,34 @@ class DurableSchedule(unittest.TestCase):
         exp.trial=self.fake_trial;exp.unit('pair-01','comparison',plan)
         self.assertEqual(ledger.file_sha(a),before)
         with Pool(runtime.PRIVATE/exp.pool_name(2),scope=exp.pool_scope(2)) as pool:self.assertEqual(pool.used,2)
+
+    def recovery_parent(self):
+        exp=self.experiment;self.carried_funding()
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:
+            for i in range(15):pool.reserve('completed-or-interrupted-'+str(i));pool.settle('completed-or-interrupted-'+str(i))
+        root=runtime.PRIVATE/'h2-unit-parent';root.mkdir()
+        parent=dict(schema='harness2.solidworks.skill.freeze.v5',experiment='unit-parent',evidence_mode='live',
+            files={},input_files={},skill_sha256={arm:ledger.sha(body) for arm,body in native.bundles().items()},
+            funding=copy.deepcopy(exp.shared['funding']),protocol={'independent_test_protocol':True})
+        ledger.write_json(root/'experiment-manifest.json',parent)
+        ledger.write_json(root/'experiment-SHA256.json',dict(manifest_sha256=ledger.file_sha(root/'experiment-manifest.json')))
+        return root
+
+    def test_recovery_registration_preserves_used_calls_and_remaining_authorization(self):
+        exp=self.experiment;self.recovery_parent()
+        plan=native.funding_plan('unit-independent-recovery',recovery_from='unit-parent')
+        self.assertEqual(plan['initial_remaining'],8)
+        self.assertEqual(plan['pools'][0]['starting_reserved'],32)
+        self.assertEqual(plan['parent_logical_calls_used'],15)
+        self.assertEqual(plan['maximum_logical_calls'],135)
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:self.assertEqual(pool.used,32)
+        self.assertFalse((runtime.PRIVATE/plan['pools'][1]['name']).exists())
+
+    def test_recovery_registration_cannot_forgive_an_unsettled_call(self):
+        exp=self.experiment;self.recovery_parent()
+        with Pool(runtime.PRIVATE/exp.pool_name(),scope=exp.pool_scope()) as pool:pool.reserve('unknown')
+        with self.assertRaisesRegex(Stop,'H2_unsettled_pool_call'):
+            native.funding_plan('unit-independent-recovery',recovery_from='unit-parent')
     def test_certified_old_failed_score_is_retained_and_cannot_be_promoted(self):
         exp=self.experiment;trial=dict(label='CH2D1R1',case='H2D1',variant='A')
         with Pool(runtime.PRIVATE/'resume-test-pool',scope='resume-unit') as pool:

@@ -174,6 +174,7 @@ def smoke(run):
     manifest=dict(run=run,files={},input_files={str(gold_path):entry['gold_sha256']},
         inputs_packet_sha256=ledger.file_sha(out/'inputs-private.json'),runtime_files={},
         host=dict(hostname=socket.gethostname()),OMP_PROFILE=os.environ.get('OMP_PROFILE'),
+        CAD_HARNESS_SW_PID=os.environ.get('CAD_HARNESS_SW_PID'),
         quota_snapshot='C:/dev/v4-ops/quota.json',skill_sha256=ledger.sha(skill),
         generator=dict(omp=str(ROOT/'tools/sw_h0.py'),sha256=ledger.file_sha(ROOT/'tools/sw_h0.py'),
             version='UNIT-MOCK',model=freezing.MODEL,thinking=freezing.THINKING))

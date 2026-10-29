@@ -1,0 +1,59 @@
+{
+  "native": {
+    "status": "FAIL",
+    "stop": true,
+    "COM_state_unknown": true,
+    "pid": 13236,
+    "revision": "34.4.0",
+    "seconds": 6.772464100038633,
+    "error_type": "com_error"
+  },
+  "RPC_server_unavailable": true,
+  "last_events": [
+    {
+      "event": "call_started",
+      "method": "MultiplyTransform"
+    },
+    {
+      "event": "call_finished",
+      "method": "MultiplyTransform",
+      "seconds": 0.0009144998621195555
+    },
+    {
+      "event": "call_started",
+      "method": "CreateCornerRectangle"
+    },
+    {
+      "event": "call_finished",
+      "method": "CreateCornerRectangle",
+      "seconds": 3.007226100191474
+    }
+  ],
+  "failure_sites": [
+    {
+      "file": "sw_h0_worker.py",
+      "line": 51
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 194
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 150
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 121
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 81
+    },
+    {
+      "file": "dynamic.py",
+      "line": 651
+    }
+  ],
+  "live_model_calls": 0
+}

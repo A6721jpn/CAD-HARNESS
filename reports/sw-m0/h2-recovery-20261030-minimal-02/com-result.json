@@ -1,0 +1,14 @@
+{
+  "status": "FAIL",
+  "paid_model_calls": 0,
+  "at": "2026-10-29T20:14:15.384144+00:00",
+  "solidworks_revision": "34.4.0",
+  "solidworks_pid": 57504,
+  "initial_documents": 0,
+  "template": "C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2026\\templates\\部品.prtdot",
+  "stages": {},
+  "error_type": "com_error",
+  "error": "(-2147023174, 'RPC サーバーを利用できません。', None, None)",
+  "COM_state_unknown": true,
+  "seconds": 6.019553099991754
+}

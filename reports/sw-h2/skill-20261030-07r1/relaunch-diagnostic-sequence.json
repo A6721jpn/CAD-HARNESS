@@ -1,0 +1,43 @@
+{
+  "schema": "sw-h2-recovery-startup-diagnostic-v1",
+  "live_model_calls": 0,
+  "pass_criteria_changed": false,
+  "frozen_builder_changed": false,
+  "shared_preferences_or_ACL_changed": false,
+  "steps": [
+    {
+      "pid": 13236,
+      "official_launcher_pid": 41172,
+      "started_utc": "2026-10-29T20:03:01.2031142Z",
+      "run": "h2-recovery-20261030-minimal-01",
+      "surface": "independent public G6 / existing H0 smoke",
+      "status": "FAIL",
+      "smoke_seconds": 7.0939999998081475,
+      "native_seconds": 6.772464100038633,
+      "last_completed_call": "CreateCornerRectangle",
+      "failure_property": "SketchManager.AddToDB=False",
+      "HRESULT": -2147023174,
+      "COM_state_unknown": true,
+      "subsequent_OS_sldworks_count": 0,
+      "stale_lock_preserved": "reports/sw-m0/session.lock.stale-20261030-native-13236"
+    },
+    {
+      "pid": 57504,
+      "official_launcher_pid": 54420,
+      "started_utc": "2026-10-29T20:10:56.8109737Z",
+      "start_only_after_OS_sldworks_count": 0,
+      "initial_worker_query": "nonterminating WMI quoting error; NOT accepted as worker-absence proof",
+      "corrected_worker_query_count": 0,
+      "session_id": 1,
+      "revision": "34.4.0",
+      "documents": 0,
+      "user_control": true,
+      "visible": true,
+      "lifetime_property_probe": "read-only; no application property set",
+      "next_control": "original M0 public positive, dimensional edit/restore and negative; preserve existing drawing path"
+    }
+  ],
+  "Orca_window_inspection": "runtime_unavailable; app was not launched to avoid resuming unrelated agent terminals",
+  "cause": "not_established",
+  "running_SolidWorks_terminated_or_restarted": false
+}

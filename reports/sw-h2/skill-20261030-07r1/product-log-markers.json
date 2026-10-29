@@ -1,0 +1,39 @@
+{
+  "read_only": true,
+  "raw_lines_not_exported": true,
+  "files": [
+    {
+      "file": "20261030051101_V6R2026x.HF5.9.log",
+      "lines": 111,
+      "markers": {
+        "view_server": 0,
+        "access_violation": 0,
+        "license_denied": 0,
+        "fatal": 0,
+        "failed": 1
+      }
+    },
+    {
+      "file": "20261030051101_V6R2026x.HF5.9_dslcc.log",
+      "lines": 2864,
+      "markers": {
+        "view_server": 0,
+        "access_violation": 0,
+        "license_denied": 0,
+        "fatal": 0,
+        "failed": 3
+      }
+    },
+    {
+      "file": "20261030051057_V6R2026x.HF5.9.log",
+      "lines": 127,
+      "markers": {
+        "view_server": 0,
+        "access_violation": 0,
+        "license_denied": 0,
+        "fatal": 0,
+        "failed": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "status": "QUARANTINED_NO_LIVE_CALLS",
+  "reason": "The selected SW process70316 exited during the first native control; COM returned RPC_server_unavailable before the control completed.",
+  "live_model_calls": 0,
+  "use_for_comparison_or_holdout": false,
+  "source_judging_or_limits_changed": false,
+  "evidence": "control-startup-diagnostic.json",
+  "process_exit_cause": "not established; no matching Application1000/1001/1002 or System4101 event found in the queried window"
+}

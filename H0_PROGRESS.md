@@ -413,3 +413,35 @@
 - 成果は`recovery-20261030-{assessment,conservative-charge,startup,compatibility}.json`、新会計、保存14row、freeze-publicと本メモ。操作scriptとraw/lockのprivate側archiveはGit外。dashboardは専用storeのmodel/effort不一致で今回も保存不可、代替モデルなし。
 - **必要な例外判断**：再開に必要な運用部分だけ（新SWの接続先、新しい独立run名、使用済みを保った現残高の登録）を最小修正し、0課金対照確認後に新しく固定し直してよいか。採用条件/候補文/課題family/判定/policy/cards/時間枠は変えない。許可までは起動済みSW70316を維持し、残8を使わず停止する。
 - 次の操作：回復証拠・保存14row・本メモを**h2/swへcommit/push**し、上記の制約と必要な例外を`ASK:`で報告。凍結source/skill/planはcommit対象にも変更対象にも含めない。
+
+## Handoff：運用部分の例外承認後・独立復旧runの無課金検証中
+
+- ユーザーはASK選択肢 **「運用部分だけ修正して続行」** を承認した。旧停止記録/保存14row/保守的使用15/残8は`f921c5e`でpush済み。旧manifestと旧結果は保持したまま、新しい独立runを使う。候補r2/原A、H2_SKILL_PLAN、判定/採点/policy/cards/時間制限は変更しない。
+- 承認範囲の修正：`CAD_HARNESS_SW_PID`で明示したPID monikerだけへ接続し、値をmanifestへ固定、run開始前と各Guardで環境変更を拒否する。既定値53084は過去向けのまま、他instanceへのfallbackなし。`--recovery-from`で親manifestを指定して新独立runを登録する。親の非運用source/全sealed input/skill bytesを照合し、統計protocolは親からそのまま継承する。
+- 予算は実在poolの現在使用済みを開始値としてsnapshotし、旧prefixとpendingを検査する。実測で32使用済み/残8を維持し、旧epoch07の15消費も消さず、元150上限から引いた**追加上限135**とした。新40は次の完全unitが既存残枠へ入らない時だけ。中断P03Aを無料化/再採点しない。
+- 変更sourceは運用8ファイル：`sw_m0.py`、`sw_h0.py`、`sw_h0_runtime.py`、`sw_h2.py`、`sw_h2_runtime.py`と`test_sw_m0.py/test_sw_h0.py/test_sw_h2.py`。shared GuardのPID拘束に合わせ既存H0 prepare/smokeのmanifest生成も移行した。geometry/compiler/worker/距離証明/採用関数/カード/skill/計画ファイルは変更なし。まだ未commit。
+- 最終SDK回帰は**63/63 PASS、skip0、3.683秒**（Eval `swRecoveryFinalUnitObserved`）。新PIDのみをbind/invalid PID拒否/環境差し替え前に停止/使用済みをresetしない独立run登録/pending迂回拒否を確認した。実PID70316へのread-only接続と、親から残8/既消費15/追加135を読む正規APIも成功。追加モデル0。
+- `skill-20261030-07r1`を新seedのdev5/holdout5として封印（seal`6acf1d06405b15e11ff3b50584be0b05e562d562e1a0315258473798a70a3812`、factory従来`d852...645`）。しかし最初のpositive controlでSW70316が終了した。10.193秒で`AddToDB=False`時にRPC server unavailable、COM_state_unknown=true。最後の記録はCreateCornerRectangle完了。モデル/課金0、正負20件成功とは扱わない。failed receiptを保存し、このbankはquarantineした。
+- OS確認でsldworks稼働0。running instanceを終了した操作はない。該当windowのApplication1000/1001/1002・System4101には一致eventなし。既存ViewServer dumpは発見したがメモリ内容を開かず、今回の終了原因を確定したとはしない。sourceのPID接続失敗ではなく、描画/作成中のserver消失として記録する。
+- **現在jobなし、実モデル0。** 次は稼働SWなしを条件に公式shortcutで1回だけ再起動し、最初に独立public G6の0モデルnative smokeを試す。描画設定/registry/geometryコードを変更しない。再び稼働中SWが無応答なら再起動せず止めて報告する。app終了での再試行でも、失敗した70316の記録/lockを削除しない。
+- 最小smoke成功後だけ新しい`skill-20261030-07r2`の独立data/control→同じr2候補でsmoke/freeze/runへ進む。各commandに`env CAD_HARNESS_SW_PID=<新PID>`を明示し、smoke/freezeだけ`--recovery-from skill-20261029-07`を付ける。最後の旧funding残8は不変。新appのPID確定前に値を推測しない。現task.todoは実装done/無課金native検証中/liveはまだblocked。
+
+- 該当時間のSystem4101も0。既存ViewServer dumpの日時は10/27と10/21で今回ではなかった（メモリ内容未読）。SW70316の終了原因は未確定のまま。旧native controller20072は不在・lock排他read可能を確認し、`session.lock.stale-20261030-native-70316`へrename保存した。
+- 稼働SW0を条件に公式shortcutを1回起動（launcher41172、2026-10-29T20:03:01.2031142Z）。新SW **PID13236 / Responding=true** を確認。稼働instanceをkill/quit/restartしていない。
+- **現在`bg_4`**：`env CAD_HARNESS_SW_PID=13236 C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h0.py smoke --run h2-recovery-20261030-minimal-01`。独立public G6の誤仕様→修復、実モデル0。新しいnative controlを大量実行する前に小さい形の経路を確認する。成功前にModel/新freezeへ進まず、ここでもserverが消失/無応答なら当該記録を保全して原因を報告する。
+
+## Handoff：10/30 05:21 JST native描画環境で停止、運用修正はWIP/unlockedで保全
+
+- **本節が上の途中checkpointを置き換える。active jobなし、新規モデル呼び出し0、新freeze/liveなし。** 運用8ファイルの修正と63/63 PASSの回帰証拠を、この区切りでh2/swへcommit/pushする。元の候補A/B、計画、compiler/builder/worker、judge、policy/cards/採点、各timeoutは変更していない。
+- PID13236のG6 smoke (`bg_4`) も **FAIL、7.094秒、CAD完了0**。CreateCornerRectangleの次の`AddToDB=False`でRPC server unavailable。OSでSW稼働0となり、worker不在とlock排他readを確認後、lockを`session.lock.stale-20261030-native-13236`へrenameした。実モデル0。
+- 消失後だけ公式shortcutを起動した3回目はlauncher54420、2026-10-29T20:10:56.8109737Z、新SW **PID57504**。最初のWMI worker-queryは引用の誤りで非終端errorとなったため、0という表示を不在証明に採用しなかった。修正版のqueryでworker0を別途確認。read-only COMでrevision34.4.0/documents0/UserControl=true/Visible=trueを確認し、アプリの属性や設定は一切setしなかった。
+- **元のpublic M0経路も失敗** (`bg_6`, `reports/sw-m0/h2-recovery-20261030-minimal-02`)。この経路はH2 builderの`AddToDB`切替を使わないが、CreateCornerRectangle直後のInsertSketchで同じRPC errorとなった。COM6.020秒、judge未到達。固定SWのprocess handleを保持するread-only observer (`bg_5`とbg_6)で **2026-10-29T20:14:21.3957468ZにSWがexit1** と確認した。接続先PIDの相違やUserControl=falseだけの問題ではない。元のM0判定/形状は書き換えていない。
+- Application1000が後から記録された：**2026-10-29T20:03:57.3305486Z、ViewServerV6.exe 18.0.0.749、同exe内c0000005、offset20380、PID0x11748**。同内容のWER1001が2件。これはPID13236 smokeと同じ時間帯のrenderer faultであり、3回すべての根本原因やGPU driverの原因を確定したものではない。SystemのDisplay/nvlddmkm/DxgKrnl/WHEA等の該当eventは検索時0。
+- read-only adapter情報：RTX5060 / driver32.0.16.1088 / 1024x768、Virtual Display Driver /11.30.4.434 /1920x1200、いずれもStatus=OK。起動環境にFreeCAD/SDK PATH混入、QT_QPA_PLATFORM/QT_PLUGIN_PATH、PYTHONHOME/PYTHONPATH、MSYSTEM、compatibility layerの設定はなかった。UserControlを変更する仮説も実測trueのため不採用。helper/launcher logは機械的marker集計だけ公開し、raw内容やdump memoryは出していない。license正常などをmarker0だけで断定しない。
+- Orcaのnative-window確認はruntime metadata不在で不可。Orcaを起動して無関係なagent terminalまで再開することは避けた。dashboard-builderも再度`指定されたモデル・effortではありません。`で未更新。代替モデルや設定変更なし。
+- 最後のM0 controller62448も不在、SW稼働0、lock排他read可能を確認し、`session.lock.stale-20261030-native-57504`へrename保全。どのrunning SWもquit/kill/restartしていない。共有pathのACL/ownership、registry、driver、display設定、graphics preferencesの変更は0。
+- 課金会計は**旧pool32/40使用済み・残8・pending0、epoch07の15開始を維持**。旧14完了rowと中断P03Aに新しいscore/無料化を付けていない。quotaの最新観測は **9%** (`omp-usage-1793305273778-7d=9`, 2026-10-29T20:21:13.778Z)。55%ASK/60%停止は解除していない。将来の新独立runは旧15を差し引いた追加上限135を守り、conditional新40 poolは次の完全unitが既存残枠へ収まらない時だけ。
+- 新`skill-20261030-07r1`は最初のcontrol失敗でquarantine済み。**`skill-20261030-07r2`は未作成**。R1 control/元M0/G6 smokeの失敗を比較成績や候補不採用として扱わず、native環境のgate未達として保存した。証拠は`reports/sw-h2/skill-20261030-07r1/native-environment-blocker.json`ほか同folder、public M0/G6 receipt。63回帰は`regression-tests.json`、同じsource以降の再実行なし。
+- **必要な判断：** 今回承認されたsource例外はPID接続と独立run登録に限る。描画環境（Software OpenGL等の起動/描画条件、必要なら自分の文書のrefresh制御）の無課金診断・復旧まで範囲を広げるか、ユーザー側でSW環境を復旧するか。共有設定/driverを無断で変更せず、native sourceをこっそり差し替えたまま凍結hashを流用しない。
+- **残件順序：** 判断後にnative環境を復旧→元のM0とH0の0モデル確認→新R2 bankの独立正負control→同候補r2でsmoke→必要なsourceをcommitして新freeze→条件不変の独立run→新runの実会計公開→commit/push。stable nativeの成功前にモデルを呼ばない。
+- **再開時の最初の正確なcommand：** `powershell -NoProfile -Command 'Get-Process -Name sldworks -ErrorAction SilentlyContinue | Select-Object Id,Responding,SessionId'`。ここで出たrunning instanceを終了しない。新しい明示承認と実PIDの確認後だけ `env CAD_HARNESS_SW_PID=<実PID> C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_m0.py --out C:/dev/CAD-HARNESS-sw/reports/sw-m0/<未使用の新run名>`。PID57504は既に終了しているため再利用しない。

@@ -268,9 +268,9 @@ def run(experiment,*,continuation=False):
         own.unlink()
 
 
-def smoke(experiment):
+def smoke(experiment,*,recovery_from=None):
     """Explicit mock only; sealed independent fixture, real SW/FreeCAD/R1."""
-    native.prepare(experiment,smoke=True)
+    native.prepare(experiment,smoke=True,recovery_from=recovery_from)
     out,entries,_=native.context(experiment)
     shared=ledger.read_json(out/'preflight-manifest.json')
     entry=next(e for e in entries if e['role']=='development')
@@ -320,11 +320,15 @@ def smoke(experiment):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action',choices=('freeze','run','smoke','freeze-continuation','run-continuation'));parser.add_argument('--experiment',required=True)
+    parser.add_argument('--recovery-from',help='Preparation only: inherit unchanged protocol and actual conserved balances')
     args=parser.parse_args()
+    if args.recovery_from and args.action not in ('freeze','smoke'):
+        parser.error('--recovery-from is allowed only for freeze or smoke')
     try:
         if args.action in ('freeze','freeze-continuation'):
-            print(json.dumps(native.prepare(args.experiment,continuation=args.action=='freeze-continuation')),flush=True)
-        elif args.action=='smoke':smoke(args.experiment)
+            print(json.dumps(native.prepare(args.experiment,continuation=args.action=='freeze-continuation',
+                recovery_from=args.recovery_from)),flush=True)
+        elif args.action=='smoke':smoke(args.experiment,recovery_from=args.recovery_from)
         else:run(args.experiment,continuation=args.action=='run-continuation')
     except Exception as exc:
         # No arbitrary native/Gold exception text is printed.

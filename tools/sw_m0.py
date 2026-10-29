@@ -64,18 +64,28 @@ def read_spec(path):
     return s
 
 
+def configured_pid():
+    value = os.environ.get('CAD_HARNESS_SW_PID')
+    if value is None:
+        return SW_PID
+    if not value.isascii() or not value.isdecimal() or not 0 < int(value) <= 0xffffffff:
+        raise RuntimeError('STOP_invalid_authorized_SW_PID')
+    return int(value)
+
+
 def attach_existing():
     """Bind only the authorized PID moniker; never fall back to the default ROT."""
     import pythoncom
     from win32com.client.dynamic import Dispatch
+    pid = configured_pid()
     rot = pythoncom.GetRunningObjectTable()
     context = pythoncom.CreateBindCtx(0)
     for moniker in rot.EnumRunning():
-        if moniker.GetDisplayName(context, None) != 'SolidWorks_PID_' + str(SW_PID):
+        if moniker.GetDisplayName(context, None) != 'SolidWorks_PID_' + str(pid):
             continue
         app = Dispatch(rot.GetObject(moniker).QueryInterface(pythoncom.IID_IDispatch))
         app._FlagAsMethod('GetProcessID')
-        if app.GetProcessID() != SW_PID:
+        if app.GetProcessID() != pid:
             raise RuntimeError('STOP_authorized_SW_PID_mismatch')
         return app
     raise RuntimeError('STOP_authorized_SW_PID_not_registered')

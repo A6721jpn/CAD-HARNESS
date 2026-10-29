@@ -1,0 +1,72 @@
+{
+  "native": {
+    "status": "FAIL",
+    "stop": true,
+    "COM_state_unknown": true,
+    "pid": 70316,
+    "revision": "34.4.0",
+    "final_documents": null,
+    "seconds": 10.192774900002405,
+    "error_type": "com_error"
+  },
+  "known_error_matches": {
+    "STOP_authorized_SW_PID_not_registered": false,
+    "STOP_authorized_SW_PID_mismatch": false,
+    "STOP_part_template_missing": false,
+    "STOP_existing_documents_open_no_document_touched": false,
+    "STOP_COM_state_unknown_no_further_calls": false,
+    "owned_document_not_created_or_opened": false
+  },
+  "failure_sites": [
+    {
+      "file": "sw_h0_worker.py",
+      "line": 51
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 194
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 150
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 121
+    },
+    {
+      "file": "sw_m1_build.py",
+      "line": 81
+    },
+    {
+      "file": "dynamic.py",
+      "line": 651
+    }
+  ],
+  "last_COM_events": [
+    {
+      "event": "call_finished",
+      "method": "CreatePoint",
+      "seconds": 0.005273400107398629
+    },
+    {
+      "event": "call_started",
+      "method": "MultiplyTransform"
+    },
+    {
+      "event": "call_finished",
+      "method": "MultiplyTransform",
+      "seconds": 0.0010506999678909779
+    },
+    {
+      "event": "call_started",
+      "method": "CreateCornerRectangle"
+    },
+    {
+      "event": "call_finished",
+      "method": "CreateCornerRectangle",
+      "seconds": 3.34719519992359
+    }
+  ],
+  "live_model_calls": 0
+}

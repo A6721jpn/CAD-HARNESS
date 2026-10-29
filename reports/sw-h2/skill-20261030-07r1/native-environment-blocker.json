@@ -1,0 +1,60 @@
+{
+  "schema": "sw-h2-native-environment-blocker-v1",
+  "status": "BLOCKED_BEFORE_FREEZE_OR_LIVE",
+  "new_live_model_calls": 0,
+  "original_public_M0": {
+    "run": "h2-recovery-20261030-minimal-02",
+    "pid": 57504,
+    "revision": "34.4.0",
+    "initial_documents": 0,
+    "user_control_before_test": true,
+    "visible_before_test": true,
+    "native_seconds": 6.019553099991754,
+    "last_completed_call": "CreateCornerRectangle",
+    "next_call_failed": "InsertSketch",
+    "HRESULT": -2147023174,
+    "COM_state_unknown": true,
+    "server_exit_code": 1,
+    "server_exit_UTC": "2026-10-29T20:14:21.3957468Z",
+    "judge_reached": false,
+    "stale_lock_owner_62448_absent": true,
+    "lock_exclusive_read_succeeded": true,
+    "stale_lock_renamed_not_deleted": "reports/sw-m0/session.lock.stale-20261030-native-57504"
+  },
+  "Windows_Application_event": {
+    "UTC": "2026-10-29T20:03:57.3305486Z",
+    "event_id": 1000,
+    "application": "ViewServerV6.exe",
+    "version": "18.0.0.749",
+    "fault_module": "ViewServerV6.exe",
+    "exception_code": "c0000005",
+    "fault_offset": "0000000000020380",
+    "renderer_pid_hex": "0x11748",
+    "relation": "Same time window as PID13236 minimal smoke; two matching WER1001 entries followed. Does not establish the underlying cause of all three SW exits."
+  },
+  "graphics_adapters_read_only": [
+    {"name": "NVIDIA GeForce RTX 5060", "driver_version": "32.0.16.1088", "status": "OK", "reported_resolution": [1024, 768]},
+    {"name": "Virtual Display Driver", "driver_version": "11.30.4.434", "status": "OK", "reported_resolution": [1920, 1200]}
+  ],
+  "startup_environment": {
+    "FreeCAD_or_pinned_SDK_in_PATH": false,
+    "QT_QPA_PLATFORM_set": false,
+    "QT_PLUGIN_PATH_set": false,
+    "PYTHONHOME_set": false,
+    "PYTHONPATH_set": false,
+    "MSYSTEM_set": false,
+    "compatibility_layer_set": false
+  },
+  "source_and_environment_not_changed": [
+    "drawing builder", "geometry compiler", "skill candidates", "plan gates", "judging", "cards", "policy", "timeouts", "graphics preferences", "graphics drivers", "display setup", "registry", "ACL"
+  ],
+  "running_SolidWorks_terminated_or_restarted": false,
+  "last_verified_OS_sldworks_count": 0,
+  "root_cause": "not_established",
+  "pool_used_preserved": 32,
+  "pool_cap": 40,
+  "remaining": 8,
+  "epoch07_consumed_preserved": 15,
+  "quota": {"snapshot_id": "omp-usage-1793305273778-7d=9", "observed_at": "2026-10-29T20:21:13.778Z", "used_percent": 9},
+  "required_before_live": "Recover stable native SW operation, pass original minimal M0/H0 and independent positive/negative controls, then commit/freeze a new independent run. Renderer/driver changes are outside the narrowly approved PID/run-registration source exception."
+}
