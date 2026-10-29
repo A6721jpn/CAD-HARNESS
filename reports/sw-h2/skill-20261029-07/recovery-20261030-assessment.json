@@ -1,0 +1,241 @@
+{
+  "at": "2026-10-29T17:47:12.441220+00:00",
+  "scope": "zero-call recovery metadata; no Gold/model/STEP contents disclosed",
+  "frozen_manifest_sha256": "89691ce640bd18ebe7f8803bbc9b31d5e2f4338ac6c4686f17b0b37668656d2f",
+  "manifest_sidecar_matches": true,
+  "changed_frozen_source_files": [],
+  "changed_runtime_binaries": [],
+  "generator_executable_unchanged": true,
+  "all_sealed_input_hashes_match": true,
+  "skill_bytes_unchanged": {
+    "A": true,
+    "B": true
+  },
+  "locks": [
+    {
+      "path": "reports\\sw-m0\\m1-private\\h0\\h2-skill-20261029-07\\controller.lock",
+      "exists": true,
+      "sha256": "9bf930f8c5f9f33eefef7e26adc24de7fe8518ebd91d258a4e7d52d0da2c2348",
+      "exclusive_read_available": true,
+      "owner": {
+        "pid": 44296,
+        "process_query_error": 87,
+        "alive": false
+      }
+    },
+    {
+      "path": "reports\\sw-m0\\session.lock",
+      "exists": true,
+      "sha256": "e767ac7ef1af9f95060ac741eacba79282dee64cd2b45801fbaa7e5404925060",
+      "exclusive_read_available": true,
+      "owner": {
+        "pid": 44296,
+        "process_query_error": 87,
+        "alive": false
+      }
+    },
+    {
+      "path": "reports\\sw-m0\\m1-private\\h0\\h2-skill-20261029-06-epoch-pool-01\\pool.lock",
+      "exists": true,
+      "sha256": "367cec3dfb96b13bc7fef1c897b38124572d6f596ee90aa2ffef12f4a7fc2027",
+      "exclusive_read_available": true,
+      "owner": null
+    }
+  ],
+  "batches": [
+    {
+      "name": "h2-skill-20261029-06-epoch-pool-01",
+      "starting_reserved": 17,
+      "scope": "harness2-solidworks-H2-skill-20261029-06-epoch-01",
+      "cap": 40,
+      "conservative_reserved_calls": 32,
+      "accepted_or_failed_calls": 31,
+      "pending_or_unknown_calls": 1,
+      "verified_overload_rejections": 0,
+      "remaining": 8,
+      "billing_missing_reason": "invoice_not_provided",
+      "additional_reserved": 15,
+      "unreadable_or_partial_records": 0,
+      "charged_prefix_unchanged": true,
+      "last_write_utc": "2026-10-29T00:06:14.584654+00:00"
+    }
+  ],
+  "trials": [
+    {
+      "label": "CH2D1R1",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "2da7628614bdaa3ea602efc6c3e414bea5b7daaa9b0894474badbab93871ae7e"
+    },
+    {
+      "label": "CH2D1R2",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "6a70e1e0f1f106e3c59b11050607740eb5d9db51c5e5c63c4c7e40af847146cd"
+    },
+    {
+      "label": "CH2D1R3",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "957445dc372e6a86045e64439b8600b6df02a65f34bec8a9bd058ee177b2f66d"
+    },
+    {
+      "label": "CH2D1R4",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "943c0f2ca1dc504d7ad5f202ab8c77da671394b831d5638928e6f86fe6b3d297"
+    },
+    {
+      "label": "CH2D1R5",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "202c0a36c771b6aa5c9b2508439a3b1a69a343ef949a990463d84f965c74ba3e"
+    },
+    {
+      "label": "CH2D2R1",
+      "result_saved": true,
+      "passed": false,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "dc397e426b05e3fe98fc18837d3c64b0f042d88ded9aeb6ea6f53f4d6ad4cef0"
+    },
+    {
+      "label": "CH2D2R2",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "615e21ba3de627155f9a3dcc1e0acc55266a0cdb3a45700db0ea4cf36ca4a6da"
+    },
+    {
+      "label": "CH2D2R3",
+      "result_saved": true,
+      "passed": false,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "4e8041f215c7a7449bf7f7b03081f2fd5ce535b1ed985d2e21558791f801ddad"
+    },
+    {
+      "label": "CH2D2R4",
+      "result_saved": true,
+      "passed": false,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 0,
+      "CAD_finished": 0,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "92f7a2619834127f57f1abcd540fc82005b0f86203502ca20df31967f7254db9"
+    },
+    {
+      "label": "CH2D2R5",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "57198ada3bd81289f63663c822546547fa6a8fc4d8a2d0659fd6598b1132223e"
+    },
+    {
+      "label": "P01A",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "d4d13863aedd31f803dcb9eefc56f75eac4dfab4a9d6e115dbba6d02893558bd"
+    },
+    {
+      "label": "P01B",
+      "result_saved": true,
+      "passed": false,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 0,
+      "CAD_finished": 0,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "71cda9460dca7a594650f3164d5c1912ef74c52a054b89d31ed92dcce69c1ddf"
+    },
+    {
+      "label": "P02A",
+      "result_saved": true,
+      "passed": true,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 1,
+      "CAD_finished": 1,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "0e943151905d1e32e374379361d52fb260e57308ad9f2be2a8034d74f2952b40"
+    },
+    {
+      "label": "P02B",
+      "result_saved": true,
+      "passed": false,
+      "model_started": 1,
+      "model_finished": 1,
+      "CAD_started": 0,
+      "CAD_finished": 0,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "4c88b9bab5baf9279214df5099e6ce229f8b5d5907c5d2f759a087a59711dfc7"
+    },
+    {
+      "label": "P03A",
+      "result_saved": false,
+      "passed": null,
+      "model_started": 1,
+      "model_finished": 0,
+      "CAD_started": 0,
+      "CAD_finished": 0,
+      "incomplete_journal_records": 0,
+      "ledger_sha256": "05f01a7aeedc484c3195cc11b02303ace426003e8ecfa9f8fd6d60851797e343"
+    }
+  ],
+  "quota": {
+    "snapshot_id": "omp-usage-1793296020733-7d=9",
+    "observed_at": "2026-10-29T17:47:00.733Z",
+    "used_percent": 9,
+    "sha256": "a67bbee91688937ca1726f084fbd8d3eaf852a4b50067b8a8b07052be076a962",
+    "age_s": 13.263536,
+    "checked_at": "2026-10-29T17:47:13.996536+00:00",
+    "decision": "allow"
+  },
+  "live_model_calls": 0,
+  "original_results_changed": false
+}

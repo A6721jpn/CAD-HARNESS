@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-29T17:52:45.322696+00:00",
+  "scope": "read-only restart compatibility; frozen code unmodified",
+  "SW": {
+    "pid": 70316,
+    "revision": "34.4.0",
+    "documents": 0
+  },
+  "frozen_authorized_PID": 53084,
+  "frozen_attachment_rejects_new_PID": true,
+  "independent_name_rejected_by_existing_API": true,
+  "existing_freeze_rejects_consumed_carry_pool": true,
+  "partial_trial_directory_exists": true,
+  "source_or_plan_changed": false,
+  "document_operations": 0,
+  "live_model_calls": 0
+}

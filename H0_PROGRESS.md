@@ -390,3 +390,26 @@
 
 - `bg_80`完了：**hard dev1のblind R1 smoke PASS、126.484秒（tool128.60秒）、mock2/実CAD2/capture8、実モデル0**。誤仕様拒否→元R1=1で復旧、parse修復0。原90秒CAD/90秒再import枠・判定・closed-stdin/盲検inputを維持した。epoch06のhard R1失敗を上書きせず、新しい独立課題で成功を確認した。これでepoch07の課金前検証は完了。
 - 現在jobなし。次はpublic controls/preflightと本メモを明示path commit/push→`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py freeze --experiment skill-20261029-07`→同CLI `run --experiment skill-20261029-07`。初回のcarryは旧scope17予約を保った残23、必要時だけ新40。freeze以後はsource/候補/計画を変更しない。
+
+## Handoff：Epoch07凍結live実行中
+
+- source/prereg/診断は`d9f048d`、新control20件とhard R1成功を含むpreflight証拠は**`ac4f2c7`**でh2/swへcommit/push済み。
+- quota直前実測 **7%**、snapshot `omp-usage-1793227053437-7d=7`、observed 2026-10-28T22:37:33.437Z、checked 22:38:17Z、decision allow。
+- freeze v5は2026-10-28T22:38:18.542105Z、manifest SHA **`89691ce640bd18ebe7f8803bbc9b31d5e2f4338ac6c4686f17b0b37668656d2f`**。元A SHAは従来どおり、r2 B SHA **`b9c7d7fdebc07b21b964d5b10969c90b9441268b7f70bd97d231df57e480f3ed`**。旧17のprefix6817bytes/SHAと残23→条件付き新40の順序も固定。価格/usageは実record以外を補わない。
+- **現在jobは`bg_81`のみ**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B tools/sw_h2.py run --experiment skill-20261029-07`。source/候補/計画を編集しない。最初の2/5・3/5ラダー候補、交互A/Bの最初のcache一致5組/最大10pair、固定採用gate、条件成立時だけfresh5確認まで同じrunnerが実行する。新backend共通なのでepoch06との単純差を文章の効果としない。
+- 55%使用量で止めて報告、60%/snapshot異常も停止。SW53084のみ、10800へbindせず、両SWの終了/再起動なし。Codexは親＋逐次generatorの最大2。進捗poll・Gold/seed/raw/CADの親への展開はしない。dashboardは今回も専用store不一致で未更新、代替モデルなし。
+- **結果受領後の正確な次コマンド**：`C:/dev/solidworks/.venv-solidworks-automation/Scripts/python.exe -B reports/sw-m0/m1-private/h0/h2-skill-20261029-07/publish-accounting.py`。旧17を引いた追加予約と新ledgerを突合→公開result/会計/失敗分類を確認→PID53084のread-only文書0確認→採用/維持/停止点を記録→明示public/メモのみcommit/push。既存epoch06会計/合否は変更しない。
+
+## Handoff：10/30夜間復旧・課金0、運用経路の制約で停止
+
+- 10/30 02:45 JSTの監督指示で再開調査。旧controller **PID44296は不在**、旧epochに一致する残存workerも0。controller/session/poolの3 lockは排他read可能と確認し、削除せずそれぞれ`.stale-20261030-recovery`へrename保存した。ACL/ownershipの変更なし。
+- frozen manifest **`89691ce640bd18ebe7f8803bbc9b31d5e2f4338ac6c4686f17b0b37668656d2f`**とsidecar一致。source/計画/候補A+B/全sealed inputs/実行binary/OMP実体hashは全て変更なし。Gold/spec/model/STEP本文は親へ表示していない。
+- 保存済み試行は**14件**。較正H2D1=5/5、H2D2=2/5、比較P01/P02の4試行が保存済み。全保存14件ではPASS9/FAIL5だが、比較は未完了で採用判断をしない。中断は**P03A**：model開始1/終了0・CAD開始0。最後の保存eventは`quota_checked` **2026-10-29T00:12:12.176637Z（09:12:12 JST）**。終了理由は外部omp終了までしか確認できず、SWがいつ/なぜ終了したかは未確定とする。
+- 既存poolは予約32（旧epoch06の17＋epoch07の15）、うちpending1だった。監督の安全側計上指示により、既存の`Pool.settle`でその1回を**保守的に使用済み**へ確定した。予約総数32は前後不変、pending0、**残8**。providerの応答完了や請求額を確認したとは主張せず価格nullを維持。中断ledgerはbyte hash不変、架空のprovider応答/採点結果は作らず、呼び直し0。旧17のprefix hashも維持。
+- `accounting-public.json`はepoch07追加**15 model attempts/11 CAD attempts・保存結果14件・pending0・残8**として新規保存し、既存ledgerと突合済み。旧epoch06会計は上書きしていない。旧live中の最大quota7%、復旧時の新snapshotは**9%**（observed 2026-10-29T17:47:00.733Z、decision allow）。55%停止には未到達。
+- SW起動時に稼働0を確認し、公式`SOLIDWORKS Design.lnk`を**1回だけ**起動（launcher9944、2026-10-29T17:51:25.2656585Z）。既存SW/他processを停止していない。read-only COM確認で新SW **PID70316 / Revision34.4.0 / 文書0**。新SWは起動したまま維持し、終了/再起動しない。
+- **凍結ソースを変えない既存経路は再開不能と実測確認**。`sw_m0.py`の接続先は旧PID53084に固定され、既存`solidworks_identity`は新PIDを`STOP_authorized_SW_PID_not_registered`で拒否。既存`funding_plan`は新しい独立実行名を`H2_epoch07_authorization_required`、元名の新freezeを消費済み残高のため`H2_carry_pool_balance_changed`で拒否した。P03Aの未完了directoryも残っており、通常のtrial作成は既存directoryへ上書きしない設計。凍結元の全controlも旧PIDへ固定されている。
+- したがって、監督が許可した「通常resume」だけでなく「同条件の新独立run」も、現コードの正規入口には接続先/新run/現在残高の登録方法がない。PIDの偽装、実行時の未記録patch、残高reset、旧結果の作り替えで回避しない。**追加model0、追加CAD生成0**。候補/計画/判定/時間制限/封印は未変更。
+- 成果は`recovery-20261030-{assessment,conservative-charge,startup,compatibility}.json`、新会計、保存14row、freeze-publicと本メモ。操作scriptとraw/lockのprivate側archiveはGit外。dashboardは専用storeのmodel/effort不一致で今回も保存不可、代替モデルなし。
+- **必要な例外判断**：再開に必要な運用部分だけ（新SWの接続先、新しい独立run名、使用済みを保った現残高の登録）を最小修正し、0課金対照確認後に新しく固定し直してよいか。採用条件/候補文/課題family/判定/policy/cards/時間枠は変えない。許可までは起動済みSW70316を維持し、残8を使わず停止する。
+- 次の操作：回復証拠・保存14row・本メモを**h2/swへcommit/push**し、上記の制約と必要な例外を`ASK:`で報告。凍結source/skill/planはcommit対象にも変更対象にも含めない。

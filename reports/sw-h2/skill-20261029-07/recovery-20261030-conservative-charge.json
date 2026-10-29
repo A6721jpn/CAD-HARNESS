@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-29T17:50:54.614876+00:00",
+  "scope": "user-authorized conservative settlement, not a confirmed invoice or provider completion",
+  "interrupted_trial": "P03A",
+  "charged_conservatively": 1,
+  "provider_completion_unknown": true,
+  "before": {
+    "scope": "harness2-solidworks-H2-skill-20261029-06-epoch-01",
+    "cap": 40,
+    "conservative_reserved_calls": 32,
+    "accepted_or_failed_calls": 31,
+    "pending_or_unknown_calls": 1,
+    "verified_overload_rejections": 0,
+    "remaining": 8,
+    "billing_missing_reason": "invoice_not_provided"
+  },
+  "after": {
+    "scope": "harness2-solidworks-H2-skill-20261029-06-epoch-01",
+    "cap": 40,
+    "conservative_reserved_calls": 32,
+    "accepted_or_failed_calls": 32,
+    "pending_or_unknown_calls": 0,
+    "verified_overload_rejections": 0,
+    "remaining": 8,
+    "billing_missing_reason": "invoice_not_provided"
+  },
+  "epoch07_additional_used": 15,
+  "carry_remaining": 8,
+  "old_epoch06_calls_preserved": 17,
+  "last_saved_event": "quota_checked",
+  "last_saved_event_at": "2026-10-29T00:12:12.176637+00:00",
+  "interrupted_ledger_unchanged": true,
+  "score_created": false,
+  "generation_replayed": false,
+  "live_model_calls": 0,
+  "price": null
+}

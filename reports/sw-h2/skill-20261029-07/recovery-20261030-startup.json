@@ -1,0 +1,14 @@
+{
+  "scope": "User-authorized absent-only official SolidWorks startup",
+  "shortcut": "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Dassault Systemes SOLIDWORKS 3DEXPERIENCE R2026x/SOLIDWORKS Design.lnk",
+  "action": "official_shortcut_invoked_once",
+  "existing_SolidWorks_before": 0,
+  "launcher_PID": 9944,
+  "launched_at": "2026-10-29T17:51:25.2656585Z",
+  "read_only_COM_observed_at": "2026-10-29T17:52:45.322696+00:00",
+  "SolidWorks": {"pid": 70316, "revision": "34.4.0", "documents": 0},
+  "running_processes_stopped": 0,
+  "document_operations": 0,
+  "live_model_calls": 0,
+  "frozen_source_changed": false
+}

@@ -1,0 +1,88 @@
+{
+  "experiment": "skill-20261029-07",
+  "at": "2026-10-29T17:53:45.701193+00:00",
+  "experiment_manifest_sha256": "89691ce640bd18ebe7f8803bbc9b31d5e2f4338ac6c4686f17b0b37668656d2f",
+  "initial_remaining": 23,
+  "old_epoch_calls_excluded": 17,
+  "batches": [
+    {
+      "index": 1,
+      "starting_reserved": 17,
+      "additional_reserved": 15,
+      "scope": "harness2-solidworks-H2-skill-20261029-06-epoch-01",
+      "cap": 40,
+      "conservative_reserved_calls": 32,
+      "accepted_or_failed_calls": 32,
+      "pending_or_unknown_calls": 0,
+      "verified_overload_rejections": 0,
+      "remaining": 8,
+      "billing_missing_reason": "invoice_not_provided"
+    }
+  ],
+  "total_conservative_reserved_calls": 15,
+  "pending_or_unknown_calls": 0,
+  "physical_model_attempts": 15,
+  "CAD_attempts": 11,
+  "max_observed_quota_percent": 7,
+  "episodes_with_result": 14,
+  "initial_user_packets_verified": 14,
+  "initial_user_packets_unverified": 0,
+  "phases": {
+    "calibration": {
+      "episodes": 10,
+      "calls": 10
+    },
+    "comparison": {
+      "episodes": 4,
+      "calls": 4
+    },
+    "final": {
+      "episodes": 0,
+      "calls": 0
+    }
+  },
+  "tokens": {
+    "input_tokens": {
+      "total": null,
+      "known_subtotal": 48303,
+      "expected": 15,
+      "known": 11,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "cached_input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 15,
+      "known": 11,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "cache_write_input_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 15,
+      "known": 11,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "output_tokens": {
+      "total": null,
+      "known_subtotal": 156537,
+      "expected": 15,
+      "known": 11,
+      "missing": 4,
+      "missing_reason": "missing_contributions"
+    },
+    "reasoning_output_tokens": {
+      "total": null,
+      "known_subtotal": 0,
+      "expected": 15,
+      "known": 0,
+      "missing": 15,
+      "missing_reason": "missing_contributions"
+    }
+  },
+  "price": null,
+  "price_missing_reason": "no_applicable_rate_source_or_invoice"
+}
