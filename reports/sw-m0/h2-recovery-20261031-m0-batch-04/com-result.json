@@ -1,0 +1,15 @@
+{
+  "status": "FAIL",
+  "paid_model_calls": 0,
+  "at": "2026-10-30T20:07:49.570626+00:00",
+  "solidworks_revision": "34.4.0",
+  "solidworks_pid": 44328,
+  "initial_documents": 0,
+  "template": "C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2026\\templates\\部品.prtdot",
+  "stages": {},
+  "error_type": "com_error",
+  "error": "(-2147023170, 'リモート プロシージャ コールに失敗しました。', None, None)",
+  "cleanup_error": "(-2147023174, 'RPC サーバーを利用できません。', None, None)",
+  "COM_state_unknown": true,
+  "seconds": 7.207310100086033
+}

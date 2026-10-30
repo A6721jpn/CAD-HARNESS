@@ -1,0 +1,154 @@
+{
+  "at": "2026-10-30T20:14:39.488858+00:00",
+  "status": "BLOCK",
+  "reason": "Native_SW_process_exits_during_unchanged_public_CAD_controls_under_permitted_environment",
+  "root_cause": "not_established",
+  "new_live_model_calls": 0,
+  "attempts": [
+    {
+      "run": "h2-recovery-20261031-m0-01",
+      "status": "FAIL",
+      "pid": 41148,
+      "revision": "34.4.0",
+      "completed_native_stages": [
+        "positive",
+        "reopened",
+        "edited",
+        "restored"
+      ],
+      "native_seconds": 18.643999200081453,
+      "COM_state_unknown": true,
+      "HRESULT": -2147023174,
+      "last_calls": [
+        {
+          "event": "call_started",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_finished",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_started",
+          "method": "InsertSketch"
+        },
+        {
+          "event": "call_error",
+          "method": "InsertSketch",
+          "hresult": -2147023174
+        }
+      ],
+      "source_sha256": "0d0f338eae36206e8993547e5114b48e1b1f045b4fe3affc23b4b513fac185aa",
+      "judge_reached": false
+    },
+    {
+      "run": "h2-recovery-20261031-m0-release-02",
+      "status": "FAIL",
+      "pid": 60384,
+      "revision": "34.4.0",
+      "completed_native_stages": [],
+      "native_seconds": 9.359369500074536,
+      "COM_state_unknown": true,
+      "HRESULT": -2147023174,
+      "last_calls": [
+        {
+          "event": "call_started",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_finished",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_started",
+          "method": "InsertSketch"
+        },
+        {
+          "event": "call_error",
+          "method": "InsertSketch",
+          "hresult": -2147023174
+        }
+      ],
+      "source_sha256": "c66a47743cba65e316b2cb4fa0f87019b57ae2d9ea9959ba5db0af2f80871b73",
+      "judge_reached": false
+    },
+    {
+      "run": "h2-recovery-20261031-m0-lines-03",
+      "status": "FAIL",
+      "pid": 824,
+      "revision": "34.4.0",
+      "completed_native_stages": [],
+      "native_seconds": 5.627464100020006,
+      "COM_state_unknown": true,
+      "HRESULT": -2147023174,
+      "last_calls": [
+        {
+          "event": "call_started",
+          "method": "CreateLine"
+        },
+        {
+          "event": "call_finished",
+          "method": "CreateLine"
+        },
+        {
+          "event": "call_started",
+          "method": "CreateLine"
+        },
+        {
+          "event": "call_error",
+          "method": "CreateLine",
+          "hresult": -2147023174
+        }
+      ],
+      "source_sha256": "9526d65a53c8249cedc32d4629e069727de89f1e9dc830293d5cd89c7ecbd44d",
+      "judge_reached": false
+    },
+    {
+      "run": "h2-recovery-20261031-m0-batch-04",
+      "status": "FAIL",
+      "pid": 44328,
+      "revision": "34.4.0",
+      "completed_native_stages": [],
+      "native_seconds": 7.207310100086033,
+      "COM_state_unknown": true,
+      "HRESULT": -2147023170,
+      "last_calls": [
+        {
+          "event": "call_started",
+          "method": "FeatureExtrusion3"
+        },
+        {
+          "event": "call_error",
+          "method": "FeatureExtrusion3",
+          "hresult": -2147023170
+        },
+        {
+          "event": "call_started",
+          "method": "GetDocumentCount"
+        },
+        {
+          "event": "call_error",
+          "method": "GetDocumentCount",
+          "hresult": -2147023174
+        }
+      ],
+      "source_sha256": "043323057c4daf77d0dd9d57c91e6b51873bb53342530abf5a44f10b8747f56b",
+      "judge_reached": false
+    }
+  ],
+  "SW_started_only_when_absent": true,
+  "ViewServer71496_not_accessed": true,
+  "no_running_process_stopped": true,
+  "shared_settings_drivers_permissions_unchanged": true,
+  "all_experimental_geometry_changes_reverted": true,
+  "safety_fix": "RPC_S_CALL_FAILED_0x800706BE_marks_COM_state_unknown_before_cleanup",
+  "safety_fix_not_claimed_as_native_recovery": true,
+  "new_freeze": false,
+  "new_comparison_run": false,
+  "sealed_inputs_and_nonoperational_source_guard_passed": true,
+  "old_pool_used": 32,
+  "remaining": 8,
+  "parent_logical_calls_used": 15,
+  "maximum_additional_calls": 135,
+  "pending_calls_admitted": false
+}

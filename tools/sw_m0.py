@@ -121,7 +121,8 @@ class Session:
             obj._FlagAsMethod(name)
             result = getattr(obj, name)(*args)
         except self.pc.com_error as e:
-            if (e.hresult & 0xffffffff) in (0x80010001, 0x8001010A, 0x800706BA, 0x80010108):
+            # RPC_S_CALL_FAILED also leaves the native operation's outcome unknown.
+            if (e.hresult & 0xffffffff) in (0x80010001, 0x8001010A, 0x800706BA, 0x800706BE, 0x80010108):
                 self.uncertain = True
             self.events.write(json.dumps({'event': 'call_error', 'at': utc(), 'method': name,
                                           'hresult': e.hresult, 'error': str(e)}) + '\n')

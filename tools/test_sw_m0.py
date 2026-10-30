@@ -1,4 +1,5 @@
 """Consumer-visible M0 admission/safety boundaries; actual COM proof is separate."""
+import io
 import json
 import os
 from pathlib import Path
@@ -72,6 +73,28 @@ class PinnedAttachment(unittest.TestCase):
             with self.subTest(value=value),patch.dict(os.environ,{'CAD_HARNESS_SW_PID':value}):
                 with self.assertRaisesRegex(RuntimeError,'invalid_authorized_SW_PID'):sw_m0.attach_existing()
         self.rot.GetObject.assert_not_called()
+
+
+class COMFailureSafety(unittest.TestCase):
+    def test_rpc_call_failed_blocks_further_COM_and_document_cleanup(self):
+        class RPCError(Exception):
+            hresult=-2147023170
+        session=object.__new__(sw_m0.Session)
+        session.pc=SimpleNamespace(com_error=RPCError)
+        session.events=io.StringIO()
+        session.uncertain=False
+        session.owned=Mock()
+        session.title='HarnessOwned'
+        session.app=Mock()
+        feature_manager=Mock()
+        feature_manager.FeatureExtrusion3.side_effect=RPCError()
+        with self.assertRaises(RPCError):
+            session.call(feature_manager,'FeatureExtrusion3')
+        with self.assertRaisesRegex(RuntimeError,'COM_state_unknown_no_further_calls'):
+            session.call(session.app,'GetDocumentCount')
+        session.close()
+        session.app.GetDocumentCount.assert_not_called()
+        session.app.CloseDoc.assert_not_called()
 
 
 if __name__=='__main__':

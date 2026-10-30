@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-30T20:14:39.489859+00:00",
+  "status": "PASS",
+  "tests": 64,
+  "skipped": 0,
+  "seconds": 5.329,
+  "exit_code": 0,
+  "interpreter": "C:\\dev\\CAD\\.tools\\freecad\\FreeCAD_1.1.4-Windows-x86_64-py311\\bin\\python.exe",
+  "native_SDK_tests_enabled": true,
+  "source_sha256": {
+    "tools/sw_m0.py": "61367d4c58bd5c10a7442f8627ace2b8ae3507274929bbcedf110648ea8c577e",
+    "tools/test_sw_m0.py": "e96dac1d424196915a79ca59b36cc32f2b88180ff8af21baa28e371b85940b75"
+  },
+  "regression_before_fix": {
+    "tests": 1,
+    "failed": 1,
+    "reason": "RuntimeError_not_raised_before_additional_COM_call"
+  },
+  "regression_after_fix": "included_in_full_64",
+  "actual_CAD_calls": 0,
+  "actual_model_calls": 0,
+  "unit_stdout_counts_are_synthetic": true
+}

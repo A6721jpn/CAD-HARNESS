@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "real_pywin32_exception": true,
+  "hresult": -2147023170,
+  "COM_state_unknown": true,
+  "additional_app_calls": 0,
+  "cleanup_app_calls": 0,
+  "actual_SW_instances_bound": 0,
+  "model_calls": 0,
+  "source_sha256": "61367d4c58bd5c10a7442f8627ace2b8ae3507274929bbcedf110648ea8c577e"
+}

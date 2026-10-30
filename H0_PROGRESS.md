@@ -471,3 +471,34 @@
 - 安全な証拠まとめは `reports/sw-h2/skill-20261030-07r1/rendering-recovery-checkpoint.json`。このfolderの新証拠はhost診断であり、quarantineしたR1の比較再利用ではない。zero-cost各smokeのsummary、public M0の正負証拠、stale lockを保全。probe/通常失敗が正常に解放したlockは重ねて作らない。SW/Viewerのkill/quit、共有設定/driver/ACL/権限変更はいずれも0。
 - **必要な次の判断：** ユーザー側で現SWの部品作成を復旧するか、今回の空のtask-owned SWと関連Viewerに限って「終了・再起動禁止」の例外を明示するか。Viewerは共有部品であり、他の3DEXPERIENCE作業への影響を確認できなければ勝手に終了しない。
 - **次の正確なcommandはread-onlyのみ：** `powershell -NoProfile -Command 'Get-Process -Name sldworks,ViewServerV6 -ErrorAction SilentlyContinue | Select-Object Id,Responding,SessionId,StartTime'`。61940は現在running、71496も存在する。許可なしで新instanceを重ねたり、これらを終了しない。判断後は0モデルnative復旧→元M0/H0/独立正負→必要なrenderer修正だけ検証→source commit/new freeze→同条件R2→実会計→pushの順。成功gate前の課金禁止、55%ASK/60%停止は不変。
+
+## Handoff：10/31 04:48 JST監督指示で不在SWの再起動から再開
+
+- 監督が **SW61940終了済み・sldworks.exe稼働0、ViewServer71496のみ残存** と確認したため、前のASKは不要になった。不在SWは既存許可に従って公式shortcutから新しく起動し、epoch07復旧を続行する。user観測を再確認のために再試行せず、起動時は重複起動防止guardだけを置く。
+- **ViewServer71496は終了・操作・再起動しない。** running SWをこちらから終了する許可もない。新SWでもNewPart/NewDocumentに失敗したらモデル0で原因を調べ、許可範囲内で直せない場合はBLOCKをここに記録してh2/swへpushし待機する。
+- quotaは **13%** (`omp-usage-1793389731614-7d=13`, observed2026-10-30T19:48:51.614Z)。55%確認/60%停止、Codex同時2までを維持。今回のモデル呼び出しはまだ0、旧pool32使用済み/残8の保存値をresetしない。
+- sourceは前checkpoint **0667689** のまま。所有view refresh=Trueを維持、未検証DisplayWhenAdded変更は取り込まない。既存63 PASSを再実行で水増しせず、まず新しい実PIDを指定して元public M0の作成・再open・正負対照を実際に実行する。封印/候補/基準/policy/cards/採点/timeoutは不変。
+- 公式起動は1回（launcher28352、2026-10-30T19:49:54.2303615Z）。新SW **PID41148 /Responding=true /Session1** を取得し、`WaitForInputIdle`成功を19:51:06.3935406Zに確認。Viewerへのquery/操作なし。`bg_11`で元public M0を `reports/sw-m0/h2-recovery-20261031-m0-01` へ実行中、明示envは `CAD_HARNESS_SW_PID=41148`。元のworker/judge各300秒は変更していない。結果が来る前に別CAD操作を重ねない。
+- `bg_11`は **FAIL、wall19.28秒/native18.644秒**。今回はNewDocument=Noneではなく、positive作成・保存・reopen・寸法edit/restoreまで進んだが、最後のnegative用新規partのCreateCornerRectangle直後にRPC unavailableとなった。judge未到達、COM_state_unknown=true。SW41148は消失しており、running processをこちらから終了していない。controller53736不在/lock排他readを確認して`session.lock.stale-20261031-m0-01`へrename保存。Viewerへのquery/操作なし。
+- 原因切り分けで、M0のedit-copyから取得した`dimension` COM child handleが、その文書をCloseDocした後のnegative新規作成中もPython localに残っていることを確認。**文書close前にこのchild handleだけ解放する2行の無課金診断変更**を入れた。座標/作成API/正負spec/判定/timeoutはそのまま。closed-document COM lifetimeが今回のcrash原因かは未確定であり、次の対照が成功するまで恒久fixとは扱わない。失敗時は診断変更を戻す。
+- 正規funding readerの再確認（2026-10-30T19:52:18.304266Z）で **使用32/残8、旧epoch07消費15、追加上限135、source/封印照合PASS**。モデル0、pendingを許した状態ではない。証拠`recovery-20261031-accounting.json`。
+- lifetime対照用も不在SWへの公式起動のみ（launcher67064、2026-10-30T19:55:51.2003070Z）。新 **SW60384** のInputIdle/Respondingを確認。`bg_12`で `h2-recovery-20261031-m0-release-02` を実行中、元の正負specとtime cap、Viewer禁止は維持。新規モデル0。診断の2行は未検証・未commitであり、結果が出るまで次のCAD/生成を始めない。
+- lifetime対照`bg_12`も **FAIL、wall9.85秒/native9.359秒**。今度は最初のpositive rectangleでRPC unavailableとなり、`dimension`取得前にSW60384が消失した。したがってchild-handle解放を修復として採用できず、診断の2行を戻した。controller53456不在/lock排他readを確認し、`.stale-20261031-m0-release-02`へrename。Viewerへのquery/操作なし。
+- 両crashとも最後の完了APIが`CreateCornerRectangle`で、その直後にRPCが切れている。次の限定診断は **同じ4辺・同じ座標の矩形を`CreateLine`4本で作る** こと。一括rectangle commandのCOM配列返却/描画経路を避けるが、外形/寸法/閉曲線/押出し/ポケット/フィレット/正負spec/判定/timeoutは変えない。現在はM0の2箇所だけをこのprimitive版に置換した未commitの診断変更。成功するまでM1/H0やliveへ広げない。失敗したら変更を戻して、禁止されたViewer操作をせずBLOCKを記録する。
+- primitive対照は、不在SWへの公式起動1回（launcher45152、2026-10-30T20:01:58.6488851Z）→新 **SW PID824 /InputIdle=true /Responding=true**。`bg_13`で `h2-recovery-20261031-m0-lines-03` を実行中。モデル0、Viewerへのquery/操作0、sourceは診断中で未commit。通常のCAD実行が内部で使う描画部品に対し、agentが別操作を加えることはしない。
+- primitive対照`bg_13`も **FAIL、wall5.92秒/native5.627秒**。最初のCreateLine完了直後、2本目でRPC unavailableとなりSW824が消失。rectangle一括API/COM配列だけの問題とは言えない。controller35092不在/lock排他readを確認し、`.stale-20261031-m0-lines-03`へrename。Viewerへのquery/操作なし。
+- 残る所有文書内の描画条件として、公式APIの **AddToDB=True＋DisplayWhenAdded=False** を4辺作成中だけ使う対照を準備。現在のhelperは元の2 flagを取得し、COM不明時は追加callしないまま停止、通常時はfinallyで正確に復元・readbackする。共有preference/driver/Viewerは変えない。形状と全判定/timeoutは不変。これが失敗したら原sourceへ戻し、許可境界内で修復できないnative BLOCKとして保存する。
+- batch対照は不在SWへの公式起動のみ（launcher51088、2026-10-30T20:07:17.9009740Z）→新 **SW44328 /InputIdle=true /Responding=true**。`bg_14`で `h2-recovery-20261031-m0-batch-04` を実行中。sourceは診断状態、モデル0、Viewerへのquery/操作0。これを正負含む元判定が通るまでは採用/固定しない。
+
+## Handoff：10/31復旧結果 BLOCK・課金0、記録push後に待機
+
+- **BLOCK：許可されたnative環境の範囲内でSWの安定動作を復旧できなかった。** 新freeze/epoch07 liveは開始していない。監督指定どおり、この記録と証拠をh2/swへcommit/pushして待機する。根本原因は未確定であり、Viewer71496が原因と断定しない。
+- 10/31の公式起動4回はいずれもSW不在時のみ。各新PID **41148 /60384 /824 /44328** がnative作成中に消失した。こちらからrunning SWを終了・再起動していない。**Viewer71496へのquery/操作/終了/再起動は0**。共有preference/driver/display設定/registry/ACL/権限の変更も0。Codex generatorの追加起動0。最後に専用dashboard agentだけ1回依頼したが、storeが`指定されたモデル・effortではありません。`で拒否し更新なし。代替model/config変更はせず、同時Codexは親＋当該agentの2台以内。
+- 結果は元M0（positive/reopen/edit/restore後negativeでcrash）、child COM handle解放対照（最初のrectangleでcrash）、同一座標のprimitive4辺対照（最初のline直後にcrash）、所有sketchの表示batch対照（4辺作成・sketch退出後の**FeatureExtrusion3でRPC_S_CALL_FAILED -2147023170**）。4件すべてjudge未到達。runtime失敗をnegative shapeの正しい不合格や採点結果に変換していない。
+- batch対照`bg_14`は **FAIL、wall7.55秒/native7.207秒**。元の制限内で原因を切り分けたが、単一rectangle API、child参照、描画中間表示だけの問題として直せなかった。最後のSW44328も不在を確認。controller25644不在/lock排他readを確認して`.stale-20261031-m0-batch-04`へrename保全した。4失敗のraw native記録はpublic M0 fixture由来でworktree内、比較Gold/seedは出していない。
+- **採用しない診断変更は全て戻した。** `dimension=None`、primitive rectangle helper、AddToDB/DisplayWhenAdded batchingは残していない。座標/geometry command/正負spec/判定/採点/timeoutは元のまま。以前に実証済みの所有view refresh=Trueは0667689から変更なし。
+- ただし今回のtraceで安全停止漏れを実測：`Session.call`が **0x800706BE（RPC_S_CALL_FAILED）** をunknownに分類せず、cleanupから追加GetDocumentCountを呼んでいた。これだけを最小修正し、**最初のRPC failure直後にCOM_state_unknownを立て、以後のCOM/CloseDocを禁止**する。これはnative復旧の代替でも、例外の隠蔽/無視/採点変更でもない。共有Sessionを使うM0/M1/H0に同じfail-closedが適用される。変更sourceは`tools/sw_m0.py`の1分類と`tools/test_sw_m0.py`のregressionのみ。
+- 新regressionは **修正前1件FAIL（追加call前にRuntimeErrorが出ない）→修正後SDK全64/64 PASS、skip0、5.329秒**。実pywin32例外classを使った独立smokeもPASS：unknown=true、追加app call0、cleanup call0、SW bind0/モデル0。これは安全guardの証拠であり、native CADの合格証拠ではない。
+- 証拠：`reports/sw-h2/skill-20261030-07r1/recovery-20261031-BLOCK.json`（4件）、`recovery-20261031-regressions.json`（64件）、`recovery-20261031-rpc-safety.json`、`recovery-20261031-accounting.json`。R1 folderはhost診断の保管先であり、quarantine bankを比較に再利用していない。新R2 bankも未作成。
+- 正規funding readerで **使用32/残8、旧epoch07の15開始、追加上限135、未決済reservation拒否、親source/封印照合PASS** を再確認。今回追加モデル/課金呼び出し **0**。旧14保存rowと中断P03A、親manifest/seed/skill/plan/policy/cards/採点/時間制限は不変。最新quota観測 **13%** (`omp-usage-1793391263545-7d=13`, observed2026-10-30T20:14:23.545Z)。55%確認/60%停止は維持。
+- **現在active jobなし。次は監督からnative環境復旧の指示を待つ。** さらに同条件の起動を繰り返したり、Viewerを操作したり、新しい課金runへ進めない。再開時は本節とBLOCK receiptを先に読み、復旧後に元public M0/H0/独立正負controlが通った場合だけ、必要なcodeをcommitして新freeze→同条件の独立epoch07へ進む。

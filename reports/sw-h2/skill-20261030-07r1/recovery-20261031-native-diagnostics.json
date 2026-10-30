@@ -1,0 +1,78 @@
+{
+  "at": "2026-10-30T20:02:41.183014+00:00",
+  "live_model_calls": 0,
+  "diagnostic_only": true,
+  "ViewServer_not_accessed": true,
+  "no_running_process_stopped": true,
+  "attempts": [
+    {
+      "run": "h2-recovery-20261031-m0-01",
+      "status": "FAIL",
+      "pid": 41148,
+      "revision": "34.4.0",
+      "initial_documents": 0,
+      "completed_native_stages": [
+        "positive",
+        "reopened",
+        "edited",
+        "restored"
+      ],
+      "native_seconds": 18.643999200081453,
+      "COM_state_unknown": true,
+      "RPC_server_unavailable": true,
+      "last_calls": [
+        {
+          "event": "call_started",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_finished",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_started",
+          "method": "InsertSketch"
+        },
+        {
+          "event": "call_error",
+          "method": "InsertSketch",
+          "hresult": -2147023174
+        }
+      ],
+      "source_sha256": "0d0f338eae36206e8993547e5114b48e1b1f045b4fe3affc23b4b513fac185aa",
+      "judge_reached": false
+    },
+    {
+      "run": "h2-recovery-20261031-m0-release-02",
+      "status": "FAIL",
+      "pid": 60384,
+      "revision": "34.4.0",
+      "initial_documents": 0,
+      "completed_native_stages": [],
+      "native_seconds": 9.359369500074536,
+      "COM_state_unknown": true,
+      "RPC_server_unavailable": true,
+      "last_calls": [
+        {
+          "event": "call_started",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_finished",
+          "method": "CreateCornerRectangle"
+        },
+        {
+          "event": "call_started",
+          "method": "InsertSketch"
+        },
+        {
+          "event": "call_error",
+          "method": "InsertSketch",
+          "hresult": -2147023174
+        }
+      ],
+      "source_sha256": "c66a47743cba65e316b2cb4fa0f87019b57ae2d9ea9959ba5db0af2f80871b73",
+      "judge_reached": false
+    }
+  ]
+}
