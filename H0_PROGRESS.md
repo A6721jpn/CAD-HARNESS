@@ -502,3 +502,16 @@
 - 証拠：`reports/sw-h2/skill-20261030-07r1/recovery-20261031-BLOCK.json`（4件）、`recovery-20261031-regressions.json`（64件）、`recovery-20261031-rpc-safety.json`、`recovery-20261031-accounting.json`。R1 folderはhost診断の保管先であり、quarantine bankを比較に再利用していない。新R2 bankも未作成。
 - 正規funding readerで **使用32/残8、旧epoch07の15開始、追加上限135、未決済reservation拒否、親source/封印照合PASS** を再確認。今回追加モデル/課金呼び出し **0**。旧14保存rowと中断P03A、親manifest/seed/skill/plan/policy/cards/採点/時間制限は不変。最新quota観測 **13%** (`omp-usage-1793391263545-7d=13`, observed2026-10-30T20:14:23.545Z)。55%確認/60%停止は維持。
 - **現在active jobなし。次は監督からnative環境復旧の指示を待つ。** さらに同条件の起動を繰り返したり、Viewerを操作したり、新しい課金runへ進めない。再開時は本節とBLOCK receiptを先に読み、復旧後に元public M0/H0/独立正負controlが通った場合だけ、必要なcodeをcommitして新freeze→同条件の独立epoch07へ進む。
+
+## Handoff：11/15復旧承認を受領、quota 84%で着手前BLOCK
+
+- ユーザーは`reports/review-fable-20261114.md`のFable 5.2推奨順での復旧を承認した。対象はこのSW worktree / `h2/sw`。同reviewはこのworktreeに存在すると確認したが、quota停止のため本文レビュー・新しいhost証拠採取は未着手。
+- **BLOCK：最新取得snapshotが84%で、60%停止条件に達している。** `C:/dev/v4-ops/quota.json`：`snapshot_id=omp-usage-1794680815927-7d=84`、`observed_at=2026-11-14T18:26:55.927Z`、`used_percent=84`。確認時計は2026-11-14T18:28:58.7663399Z、取得から122.843秒であり、古い値を現在値と取り違えて止めたものではない。55%確認/60%停止を自律継続の委任で迂回しない。
+- 今回のSW起動、CAD実行、生成モデル/課金呼び出し、registry/監視設定、host表示設定、hub再起動は**すべて0**。追加Codex agentも起動していない。コード/合格ライン/policy/cards/採点/封印/既存結果/予算台帳は未変更。新しいfreezeは作成しない。
+- 承認済みの未実施順序1：SWを起動せず、10/29 09:12 JST前後のhost event log、SW/WER、GPU/表示構成、session種別をread-only採取して記録する。新規採取と過去記録を区別し、証拠欠損を「異常なし」にしない。
+- 未実施順序2：未追跡の10/31証拠とrecovery報告を、gold/seed/raw非公開入力やdumpを混入させない明示追加で保全・commit/pushする。quota停止中は未精査のreportsをまとめて追加しない。
+- 未実施順序3：`sldworks.exe`向けLocalDumpsとSilent Process Exitの設定をユーザー承認済み。適用前の値と復元手順を保存し、dumpは非公開・Git外に置く。復旧中に閉じてよいのは、起動元を確認できるハーネス/task所有・文書0・壊れたSWだけ。ユーザー文書付きSWを終了しない。現時点では設定未適用。
+- 未実施順序4：hub再起動とユーザーの手動起動テストは**ユーザー作業**。手順書のみ用意し、agentはhubを再起動しない。そのユーザー作業を待つ間も、quotaと許可範囲が許す他の到達可能作業だけを進める。
+- 未実施順序5/6：凍結コードの元M0、Software OpenGL比較、表示構成の無課金切り分けを行い、SW修復は後回し。**連続5回・smoke2回・idle後1回・20制御完走**を安定条件とし、全部成立するまで課金run禁止。quotaを再取得し、Codex同時は親を含め2台まで。安定条件の未実施をPASSにしない。
+- 未実施順序7：新しい独立runを凍結する前に、timeout組の扱い等の比較手順の修正**案**を作る。形状の合格ライン、policy/cards/採点、封印は変えず、旧結果の再採点やtimeoutの成功化もしない。
+- **現在active jobなし。** この停止記録だけをcommit/pushし、未追跡reportsはそのまま保持して待機する。再開には55%未満の新しく有効なquota確認が必要。再開時の最初の安全な操作はquota snapshotのread-only取得であり、SWやhubを先に起動・再起動しない。
