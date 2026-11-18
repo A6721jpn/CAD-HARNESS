@@ -1,0 +1,9 @@
+{
+    "at":  "2026-11-18T17:49:43.2164728Z",
+    "official_shortcut":  true,
+    "launcher_pid":  28160,
+    "started_only_when_SW_absent":  true,
+    "no_process_stopped":  true,
+    "paid_calls":  0,
+    "status":  "BLOCK_SW_did_not_appear"
+}

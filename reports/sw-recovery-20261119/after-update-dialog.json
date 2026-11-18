@@ -1,0 +1,21 @@
+{
+    "observed_at":  "2026-11-18T17:54:48.9414715Z",
+    "processes":  [
+                      {
+                          "ProcessName":  "CATSTART",
+                          "Id":  28160,
+                          "Responding":  true,
+                          "SessionId":  1,
+                          "StartTime":  "\/Date(1795024183298)\/"
+                      },
+                      {
+                          "ProcessName":  "SWXDesktopLauncher",
+                          "Id":  47604,
+                          "Responding":  true,
+                          "SessionId":  1,
+                          "StartTime":  "\/Date(1795024183583)\/"
+                      }
+                  ],
+    "click_result":  "app_not_found: no skip action proven",
+    "no_process_stopped":  true
+}

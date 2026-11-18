@@ -2,7 +2,7 @@
 
 Codex の `rollout-*.jsonl` または保存済み計測 JSON から、壁時計時間、トークン、API/CU 経路を集計する標準ライブラリのみの CLI。プロンプト本文はレポートに出力しない。
 
-規定タスク A（`A-box-pocket-fillet`）の CAD は 2026-10-03 約 18:29 JST のユーザー決定で DPC-019 の FreeCAD 1.1.4 である。実行ファイルは `C:\dev\CAD\.tools\freecad\FreeCAD_1.1.4-Windows-x86_64-py311\FreeCAD.exe`。LPC-017 は CAD ホストではない。手順は `docs/runbook-A-box-pocket-fillet.md` と `docs/measurement-slice-v0.md`。SolidWorks と Fusion 360 の経路は retired。この README は計測 CLI の説明であり、CAD GUI は起動しない。後述の `mcp__*fusion*` / `adsk` は分類コードが現在見ている文字列であり、コード自体はここでは変えない。
+旧計測タスク A（`A-box-pocket-fillet`）の CAD は 2026-10-03 約 18:29 JST のユーザー決定で DPC-019 の FreeCAD 1.1.4 である。実行ファイルは `C:\dev\CAD\.tools\freecad\FreeCAD_1.1.4-Windows-x86_64-py311\FreeCAD.exe`。LPC-017 は CAD ホストではない。手順は `docs/runbook-A-box-pocket-fillet.md` と `docs/measurement-slice-v0.md`。旧計測タスクのSolidWorks/Fusion 360経路はretiredだが、**`h2/sw`ブランチのSolidWorks COMハーネスは別の開発対象**であり、ここで廃止したものではない。復旧手順は[`USER-RECOVERY.md`](../reports/sw-recovery-20261119/USER-RECOVERY.md)を参照。この README は計測 CLI の説明であり、CAD GUI は起動しない。後述の `mcp__*fusion*` / `adsk` は分類コードが現在見ている文字列であり、コード自体はここでは変えない。
 
 
 ## 最小実行

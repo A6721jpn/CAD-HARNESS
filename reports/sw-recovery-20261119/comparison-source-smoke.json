@@ -1,0 +1,65 @@
+{
+  "schema": "sw.recovery.comparison-existing-function-smoke.v1",
+  "at": "2026-11-18T17:57:39.423303+00:00",
+  "source_sha256": "f241e0effbebb5fe4ca4356ee53b6f7201b342f01655631a654beaa82b61c52e",
+  "synthetic_only": true,
+  "source_modified": false,
+  "model_calls": 0,
+  "cad_calls": 0,
+  "checks": [
+    {
+      "name": "missing_usage_is_excluded",
+      "actual": [
+        false,
+        "unknown_or_invalid_initial_cache"
+      ],
+      "expected": [
+        false,
+        "unknown_or_invalid_initial_cache"
+      ],
+      "passed": true
+    },
+    {
+      "name": "exact_one_percentage_point_matches",
+      "actual": [
+        true,
+        null
+      ],
+      "expected": [
+        true,
+        null
+      ],
+      "passed": true
+    },
+    {
+      "name": "over_one_percentage_point_excluded",
+      "actual": [
+        false,
+        "initial_cache_rate_mismatch"
+      ],
+      "expected": [
+        false,
+        "initial_cache_rate_mismatch"
+      ],
+      "passed": true
+    },
+    {
+      "name": "unchanged_two_gain_equal_time_calls_eligible",
+      "actual": true,
+      "expected": true,
+      "passed": true
+    },
+    {
+      "name": "unchanged_time_nonworsening_gate",
+      "actual": "calls_or_active_time_worse",
+      "expected": "calls_or_active_time_worse",
+      "passed": true
+    },
+    {
+      "name": "four_matched_pairs_not_five",
+      "actual": "five_matched_pairs_required",
+      "expected": "five_matched_pairs_required",
+      "passed": true
+    }
+  ]
+}

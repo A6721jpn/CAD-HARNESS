@@ -1,0 +1,24 @@
+{
+    "observed_at":  "2026-11-18T18:01:59.1300453Z",
+    "exe_version":  "34.4.0.0078",
+    "product_version":  "34.4.0.0078",
+    "exe_sha256":  "ecd4ba94513f72f027025647acc45a45fc58babdb026da9caefcb5a574fe98e0",
+    "matches_historical_oct31_exe":  true,
+    "processes":  [
+                      {
+                          "ProcessName":  "CATSTART",
+                          "Id":  28160,
+                          "Responding":  true,
+                          "SessionId":  1
+                      },
+                      {
+                          "ProcessName":  "SWXDesktopLauncher",
+                          "Id":  47604,
+                          "Responding":  true,
+                          "SessionId":  1
+                      }
+                  ],
+    "runtime_revision_not_observed":  true,
+    "no_process_stopped":  true,
+    "settings_changed":  false
+}

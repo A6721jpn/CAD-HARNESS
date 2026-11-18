@@ -1,0 +1,20 @@
+{
+    "valid": false,
+    "superseded_by": "launcher-markers-v2.json",
+    "error": "Initial ReadAllText failed because the writer held the log. The following zero counts are invalid, not measured absence.",
+    "observed_at":  "2026-11-18T17:52:41.2042105Z",
+    "source":  "SWXDesktopLauncher/20261119024944_V6R2026x.HF5.9.log",
+    "bytes":  17343,
+    "counts":  {
+                   "error":  0,
+                   "failed":  0,
+                   "authentication":  0,
+                   "offline":  0,
+                   "expired":  0,
+                   "license":  0,
+                   "cancel":  0,
+                   "http_status":  0
+               },
+    "raw_text_published":  false,
+    "limitations":  "Markers alone do not prove authentication, license or network failure. No login/account/tokens or commands are published."
+}

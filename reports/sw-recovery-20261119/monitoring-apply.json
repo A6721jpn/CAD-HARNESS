@@ -1,0 +1,85 @@
+{
+    "observed_at":  "2026-11-18T17:45:45.2957696Z",
+    "mode":  "Apply",
+    "registry_view":  "Registry64",
+    "status":  "BLOCK_admin_required_no_changes",
+    "changed_values":  0,
+    "dump_directory_created":  false,
+    "paid_calls":  0,
+    "cad_started":  false,
+    "error":  "BLOCK_admin_required_no_changes",
+    "after":  [
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting\\LocalDumps\\sldworks.exe",
+                      "name":  "DumpFolder",
+                      "key_existed":  true,
+                      "exists":  true,
+                      "kind":  "ExpandString",
+                      "value":  "%localappdata%\\SolidWorks\\CXPD"
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting\\LocalDumps\\sldworks.exe",
+                      "name":  "DumpType",
+                      "key_existed":  true,
+                      "exists":  true,
+                      "kind":  "DWord",
+                      "value":  1
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting\\LocalDumps\\sldworks.exe",
+                      "name":  "DumpCount",
+                      "key_existed":  true,
+                      "exists":  true,
+                      "kind":  "DWord",
+                      "value":  5
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\sldworks.exe",
+                      "name":  "GlobalFlag",
+                      "key_existed":  false,
+                      "exists":  false,
+                      "kind":  null,
+                      "value":  null
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SilentProcessExit\\sldworks.exe",
+                      "name":  "ReportingMode",
+                      "key_existed":  false,
+                      "exists":  false,
+                      "kind":  null,
+                      "value":  null
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SilentProcessExit\\sldworks.exe",
+                      "name":  "IgnoreSelfExits",
+                      "key_existed":  false,
+                      "exists":  false,
+                      "kind":  null,
+                      "value":  null
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SilentProcessExit\\sldworks.exe",
+                      "name":  "LocalDumpFolder",
+                      "key_existed":  false,
+                      "exists":  false,
+                      "kind":  null,
+                      "value":  null
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SilentProcessExit\\sldworks.exe",
+                      "name":  "DumpType",
+                      "key_existed":  false,
+                      "exists":  false,
+                      "kind":  null,
+                      "value":  null
+                  },
+                  {
+                      "path":  "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SilentProcessExit\\sldworks.exe",
+                      "name":  "MaxNumberOfDumpFiles",
+                      "key_existed":  false,
+                      "exists":  false,
+                      "kind":  null,
+                      "value":  null
+                  }
+              ]
+}

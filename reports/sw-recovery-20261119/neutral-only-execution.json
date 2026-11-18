@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-18T17:58:26.300Z",
+  "exit_code": 0,
+  "stdout": "{\"status\": \"PASS\", \"out\": \"C:\\\\dev\\\\CAD-HARNESS-sw\\\\reports\\\\sw-m0\\\\h2-recovery-20261119-neutral-only-01\", \"seconds\": 2.0475165001116693}\r\n",
+  "stderr": "",
+  "new_SW_run": false,
+  "counts_toward_stability": false,
+  "source": "Original public M0 saved STEP controls, unchanged neutral probe"
+}

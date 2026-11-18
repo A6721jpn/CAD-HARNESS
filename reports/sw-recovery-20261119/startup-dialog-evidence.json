@@ -1,0 +1,39 @@
+{
+  "schema": "sw.recovery.startup-dialog.v1",
+  "recorded_at": "2026-11-18T17:56:22.059Z",
+  "inspection": "Orca computer UIA, task-owned SWXDesktopLauncher only, no screenshot or credential fields captured",
+  "events": [
+    {
+      "observed_utc": "2026-11-18T17:53:55Z",
+      "pid": 47604,
+      "window_id": 2826450,
+      "title": "3DEXPERIENCE の更新",
+      "installed": "3DEXPERIENCE R2026x HotFix 5.9",
+      "available": "3DEXPERIENCE R2026x HotFix 5.11",
+      "choices": [
+        "更新",
+        "スキップ"
+      ]
+    },
+    {
+      "observed_utc": "2026-11-18T17:54:34Z",
+      "intended_action": "Skip update to retain frozen version",
+      "provider_result": "app_not_found",
+      "action_verified": false
+    },
+    {
+      "observed_utc": "2026-11-18T17:55:13Z",
+      "pid": 47604,
+      "window_id": 19141332,
+      "title": "Login | 3DEXPERIENCE ID | Dassault Systèmes",
+      "action": "Read-only list-windows; no sign-in attempted"
+    }
+  ],
+  "conclusions": [
+    "Startup is currently waiting at an interactive login window, not an observed SolidWorks CAD crash.",
+    "Do not infer that our failed click skipped the update or infer why the window changed.",
+    "No credentials submitted, no update installed by the agent, no SW client instantiated, no document opened.",
+    "User handles sign-in/manual test; no second launcher, reboot, kill or repair attempted."
+  ],
+  "paid_generator_calls": 0
+}

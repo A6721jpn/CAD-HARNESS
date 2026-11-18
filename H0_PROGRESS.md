@@ -526,3 +526,22 @@
 - `preservation-audit.json`で、公開・独立M0の10/31四folderにある未追跡**25ファイル**を明示allowlist/元byte SHA256/秘密marker検査で分類、拒否0。これらと採取根拠を保全commitする。封印M1/H0/H2入力、dump、raw native user log、無関係の未追跡review/brainstormはまとめて追加しない。
 - 監視設定のread-only snapshot `monitoring-before.json`：SWの既存LocalDumpsは`%localappdata%\SolidWorks\CXPD`、mini、保持5。IFEO GlobalFlag/SilentProcessExitの対象値は未設定。現在non-adminでHKLM親のwrite-openが拒否される。可逆のper-exe監視scriptを用意したが、まだApply未実施・設定変更0。権限を迂回せず、証拠保全後に正規Applyの成否を記録する。
 - Dashboard専用agentは今回も`指定されたモデル・effortではありません。`でstore拒否。別modelや設定変更で代行せず、dashboard未更新として記録する。比較手順は別のdocumentation agentが提案書を作成済み、採点/採用実装へは未適用。次は監視Applyの記録→ユーザー専用再起動/手動手順書→許可された無課金切り分け。安定gate前の課金禁止、判定/card0.01mm/policy/scoring/封印/timeout不変。
+
+- 11/19追記：証拠保全`0ea81c1`をpush済み。正規監視Applyはexit2、`BLOCK_admin_required_no_changes`。9値readbackは変更前と同一、folder作成0。管理者作業を`reports/sw-recovery-20261119/USER-RECOVERY.md`に記載。昇格/UAC/ACL変更を迂回しない。
+- displayの空列挙を別のC#内native API呼出しで切り分けたところ、`desktop-access-readonly.json`で**Virtual Display DriverのDISPLAY5だけactive/primary、NVIDIAのDISPLAY1〜4はinactive**と確認。親はWinSta0/Default、Win32k disable flags0。最初のPowerShell struct経由の空列挙は不確定な観測として保持し、「画面なし」の証拠にはしない。GPU driver原因の確定でもない。
+- 次の限定診断判断：ユーザーの「それまでに課金0で元M0再実行を進めてよい」の範囲で、現在SW不在時だけ公式shortcutから**元M0を1回**実行する。PC再起動・ユーザー手動確認の代行はしないし、これを手動確認後の安定gateに数えない。SPE未設定という制約を残し、既存vendor WER設定は維持。`m0-source-before.json`でM0既存7ファイルがHEADと一致。失敗時は追試で同じ故障を数え直さず、新証拠で次の切り分けを判断する。healthy running SWの終了/再起動や、無応答SWへの追加操作はしない。
+
+## Handoff：11/19 03時台・管理者監視設定と対話ログイン待ち BLOCK（本節が最新）
+
+- 到達可能なread-only採取、10/31証拠保全、復旧手順書、比較手順提案を完了。**残るBLOCKはquotaではなく、管理者権限とユーザーの対話ログイン/再起動/手動確認。** `CURRENT-STATUS.md`と`USER-RECOVERY.md`は`reports/sw-recovery-20261119/`に置いた。
+- 公式shortcutはSW不在時の**1回**のみ（17:49:43Z、CATSTART28160）。120秒以内にSWは現れなかったため、元M0のCOM workerは実行していない。read-only UIAで、最初はHF5.9から5.11への更新提示、その後は`Login | 3DEXPERIENCE ID | Dassault Systèmes`を確認した。skipの操作は`app_not_found`、次の古いwindow指定は`windowNotFound`で、**skip成功・更新完了・認証完了はいずれも主張しない**。認証入力や別起動はしなかった。
+- 最後のOS観測 `2026-11-18T18:01:59.1300453Z`：CATSTART28160/SWXDesktopLauncher47604はいずれもResponding=true、SW/Viewerは0。launcherのログイン画面はユーザー対応用に残した。running SWやhelperの終了・再起動、PC再起動、kill、認証/driver/表示/ACL変更は0。SW exeは**34.4.0.0078**、SHA256`ecd4ba94513f72f027025647acc45a45fc58babdb026da9caefcb5a574fe98e0`で10/31記録と一致。runtime RevisionNumberは未取得。
+- 監視：Inspect成功、Applyは**exit2/`BLOCK_admin_required_no_changes`**。9値のreadbackは元のまま。既存vendor WERのmini/保持5を残し、新しいSPEは未設定。管理者Apply/Restoreと実dump生成は未検証であり、設定済みと扱わない。per-exe scriptと正確なApply/Restore command、変更前snapshot、private dumpの扱いをユーザー手順書に保存。権限/UACを迂回せず、shared pathのACL/ownership変更も0。
+- 追加の到達可能な無課金切り分けとして、**公開・独立の保存済みM0 STEPだけ**を新しい専用folderへコピーし、未変更のFreeCAD1.1.4/OCCT7.8.1判定を実行。**PASS、2.0475165秒**、元0.01mm＋追加0.005mm、同じ基準によるnegative拒否=true。証拠`reports/sw-m0/h2-recovery-20261119-neutral-only-01/`、`neutral-only-execution.json`。SW質量値とCOM履歴は旧保存物で、新測定ではない。現在のSW作図・G2・全域最大偏差・安定gateの成功証拠にも数えない。旧M0/E7の成果物・結果は変更していない。
+- 比較提案は`comparison-procedure-proposal.md`。全割当の公式合格/不合格/不明/未開始を残し、timeoutのcache欠測による脱落を別表示する案。**usage欠測だけで公式合格を不合格に変えない**。既存cache一致5組・gain2件・時間/calls非悪化・fresh5/5の採用gateは保持し、採用分母の変更や無益性停止の導入は別の事前登録/判断が必要と明記。実装・旧結果の再採点/replay/refundはしていない。
+- 未変更の`cache_match/compare`をASTから隔離した人工入力smokeは**6/6 PASS**（欠測除外、1 percentage point境界、2件gain、時間非悪化、4組拒否）。証拠`comparison-source-smoke.json`。将来の提案全体のテストではない。core sourceを変えていないため既存64件suiteの再実行・合格数の水増しはしない。`tools/README.md`の旧計測経路retiredとSW開発branchの混同だけを文書修正した。root READMEは変更していない。
+- 全新規CAD生成モデル/課金呼び出し**0**。FreeCADの上記neutral-only実行は1回、SWの新規COM/CAD試行は0。quota最終取得は**1%**（`omp-usage-1795024901784-7d=1`, observed`2026-11-18T18:01:41.784Z`）。55%確認/60%停止、親を含め同時Codex最大2を維持。旧budget/ledger/manifest/封印/card0.01mm/policy/scoring/時間制限は不変。
+- **安定gateのM0連続5回・smoke2回・30分idle後1回・正負20制御は全て未実施**。Software OpenGL比較もSW未起動のため未実施。ユーザーだけが行うPC再起動/手動テストの代行や、ログインを回避する別起動/非表示instance/無断更新で進めない。成功前のlive/newfreezeは禁止。
+- Dashboard専用storeは各milestoneとも`指定されたモデル・effortではありません。`で拒否。今回は親側のnative inspection環境が使用できたが、それをdashboard更新の無制限代行には使わず、dashboard未更新のまま記録。別model/configへの変更なし。
+- **停止点と残件順序：** ユーザーが同一アカウントの管理者PowerShellで監視Apply→ユーザーのPC再起動・公式起動・ログイン・検証専用部品の手動確認→文書0/応答ありの実PID通知→元M0/SoftwareOpenGL比較→上記安定gate→比較手順の事前登録判断→正規会計/新quota/新freezeを満たした場合のみ課金。新たな呼出し枠を勝手に発行しない。
+- **agent再開時の最初の操作：** `C:/dev/v4-ops/quota.json`をread-only取得し、次に`powershell -NoProfile -Command 'Get-Process -Name sldworks,SWXDesktopLauncher,CATSTART -ErrorAction SilentlyContinue | Select-Object ProcessName,Id,Responding,SessionId'`。現在のlauncherを無視して起動を重ねない。無応答SWなら追加操作せず停止。手順書の管理者成功receiptとユーザー手動結果がない状態で安定済みとしない。本checkpointと安全な証拠だけをh2/swへcommit/pushし、ユーザー作業待ちで待機する。

@@ -1,0 +1,48 @@
+{
+  "observed_at": "2026-11-18T17:49:13.401Z",
+  "reference": "HEAD 0ea81c1; committed existing M0, no source modification",
+  "checks": [
+    {
+      "path": "tools/sw_m0.py",
+      "git_blob": "f0c3394e11a0f91a445eb2058517f9c871a58942",
+      "committed_git_blob": "f0c3394e11a0f91a445eb2058517f9c871a58942",
+      "unchanged": true
+    },
+    {
+      "path": "tools/sw_m0_probe.py",
+      "git_blob": "3f6a24189ce7dd9fb18a7258fa86eed4850fd96e",
+      "committed_git_blob": "3f6a24189ce7dd9fb18a7258fa86eed4850fd96e",
+      "unchanged": true
+    },
+    {
+      "path": "tools/cad_spec.py",
+      "git_blob": "86b4510051624ecc1c43fd06acee5c009168884d",
+      "committed_git_blob": "86b4510051624ecc1c43fd06acee5c009168884d",
+      "unchanged": true
+    },
+    {
+      "path": "tools/cad_spec_probe.py",
+      "git_blob": "b329858c598ab0c78aaa598d2a594656c60e20f0",
+      "committed_git_blob": "b329858c598ab0c78aaa598d2a594656c60e20f0",
+      "unchanged": true
+    },
+    {
+      "path": "design/cad-harness-mvp/eval-v1/P1.json",
+      "git_blob": "e152ecc2cd42d0169dc12091f36932344a5757d5",
+      "committed_git_blob": "e152ecc2cd42d0169dc12091f36932344a5757d5",
+      "unchanged": true
+    },
+    {
+      "path": "design/harness2-sw-m0/positive.json",
+      "git_blob": "7822effd7429eda1474eeaf0d411166fa18787a0",
+      "committed_git_blob": "7822effd7429eda1474eeaf0d411166fa18787a0",
+      "unchanged": true
+    },
+    {
+      "path": "design/harness2-sw-m0/wrong-depth.json",
+      "git_blob": "60f64cf2214fe8eba574d9a01276b1227c27565f",
+      "committed_git_blob": "60f64cf2214fe8eba574d9a01276b1227c27565f",
+      "unchanged": true
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+    "observed_at":  "2026-11-18T17:46:59.4786725Z",
+    "user_interactive":  true,
+    "window_station":  "WinSta0",
+    "desktop":  "Default",
+    "win32k_policy_query_ok":  true,
+    "win32k_system_call_disable_flags":  0,
+    "displays":  [
+                     {
+                         "name":  "\\\\.\\DISPLAY1",
+                         "description":  "NVIDIA GeForce RTX 5060",
+                         "flags":  0,
+                         "active":  false,
+                         "primary":  false
+                     },
+                     {
+                         "name":  "\\\\.\\DISPLAY2",
+                         "description":  "NVIDIA GeForce RTX 5060",
+                         "flags":  0,
+                         "active":  false,
+                         "primary":  false
+                     },
+                     {
+                         "name":  "\\\\.\\DISPLAY3",
+                         "description":  "NVIDIA GeForce RTX 5060",
+                         "flags":  0,
+                         "active":  false,
+                         "primary":  false
+                     },
+                     {
+                         "name":  "\\\\.\\DISPLAY4",
+                         "description":  "NVIDIA GeForce RTX 5060",
+                         "flags":  0,
+                         "active":  false,
+                         "primary":  false
+                     },
+                     {
+                         "name":  "\\\\.\\DISPLAY5",
+                         "description":  "Virtual Display Driver",
+                         "flags":  5,
+                         "active":  true,
+                         "primary":  true
+                     }
+                 ],
+    "settings_changed":  false
+}

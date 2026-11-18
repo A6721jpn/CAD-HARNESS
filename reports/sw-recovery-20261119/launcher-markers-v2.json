@@ -1,0 +1,22 @@
+{
+    "observed_at":  "2026-11-18T17:53:04.8319897Z",
+    "source":  "SWXDesktopLauncher/20261119024944_V6R2026x.HF5.9.log",
+    "supersedes":  "launcher-markers.json invalid: read error was nonterminating, zero counts are not observations",
+    "raw_text_published":  false,
+    "status":  "read_ok",
+    "characters":  17343,
+    "counts":  {
+                   "error":  2,
+                   "failed":  1,
+                   "authentication":  7,
+                   "offline":  1,
+                   "expired":  9,
+                   "license":  1,
+                   "cancel":  0,
+                   "http_status":  0
+               },
+    "hresult_codes":  [
+
+                      ],
+    "limitations":  "Markers alone do not prove authentication, license or network failure; no credentials/raw lines published."
+}

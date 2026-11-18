@@ -1,0 +1,35 @@
+{
+  "schema": "sw.recovery.neutral-only.v1",
+  "at": "2026-11-18T17:58:23.230692+00:00",
+  "source": "reports/sw-m0/m0-20261022-04",
+  "recovery_native_SW_executed": false,
+  "old_SW_mass_values_not_new_measurements": true,
+  "counts_toward_SW_stability": false,
+  "paid_calls": 0,
+  "inputs": [
+    {
+      "name": "com-result.json",
+      "sha256": "bb004a1d7cb0d7be6cff6c92e9cb6756f59420f8b52f3a851b55e89994132381"
+    },
+    {
+      "name": "before-reopen.step",
+      "sha256": "2a03ea1aa04d345367a2b832bf143c5938327a51f5510fdda352a0e733879f78"
+    },
+    {
+      "name": "reopened.step",
+      "sha256": "6689bb03bc02d78cd44315b05853c934fa680b6195015715a2ca3e9ddd54b2f9"
+    },
+    {
+      "name": "edited.step",
+      "sha256": "c20cc8e96222fdbfe73b5d7c03331fbd97f2df27fb1300fa696bdfe685a75bf7"
+    },
+    {
+      "name": "restored.step",
+      "sha256": "5990456fd4af76a32e6b21016d0ade56ae94b30cbc78c343b02bd4dedcc7221e"
+    },
+    {
+      "name": "wrong-depth.step",
+      "sha256": "85a990094c71da6b86332ce937e5909474447e7713406d6b7848da0977b60a0e"
+    }
+  ]
+}

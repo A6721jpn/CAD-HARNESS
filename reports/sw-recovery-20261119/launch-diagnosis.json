@@ -1,0 +1,41 @@
+{
+    "observed_at":  "2026-11-18T17:52:25.7902407Z",
+    "target_path":  "C:\\Program Files\\Dassault Systemes\\SOLIDWORKS 3DEXPERIENCE R2026x\\win_b64\\code\\bin\\CATSTART.exe",
+    "target_exists":  true,
+    "shortcut_arguments_not_published":  true,
+    "working_directory":  "",
+    "processes":  [
+                      {
+                          "ProcessName":  "3DEXPERIENCELauncher",
+                          "Id":  6020,
+                          "Responding":  true,
+                          "SessionId":  0,
+                          "StartTime":  null
+                      },
+                      {
+                          "ProcessName":  "3DEXPERIENCELauncherBackbone",
+                          "Id":  16016,
+                          "Responding":  true,
+                          "SessionId":  1,
+                          "StartTime":  "\/Date(1791337126238)\/"
+                      },
+                      {
+                          "ProcessName":  "3DEXPERIENCELauncherSysTray",
+                          "Id":  18820,
+                          "Responding":  true,
+                          "SessionId":  1,
+                          "StartTime":  "\/Date(1791337028206)\/"
+                      },
+                      {
+                          "ProcessName":  "SWXDesktopLauncher",
+                          "Id":  47604,
+                          "Responding":  true,
+                          "SessionId":  1,
+                          "StartTime":  "\/Date(1795024183583)\/"
+                      }
+                  ],
+    "launcher_28160_exists":  true,
+    "paid_calls":  0,
+    "settings_changed":  false,
+    "launcher_version":  "6.428.0.25074"
+}
