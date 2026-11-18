@@ -515,3 +515,14 @@
 - 未実施順序5/6：凍結コードの元M0、Software OpenGL比較、表示構成の無課金切り分けを行い、SW修復は後回し。**連続5回・smoke2回・idle後1回・20制御完走**を安定条件とし、全部成立するまで課金run禁止。quotaを再取得し、Codex同時は親を含め2台まで。安定条件の未実施をPASSにしない。
 - 未実施順序7：新しい独立runを凍結する前に、timeout組の扱い等の比較手順の修正**案**を作る。形状の合格ライン、policy/cards/採点、封印は変えず、旧結果の再採点やtimeoutの成功化もしない。
 - **現在active jobなし。** この停止記録だけをcommit/pushし、未追跡reportsはそのまま保持して待機する。再開には55%未満の新しく有効なquota確認が必要。再開時の最初の安全な操作はquota snapshotのread-only取得であり、SWやhubを先に起動・再起動しない。
+
+## Handoff：11/19再開・read-only証拠採取と10/31未追跡証拠の保全
+
+- quota解除を自分で確認：`omp-usage-1795023245638-7d=1`、observed `2026-11-18T17:34:05.638Z`、1%。確認時計17:34:44Z。Fable 5.2 review本文を最後まで読み、前回の84%停止を解除した。SW起動・COM接続・生成/課金呼び出しはまだ0。親＋documentation agent最大2を維持。
+- 新規証拠は`reports/sw-recovery-20261119/`。`host-readonly-v2.json`の観測17:41:07ZではSW/Viewer稼働0、現在console session、OS LastBootは`2026-10-07T01:27:41.9014060Z`。System/Application/session logの保持範囲は10/29を含み、対象中断windowに再起動を示すlifecycle eventは見つからなかった。**「10/29のhost再起動が原因」とは裏付けられない。** Security logは権限不足で、ログオフ不存在や全processの消失時刻までは証明していない。
+- GPU provider eventは10/26 15:42Z台にnvlddmkm153が5件。10/29中断の原因確定ではない。ApplicationはViewServerV6の既知2crash（10/27 16:26Z、10/29 20:03Z、c0000005/offset20380）と各WERを再採取。sldworks自身の一致Application crash eventは見つからないが、native独自reportは存在する。
+- `native-metadata.json`にSWのCXPD/CXRS/CXPA、journal、Viewer dumpの位置・サイズ・時刻と安全な版/診断欄だけ記録。dump/journal/archive本文・serial/account・sealed modelはLLMにもGitにも出していない。WER ViewServer Report.werはアクセス拒否。native zip/XMLの後日更新時刻をcrash時刻と取り違えない。
+- 現在もRTX5060 `32.0.16.1088`/1024x768とVirtual Display Driver `11.30.4.434`/1920x1200。EnumDisplayDevicesの列挙は空でprimary displayは未確定。CIM上のStatus=OKやconsole接続だけでOpenGL正常とはしない。表示/driver設定は変更していない。
+- `preservation-audit.json`で、公開・独立M0の10/31四folderにある未追跡**25ファイル**を明示allowlist/元byte SHA256/秘密marker検査で分類、拒否0。これらと採取根拠を保全commitする。封印M1/H0/H2入力、dump、raw native user log、無関係の未追跡review/brainstormはまとめて追加しない。
+- 監視設定のread-only snapshot `monitoring-before.json`：SWの既存LocalDumpsは`%localappdata%\SolidWorks\CXPD`、mini、保持5。IFEO GlobalFlag/SilentProcessExitの対象値は未設定。現在non-adminでHKLM親のwrite-openが拒否される。可逆のper-exe監視scriptを用意したが、まだApply未実施・設定変更0。権限を迂回せず、証拠保全後に正規Applyの成否を記録する。
+- Dashboard専用agentは今回も`指定されたモデル・effortではありません。`でstore拒否。別modelや設定変更で代行せず、dashboard未更新として記録する。比較手順は別のdocumentation agentが提案書を作成済み、採点/採用実装へは未適用。次は監視Applyの記録→ユーザー専用再起動/手動手順書→許可された無課金切り分け。安定gate前の課金禁止、判定/card0.01mm/policy/scoring/封印/timeout不変。

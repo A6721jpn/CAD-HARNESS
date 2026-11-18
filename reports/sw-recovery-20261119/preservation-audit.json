@@ -1,0 +1,160 @@
+{
+  "schema": "sw.recovery.preservation-audit.v1",
+  "observed_at": "2026-11-18T17:44:13.647Z",
+  "scope": "Only four independent public M0 recovery folders; not sealed M1/H0/H2 inputs",
+  "new_files": [
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/before-reopen.step",
+      "bytes": 34605,
+      "sha256": "bebad5d727883201a1d9dab1b83f4ca0a6ad151e6172eb472a030008fda92f86",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/com-events.jsonl",
+      "bytes": 109660,
+      "sha256": "067375bf6ecc4aab92659a18234d05713f042c1e342e9716b89dd3cee5ba8f30",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/com-result.json",
+      "bytes": 15278,
+      "sha256": "2583f7d673986c6fb4689e997725d01c25ba395bf3397aa5d3d8d6e28f7a98c9",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/com.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/com.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/edit-copy.sldprt",
+      "bytes": 65918,
+      "sha256": "466cd7c2adfbe6fb41cb848080ba9439c8f36d570ea1c581feefec503c2f9715",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/edited.step",
+      "bytes": 34580,
+      "sha256": "780507f57efc9f73fa5a09249660459050c44315196e5da36f61de889592f84b",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/pocket-frame-positive.json",
+      "bytes": 299,
+      "sha256": "c0b8c9d388961f1c98f66b0dc34d051554ca7940996ad3a16e62b83936560181",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/positive.SLDPRT",
+      "bytes": 65918,
+      "sha256": "466cd7c2adfbe6fb41cb848080ba9439c8f36d570ea1c581feefec503c2f9715",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/reopened.step",
+      "bytes": 34580,
+      "sha256": "c3c6359a034569b4a69426c12350742c931ad16d0404a6ec7b7b85ae0dc6b9fa",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/restored.step",
+      "bytes": 34588,
+      "sha256": "62932c66ee2448f807aa5c5c62bb005afea54bb8738c14a46b3dd5a35b56b28a",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-01/result.json",
+      "bytes": 1224,
+      "sha256": "2c8ace22a2e2b4805dd9f9da7749f4bd21905fcbd8252a1ecd16d1253508614e",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-batch-04/com.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-batch-04/com.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-batch-04/result.json",
+      "bytes": 1251,
+      "sha256": "b1afe229ede97092d2ff430c44242794d0197f0542fc95c3854c7b52f7a1a123",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-lines-03/com-events.jsonl",
+      "bytes": 9926,
+      "sha256": "a822435b891e22933226c4981b18b30dbccd6ca3fcb04dba6c0e4a642d6b3287",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-lines-03/com-result.json",
+      "bytes": 473,
+      "sha256": "3b8805cdb2660844865e6f97160ff6a2e55ab06c3d2a337bbc3f86cb4db5352f",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-lines-03/com.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-lines-03/com.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-lines-03/result.json",
+      "bytes": 1229,
+      "sha256": "8c67967af2ecb4717b795eba71d695c62be70a5e095f41db3d9a19fa401612f3",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-release-02/com-events.jsonl",
+      "bytes": 9944,
+      "sha256": "80577b2d95fd1ae37c7015fcad8459762f0e3f66e8a73b630545839e8842a6cc",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-release-02/com-result.json",
+      "bytes": 475,
+      "sha256": "cc0eba729af0a0cd00216671a23c46e8ae0101b5be3474890c6efcbc17e4abfd",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-release-02/com.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-release-02/com.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "Independent public M0, no sealed case input"
+    },
+    {
+      "path": "reports/sw-m0/h2-recovery-20261031-m0-release-02/result.json",
+      "bytes": 1231,
+      "sha256": "7b47ff91e56e192e2c44b239c9e6cc54e6713dd0d9545d6889e1f60fafdf6709",
+      "provenance": "Independent public M0, no sealed case input"
+    }
+  ],
+  "rejected": [],
+  "dump_or_private_data_added": false,
+  "hash_basis": "Original worktree bytes before staging; stage with core.autocrlf=false to avoid automatic newline conversion."
+}

@@ -1,0 +1,258 @@
+{
+    "schema":  "sw.recovery.native-metadata.v1",
+    "observed_at":  "2026-11-18T17:42:25.2680392Z",
+    "files":  [
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Roaming/SOLIDWORKS/SOLIDWORKS 2026/swxJRNL.swj",
+                      "status":  "present",
+                      "bytes":  2984,
+                      "created_utc":  "2026-08-17T07:43:31.0557681Z",
+                      "modified_utc":  "2026-10-30T20:07:56.1972859Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Roaming/SOLIDWORKS/SOLIDWORKS 2026/swxJRNL.BAK",
+                      "status":  "present",
+                      "bytes":  3138,
+                      "created_utc":  "2026-08-17T07:43:31.0557681Z",
+                      "modified_utc":  "2026-10-30T20:02:57.3040396Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/CrashDumps/ViewServerV6.exe.71496.dmp",
+                      "status":  "present",
+                      "bytes":  678243,
+                      "created_utc":  "2026-10-29T20:03:57.8209126Z",
+                      "modified_utc":  "2026-10-29T20:03:57.8922676Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/CrashDumps/ViewServerV6.exe.54972.dmp",
+                      "status":  "present",
+                      "bytes":  643495,
+                      "created_utc":  "2026-10-27T16:26:42.7718373Z",
+                      "modified_utc":  "2026-10-27T16:26:42.8876209Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/CrashDumps/ViewServerV6.exe.55124.dmp",
+                      "status":  "present",
+                      "bytes":  686259,
+                      "created_utc":  "2026-10-21T15:07:17.4059017Z",
+                      "modified_utc":  "2026-10-21T15:07:17.5233133Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPD/20261031050722_34.4.0.0078/sldexitapp.xml",
+                      "status":  "present",
+                      "bytes":  980,
+                      "created_utc":  "2026-11-02T01:20:24.0414675Z",
+                      "modified_utc":  "2026-11-02T01:20:24.0414675Z",
+                      "contents_published":  false,
+                      "safe_fields":  {
+                                          "FileVersion":  "34.4.0.0078",
+                                          "CrashFrequency":  "-1",
+                                          "SWServicePack":  "SP4.0",
+                                          "Version":  "1.0",
+                                          "ProductVersion":  "34.4.0.0078"
+                                      },
+                      "exception_count":  0,
+                      "diagnostic_markers":  [
+
+                                             ],
+                      "raw_diagnostic_text_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPD/20261031050203_34.4.0.0078/sldexitapp.xml",
+                      "status":  "present",
+                      "bytes":  980,
+                      "created_utc":  "2026-11-02T01:20:22.5416444Z",
+                      "modified_utc":  "2026-11-02T01:20:22.5416444Z",
+                      "contents_published":  false,
+                      "safe_fields":  {
+                                          "FileVersion":  "34.4.0.0078",
+                                          "CrashFrequency":  "-1",
+                                          "SWServicePack":  "SP4.0",
+                                          "Version":  "1.0",
+                                          "ProductVersion":  "34.4.0.0078"
+                                      },
+                      "exception_count":  0,
+                      "diagnostic_markers":  [
+
+                                             ],
+                      "raw_diagnostic_text_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPD/20261031045555_34.4.0.0078/sldexitapp.xml",
+                      "status":  "present",
+                      "bytes":  980,
+                      "created_utc":  "2026-11-02T01:20:14.5092916Z",
+                      "modified_utc":  "2026-11-02T01:20:14.5092916Z",
+                      "contents_published":  false,
+                      "safe_fields":  {
+                                          "FileVersion":  "34.4.0.0078",
+                                          "CrashFrequency":  "-1",
+                                          "SWServicePack":  "SP4.0",
+                                          "Version":  "1.0",
+                                          "ProductVersion":  "34.4.0.0078"
+                                      },
+                      "exception_count":  0,
+                      "diagnostic_markers":  [
+
+                                             ],
+                      "raw_diagnostic_text_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXRS/RS_20261031050722_34.4.0.0078.xml",
+                      "status":  "present",
+                      "bytes":  1285,
+                      "created_utc":  "2026-11-02T01:20:13.3060316Z",
+                      "modified_utc":  "2026-11-02T01:20:13.3060316Z",
+                      "contents_published":  false,
+                      "safe_fields":  {
+                                          "SuiteVersion":  "20260-40400-1100",
+                                          "AppVersion":  "34.4.0.0078"
+                                      },
+                      "exception_count":  1,
+                      "diagnostic_markers":  [
+
+                                             ],
+                      "raw_diagnostic_text_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261031050722_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  510944,
+                      "created_utc":  "2026-10-30T20:07:37.0565938Z",
+                      "modified_utc":  "2026-11-02T01:20:12.1392747Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261031050203_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  6387,
+                      "created_utc":  "2026-10-30T20:02:17.7944101Z",
+                      "modified_utc":  "2026-10-30T20:07:37.2147670Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261031045555_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  6428,
+                      "created_utc":  "2026-10-30T19:56:10.6711609Z",
+                      "modified_utc":  "2026-10-30T20:02:17.9488033Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261031045000_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  7016,
+                      "created_utc":  "2026-10-30T19:56:10.7465240Z",
+                      "modified_utc":  "2026-10-30T19:56:10.8636841Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261030065635_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  5237,
+                      "created_utc":  "2026-10-29T21:56:50.9750945Z",
+                      "modified_utc":  "2026-10-30T19:50:18.8628793Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261030064748_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  8134,
+                      "created_utc":  "2026-10-29T21:48:03.6222363Z",
+                      "modified_utc":  "2026-10-30T02:13:11.7602849Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261030050305_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  7241,
+                      "created_utc":  "2026-10-29T20:03:20.2653994Z",
+                      "modified_utc":  "2026-10-30T02:13:11.7542848Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261030025132_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  7597,
+                      "created_utc":  "2026-10-29T20:03:20.3331065Z",
+                      "modified_utc":  "2026-10-30T02:13:11.7477769Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261030051101_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  6490,
+                      "created_utc":  "2026-10-29T20:11:16.0181502Z",
+                      "modified_utc":  "2026-10-29T21:48:03.7775432Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261028125802_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  7997,
+                      "created_utc":  "2026-10-29T17:51:50.9075174Z",
+                      "modified_utc":  "2026-10-29T17:51:50.9673242Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261028125337_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  496909,
+                      "created_utc":  "2026-10-28T03:57:54.7564488Z",
+                      "modified_utc":  "2026-10-29T02:24:19.8149397Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261028015350_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  8349,
+                      "created_utc":  "2026-10-28T03:53:34.0836341Z",
+                      "modified_utc":  "2026-10-29T02:24:19.8020484Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261028015414_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  22,
+                      "created_utc":  "2026-10-27T16:54:31.6748447Z",
+                      "modified_utc":  "2026-10-27T16:54:31.6865865Z",
+                      "contents_published":  false
+                  },
+                  {
+                      "path":  "%USERPROFILE%\\AppData\\Local/SOLIDWORKS/CXPA/20261028012048_34.4.0.0078.zip",
+                      "status":  "present",
+                      "bytes":  501775,
+                      "created_utc":  "2026-10-27T16:21:45.9386284Z",
+                      "modified_utc":  "2026-10-27T16:53:52.2335257Z",
+                      "contents_published":  false
+                  }
+              ],
+    "wer_access":  [
+                       {
+                           "path":  "C:/ProgramData/Microsoft/Windows/WER/ReportArchive/AppCrash_ViewServerV6.exe_4f383ac5c6d1b9ce2a837f10d4e8b79d5bf8c4_844386b3_c6f7ad77-f208-4995-9de4-5252c7e3c557/Report.wer",
+                           "readable":  false,
+                           "error_type":  "System.Management.Automation.MethodInvocationException",
+                           "contents_read":  false
+                       },
+                       {
+                           "path":  "C:/ProgramData/Microsoft/Windows/WER/ReportArchive/AppCrash_ViewServerV6.exe_4f383ac5c6d1b9ce2a837f10d4e8b79d5bf8c4_844386b3_4a0b9a77-3843-4718-9929-3db21eb661ab/Report.wer",
+                           "readable":  false,
+                           "error_type":  "System.Management.Automation.MethodInvocationException",
+                           "contents_read":  false
+                       }
+                   ],
+    "paid_calls":  0,
+    "cad_started":  false,
+    "settings_changed":  false,
+    "limits":  [
+                   "No archive, dump or journal contents read; those may contain sealed models or personal information.",
+                   "Native diagnostic markers alone do not identify a crash cause.",
+                   "ReportArchive access failure is not report absence.",
+                   "Filename dates are not process-exit timestamps."
+               ]
+}
